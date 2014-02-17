@@ -30,7 +30,7 @@
     
     BOOL viewGroupsAreDynamic;
     YapDatabaseViewMappingGroupFilter groupFilterBlock;
-    YapDatabaseViewMappingGroupSort groupSort;
+    NSComparator groupSort;
     YapDatabaseViewMappingsGroupTransform groupTransform;
     
 	// Mappings and cached counts
@@ -88,7 +88,7 @@
 
 - (id)initWithGroupFilterBlock:(YapDatabaseViewMappingGroupFilter)inFilter
                     sortTransform:(YapDatabaseViewMappingsGroupTransform)transformBlock
-                     sortBlock:(YapDatabaseViewMappingGroupSort)inSort
+                     sortBlock:(NSComparator)inSort
                           view:(NSString *)inRegisteredViewName{
     if (self = [super init]){
         groupFilterBlock = inFilter;
@@ -457,12 +457,6 @@
 **/
 - (void)updateWithCounts:(NSDictionary *)newCounts
 {
-    if (viewGroupsAreDynamic){
-        NSArray *newGroups = [self filterAndSortTransactionGroups:[newCounts allKeys]];
-        if ([self shouldUpdateAllGroupsWithNewGroups:newGroups]){
-            [self updateMappingWithGroups:newGroups];
-        }
-    }
 	for (NSString *group in allGroups)
 	{
 		NSUInteger count = [[newCounts objectForKey:group] unsignedIntegerValue];

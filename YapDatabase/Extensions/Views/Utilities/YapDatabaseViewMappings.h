@@ -174,7 +174,6 @@ struct YapDatabaseViewRangePosition {
 typedef struct YapDatabaseViewRangePosition YapDatabaseViewRangePosition;
 
 typedef BOOL (^YapDatabaseViewMappingGroupFilter)(YapDatabaseReadTransaction *t, NSString *group);
-typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(id group1, id group2);
 typedef id(^YapDatabaseViewMappingsGroupTransform)(YapDatabaseReadTransaction *t, NSString *group);
 
 @interface YapDatabaseViewMappings : NSObject <NSCopying>
@@ -211,15 +210,20 @@ typedef id(^YapDatabaseViewMappingsGroupTransform)(YapDatabaseReadTransaction *t
  * Initializes a new mappings object that uses a filterBlock and a sortBlock to dynamically construct sections from view.
  * @param filterBlock
  *      Block that takes a string and returns a BOOL.  returning YES will include the group in the sections of the mapping.
+ * @param sortTransform
+ *      Block that takes a YapDatabaseReadTransaction and a group name and allows the user to create sort value to be used
+ *      by the sort block.  If this value is nil then the sort block will be passed raw group names.
  * @param sortBlock
- *      Block used to sort group names for groups that pass the filter.
+ *      Block used to sort group names or the values returned by sortTransform, if the transformBlock this NSComparator
+ *      should operate on two NSStrings.  If sortTransform is not nil then this block should operate on the return type
+ *      of sortTransform.
  * @param registeredViewName
  *      This is the name of the view, as you registered it with the database system.
  *
 **/
 - (id)initWithGroupFilterBlock:(YapDatabaseViewMappingGroupFilter)filterBlock
                   sortTransform:(YapDatabaseViewMappingsGroupTransform)transformBlock
-                     sortBlock:(YapDatabaseViewMappingGroupSort)sortBlock
+                     sortBlock:(NSComparator)sortBlock
                           view:(NSString *)registeredViewName;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
