@@ -31,6 +31,7 @@
     BOOL viewGroupsAreDynamic;
     YapDatabaseViewMappingGroupFilter groupFilterBlock;
     YapDatabaseViewMappingGroupSort groupSort;
+    YapDatabaseViewMappingsGroupTransform groupTransform;
     
 	// Mappings and cached counts
 	NSMutableArray *visibleGroups;
@@ -85,10 +86,14 @@
 	return self;
 }
 
-- (id)initWithGroupFilterBlock:(YapDatabaseViewMappingGroupFilter)inFilter sortBlock:(YapDatabaseViewMappingGroupSort)inSort view:(NSString *)inRegisteredViewName{
+- (id)initWithGroupFilterBlock:(YapDatabaseViewMappingGroupFilter)inFilter
+                    sortTransform:(YapDatabaseViewMappingsGroupTransform)transformBlock
+                     sortBlock:(YapDatabaseViewMappingGroupSort)inSort
+                          view:(NSString *)inRegisteredViewName{
     if (self = [super init]){
         groupFilterBlock = inFilter;
-         groupSort = inSort;
+        groupTransform = transformBlock;
+        groupSort = inSort;
         viewGroupsAreDynamic = YES;
 
         //we don't know what our capacity is going to be yet.
@@ -322,7 +327,7 @@
 
 - (void)updateWithTransaction:(YapDatabaseReadTransaction *)transaction
 {
-	if (![transaction->connection isInLongLivedReadTransaction])
+	if (![transaction.connection isInLongLivedReadTransaction])
 	{
 		NSString *reason = @"YapDatabaseViewMappings requires the connection to be in a longLivedReadTransaction.";
 		
@@ -363,8 +368,9 @@
 	}
 	
     YapDatabaseViewTransaction *viewTransaction = [transaction ext:registeredViewName];
+
     if (viewGroupsAreDynamic){
-        NSArray *newGroups = [self filterAndSortTransactionGroups:[viewTransaction allGroups]];
+        NSArray *newGroups = [self filterAndSortTransactionGroups:transaction];
         if ([self shouldUpdateAllGroupsWithNewGroups:newGroups]){
             [self updateMappingWithGroups:newGroups];
         }
@@ -378,7 +384,7 @@
 	}
 	
 	BOOL firstUpdate = (snapshotOfLastUpdate == UINT64_MAX);
-	snapshotOfLastUpdate = [transaction->connection snapshot];
+	snapshotOfLastUpdate = [transaction.connection snapshot];
 	
 	if (firstUpdate)
 		[self initializeRangeOptsLength];
@@ -387,13 +393,7 @@
 }
 
 -(void)updateMappingWithGroups:(NSArray *)groups{
-    NSMutableArray *newAllGroups = [NSMutableArray arrayWithCapacity:groups.count];
-    for (NSString *group in groups) {
-        if (groupFilterBlock(group)) [newAllGroups addObject:group];
-    }
-    [newAllGroups sortUsingComparator:groupSort];
-    
-    allGroups = [newAllGroups copy];
+    allGroups = [groups copy];
     [self validateAutoConsolidation];
     id sharedKeySet = [NSDictionary sharedKeySetForKeys:allGroups];
     counts       = [NSMutableDictionary dictionaryWithSharedKeySet:sharedKeySet];
@@ -412,12 +412,37 @@
     }
 }
 
-- (NSArray *)filterAndSortTransactionGroups:(NSArray *)transactionGroups{
+- (NSArray *)filterAndSortTransactionGroups:(YapDatabaseReadTransaction *)t{
+    NSArray *transactionGroups = [[t ext:registeredViewName] allGroups];
+
     NSMutableArray *newAllGroups = [NSMutableArray arrayWithCapacity:transactionGroups.count];
+    
     for (NSString *group in transactionGroups) {
-        if (groupFilterBlock(group)) [newAllGroups addObject:group];
+        if (groupFilterBlock(t, group)){
+            if (groupTransform){
+                id sortTransform = groupTransform(t, group);
+                [newAllGroups addObject:@{@"g":group,@"t":sortTransform}];
+            }
+            else{
+                [newAllGroups addObject:group];
+            }
+        }
     }
-    [newAllGroups sortUsingComparator:groupSort];
+    
+    if (groupTransform != nil){
+        [newAllGroups sortUsingComparator:^(NSDictionary *l, NSDictionary *r){
+            return groupSort(l[@"t"], r[@"t"]);
+        }];
+        
+        NSMutableArray *unTransformed = [[NSMutableArray alloc] initWithCapacity:newAllGroups.count];
+        for(NSDictionary *d in newAllGroups){
+            [unTransformed addObject:d[@"g"]];
+        }
+        newAllGroups = unTransformed;
+    }
+    else{
+        [newAllGroups sortUsingComparator:groupSort];
+    }
     
     return [newAllGroups copy];
 }
@@ -425,7 +450,6 @@
 - (BOOL)shouldUpdateAllGroupsWithNewGroups:(NSArray *)newGroups{
     return ![allGroups isEqualToArray:newGroups];
 }
-
 
 /**
  * This method is internal.
