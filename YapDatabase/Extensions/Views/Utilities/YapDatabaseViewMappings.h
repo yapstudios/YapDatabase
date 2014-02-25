@@ -174,7 +174,7 @@ struct YapDatabaseViewRangePosition {
 typedef struct YapDatabaseViewRangePosition YapDatabaseViewRangePosition;
 
 typedef BOOL (^YapDatabaseViewMappingGroupFilter)(YapDatabaseReadTransaction *t, NSString *group);
-typedef id(^YapDatabaseViewMappingsGroupTransform)(YapDatabaseReadTransaction *t, NSString *group);
+typedef NSComparisonResult(^YapDatabaseViewMappingGroupSort)(id, id, YapDatabaseReadTransaction *);
 
 @interface YapDatabaseViewMappings : NSObject <NSCopying>
 
@@ -222,8 +222,7 @@ typedef id(^YapDatabaseViewMappingsGroupTransform)(YapDatabaseReadTransaction *t
  *
 **/
 - (id)initWithGroupFilterBlock:(YapDatabaseViewMappingGroupFilter)filterBlock
-                  sortTransform:(YapDatabaseViewMappingsGroupTransform)transformBlock
-                     sortBlock:(NSComparator)sortBlock
+                     sortBlock:(YapDatabaseViewMappingGroupSort)sortBlock
                           view:(NSString *)registeredViewName;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

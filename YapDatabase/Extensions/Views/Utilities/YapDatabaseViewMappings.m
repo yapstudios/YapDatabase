@@ -30,8 +30,7 @@
     
     BOOL viewGroupsAreDynamic;
     YapDatabaseViewMappingGroupFilter groupFilterBlock;
-    NSComparator groupSort;
-    YapDatabaseViewMappingsGroupTransform groupTransform;
+    YapDatabaseViewMappingGroupSort groupSort;
     
 	// Mappings and cached counts
 	NSMutableArray *visibleGroups;
@@ -87,12 +86,10 @@
 }
 
 - (id)initWithGroupFilterBlock:(YapDatabaseViewMappingGroupFilter)inFilter
-                    sortTransform:(YapDatabaseViewMappingsGroupTransform)transformBlock
-                     sortBlock:(NSComparator)inSort
+                     sortBlock:(NSComparisonResult(^)(id, id, YapDatabaseReadTransaction *))inSort
                           view:(NSString *)inRegisteredViewName{
     if (self = [super init]){
         groupFilterBlock = inFilter;
-        groupTransform = transformBlock;
         groupSort = inSort;
         viewGroupsAreDynamic = YES;
 
@@ -406,43 +403,27 @@
         autoConsolidateGroupsThreshold = 0;
     }
     
-    if (consolidatedGroupName == nil || autoConsolidateGroupsThreshold == 0){
+    if (consolidatedGroupName == nil || autoConsolidateGroupsThreshold == 0) {
         consolidatedGroupName = nil;
         autoConsolidateGroupsThreshold = 0;
     }
 }
 
-- (NSArray *)filterAndSortTransactionGroups:(YapDatabaseReadTransaction *)t{
+- (NSArray *)filterAndSortTransactionGroups:(YapDatabaseReadTransaction *)t {
     NSArray *transactionGroups = [[t ext:registeredViewName] allGroups];
 
     NSMutableArray *newAllGroups = [NSMutableArray arrayWithCapacity:transactionGroups.count];
     
     for (NSString *group in transactionGroups) {
         if (groupFilterBlock(t, group)){
-            if (groupTransform){
-                id sortTransform = groupTransform(t, group);
-                [newAllGroups addObject:@{@"g":group,@"t":sortTransform}];
-            }
-            else{
-                [newAllGroups addObject:group];
-            }
+            [newAllGroups addObject:group];
         }
     }
     
-    if (groupTransform != nil){
-        [newAllGroups sortUsingComparator:^(NSDictionary *l, NSDictionary *r){
-            return groupSort(l[@"t"], r[@"t"]);
-        }];
-        
-        NSMutableArray *unTransformed = [[NSMutableArray alloc] initWithCapacity:newAllGroups.count];
-        for(NSDictionary *d in newAllGroups){
-            [unTransformed addObject:d[@"g"]];
-        }
-        newAllGroups = unTransformed;
-    }
-    else{
-        [newAllGroups sortUsingComparator:groupSort];
-    }
+    [newAllGroups sortUsingComparator:^(NSString *group1, NSString *group2){
+        return groupSort(group1, group2, t);
+    }];
+
     
     return [newAllGroups copy];
 }

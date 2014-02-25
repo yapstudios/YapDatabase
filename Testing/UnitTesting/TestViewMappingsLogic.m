@@ -6450,8 +6450,7 @@ static NSMutableArray *changes;
                        initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                            return YES;
                        }
-                       sortTransform:nil
-                       sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                       sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                            return [l compare:r];
                        }
                        view:@"view"];
@@ -6490,8 +6489,7 @@ static NSMutableArray *changes;
                        initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                            return YES;
                        }
-                       sortTransform:nil
-                       sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                       sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                            return [l compare:r];
                        }
                        view:@"view"];
@@ -6531,8 +6529,7 @@ static NSMutableArray *changes;
                        initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                            return YES;
                        }
-                       sortTransform:nil
-                       sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                       sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                            return [l compare:r];
                        }
                        view:@"view"];
@@ -6566,8 +6563,7 @@ static NSMutableArray *changes;
                                                 initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                                                     return YES;
                                                 }
-                                                sortTransform:nil
-                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                                                     return [l compare:r];
                                                 }
                                                 view:@"view"];
@@ -6589,8 +6585,7 @@ static NSMutableArray *changes;
                                                 initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                                                     return YES;
                                                 }
-                                                sortTransform:nil
-                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                                                     return [l compare:r];
                                                 }
                                                 view:@"view"];
@@ -6609,8 +6604,7 @@ static NSMutableArray *changes;
                                                 initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                                                     return YES;
                                                 }
-                                                sortTransform:nil
-                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                                                     return [l compare:r];
                                                 }
                                                 view:@"view"];
@@ -6645,8 +6639,7 @@ static NSMutableArray *changes;
                        initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                            return YES;
                        }
-                       sortTransform:nil
-                       sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                       sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                            return [l compare:r];
                        }
                        view:@"view"];
@@ -6678,8 +6671,7 @@ static NSMutableArray *changes;
                        initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                            return YES;
                        }
-                       sortTransform:nil
-                       sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                       sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                            return [l compare:r];
                        }
                        view:@"view"];
@@ -6711,8 +6703,7 @@ static NSMutableArray *changes;
                        initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                            return YES;
                        }
-                       sortTransform:nil
-                       sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                       sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                            return [l compare:r];
                        }
                        view:@"view"];
@@ -6743,8 +6734,7 @@ static NSMutableArray *changes;
                                                 initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                                                     return YES;
                                                 }
-                                                sortTransform:nil
-                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r){
+                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
                                                     return [l compare:r];
                                                 }
                                                 view:@"view"];
@@ -6766,11 +6756,10 @@ static NSMutableArray *changes;
                                                 initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                                                     return YES;
                                                 }
-                                                sortTransform:^NSString *(YapDatabaseReadTransaction *t, NSString *g){
-                                                    return [g substringFromIndex:1];
-                                                }
-                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r){
-                                                    return  [l compare:r];
+                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
+                                                    NSString *lTransformed = [l substringFromIndex:1];
+                                                    NSString *rTransformed = [r substringFromIndex:1];
+                                                    return  [lTransformed compare:rTransformed];
                                                 }
                                                 view:@"view"];
     
@@ -6791,13 +6780,12 @@ static NSMutableArray *changes;
                                                 initWithGroupFilterBlock:^BOOL(YapDatabaseReadTransaction *t, NSString *g){
                                                     return YES;
                                                 }
-                                                sortTransform:^NSString *(YapDatabaseReadTransaction *t, NSString *g){
-                                                    STAssertEquals(self.transaction, t, nil);
+                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r, YapDatabaseReadTransaction *t){
+                                                    STAssertEqualObjects(self.transaction, t, nil);
                                                     hitAssertion = YES;
-                                                    return [g substringFromIndex:1];
-                                                }
-                                                sortBlock:^NSComparisonResult(NSString *l, NSString *r){
-                                                    return  [l compare:r];
+                                                    NSString *lTransform = [l substringFromIndex:1];
+                                                    NSString *rTransform = [r substringFromIndex:1];
+                                                    return  [lTransform compare:rTransform];
                                                 }
                                                 view:@"view"];
     
