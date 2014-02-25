@@ -73,6 +73,8 @@
 		DC9B1104184D124E00174B0F /* YapDatabaseTransaction.m in Sources */ = {isa = PBXBuildFile; fileRef = DC9B10DD184D124E00174B0F /* YapDatabaseTransaction.m */; };
 		DC9B1106184D143800174B0F /* TestYapDatabaseFilteredView.m in Sources */ = {isa = PBXBuildFile; fileRef = DC9B1105184D143800174B0F /* TestYapDatabaseFilteredView.m */; };
 		DCA528C71797650600B4503B /* TestViewChangeLogic.m in Sources */ = {isa = PBXBuildFile; fileRef = DCA528C41797650500B4503B /* TestViewChangeLogic.m */; };
+		FC2993C618B19D5D00961D25 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FC2993C518B19D5D00961D25 /* OCMock.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		FC2993C918B19F8900961D25 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = FC2993C518B19D5D00961D25 /* OCMock.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -84,6 +86,19 @@
 			remoteInfo = YapDatabase;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FC2993C818B19F7800961D25 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				FC2993C918B19F8900961D25 /* OCMock.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		DC2C988217E3C63700F1E04F /* TestViewMappingsLogic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestViewMappingsLogic.m; path = ../../UnitTesting/TestViewMappingsLogic.m; sourceTree = "<group>"; };
@@ -217,6 +232,7 @@
 		DC9B10DD184D124E00174B0F /* YapDatabaseTransaction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YapDatabaseTransaction.m; sourceTree = "<group>"; };
 		DC9B1105184D143800174B0F /* TestYapDatabaseFilteredView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestYapDatabaseFilteredView.m; path = ../../UnitTesting/TestYapDatabaseFilteredView.m; sourceTree = "<group>"; };
 		DCA528C41797650500B4503B /* TestViewChangeLogic.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestViewChangeLogic.m; path = ../../UnitTesting/TestViewChangeLogic.m; sourceTree = "<group>"; };
+		FC2993C518B19D5D00961D25 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = ../../Vendor/OCMock.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -233,9 +249,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DC84006B175142BD003BFBB2 /* libsqlite3.dylib in Frameworks */,
 				DC84FFAD175130D3003BFBB2 /* SenTestingKit.framework in Frameworks */,
+				DC84006B175142BD003BFBB2 /* libsqlite3.dylib in Frameworks */,
 				DC84FFAE175130D3003BFBB2 /* Cocoa.framework in Frameworks */,
+				FC2993C618B19D5D00961D25 /* OCMock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +292,7 @@
 		DC84FF8D175130D2003BFBB2 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				FC2993C518B19D5D00961D25 /* OCMock.framework */,
 				DC84FF8E175130D2003BFBB2 /* Cocoa.framework */,
 				DC84FFAC175130D3003BFBB2 /* SenTestingKit.framework */,
 				DC84005A175132E7003BFBB2 /* libsqlite3.dylib */,
@@ -649,6 +667,7 @@
 			buildConfigurationList = DC84FFBF175130D3003BFBB2 /* Build configuration list for PBXNativeTarget "YapDatabaseTests" */;
 			buildPhases = (
 				DC84FFA6175130D3003BFBB2 /* Sources */,
+				FC2993C818B19F7800961D25 /* CopyFiles */,
 				DC84FFA7175130D3003BFBB2 /* Frameworks */,
 				DC84FFA8175130D3003BFBB2 /* Resources */,
 				DC84FFA9175130D3003BFBB2 /* ShellScript */,
@@ -931,7 +950,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/YapDatabase.app/Contents/MacOS/YapDatabase";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"/Users/jon/Documents/developer-town/projects/Internal/YapDatabase/Vendor",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "YapDatabase/YapDatabase-Prefix.pch";
 				INFOPLIST_FILE = "YapDatabaseTests/YapDatabaseTests-Info.plist";
@@ -946,7 +968,10 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/YapDatabase.app/Contents/MacOS/YapDatabase";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"/Users/jon/Documents/developer-town/projects/Internal/YapDatabase/Vendor",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "YapDatabase/YapDatabase-Prefix.pch";
 				INFOPLIST_FILE = "YapDatabaseTests/YapDatabaseTests-Info.plist";
