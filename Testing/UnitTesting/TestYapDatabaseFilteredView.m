@@ -700,4 +700,210 @@
 	}];
 }
 
+- (void)testEmptyFilterMappings_persistent
+{
+	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+
+	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
+	options.isPersistent = YES;
+
+	[self _testEmptyFilterMappings_withPath:databasePath options:options];
+}
+
+- (void)testEmptyFilterMappings_nonPersistent
+{
+	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+
+	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
+	options.isPersistent = NO;
+
+	[self _testEmptyFilterMappings_withPath:databasePath options:options];
+}
+
+- (void)_testEmptyFilterMappings_withPath:(NSString *)databasePath options:(YapDatabaseViewOptions *)options
+{
+	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+
+	STAssertNotNil(database, @"Oops");
+
+	YapDatabaseConnection *connection = [database newConnection];
+    YapDatabaseConnection *connection2 = [database newConnection];
+    YapDatabaseConnection *connection3 = [database newConnection];
+
+	YapDatabaseViewBlockType groupingBlockType;
+	YapDatabaseViewGroupingWithKeyBlock groupingBlock;
+
+	YapDatabaseViewBlockType sortingBlockType;
+	YapDatabaseViewSortingWithObjectBlock sortingBlock;
+
+	groupingBlockType = YapDatabaseViewBlockTypeWithKey;
+	groupingBlock = ^NSString *(NSString *collection, NSString *key)
+	{
+		if ([key isEqualToString:@"keyX"]) // Exclude keyX from view
+			return nil;
+		else
+			return @"";
+	};
+
+	sortingBlockType = YapDatabaseViewBlockTypeWithObject;
+	sortingBlock = ^(NSString *group, NSString *collection1, NSString *key1, id obj1,
+                     NSString *collection2, NSString *key2, id obj2)
+	{
+		__unsafe_unretained NSNumber *number1 = (NSNumber *)obj1;
+		__unsafe_unretained NSNumber *number2 = (NSNumber *)obj2;
+
+		return [number1 compare:number2];
+	};
+
+	YapDatabaseView *view =
+    [[YapDatabaseView alloc] initWithGroupingBlock:groupingBlock
+                                 groupingBlockType:groupingBlockType
+                                      sortingBlock:sortingBlock
+                                  sortingBlockType:sortingBlockType
+                                           version:0
+                                           options:options];
+
+	BOOL registerResult1 = [database registerExtension:view withName:@"order"];
+	STAssertTrue(registerResult1, @"Failure registering view extension");
+
+	YapDatabaseViewBlockType filteringBlockType1;
+	YapDatabaseViewFilteringBlock filteringBlock1;
+
+	filteringBlockType1 = YapDatabaseViewBlockTypeWithObject;
+	filteringBlock1 = ^BOOL (NSString *group, NSString *collection, NSString *key, id object)
+	{
+		__unsafe_unretained NSNumber *number = (NSNumber *)object;
+
+		if ([number intValue] % 2 == 0)
+			return YES; // even
+		else
+			return NO;  // odd
+	};
+
+	YapDatabaseFilteredView *filteredView1 =
+    [[YapDatabaseFilteredView alloc] initWithParentViewName:@"order"
+                                             filteringBlock:filteringBlock1
+                                         filteringBlockType:filteringBlockType1
+                                                        tag:@"filter1tag"];
+
+	BOOL registerResult2 = [database registerExtension:filteredView1 withName:@"filter1"];
+	STAssertTrue(registerResult2, @"Failure registering filteredView1 extension");
+
+
+    YapDatabaseViewMappings *mappings =
+    [[YapDatabaseViewMappings alloc] initWithGroups:@[@""] view:@"filter1"];
+
+    [connection beginLongLivedReadTransaction];
+    [connection readWithBlock:^(YapDatabaseReadTransaction *transaction) {
+        [mappings updateWithTransaction:transaction];
+    }];
+
+    __block int notificationCount = 0;
+    id observerThingy = [[NSNotificationCenter defaultCenter] addObserverForName:YapDatabaseModifiedNotification object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
+        notificationCount++;
+    }];
+
+	YapDatabaseViewBlockType filteringBlockType2;
+	YapDatabaseViewFilteringBlock filteringBlock2;
+
+	filteringBlockType2 = YapDatabaseViewBlockTypeWithObject;
+	filteringBlock2 = ^BOOL (NSString *group, NSString *collection, NSString *key, id object)
+	{
+        return NO;
+	};
+
+    NSTimeInterval timeout = 2.0;   // Number of seconds before giving up
+    NSTimeInterval idle = 0.01;     // Number of seconds to pause within loop
+    BOOL timedOut = NO;
+    NSDate *timeoutDate = nil;
+
+    // --- Try setting a regular filter
+
+    notificationCount = 0;
+
+    [connection3 readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+        [[transaction extension:@"filter1"] setFilteringBlock:filteringBlock1 filteringBlockType:filteringBlockType1 tag:@"filter1tag"];
+    }];
+
+    timedOut = NO;
+    timeoutDate = [[NSDate alloc] initWithTimeIntervalSinceNow:timeout];
+    while (!timedOut) {
+        NSDate *tick = [[NSDate alloc] initWithTimeIntervalSinceNow:idle];
+        [[NSRunLoop currentRunLoop] runUntilDate:tick];
+        timedOut = ([tick compare:timeoutDate] == NSOrderedDescending);
+    }
+
+    STAssertEquals(notificationCount, 1, @"Expected notification (%d notifications)", notificationCount);
+
+    // ---
+
+    // --- Try setting an empty filter
+
+    notificationCount = 0;
+
+    [connection2 readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+        [[transaction extension:@"filter1"] setFilteringBlock:filteringBlock2 filteringBlockType:filteringBlockType2 tag:@"emptytag"];
+    }];
+
+    timedOut = NO;
+    timeoutDate = [[NSDate alloc] initWithTimeIntervalSinceNow:timeout];
+    while (!timedOut) {
+        NSDate *tick = [[NSDate alloc] initWithTimeIntervalSinceNow:idle];
+        [[NSRunLoop currentRunLoop] runUntilDate:tick];
+        timedOut = ([tick compare:timeoutDate] == NSOrderedDescending);
+    }
+
+    STAssertEquals(notificationCount, 1, @"Expected notification (%d notifications)", notificationCount);
+
+    // ---
+
+    // --- Try setting a regular filter
+
+    notificationCount = 0;
+
+    [connection3 readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+        [[transaction extension:@"filter1"] setFilteringBlock:filteringBlock1 filteringBlockType:filteringBlockType1 tag:@"filter1tag"];
+    }];
+
+    timedOut = NO;
+    timeoutDate = [[NSDate alloc] initWithTimeIntervalSinceNow:timeout];
+    while (!timedOut) {
+        NSDate *tick = [[NSDate alloc] initWithTimeIntervalSinceNow:idle];
+        [[NSRunLoop currentRunLoop] runUntilDate:tick];
+        timedOut = ([tick compare:timeoutDate] == NSOrderedDescending);
+    }
+
+    STAssertEquals(notificationCount, 1, @"Expected notification (%d notifications)", notificationCount);
+
+    // ---
+
+    // --- Try setting an empty filter
+
+    notificationCount = 0;
+
+    [connection2 readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+        [[transaction extension:@"filter1"] setFilteringBlock:filteringBlock2 filteringBlockType:filteringBlockType2 tag:@"emptytag"];
+    }];
+
+    timedOut = NO;
+    timeoutDate = [[NSDate alloc] initWithTimeIntervalSinceNow:timeout];
+    while (!timedOut) {
+        NSDate *tick = [[NSDate alloc] initWithTimeIntervalSinceNow:idle];
+        [[NSRunLoop currentRunLoop] runUntilDate:tick];
+        timedOut = ([tick compare:timeoutDate] == NSOrderedDescending);
+    }
+
+    STAssertEquals(notificationCount, 1, @"Expected notification (%d notifications)", notificationCount);
+    
+    // ---
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:observerThingy];
+    
+    [database unregisterExtension:@"order"];
+	[database unregisterExtension:@"filter1"];
+    
+}
+
+
 @end
