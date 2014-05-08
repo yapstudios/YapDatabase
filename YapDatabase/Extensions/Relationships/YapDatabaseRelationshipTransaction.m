@@ -1180,12 +1180,12 @@ NS_INLINE BOOL EdgeMatchesDestination(YapDatabaseRelationshipEdge *edge, int64_t
 {
 	__block NSNumber *result = nil;
 	
-	[relationshipConnection->deletedInfo enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop){
+	[relationshipConnection->deletedInfo enumerateKeysAndObjectsUsingBlock:^(id nextKey, id nextObj, BOOL *stop){
 		
-		__unsafe_unretained NSNumber *rowidNumber = (NSNumber *)key;
-		__unsafe_unretained YapCollectionKey *collectionKey = (YapCollectionKey *)obj;
+		__unsafe_unretained NSNumber *rowidNumber = (NSNumber *)nextKey;
+		__unsafe_unretained YapCollectionKey *collectionKey = (YapCollectionKey *)nextObj;
 		
-		if ([collectionKey.key isEqualToString:key] && [collectionKey.collection isEqualToString:collection])
+		if ([collectionKey.key isEqualToString:nextKey] && [collectionKey.collection isEqualToString:collection])
 		{
 			result = rowidNumber;
 			*stop = YES;
