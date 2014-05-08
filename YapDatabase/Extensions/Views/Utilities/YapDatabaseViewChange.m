@@ -450,12 +450,12 @@
 						
 						while (prevRowCount > 0)
 						{
-							YapDatabaseViewRowChange *rowChange =
+							YapDatabaseViewRowChange *deleteRowChange =
 							    [YapDatabaseViewRowChange deleteKey:nil
 							                                inGroup:sectionChange->group
 							                                atIndex:(prevRowOffset+prevRowCount-1)];
 							
-							[rowChanges addObject:rowChange];
+							[rowChanges addObject:deleteRowChange];
 							prevRowCount--;
 						}
 						
@@ -548,10 +548,10 @@
 				
 				if (dependencyIndex < groupCount)
 				{
-					int changes = YapDatabaseViewChangedDependency;
+					int flags = YapDatabaseViewChangedDependency;
 					
 					YapDatabaseViewRowChange *rowChange =
-					    [YapDatabaseViewRowChange updateKey:nil changes:changes inGroup:group atIndex:dependencyIndex];
+					    [YapDatabaseViewRowChange updateKey:nil changes:flags inGroup:group atIndex:dependencyIndex];
 					
 					[rowChanges addObject:rowChange];
 				}
@@ -1712,7 +1712,7 @@
 			//
 			// Note: This code path is only taken if using a flexibleRange
 			
-			NSUInteger i = 0;
+			NSUInteger j = 0;
 			NSUInteger count = 0;
 			
 			NSUInteger index;
@@ -1721,7 +1721,7 @@
 			else
 				index = finalRangeLength - 1;
 			
-			while ((count < numberOfInsertOperationsToManuallyAdd) && (i < flexibleRangePinSideInsertDiff))
+			while ((count < numberOfInsertOperationsToManuallyAdd) && (j < flexibleRangePinSideInsertDiff))
 			{
 				// We need to be careful not to step on existing rowChanges.
 				// If there is an existing insert for this index, we need to continue onto the next index.
@@ -1770,7 +1770,7 @@
 				else
 					index--;
 				
-				i++;
+				j++;
 			}
 			
 			numberOfInsertOperationsToManuallyAdd -= count;

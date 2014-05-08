@@ -1753,23 +1753,23 @@
 				const void *blob = sqlite3_column_blob(statement, 1);
 				int blobSize = sqlite3_column_bytes(statement, 1);
 				
-				NSString *key = [[NSString alloc] initWithBytes:text length:textSize encoding:NSUTF8StringEncoding];
-				NSUInteger keyIndex = [[keyIndexDict objectForKey:key] unsignedIntegerValue];
+				NSString *nextKey = [[NSString alloc] initWithBytes:text length:textSize encoding:NSUTF8StringEncoding];
+				NSUInteger nextKeyIndex = [[keyIndexDict objectForKey:nextKey] unsignedIntegerValue];
 				
 				NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
 				
-				id metadata = data ? connection->database->metadataDeserializer(collection, key, data) : nil;
+				id metadata = data ? connection->database->metadataDeserializer(collection, nextKey, data) : nil;
 				
 				if (metadata)
 				{
-					YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
+					YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:nextKey];
 					
 					[connection->metadataCache setObject:metadata forKey:cacheKey];
 				}
 				
-				block(keyIndex, metadata, &stop);
+				block(nextKeyIndex, metadata, &stop);
 				
-				[keyIndexDict removeObjectForKey:key];
+				[keyIndexDict removeObjectForKey:nextKey];
 				
 				if (stop || isMutated) break;
 				
@@ -1960,21 +1960,21 @@
 				const void *blob = sqlite3_column_blob(statement, 1);
 				int blobSize = sqlite3_column_bytes(statement, 1);
 				
-				NSString *key = [[NSString alloc] initWithBytes:text length:textSize encoding:NSUTF8StringEncoding];
-				NSUInteger keyIndex = [[keyIndexDict objectForKey:key] unsignedIntegerValue];
+				NSString *nextKey = [[NSString alloc] initWithBytes:text length:textSize encoding:NSUTF8StringEncoding];
+				NSUInteger nextKeyIndex = [[keyIndexDict objectForKey:nextKey] unsignedIntegerValue];
 				
 				NSData *objectData = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-				id object = connection->database->objectDeserializer(collection, key, objectData);
+				id object = connection->database->objectDeserializer(collection, nextKey, objectData);
 				
 				if (object)
 				{
-					YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
+					YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:nextKey];
 					[connection->objectCache setObject:object forKey:cacheKey];
 				}
 				
-				block(keyIndex, object, &stop);
+				block(nextKeyIndex, object, &stop);
 				
-				[keyIndexDict removeObjectForKey:key];
+				[keyIndexDict removeObjectForKey:nextKey];
 				
 				if (stop || isMutated) break;
 				
@@ -2173,10 +2173,10 @@
 				const unsigned char *text = sqlite3_column_text(statement, 0);
 				int textSize = sqlite3_column_bytes(statement, 0);
 				
-				NSString *key = [[NSString alloc] initWithBytes:text length:textSize encoding:NSUTF8StringEncoding];
-				NSUInteger keyIndex = [[keyIndexDict objectForKey:key] unsignedIntegerValue];
+				NSString *nextKey = [[NSString alloc] initWithBytes:text length:textSize encoding:NSUTF8StringEncoding];
+				NSUInteger nextKeyIndex = [[keyIndexDict objectForKey:nextKey] unsignedIntegerValue];
 				
-				YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
+				YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:nextKey];
 				
 				id object = [connection->objectCache objectForKey:cacheKey];
 				if (object == nil)
@@ -2185,7 +2185,7 @@
 					int oBlobSize = sqlite3_column_bytes(statement, 1);
 					
 					NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-					object = connection->database->objectDeserializer(collection, key, oData);
+					object = connection->database->objectDeserializer(collection, nextKey, oData);
 					
 					if (object)
 						[connection->objectCache setObject:object forKey:cacheKey];
@@ -2205,7 +2205,7 @@
 					if (mBlobSize > 0)
 					{
 						NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-						metadata = connection->database->metadataDeserializer(collection, key, mData);
+						metadata = connection->database->metadataDeserializer(collection, nextKey, mData);
 					}
 					
 					if (metadata)
@@ -2214,9 +2214,9 @@
 						[connection->metadataCache setObject:[YapNull null] forKey:cacheKey];
 				}
 				
-				block(keyIndex, object, metadata, &stop);
+				block(nextKeyIndex, object, metadata, &stop);
 				
-				[keyIndexDict removeObjectForKey:key];
+				[keyIndexDict removeObjectForKey:nextKey];
 				
 				if (stop || isMutated) break;
 				
