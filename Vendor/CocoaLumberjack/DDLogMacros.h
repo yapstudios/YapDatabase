@@ -13,7 +13,6 @@
 //   to endorse or promote products derived from this software without specific
 //   prior written permission of Deusty, LLC.
 
-
 #import "DDLog.h"
 
 /**
@@ -34,7 +33,7 @@
  * This is the single macro that all other macros below compile into.
  * This big multiline macro makes all the other macros easier to read.
  **/
-#define LOGV_MACRO(isAsynchronous, lvl, flg, ctx, atag, fnct, frmt, ...) \
+#define LOG_MACRO(isAsynchronous, lvl, flg, ctx, atag, fnct, frmt, ...) \
         [DDLog log : isAsynchronous                                     \
              level : lvl                                                \
               flag : flg                                                \
@@ -43,8 +42,7 @@
           function : fnct                                               \
               line : __LINE__                                           \
                tag : atag                                               \
-            format : frmt                                               \
-              args : avalist]
+            format : (frmt), ## __VA_ARGS__]
 
 /**
  * Define version of the macro that only execute if the log level is above the threshold.
@@ -65,15 +63,15 @@
  *
  * We also define shorthand versions for asynchronous and synchronous logging.
  **/
-#define LOGV_MAYBE(async, lvl, flg, ctx, tag, fnct, frmt, avalist) \
-        do { if(lvl & flg) LOGV_MACRO(async, lvl, flg, ctx, tag, fnct, frmt, avalist); } while(0)
+#define LOG_MAYBE(async, lvl, flg, ctx, tag, fnct, frmt, ...) \
+        do { if(lvl & flg) LOG_MACRO(async, lvl, flg, ctx, tag, fnct, frmt, ##__VA_ARGS__); } while(0)
 
 /**
  * Ready to use log macros with no context or tag.
  **/
-#define DDLogVError(frmt, ...)   LOGV_MAYBE(NO,                LOG_LEVEL_DEF, DDLogFlagError,   0, nil, __PRETTY_FUNCTION__, frmt, avalist)
-#define DDLogVWarn(frmt, ...)    LOGV_MAYBE(LOG_ASYNC_ENABLED, LOG_LEVEL_DEF, DDLogFlagWarning, 0, nil, __PRETTY_FUNCTION__, frmt, avalist)
-#define DDLogVInfo(frmt, ...)    LOGV_MAYBE(LOG_ASYNC_ENABLED, LOG_LEVEL_DEF, DDLogFlagInfo,    0, nil, __PRETTY_FUNCTION__, frmt, avalist)
-#define DDLogVDebug(frmt, ...)   LOGV_MAYBE(LOG_ASYNC_ENABLED, LOG_LEVEL_DEF, DDLogFlagDebug,   0, nil, __PRETTY_FUNCTION__, frmt, avalist)
-#define DDLogVVerbose(frmt, ...) LOGV_MAYBE(LOG_ASYNC_ENABLED, LOG_LEVEL_DEF, DDLogFlagVerbose, 0, nil, __PRETTY_FUNCTION__, frmt, avalist)
+#define DDLogError(frmt, ...)   LOG_MAYBE(NO,                LOG_LEVEL_DEF, DDLogFlagError,   0, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+#define DDLogWarn(frmt, ...)    LOG_MAYBE(LOG_ASYNC_ENABLED, LOG_LEVEL_DEF, DDLogFlagWarning, 0, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+#define DDLogInfo(frmt, ...)    LOG_MAYBE(LOG_ASYNC_ENABLED, LOG_LEVEL_DEF, DDLogFlagInfo,    0, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+#define DDLogDebug(frmt, ...)   LOG_MAYBE(LOG_ASYNC_ENABLED, LOG_LEVEL_DEF, DDLogFlagDebug,   0, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
+#define DDLogVerbose(frmt, ...) LOG_MAYBE(LOG_ASYNC_ENABLED, LOG_LEVEL_DEF, DDLogFlagVerbose, 0, nil, __PRETTY_FUNCTION__, frmt, ##__VA_ARGS__)
 
