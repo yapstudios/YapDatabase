@@ -647,7 +647,7 @@ static NSString *const Key_ServerChangeToken   = @"serverChangeToken";
 			} completionBlock:^{
 				
 				if (moreComing) {
-					[self _fetchRecordChangesWithCompletionHandler:completionHandler];
+					[self fetchRecordChangesWithCompletionHandler:completionHandler];
 				}
 				
 				if (completionHandler)
