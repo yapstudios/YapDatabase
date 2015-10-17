@@ -107,6 +107,7 @@ NS_INLINE BOOL EdgeMatchesDestination(YapDatabaseRelationshipEdge *edge, int64_t
 			
 			// In version 2 we added the 'manual' column to support manual edge management.
 			// In version 3 we changed the column affinity of the 'dst' column.
+			// In version 4 we added the dst_name index.
 			
 			if (![self dropTable]) return NO;
 		}
@@ -230,6 +231,9 @@ NS_INLINE BOOL EdgeMatchesDestination(YapDatabaseRelationshipEdge *edge, int64_t
 	NSString *createDstIndex = [NSString stringWithFormat:
 	  @"CREATE INDEX IF NOT EXISTS \"dst\" ON \"%@\" (\"dst\");", tableName];
 	
+	NSString *createDstNameIndex = [NSString stringWithFormat:
+	  @"CREATE INDEX IF NOT EXISTS \"dst_name\" ON \"%@\" (\"dst\", \"name\");", tableName];
+	
 	int status;
 	
 	status = sqlite3_exec(db, [createTable UTF8String], NULL, NULL, NULL);
@@ -261,6 +265,14 @@ NS_INLINE BOOL EdgeMatchesDestination(YapDatabaseRelationshipEdge *edge, int64_t
 	{
 		YDBLogError(@"%@ - Failed creating dst index (%@): %d %s",
 		            THIS_METHOD, createDstIndex, status, sqlite3_errmsg(db));
+		return NO;
+	}
+	
+	status = sqlite3_exec(db, [createDstNameIndex UTF8String], NULL, NULL, NULL);
+	if (status != SQLITE_OK)
+	{
+		YDBLogError(@"%@ - Failed creating dst_name index (%@): %d %s",
+		            THIS_METHOD, createDstNameIndex, status, sqlite3_errmsg(db));
 		return NO;
 	}
 		
