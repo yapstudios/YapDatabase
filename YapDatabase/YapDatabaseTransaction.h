@@ -442,8 +442,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @see [YapDatabase registerExtension:withName:]
 **/
-- (id)extension:(NSString *)extensionName;
-- (id)ext:(NSString *)extensionName; // <-- Shorthand (same as extension: method)
+- (nullable id)extension:(NSString *)extensionName;
+- (nullable id)ext:(NSString *)extensionName; // <-- Shorthand (same as extension: method)
 
 NS_ASSUME_NONNULL_END
 @end
