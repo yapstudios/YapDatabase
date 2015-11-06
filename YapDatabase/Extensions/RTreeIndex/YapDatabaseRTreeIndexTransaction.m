@@ -1345,3 +1345,16 @@ static NSString *const ext_key_version_deprecated = @"version";
 }
 
 @end
+
+@implementation YapDatabaseReadTransaction (RTreeIndex)
+
+- (YapDatabaseRTreeIndexTransaction *) rTreeIndexTransaction:(NSString *)extensionName
+{
+	id extension = [self extension:extensionName];
+	if([extension isKindOfClass:[YapDatabaseRTreeIndexTransaction class]]) {
+		return extension;
+	}
+	return nil;
+}
+
+@end

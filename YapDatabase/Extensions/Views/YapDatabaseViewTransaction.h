@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 
+#import "YapDatabaseTransaction.h"
 #import "YapDatabaseExtensionTransaction.h"
 #import "YapDatabaseViewTypes.h"
 #import "YapDatabaseViewMappings.h"
@@ -623,6 +624,10 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (nullable id)metadataAtRow:(NSUInteger)row inSection:(NSUInteger)section withMappings:(YapDatabaseViewMappings *)mappings;
 
+@end
+
+@interface YapDatabaseReadTransaction (View)
+- (nullable YapDatabaseViewTransaction *) viewTransaction:(NSString *)extensionName;
 @end
 
 NS_ASSUME_NONNULL_END

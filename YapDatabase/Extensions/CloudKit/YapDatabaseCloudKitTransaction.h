@@ -1,4 +1,6 @@
 #import <Foundation/Foundation.h>
+
+#import "YapDatabaseTransaction.h"
 #import "YapDatabaseExtensionTransaction.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -346,6 +348,10 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (BOOL)saveRecord:(CKRecord *)record databaseIdentifier:(nullable NSString *)databaseIdentifier;
 
+@end
+
+@interface YapDatabaseReadTransaction (CloudKit)
+- (nullable YapDatabaseCloudKitTransaction *) cloudKitTransaction:(NSString *)extensionName;
 @end
 
 NS_ASSUME_NONNULL_END

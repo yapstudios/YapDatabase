@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 
+#import "YapDatabaseTransaction.h"
 #import "YapDatabaseExtensionTransaction.h"
 #import "YapDatabaseQuery.h"
 
@@ -72,6 +73,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary<NSString*, NSNumber*> *)rowidsForKeys:(NSArray<NSString *> *)keys
 										 inCollection:(nullable NSString *)collection;
 
+@end
+
+@interface YapDatabaseReadTransaction (RTreeIndex)
+- (nullable YapDatabaseRTreeIndexTransaction *) rTreeIndexTransaction:(NSString *)extensionName;
 @end
 
 NS_ASSUME_NONNULL_END

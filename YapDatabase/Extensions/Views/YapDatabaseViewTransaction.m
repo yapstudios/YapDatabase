@@ -5613,3 +5613,16 @@
 }
 
 @end
+
+@implementation YapDatabaseReadTransaction (View)
+
+- (YapDatabaseViewTransaction *) viewTransaction:(NSString *)extensionName
+{
+	id extension = [self extension:extensionName];
+	if([extension isKindOfClass:[YapDatabaseViewTransaction class]]) {
+		return extension;
+	}
+	return nil;
+}
+
+@end

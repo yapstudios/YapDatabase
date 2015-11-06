@@ -1601,3 +1601,16 @@ static NSString *const ext_key_version_deprecated = @"version";
 }
 
 @end
+
+@implementation YapDatabaseReadTransaction (SecondaryIndex)
+
+- (YapDatabaseSecondaryIndexTransaction *) secondaryIndexTransaction:(NSString *)extensionName
+{
+	id extension = [self extension:extensionName];
+	if([extension isKindOfClass:[YapDatabaseSecondaryIndexTransaction class]]) {
+		return extension;
+	}
+	return nil;
+}
+
+@end

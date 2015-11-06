@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 
+#import "YapDatabaseTransaction.h"
 #import "YapDatabaseExtensionTransaction.h"
 #import "YapDatabaseRelationshipEdge.h"
 #import "YapDatabaseRelationshipNode.h"
@@ -436,6 +437,10 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)flush;
 
+@end
+
+@interface YapDatabaseReadTransaction (Relationship)
+- (nullable YapDatabaseRelationshipTransaction *) relationshipTransaction:(NSString *)extensionName;
 @end
 
 NS_ASSUME_NONNULL_END

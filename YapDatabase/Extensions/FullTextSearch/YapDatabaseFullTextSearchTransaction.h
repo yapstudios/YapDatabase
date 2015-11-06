@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 
+#import "YapDatabaseTransaction.h"
 #import "YapDatabaseExtensionTransaction.h"
 #import "YapDatabaseFullTextSearchSnippetOptions.h"
 
@@ -66,6 +67,10 @@ NS_ASSUME_NONNULL_BEGIN
                    usingBlock:
             (void (^)(NSString *snippet, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
 
+@end
+
+@interface YapDatabaseReadTransaction (FullTextSearch)
+- (nullable YapDatabaseFullTextSearchTransaction *) fullTextSearchTransaction:(NSString *)extensionName;
 @end
 
 NS_ASSUME_NONNULL_END

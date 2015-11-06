@@ -4554,3 +4554,16 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 }
 
 @end
+
+@implementation YapDatabaseReadTransaction (CloudKit)
+
+- (YapDatabaseCloudKitTransaction *) cloudKitTransaction:(NSString *)extensionName
+{
+	id extension = [self extension:extensionName];
+	if([extension isKindOfClass:[YapDatabaseCloudKitTransaction class]]) {
+		return extension;
+	}
+	return nil;
+}
+
+@end
