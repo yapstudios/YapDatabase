@@ -5758,7 +5758,7 @@ NS_INLINE BOOL EdgeMatchesDestination(YapDatabaseRelationshipEdge *edge, int64_t
 
 @end
 
-@implementation YapDatabaseReadTransaction (FilteredView)
+@implementation YapDatabaseReadTransaction (Relationship)
 
 - (YapDatabaseRelationshipTransaction *) relationshipTransaction:(NSString *)extensionName
 {
