@@ -1243,9 +1243,9 @@ static NSString *const ext_key__version_deprecated = @"version";
 
 @end
 
-@implementation YapDatabaseReadTransaction (FilteredView)
+@implementation YapDatabaseReadTransaction (FullTextSearch)
 
-- (YapDatabaseFullTextSearchTransaction *) filteredViewTransaction:(NSString *)extensionName
+- (YapDatabaseFullTextSearchTransaction *) fullTextSearchTransaction:(NSString *)extensionName
 {
 	id extension = [self extension:extensionName];
 	if([extension isKindOfClass:[YapDatabaseFullTextSearchTransaction class]]) {
