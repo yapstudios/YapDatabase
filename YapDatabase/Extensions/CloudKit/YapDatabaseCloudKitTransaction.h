@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import "YapDatabaseExtensionTransaction.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface YapDatabaseCloudKitTransaction : YapDatabaseExtensionTransaction
 
@@ -33,9 +34,9 @@
  *   Further, which item it returns is not guaranteed, and may change between method invocations.
  *   So, in this particular case, you likely should be using 'collectionKeysForRecordID:databaseIdentifier:'.
 **/
-- (BOOL)getKey:(NSString **)keyPtr collection:(NSString **)collectionPtr
-                                  forRecordID:(CKRecordID *)recordID
-                           databaseIdentifier:(NSString *)databaseIdentifier;
+- (BOOL)getKey:(NSString * _Nonnull * _Nullable)keyPtr collection:(NSString * _Nonnull * _Nullable)collectionPtr
+                                                      forRecordID:(CKRecordID *)recordID
+                                               databaseIdentifier:(nullable NSString *)databaseIdentifier;
 
 /**
  * It's possible to associate multiple items in the database with a single CKRecord/databaseIdentifier.
@@ -46,7 +47,8 @@
  * 
  * @see YapCollectionKey
 **/
-- (NSArray *)collectionKeysForRecordID:(CKRecordID *)recordID databaseIdentifier:(NSString *)databaseIdentifier;
+- (NSArray<YapCollectionKey *> *)collectionKeysForRecordID:(CKRecordID *)recordID
+                                        databaseIdentifier:(nullable NSString *)databaseIdentifier;
 
 /**
  * If the given key/collection tuple is associated with a record,
@@ -70,10 +72,10 @@
  *   YES if the given collection/key is associated with a CKRecord.
  *   NO otherwise.
 **/
-- (BOOL)getRecordID:(CKRecordID **)recordIDPtr
- databaseIdentifier:(NSString **)databaseIdentifierPtr
+- (BOOL)getRecordID:(CKRecordID * _Nonnull * _Nullable)recordIDPtr
+ databaseIdentifier:(NSString * _Nonnull * _Nullable)databaseIdentifierPtr
              forKey:(NSString *)key
-       inCollection:(NSString *)collection;
+       inCollection:(nullable NSString *)collection;
 
 /**
  * Returns a copy of the CKRcord for the given recordID/databaseIdentifier.
@@ -96,7 +98,7 @@
  * 
  * @see saveRecord:databaseIdentifier:
 **/
-- (CKRecord *)recordForRecordID:(CKRecordID *)recordID databaseIdentifier:(NSString *)databaseIdentifier;
+- (CKRecord *)recordForRecordID:(CKRecordID *)recordID databaseIdentifier:(nullable NSString *)databaseIdentifier;
 
 /**
  * Convenience method.
@@ -107,7 +109,7 @@
  * 
  * @see recordForRecordID:databaseIdentifier:
 **/
-- (CKRecord *)recordForKey:(NSString *)key inCollection:(NSString *)collection;
+- (CKRecord *)recordForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 /**
  * High performance lookup method, if you only need to know if YapDatabaseCloudKit has a
@@ -120,7 +122,7 @@
  *   Whether or not YapDatabaseCloudKit is currently managing a record for the given recordID/databaseIdentifer.
  *   That is, whether or not there is currently one or more rows in the database attached to the CKRecord.
 **/
-- (BOOL)containsRecordID:(CKRecordID *)recordID databaseIdentifier:(NSString *)databaseIdentifier;
+- (BOOL)containsRecordID:(CKRecordID *)recordID databaseIdentifier:(nullable NSString *)databaseIdentifier;
 
 /**
  * Use this method during CKFetchRecordChangesOperation.fetchRecordChangesCompletionBlock.
@@ -157,11 +159,11 @@
  *   That is, if we deleted the item locally, and the delete operation is pending upload to the cloudKit server.
  *   If this value is YES, then you may not want to create a new database item for the record.
 **/
-- (void)getRecordChangeTag:(NSString **)outRecordChangeTag
-   hasPendingModifications:(BOOL *)outPendingModifications
-          hasPendingDelete:(BOOL *)outPendingDelete
+- (void)getRecordChangeTag:(NSString * _Nonnull * _Nullable)outRecordChangeTag
+   hasPendingModifications:(nullable BOOL *)outPendingModifications
+          hasPendingDelete:(nullable BOOL *)outPendingDelete
                forRecordID:(CKRecordID *)recordID
-        databaseIdentifier:(NSString *)databaseIdentifier;
+        databaseIdentifier:(nullable NSString *)databaseIdentifier;
 
 @end
 
@@ -231,9 +233,9 @@
  * Invoking this method from within a read-only transaction will throw an exception.
 **/
 - (BOOL)attachRecord:(CKRecord *)record
-  databaseIdentifier:(NSString *)databaseIdentifier
+  databaseIdentifier:(nullable NSString *)databaseIdentifier
               forKey:(NSString *)key
-        inCollection:(NSString *)collection
+        inCollection:(nullable NSString *)collection
   shouldUploadRecord:(BOOL)shouldUploadRecord;
 
 /**
@@ -296,7 +298,7 @@
  * @see getKey:collection:forRecordID:databaseIdentifier:
 **/
 - (void)detachRecordForKey:(NSString *)key
-              inCollection:(NSString *)collection
+              inCollection:(nullable NSString *)collection
          wasRemoteDeletion:(BOOL)wasRemoteDeletion
       shouldUploadDeletion:(BOOL)shouldUploadDeletion;
 
@@ -323,7 +325,7 @@
  * Important: This method only works if within a readWriteTrasaction.
  * Invoking this method from within a read-only transaction will throw an exception.
 **/
-- (void)mergeRecord:(CKRecord *)remoteRecord databaseIdentifier:(NSString *)databaseIdentifer;
+- (void)mergeRecord:(CKRecord *)remoteRecord databaseIdentifier:(nullable NSString *)databaseIdentifer;
 
 /**
  * This method allows you to manually modify a CKRecord.
@@ -342,6 +344,8 @@
  * Important: This method only works if within a readWriteTrasaction.
  * Invoking this method from within a read-only transaction will throw an exception.
 **/
-- (BOOL)saveRecord:(CKRecord *)record databaseIdentifier:(NSString *)databaseIdentifier;
+- (BOOL)saveRecord:(CKRecord *)record databaseIdentifier:(nullable NSString *)databaseIdentifier;
 
 @end
+
+NS_ASSUME_NONNULL_END

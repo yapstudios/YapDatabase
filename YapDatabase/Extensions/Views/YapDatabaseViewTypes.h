@@ -1,16 +1,9 @@
 #import <Foundation/Foundation.h>
+#import "YapDatabaseExtensionTypes.h"
 
 @class YapDatabaseReadTransaction;
 
-/**
- * Corresponds to the different type of blocks supported by YapDatabaseView.
-**/
-typedef NS_ENUM(NSInteger, YapDatabaseViewBlockType) {
-	YapDatabaseViewBlockTypeWithKey,
-	YapDatabaseViewBlockTypeWithObject,
-	YapDatabaseViewBlockTypeWithMetadata,
-	YapDatabaseViewBlockTypeWithRow
-};
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * The grouping block handles both filtering and grouping.
@@ -22,32 +15,50 @@ typedef NS_ENUM(NSInteger, YapDatabaseViewBlockType) {
  * Once the view knows what group the row belongs to,
  * it will then determine the position of the row within the group (using the sorting block).
  * 
- * You should choose a block type that takes the minimum number of required parameters.
- * The view can make various optimizations based on required parameters of the block.
+ * It is recommended you choose a block type that takes the minimum number of required parameters.
+ * This allows the view to make various optimizations based on the required parameters of the block.
+ * 
+ * If you'd like to get more advanced, you can specify exactly what should trigger an invocation of the block.
+ * For example:
+ * 
+ * If you use a 'GroupingWithObjectBlock', then normally the view will assume that any changes to the 'object' in
+ * the database means that the groupingBlock should be re-invoked (to check for changes to the group).
+ * However, your groupingBlock may be more "static" than that.
+ * That is, it may simply be based on an immutable property of the object.
+ * And as such, it only needs to be run once (because the group will never change).
+ * So you can use the 'options' parameter to specify YapDatabaseBlockInvokeOnInsertOnly.
+ * This will allow the view to properly optimize based on the details of your actual groupingBlock implementation.
 **/
+
 @interface YapDatabaseViewGrouping : NSObject
 
 typedef id YapDatabaseViewGroupingBlock; // One of the YapDatabaseViewGroupingX types below.
 
-typedef NSString* (^YapDatabaseViewGroupingWithKeyBlock) \
+typedef NSString* _Nullable (^YapDatabaseViewGroupingWithKeyBlock)
              (YapDatabaseReadTransaction *transaction, NSString *collection, NSString *key);
 
-typedef NSString* (^YapDatabaseViewGroupingWithObjectBlock) \
+typedef NSString* _Nullable (^YapDatabaseViewGroupingWithObjectBlock)
              (YapDatabaseReadTransaction *transaction, NSString *collection, NSString *key, id object);
 
-typedef NSString* (^YapDatabaseViewGroupingWithMetadataBlock) \
+typedef NSString* _Nullable (^YapDatabaseViewGroupingWithMetadataBlock)
              (YapDatabaseReadTransaction *transaction, NSString *collection, NSString *key, id metadata);
 
-typedef NSString* (^YapDatabaseViewGroupingWithRowBlock) \
+typedef NSString* _Nullable (^YapDatabaseViewGroupingWithRowBlock)
              (YapDatabaseReadTransaction *transaction, NSString *collection, NSString *key, id object, id metadata);
 
-+ (instancetype)withKeyBlock:(YapDatabaseViewGroupingWithKeyBlock)groupingBlock;
-+ (instancetype)withObjectBlock:(YapDatabaseViewGroupingWithObjectBlock)groupingBlock;
-+ (instancetype)withMetadataBlock:(YapDatabaseViewGroupingWithMetadataBlock)groupingBlock;
-+ (instancetype)withRowBlock:(YapDatabaseViewGroupingWithRowBlock)groupingBlock;
++ (instancetype)withKeyBlock:(YapDatabaseViewGroupingWithKeyBlock)block;
++ (instancetype)withObjectBlock:(YapDatabaseViewGroupingWithObjectBlock)block;
++ (instancetype)withMetadataBlock:(YapDatabaseViewGroupingWithMetadataBlock)block;
++ (instancetype)withRowBlock:(YapDatabaseViewGroupingWithRowBlock)block;
 
-@property (nonatomic, strong, readonly) YapDatabaseViewGroupingBlock groupingBlock;
-@property (nonatomic, assign, readonly) YapDatabaseViewBlockType groupingBlockType;
++ (instancetype)withOptions:(YapDatabaseBlockInvoke)iops keyBlock:(YapDatabaseViewGroupingWithKeyBlock)block;
++ (instancetype)withOptions:(YapDatabaseBlockInvoke)iops objectBlock:(YapDatabaseViewGroupingWithObjectBlock)block;
++ (instancetype)withOptions:(YapDatabaseBlockInvoke)iops metadataBlock:(YapDatabaseViewGroupingWithMetadataBlock)block;
++ (instancetype)withOptions:(YapDatabaseBlockInvoke)iops rowBlock:(YapDatabaseViewGroupingWithRowBlock)block;
+
+@property (nonatomic, strong, readonly) YapDatabaseViewGroupingBlock block;
+@property (nonatomic, assign, readonly) YapDatabaseBlockType         blockType;
+@property (nonatomic, assign, readonly) YapDatabaseBlockInvoke       blockInvokeOptions;
 
 @end
 
@@ -103,33 +114,39 @@ typedef NSString* (^YapDatabaseViewGroupingWithRowBlock) \
 
 typedef id YapDatabaseViewSortingBlock; // One of the YapDatabaseViewSortingX types below.
 
-typedef NSComparisonResult (^YapDatabaseViewSortingWithKeyBlock)                       \
-                 (YapDatabaseReadTransaction *transaction, NSString *group,            \
-                      NSString *collection1, NSString *key1,                           \
+typedef NSComparisonResult (^YapDatabaseViewSortingWithKeyBlock)
+                 (YapDatabaseReadTransaction *transaction, NSString *group,
+                      NSString *collection1, NSString *key1,
                       NSString *collection2, NSString *key2);
 
-typedef NSComparisonResult (^YapDatabaseViewSortingWithObjectBlock)                    \
-                 (YapDatabaseReadTransaction *transaction, NSString *group,            \
-                      NSString *collection1, NSString *key1, id object1,               \
+typedef NSComparisonResult (^YapDatabaseViewSortingWithObjectBlock)
+                 (YapDatabaseReadTransaction *transaction, NSString *group,
+                      NSString *collection1, NSString *key1, id object1,
                       NSString *collection2, NSString *key2, id object2);
 
-typedef NSComparisonResult (^YapDatabaseViewSortingWithMetadataBlock)                  \
-                 (YapDatabaseReadTransaction *transaction, NSString *group,            \
-                      NSString *collection1, NSString *key1, id metadata,              \
+typedef NSComparisonResult (^YapDatabaseViewSortingWithMetadataBlock)
+                 (YapDatabaseReadTransaction *transaction, NSString *group,
+                      NSString *collection1, NSString *key1, id metadata,
                       NSString *collection2, NSString *key2, id metadata2);
 
-typedef NSComparisonResult (^YapDatabaseViewSortingWithRowBlock)                       \
-                 (YapDatabaseReadTransaction *transaction, NSString *group,            \
-                      NSString *collection1, NSString *key1, id object1, id metadata1, \
+typedef NSComparisonResult (^YapDatabaseViewSortingWithRowBlock)
+                 (YapDatabaseReadTransaction *transaction, NSString *group,
+                      NSString *collection1, NSString *key1, id object1, id metadata1,
                       NSString *collection2, NSString *key2, id object2, id metadata2);
 
-+ (instancetype)withKeyBlock:(YapDatabaseViewSortingWithKeyBlock)sortingBlock;
-+ (instancetype)withObjectBlock:(YapDatabaseViewSortingWithObjectBlock)sortingBlock;
-+ (instancetype)withMetadataBlock:(YapDatabaseViewSortingWithMetadataBlock)sortingBlock;
-+ (instancetype)withRowBlock:(YapDatabaseViewSortingWithRowBlock)sortingBlock;
++ (instancetype)withKeyBlock:(YapDatabaseViewSortingWithKeyBlock)block;
++ (instancetype)withObjectBlock:(YapDatabaseViewSortingWithObjectBlock)block;
++ (instancetype)withMetadataBlock:(YapDatabaseViewSortingWithMetadataBlock)block;
++ (instancetype)withRowBlock:(YapDatabaseViewSortingWithRowBlock)block;
 
-@property (nonatomic, strong, readonly) YapDatabaseViewSortingBlock sortingBlock;
-@property (nonatomic, assign, readonly) YapDatabaseViewBlockType sortingBlockType;
++ (instancetype)withOptions:(YapDatabaseBlockInvoke)iops keyBlock:(YapDatabaseViewSortingWithKeyBlock)block;
++ (instancetype)withOptions:(YapDatabaseBlockInvoke)iops objectBlock:(YapDatabaseViewSortingWithObjectBlock)block;
++ (instancetype)withOptions:(YapDatabaseBlockInvoke)iops metadataBlock:(YapDatabaseViewSortingWithMetadataBlock)block;
++ (instancetype)withOptions:(YapDatabaseBlockInvoke)iops rowBlock:(YapDatabaseViewSortingWithRowBlock)block;
+
+@property (nonatomic, strong, readonly) YapDatabaseViewSortingBlock block;
+@property (nonatomic, assign, readonly) YapDatabaseBlockType        blockType;
+@property (nonatomic, assign, readonly) YapDatabaseBlockInvoke      blockInvokeOptions;
 
 @end
 
@@ -186,16 +203,16 @@ typedef NSComparisonResult (^YapDatabaseViewSortingWithRowBlock)                
 
 typedef id YapDatabaseViewFindBlock; // One of the YapDatabaseViewFindX types below.
 
-typedef NSComparisonResult (^YapDatabaseViewFindWithKeyBlock)      \
+typedef NSComparisonResult (^YapDatabaseViewFindWithKeyBlock)
                                  (NSString *collection, NSString *key);
 
-typedef NSComparisonResult (^YapDatabaseViewFindWithObjectBlock)   \
+typedef NSComparisonResult (^YapDatabaseViewFindWithObjectBlock)
                                  (NSString *collection, NSString *key, id object);
 
-typedef NSComparisonResult (^YapDatabaseViewFindWithMetadataBlock) \
+typedef NSComparisonResult (^YapDatabaseViewFindWithMetadataBlock)
                                  (NSString *collection, NSString *key, id metadata);
 
-typedef NSComparisonResult (^YapDatabaseViewFindWithRowBlock)      \
+typedef NSComparisonResult (^YapDatabaseViewFindWithRowBlock)
                                  (NSString *collection, NSString *key, id object, id metadata);
 
 + (instancetype)withKeyBlock:(YapDatabaseViewFindWithKeyBlock)findBlock;
@@ -204,6 +221,8 @@ typedef NSComparisonResult (^YapDatabaseViewFindWithRowBlock)      \
 + (instancetype)withRowBlock:(YapDatabaseViewFindWithRowBlock)findBlock;
 
 @property (nonatomic, strong, readonly) YapDatabaseViewFindBlock findBlock;
-@property (nonatomic, assign, readonly) YapDatabaseViewBlockType findBlockType;
+@property (nonatomic, assign, readonly) YapDatabaseBlockType findBlockType;
 
 @end
+
+NS_ASSUME_NONNULL_END

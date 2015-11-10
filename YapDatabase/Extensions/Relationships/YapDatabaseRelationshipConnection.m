@@ -50,14 +50,14 @@
 	sqlite3_stmt *removeAllProtocolStatement;
 }
 
-@synthesize relationship = relationship;
+@synthesize relationship = parent;
 
-- (id)initWithRelationship:(YapDatabaseRelationship *)inRelationship databaseConnection:(YapDatabaseConnection *)inDbC
+- (id)initWithParent:(YapDatabaseRelationship *)inParent databaseConnection:(YapDatabaseConnection *)inDbConnection
 {
 	if ((self = [super init]))
 	{
-		relationship = inRelationship;
-		databaseConnection = inDbC;
+		parent = inParent;
+		databaseConnection = inDbConnection;
 	}
 	return self;
 }
@@ -115,7 +115,7 @@
 **/
 - (YapDatabaseExtension *)extension
 {
-	return relationship;
+	return parent;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -128,8 +128,8 @@
 - (id)newReadTransaction:(YapDatabaseReadTransaction *)databaseTransaction
 {
 	YapDatabaseRelationshipTransaction *transaction =
-	    [[YapDatabaseRelationshipTransaction alloc] initWithRelationshipConnection:self
-	                                                           databaseTransaction:databaseTransaction];
+	    [[YapDatabaseRelationshipTransaction alloc] initWithParentConnection:self
+	                                                     databaseTransaction:databaseTransaction];
 	
 	return transaction;
 }
@@ -140,8 +140,8 @@
 - (id)newReadWriteTransaction:(YapDatabaseReadWriteTransaction *)databaseTransaction
 {
 	YapDatabaseRelationshipTransaction *transaction =
-	    [[YapDatabaseRelationshipTransaction alloc] initWithRelationshipConnection:self
-	                                                           databaseTransaction:databaseTransaction];
+	    [[YapDatabaseRelationshipTransaction alloc] initWithParentConnection:self
+	                                                     databaseTransaction:databaseTransaction];
 	
 	[self prepareForReadWriteTransaction];
 	return transaction;
@@ -158,14 +158,19 @@
 {
 	if (protocolChanges == nil)
 		protocolChanges = [[NSMutableDictionary alloc] init];
+	
 	if (manualChanges == nil)
 		manualChanges = [[NSMutableDictionary alloc] init];
+	
 	if (inserted == nil)
 		inserted = [[NSMutableSet alloc] init];
+	
 	if (deletedOrder == nil)
 		deletedOrder = [[NSMutableArray alloc] init];
+	
 	if (deletedInfo == nil)
 		deletedInfo = [[NSMutableDictionary alloc] init];
+	
 	if (filesToDelete == nil)
 		filesToDelete = [[NSMutableSet alloc] init];
 }
@@ -254,7 +259,7 @@
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"rules\" FROM \"%@\" "
 		  @" WHERE \"src\" = ? AND \"dst\" = ? AND \"name\" = ? AND \"manual\" = 1 LIMIT 1;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -269,7 +274,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"INSERT INTO \"%@\" (\"name\", \"src\", \"dst\", \"rules\", \"manual\") VALUES (?, ?, ?, ?, ?);",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -283,7 +288,7 @@
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
-		  @"UPDATE \"%@\" SET \"rules\" = ? WHERE \"rowid\" = ?;", [relationship tableName]];
+		  @"UPDATE \"%@\" SET \"rules\" = ? WHERE \"rowid\" = ?;", [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -297,7 +302,7 @@
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
-		  @"DELETE FROM \"%@\" WHERE \"rowid\" = ?;", [relationship tableName]];
+		  @"DELETE FROM \"%@\" WHERE \"rowid\" = ?;", [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -311,7 +316,7 @@
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
-		  @"DELETE FROM \"%@\" WHERE \"src\" = ? OR \"dst\" = ?;", [relationship tableName]];
+		  @"DELETE FROM \"%@\" WHERE \"src\" = ? OR \"dst\" = ?;", [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -338,7 +343,7 @@
 		
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"dst\" FROM \"%@\" WHERE \"dst\" > ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -361,7 +366,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"name\", \"dst\", \"rules\", \"manual\" FROM \"%@\" WHERE \"src\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -376,7 +381,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"name\", \"src\", \"rules\", \"manual\" FROM \"%@\" WHERE \"dst\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -391,7 +396,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"dst\", \"rules\", \"manual\" FROM \"%@\" WHERE \"src\" = ? AND \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -406,7 +411,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"src\", \"rules\", \"manual\" FROM \"%@\" WHERE \"dst\" = ? AND \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -421,7 +426,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"src\", \"dst\", \"rules\", \"manual\" FROM \"%@\" WHERE \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -436,7 +441,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"name\", \"rules\", \"manual\" FROM \"%@\" WHERE \"src\" = ? AND \"dst\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -451,7 +456,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"rules\", \"manual\" FROM \"%@\" WHERE \"src\" = ? AND \"dst\" = ? AND \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -466,7 +471,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"src\" = ? AND \"dst\" != ? AND \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -481,7 +486,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"dst\" = ? AND \"src\" != ? AND \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -496,7 +501,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -511,7 +516,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"src\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -526,7 +531,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"src\" = ? AND \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -541,7 +546,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"dst\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -556,7 +561,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"dst\" = ? AND \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -571,7 +576,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"src\" = ? AND \"dst\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -586,7 +591,7 @@
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"src\" = ? AND \"dst\" = ? AND \"name\" = ?;",
-		  [relationship tableName]];
+		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -599,7 +604,7 @@
 	sqlite3_stmt **statement = &removeAllStatement;
 	if (*statement == NULL)
 	{
-		NSString *string = [NSString stringWithFormat:@"DELETE FROM \"%@\";", [relationship tableName]];
+		NSString *string = [NSString stringWithFormat:@"DELETE FROM \"%@\";", [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -613,7 +618,7 @@
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
-		  @"DELETE FROM \"%@\" WHERE \"manual\" = 0;", [relationship tableName]];
+		  @"DELETE FROM \"%@\" WHERE \"manual\" = 0;", [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
