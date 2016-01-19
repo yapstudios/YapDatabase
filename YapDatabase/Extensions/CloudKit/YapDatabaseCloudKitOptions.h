@@ -27,6 +27,14 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, strong, readwrite, nullable) YapWhitelistBlacklist *allowedCollections;
 
+/**
+ * CloudKit has a limitation for number of changes in one change request.
+ * Currenly CloudKit can't handle more than 400 changes at once.
+ *
+ * You can use this property to set limit for number of changes per one request.
+ * Default value is 0 (No limitation).
+ **/
+@property (nonatomic, assign, readwrite) NSUInteger maxChangesPerChangeRequest;
 
 // Todo: Need ability to set default options for CKModifyRecordsOperation
 
