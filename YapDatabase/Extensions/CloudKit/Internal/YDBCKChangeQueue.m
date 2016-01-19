@@ -373,6 +373,23 @@
 }
 
 /**
+ * Number of changes (saved and deleted objects) in current commit.
+ **/
+- (NSUInteger)numberOfChangesInCurrentCommit
+{
+	NSAssert(self.isPendingQueue, @"Method can only be invoked on pendingQueue");
+	
+	NSUInteger count = 0;
+	
+	for (YDBCKChangeSet *newChangeSet in [newChangeSetsDict objectEnumerator])
+	{
+		count += (newChangeSet.recordIDsToDeleteCount + newChangeSet.recordsToSaveCount);
+	}
+	
+	return count;
+}
+
+/**
  * Atomic access to all counts at once.
 **/
 - (void)getNumberOfInFlightChangeSets:(NSUInteger *)numInFlightChangeSetsPtr
