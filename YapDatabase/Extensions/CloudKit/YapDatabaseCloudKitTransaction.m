@@ -2907,7 +2907,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		return;
 	}
 	
-	// Step 1 of 6:
+	// Step 1 of 5:
 	//
 	// Update mapping table.
 	
@@ -2943,7 +2943,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	#pragma clang diagnostic pop
 	}];
 	
-	// Step 2 of 6:
+	// Step 2 of 5:
 	//
 	// Update record table.
 	
@@ -3009,39 +3009,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	#pragma clang diagnostic pop
 	}];
 	
-	// Step 4 of 6:
-	//
-	// Use YDBCKChangeQueue tools to generate a list of updates for the queue table.
-	
-	void (^mergeQueueBlock)(YDBCKChangeQueue *, YDBCKChangeQueue *) = ^(YDBCKChangeQueue *masterQueue, YDBCKChangeQueue *pendingQueue) {
-		
-		// Step 5 of 6:
-		//
-		// Update queue table.
-		// This is the list of changes the pendingQueue gives us.
-		
-		for (YDBCKChangeSet *oldChangeSet in pendingQueue.changeSetsFromPreviousCommits)
-		{
-			if (oldChangeSet.hasChangesToDeletedRecordIDs || oldChangeSet.hasChangesToModifiedRecords)
-			{
-				[self updateQueueTableRowWithChangeSet:oldChangeSet];
-			}
-		}
-		
-		for (YDBCKChangeSet *newChangeSet in pendingQueue.changeSetsFromCurrentCommit)
-		{
-			[self insertQueueTableRowWithChangeSet:newChangeSet];
-		}
-		
-		// Step 6 of 6:
-		//
-		// Update the masterQueue,
-		// and unlock it so the next operation can be dispatched.
-		
-		[masterQueue mergePendingQueue:pendingQueue];
-	};
-	
-	// Step 3 of 6:
+	// Step 3 of 5:
 	//
 	// Create a pendingQueue,
 	// and lock the masterQueue so we can make changes to it.
@@ -3150,19 +3118,54 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		}
 
 		// Merge pending queue in master queue if number of changes is reached the limit.
+		
 		if (maxChangesPerChangeRequest > 0 && maxChangesPerChangeRequest <= pendingQueue.numberOfChangesInCurrentCommit)
 		{
-			mergeQueueBlock(masterQueue, pendingQueue);
+			// Step 4 of 5:
+			//
+			// Update the masterQueue.
+			
+			[self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
 			pendingQueue = nil;
 		}
 	}];
 	
-	// Merge the rest.
-	if (pendingQueue != nil)
+	// Step 5 of 5:
+	//
+	// Update the masterQueue. Merge the rest.
+	
+	[self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
+	pendingQueue = nil;
+}
+
+- (void)mergePendingQueue:(YDBCKChangeQueue *)pendingQueue toMasterQueue:(YDBCKChangeQueue *)masterQueue
+{
+	// Check input arguments.
+	
+	if (!pendingQueue || !masterQueue)
 	{
-		mergeQueueBlock(masterQueue, pendingQueue);
-		pendingQueue = nil;
+		return;
 	}
+	
+	// Update queue table.
+	// This is the list of changes the pendingQueue gives us.
+	
+	for (YDBCKChangeSet *oldChangeSet in pendingQueue.changeSetsFromPreviousCommits)
+	{
+		if (oldChangeSet.hasChangesToDeletedRecordIDs || oldChangeSet.hasChangesToModifiedRecords)
+		{
+			[self updateQueueTableRowWithChangeSet:oldChangeSet];
+		}
+	}
+	
+	for (YDBCKChangeSet *newChangeSet in pendingQueue.changeSetsFromCurrentCommit)
+	{
+		[self insertQueueTableRowWithChangeSet:newChangeSet];
+	}
+	
+	// Update the masterQueue
+	
+	[masterQueue mergePendingQueue:pendingQueue];
 }
 
 /**
