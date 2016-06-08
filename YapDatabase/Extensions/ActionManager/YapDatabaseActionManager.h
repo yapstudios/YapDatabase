@@ -5,6 +5,7 @@
 #import "YapDatabaseActionManagerConnection.h"
 #import "YapDatabaseActionManagerTransaction.h"
 #import "YapDatabaseView.h"
+#import "YapDatabaseConnection.h"
 
 @class Reachability;
 
@@ -32,8 +33,9 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 @interface YapDatabaseActionManager : YapDatabaseView
 
-- (instancetype)init;
-- (instancetype)initWithOptions:(nullable YapDatabaseViewOptions *)options;
+- (instancetype)init NS_UNAVAILABLE;
+- (instancetype)initWithConnection:(YapDatabaseConnection*)connection;
+- (instancetype)initWithConnection:(YapDatabaseConnection*)connection options:(nullable YapDatabaseViewOptions *)options;
 
 /**
  * YapDatabaseActionManager relies on a reachability instance to monitory for internet connectivity.
