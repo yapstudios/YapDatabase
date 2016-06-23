@@ -10,6 +10,6 @@
 **/
 @interface YapTouch : NSObject
 
-+ (id)touch;
++ (instancetype)touch;
 
 @end

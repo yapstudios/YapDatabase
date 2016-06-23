@@ -5,22 +5,17 @@
 
 static YapTouch *singleton;
 
-+ (void)initialize
++ (instancetype)touch
 {
-	static BOOL initialized = NO;
-	if (!initialized)
-	{
-		initialized = YES;
+	static dispatch_once_t onceToken;
+	dispatch_once(&onceToken, ^{
 		singleton = [[YapTouch alloc] init];
-	}
-}
-
-+ (id)touch
-{
+	});
+	
 	return singleton;
 }
 
-- (id)init
+- (instancetype)init
 {
 	NSAssert(singleton == nil, @"Must use singleton via [YapTouch touch]");
 	
