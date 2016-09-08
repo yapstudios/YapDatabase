@@ -27,7 +27,7 @@
 
 @implementation YapDatabaseActionManager
 {
-	YapDatabaseConnection *databaseConnection;
+	__weak YapDatabaseConnection *databaseConnection;
 	
 	NSMutableDictionary *actionItemsDict;
 	
@@ -42,6 +42,30 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Invalid
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (instancetype)init
+{
+    NSString *reason = @"You must use the init method(s) specific to YapDatabaseActionManager.";
+    NSDictionary *userInfo = @{ NSLocalizedRecoverySuggestionErrorKey:
+      @"YapDatabaseActionManager should be initialized with existing YapDatabaseConnection"
+      @" As such, YapDatabaseActionManager has different init methods you must use."};
+    
+    @throw [NSException exceptionWithName:@"YapDatabaseException" reason:reason userInfo:userInfo];
+    
+    return nil;
+}
+
+- (instancetype)initWithOptions:(YapDatabaseViewOptions *)inOptions
+{
+    NSString *reason = @"You must use the init method(s) specific to YapDatabaseActionManager.";
+    NSDictionary *userInfo = @{ NSLocalizedRecoverySuggestionErrorKey:
+      @"YapDatabaseActionManager should be initialized with existing YapDatabaseConnection"
+      @" As such, YapDatabaseActionManager has different init methods you must use."};
+    
+    @throw [NSException exceptionWithName:@"YapDatabaseException" reason:reason userInfo:userInfo];
+    
+    return nil;
+}
 
 - (instancetype)initWithGrouping:(YapDatabaseViewGrouping __unused *)inGrouping
                          sorting:(YapDatabaseViewSorting __unused *)inSorting
@@ -64,36 +88,36 @@
 #pragma mark Init & Dealloc
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (instancetype)init
+- (instancetype)initWithConnection:(YapDatabaseConnection*)connection
 {
-	return [self initWithOptions:nil];
+    return [self initWithConnection:nil];
 }
 
-- (instancetype)initWithOptions:(YapDatabaseViewOptions *)inOptions
+- (instancetype)initWithConnection:(YapDatabaseConnection*)connection options:(YapDatabaseViewOptions *)inOptions
 {
-	// Create and configure view
-	
-	YapDatabaseViewGrouping *groupingStub = [YapDatabaseViewGrouping withObjectBlock:
-	    ^NSString *(YapDatabaseReadTransaction *transaction, NSString *collection, NSString *key, id object)
-	{
-		// Block stub - will be replaced in 'supportsDatabaseWithRegisteredExtensions:'
-		return nil;
-	}];
-	
-	YapDatabaseViewSorting *sortingStub = [YapDatabaseViewSorting withObjectBlock:
-	    ^(YapDatabaseReadTransaction *transaction, NSString *group,
-		    NSString *collection1, NSString *key1, id obj1,
-            NSString *collection2, NSString *key2, id obj2)
-	{
-		// Block stub - will be replaced in 'supportsDatabaseWithRegisteredExtensions:'
-		return NSOrderedSame;
-	}];
-	
-	if ((self = [super initWithGrouping:groupingStub sorting:sortingStub versionTag:nil options:inOptions]))
-	{
-		actionItemsDict = [[NSMutableDictionary alloc] init];
-	}
-	return self;
+    YapDatabaseViewGrouping *groupingStub = [YapDatabaseViewGrouping withObjectBlock:
+                                             ^NSString *(YapDatabaseReadTransaction *transaction, NSString *collection, NSString *key, id object)
+                                             {
+                                                 // Block stub - will be replaced in 'supportsDatabaseWithRegisteredExtensions:'
+                                                 return nil;
+                                             }];
+    
+    YapDatabaseViewSorting *sortingStub = [YapDatabaseViewSorting withObjectBlock:
+                                           ^(YapDatabaseReadTransaction *transaction, NSString *group,
+                                             NSString *collection1, NSString *key1, id obj1,
+                                             NSString *collection2, NSString *key2, id obj2)
+                                           {
+                                               // Block stub - will be replaced in 'supportsDatabaseWithRegisteredExtensions:'
+                                               return NSOrderedSame;
+                                           }];
+    
+    if ((self = [super initWithGrouping:groupingStub sorting:sortingStub versionTag:nil options:inOptions]))
+    {
+        actionItemsDict = [[NSMutableDictionary alloc] init];
+        databaseConnection = connection;
+        
+    }
+    return self;
 }
 
 - (void)dealloc
@@ -235,8 +259,6 @@
 	
 	// We're all ready to go.
 	// Start the engine !
-	//
-	databaseConnection = [self.registeredDatabase newConnection];
 	[self checkForActions_init];
 }
 
