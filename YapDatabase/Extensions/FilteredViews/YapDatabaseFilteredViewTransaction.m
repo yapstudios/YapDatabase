@@ -1346,3 +1346,16 @@
 }
 
 @end
+
+@implementation YapDatabaseReadTransaction (FilteredView)
+
+- (YapDatabaseFilteredViewTransaction *) filteredViewTransaction:(NSString *)extensionName
+{
+	id extension = [self extension:extensionName];
+	if([extension isKindOfClass:[YapDatabaseFilteredViewTransaction class]]) {
+		return extension;
+	}
+	return nil;
+}
+
+@end

@@ -6821,3 +6821,16 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 }
 
 @end
+
+@implementation YapDatabaseReadTransaction (Relationship)
+
+- (YapDatabaseRelationshipTransaction *) relationshipTransaction:(NSString *)extensionName
+{
+	id extension = [self extension:extensionName];
+	if([extension isKindOfClass:[YapDatabaseRelationshipTransaction class]]) {
+		return extension;
+	}
+	return nil;
+}
+
+@end

@@ -1,5 +1,6 @@
 #import <Foundation/Foundation.h>
 
+#import "YapDatabaseTransaction.h"
 #import "YapDatabaseViewTransaction.h"
 #import "YapDatabaseSearchQueue.h"
 
@@ -48,6 +49,10 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)performSearchWithQueue:(YapDatabaseSearchQueue *)queue;
 
+@end
+
+@interface YapDatabaseReadTransaction (SearchResultsView)
+- (nullable YapDatabaseSearchResultsViewTransaction *) searchResultsViewTransaction:(NSString *)extensionName;
 @end
 
 NS_ASSUME_NONNULL_END

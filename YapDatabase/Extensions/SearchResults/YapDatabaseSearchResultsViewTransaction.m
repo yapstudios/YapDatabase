@@ -2545,3 +2545,16 @@ static NSString *const ext_key_query             = @"query";
 }
 
 @end
+
+@implementation YapDatabaseReadTransaction (SearchResultsView)
+
+- (YapDatabaseSearchResultsViewTransaction *) searchResultsViewTransaction:(NSString *)extensionName
+{
+	id extension = [self extension:extensionName];
+	if([extension isKindOfClass:[YapDatabaseSearchResultsViewTransaction class]]) {
+		return extension;
+	}
+	return nil;
+}
+
+@end
