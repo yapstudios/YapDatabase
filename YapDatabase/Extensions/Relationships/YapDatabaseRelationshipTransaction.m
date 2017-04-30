@@ -1175,7 +1175,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		{
 			if ((edge->state & YDB_EdgeState_HasSourceRowid) && srcRowid)
 			{
-				if (edge->sourceRowid != srcRowid.unsignedLongLongValue)
+				if (edge->sourceRowid != srcRowid.longLongValue)
 				{
 					continue;
 				}
@@ -1228,7 +1228,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
 				
-				edge->sourceRowid = srcRowid.unsignedLongLongValue;
+				edge->sourceRowid = srcRowid.longLongValue;
 				edge->flags |= YDB_EdgeState_HasSourceRowid;
 			}
 			else
@@ -1286,7 +1286,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			}
 			else if ((edge->state & YDB_EdgeState_HasDestinationRowid) && dstRowid)
 			{
-				if (edge->destinationRowid != dstRowid.unsignedLongLongValue)
+				if (edge->destinationRowid != dstRowid.longLongValue)
 				{
 					continue;
 				}
@@ -1319,7 +1319,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			}
 			else if ((edge->state & YDB_EdgeState_HasDestinationRowid) && dstRowid)
 			{
-				if (edge->destinationRowid != dstRowid.unsignedLongLongValue)
+				if (edge->destinationRowid != dstRowid.longLongValue)
 				{
 					continue;
 				}
@@ -1376,7 +1376,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
 				
-				edge->destinationRowid = dstRowid.unsignedLongLongValue;
+				edge->destinationRowid = dstRowid.longLongValue;
 				edge->state |= YDB_EdgeState_HasDestinationRowid;
 			}
 			else
@@ -1534,7 +1534,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		}
 		else if ((edge->state & YDB_EdgeState_HasDestinationRowid) && dstRowid)
 		{
-			if (edge->destinationRowid != dstRowid.unsignedLongLongValue)
+			if (edge->destinationRowid != dstRowid.longLongValue)
 			{
 				continue;
 			}
@@ -1562,7 +1562,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		{
 			if ((edge->state & YDB_EdgeState_HasSourceRowid) && srcRowid)
 			{
-				if (edge->sourceRowid != srcRowid.unsignedLongLongValue)
+				if (edge->sourceRowid != srcRowid.longLongValue)
 				{
 					continue;
 				}
@@ -1582,7 +1582,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			}
 			else if ((edge->state & YDB_EdgeState_HasDestinationRowid) && dstRowid)
 			{
-				if (edge->destinationRowid != dstRowid.unsignedLongLongValue)
+				if (edge->destinationRowid != dstRowid.longLongValue)
 				{
 					continue;
 				}
@@ -1634,7 +1634,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
 				
-				edge->sourceRowid = srcRowid.unsignedLongLongValue;
+				edge->sourceRowid = srcRowid.longLongValue;
 				edge->state |= YDB_EdgeState_HasSourceRowid;
 			}
 			else
@@ -1650,7 +1650,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				// Shortcut:
 				// We already know the destinationRowid. It was given to us as a parameter.
 				
-				edge->destinationRowid = dstRowid.unsignedLongLongValue;
+				edge->destinationRowid = dstRowid.longLongValue;
 				edge->state |= YDB_EdgeState_HasDestinationRowid;
 			}
 			else
@@ -1722,7 +1722,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		{
 			if ((edge->state & YDB_EdgeState_HasSourceRowid) && srcRowid)
 			{
-				if (edge->sourceRowid != srcRowid.unsignedLongLongValue)
+				if (edge->sourceRowid != srcRowid.longLongValue)
 				{
 					continue;
 				}
@@ -1779,7 +1779,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
 				
-				edge->sourceRowid = srcRowid.unsignedLongLongValue;
+				edge->sourceRowid = srcRowid.longLongValue;
 				edge->state |= YDB_EdgeState_HasSourceRowid;
 			}
 			else
@@ -2091,10 +2091,10 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	// AKA: typeof(dst) IS BLOB
 	
 	int const column_idx_rowid  = SQLITE_COLUMN_START + 0;
-	int const column_idx_src    = SQLITE_COLUMN_START + 2;
-	int const column_idx_dst    = SQLITE_COLUMN_START + 3;
-	int const column_idx_rules  = SQLITE_COLUMN_START + 4;
-	int const column_idx_manual = SQLITE_COLUMN_START + 5;
+	int const column_idx_src    = SQLITE_COLUMN_START + 1;
+	int const column_idx_dst    = SQLITE_COLUMN_START + 2;
+	int const column_idx_rules  = SQLITE_COLUMN_START + 3;
+	int const column_idx_manual = SQLITE_COLUMN_START + 4;
 	
 	int const bind_idx_src = SQLITE_BIND_START + 0;
 	int const bind_idx_name = SQLITE_BIND_START + 1;
@@ -2204,7 +2204,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		sqlite3_stmt *statement = [parentConnection findManualEdgeWithDstFileURLStatement];
 		if (statement == NULL) return nil;
 		
-		// SELECT "rowid", "rules" FROM "tableName"
+		// SELECT "rowid", "dst", "rules" FROM "tableName"
 		//   WHERE "src" = ? AND "name" = ? AND "dst" > INT64_MAX AND "manual" = 1;
 		//
 		// AKA: typeof(dst) IS BLOB
@@ -2625,17 +2625,29 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_SourceDeleted;
 				edge->flags |= YDB_EdgeFlags_BadSource;
+                if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
+                {
+                    edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
+                }
 			}
 			else if (srcDeleted)
 			{
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_SourceDeleted;
+                if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
+                {
+                    edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
+                }
 			}
 		}
 		else if ([parentConnection->deletedInfo ydb_containsKey:@(edge->sourceRowid)])
 		{
 			edge->action = YDB_EdgeAction_Delete;
 			edge->flags |= YDB_EdgeFlags_SourceDeleted;
+            if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
+            {
+                edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
+            }
 		}
 		
 		
@@ -2659,17 +2671,29 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_DestinationDeleted;
 				edge->flags |= YDB_EdgeFlags_BadDestination;
+                if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
+                {
+                    edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
+                }
 			}
 			else if (dstDeleted)
 			{
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_DestinationDeleted;
+                if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
+                {
+                    edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
+                }
 			}
 		}
 		else if ([parentConnection->deletedInfo ydb_containsKey:@(edge->destinationRowid)])
 		{
 			edge->action = YDB_EdgeAction_Delete;
 			edge->flags |= YDB_EdgeFlags_DestinationDeleted;
+            if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
+            {
+                edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
+            }
 		}
 	}
 }
@@ -5491,6 +5515,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				
 				int64_t edgeRowid = sqlite3_column_int64(statement, column_idx_rowid);
 				
+                edge = [parentConnection->edgeCache objectForKey:@(edgeRowid)];
 				if (edge)
 				{
 					edge->sourceRowid = srcRowid;
@@ -6795,6 +6820,10 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 					edge->edgeRowid = pendingEdge->edgeRowid;
 					edge->state |= YDB_EdgeState_HasEdgeRowid;
 				}
+                else
+                {
+                    edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
+                }
 				
 				[edges replaceObjectAtIndex:i withObject:edge];
 				return;
