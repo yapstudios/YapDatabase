@@ -779,6 +779,17 @@ static int connectionBusyHandler(void *ptr, int count) {
 		YDBLogError(@"Error setting PRAGMA journal_size_limit: %d %s", status, sqlite3_errmsg(db));
 		// This isn't critical, so we can continue.
 	}
+
+    // Clear out the WAL on startup
+    //
+    // This should be handled by manual checkpointing but better to be safe than sorry.
+    // WALs that grow across app launches have been found in the field.
+    status = sqlite3_wal_checkpoint_v2(db, "main", SQLITE_CHECKPOINT_FULL, NULL, NULL);
+    if (status != SQLITE_OK)
+    {
+        YDBLogError(@"Error running full checkpoint: %d %s", status, sqlite3_errmsg(db));
+        // This isn't critical, so we can continue.
+    }
 	
 	// Set mmap_size (if needed).
 	//
