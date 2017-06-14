@@ -603,9 +603,9 @@
     else
     {
         YDBLogError(@"Error executing 'sqlite3_blob_read': %d %s", status, sqlite3_errmsg(connection->db));
-
-        free(bytes);
     }
+
+    free(bytes);
 	
 	return object;
 }
@@ -669,9 +669,9 @@
         else
         {
             YDBLogError(@"Error executing 'sqlite3_blob_read': %d %s", status, sqlite3_errmsg(connection->db));
-
-            free(bytes);
         }
+
+        free(bytes);
     }
 
     return metadata;
@@ -857,9 +857,9 @@
         else
         {
             YDBLogError(@"Error executing 'sqlite3_blob_read': %d %s", status, sqlite3_errmsg(connection->db));
-
-            free(bytes);
         }
+
+        free(bytes);
 	}
 	else
 	{
@@ -975,9 +975,9 @@
             else
             {
                 YDBLogError(@"Error executing 'sqlite3_blob_read': %d %s", status, sqlite3_errmsg(connection->db));
-
-                free(bytes);
             }
+
+            free(bytes);
         }
 	}
 	else
