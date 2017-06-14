@@ -251,7 +251,6 @@ static NSString *const ext_key_class = @"class";
 - (sqlite3_stmt *)getCountForRowidStatement;
 - (sqlite3_stmt *)getRowidForKeyStatement;
 - (sqlite3_stmt *)getKeyForRowidStatement;
-- (sqlite3_stmt *)getDataForRowidStatement;
 - (sqlite3_stmt *)getMetadataForRowidStatement;
 - (sqlite3_stmt *)getAllForRowidStatement;
 - (sqlite3_stmt *)getDataForKeyStatement;
@@ -275,6 +274,8 @@ static NSString *const ext_key_class = @"class";
 - (sqlite3_stmt *)enumerateKeysAndObjectsInAllCollectionsStatement:(BOOL *)needsFinalizePtr;
 - (sqlite3_stmt *)enumerateRowsInCollectionStatement:(BOOL *)needsFinalizePtr;
 - (sqlite3_stmt *)enumerateRowsInAllCollectionsStatement:(BOOL *)needsFinalizePtr;
+
+- (sqlite3_blob *)getDataForRowidBlob:(int64_t)rowid;
 
 - (void)prepare;
 

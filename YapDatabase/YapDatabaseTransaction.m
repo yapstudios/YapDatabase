@@ -569,39 +569,43 @@
 	id object = [connection->objectCache objectForKey:cacheKey];
 	if (object)
 		return object;
-	
-	sqlite3_stmt *statement = [connection getDataForRowidStatement];
-	if (statement == NULL) return nil;
-	
-	// SELECT "data" FROM "database2" WHERE "rowid" = ?;
-	
-	int const column_idx_data = SQLITE_COLUMN_START;
-	int const bind_idx_rowid  = SQLITE_BIND_START;
-	
-	sqlite3_bind_int64(statement, bind_idx_rowid, rowid);
-	
-	int status = sqlite3_step(statement);
-	if (status == SQLITE_ROW)
-	{
-		const void *blob = sqlite3_column_blob(statement, column_idx_data);
-		int blobSize = sqlite3_column_bytes(statement, column_idx_data);
-		
-		// Performance tuning:
-		// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
-		
-		NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-		object = connection->database->objectDeserializer(cacheKey.collection, cacheKey.key, data);
-		
-		if (object)
-			[connection->objectCache setObject:object forKey:cacheKey];
-	}
-	else if (status == SQLITE_ERROR)
-	{
-		YDBLogError(@"Error executing 'getDataForRowidStatement': %d %s", status, sqlite3_errmsg(connection->db));
-	}
-	
-	sqlite3_clear_bindings(statement);
-	sqlite3_reset(statement);
+
+    sqlite3_blob *blob = [connection getDataForRowidBlob:rowid];
+
+    if (blob == NULL)
+    {
+        return nil;
+    }
+
+    int status = sqlite3_blob_reopen(blob, rowid);
+
+    if (status != SQLITE_OK)
+    {
+        YDBLogError(@"Error calling 'sqlite3_blob_reopen': %d %s", status, sqlite3_errmsg(connection->db));
+    }
+
+    int size = sqlite3_blob_bytes(blob);
+    void *bytes = malloc(size);
+
+    status = sqlite3_blob_read(blob, bytes, size, 0);
+
+    if (status == SQLITE_OK)
+    {
+        // Performance tuning:
+        // Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
+
+        NSData *data = [NSData dataWithBytesNoCopy:(void *)bytes length:size freeWhenDone:NO];
+        object = connection->database->objectDeserializer(cacheKey.collection, cacheKey.key, data);
+
+        if (object)
+            [connection->objectCache setObject:object forKey:cacheKey];
+    }
+    else
+    {
+        YDBLogError(@"Error executing 'sqlite3_blob_read': %d %s", status, sqlite3_errmsg(connection->db));
+
+        free(bytes);
+    }
 	
 	return object;
 }
@@ -814,39 +818,42 @@
 	if (cachedRowid)
 	{
 		int64_t rowid = [cachedRowid longLongValue];
-		
-		sqlite3_stmt *statement = [connection getDataForRowidStatement];
-		if (statement == NULL) return nil;
-		
-		// SELECT "data" FROM "database2" WHERE "rowid" = ?;
-		
-		int const column_idx_data = SQLITE_COLUMN_START;
-		int const bind_idx_rowid  = SQLITE_BIND_START;
-		
-		sqlite3_bind_int64(statement, bind_idx_rowid, rowid);
-		
-		int status = sqlite3_step(statement);
-		if (status == SQLITE_ROW)
-		{
-			const void *blob = sqlite3_column_blob(statement, column_idx_data);
-			int blobSize = sqlite3_column_bytes(statement, column_idx_data);
-			
-			// Performance tuning:
-			// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
-			
-			NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-			object = connection->database->objectDeserializer(cacheKey.collection, cacheKey.key, data);
-			
-			if (object)
-				[connection->objectCache setObject:object forKey:cacheKey];
-		}
-		else if (status == SQLITE_ERROR)
-		{
-			YDBLogError(@"Error executing 'getDataForRowidStatement': %d %s", status, sqlite3_errmsg(connection->db));
-		}
-		
-		sqlite3_clear_bindings(statement);
-		sqlite3_reset(statement);
+        sqlite3_blob *blob = [connection getDataForRowidBlob:rowid];
+
+        if (blob == NULL)
+        {
+            return nil;
+        }
+
+        int status = sqlite3_blob_reopen(blob, rowid);
+
+        if (status != SQLITE_OK)
+        {
+            YDBLogError(@"Error calling 'sqlite3_blob_reopen': %d %s", status, sqlite3_errmsg(connection->db));
+        }
+
+        int size = sqlite3_blob_bytes(blob);
+        void *bytes = malloc(size);
+
+        status = sqlite3_blob_read(blob, bytes, size, 0);
+
+        if (status == SQLITE_OK)
+        {
+            // Performance tuning:
+            // Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
+
+            NSData *data = [NSData dataWithBytesNoCopy:(void *)bytes length:size freeWhenDone:NO];
+            object = connection->database->objectDeserializer(cacheKey.collection, cacheKey.key, data);
+
+            if (object)
+                [connection->objectCache setObject:object forKey:cacheKey];
+        }
+        else
+        {
+            YDBLogError(@"Error executing 'sqlite3_blob_read': %d %s", status, sqlite3_errmsg(connection->db));
+
+            free(bytes);
+        }
 	}
 	else
 	{
@@ -1236,32 +1243,30 @@
 	if (cachedRowid)
 	{
 		int64_t rowid = [cachedRowid longLongValue];
-		
-		sqlite3_stmt *statement = [connection getDataForRowidStatement];
-		if (statement == NULL) return nil;
-		
-		// SELECT "data" FROM "database2" WHERE "rowid" = ?;
-		
-		int const column_idx_data = SQLITE_COLUMN_START;
-		int const bind_idx_rowid  = SQLITE_BIND_START;
-		
-		sqlite3_bind_int64(statement, bind_idx_rowid, rowid);
-		
-		int status = sqlite3_step(statement);
-		if (status == SQLITE_ROW)
-		{
-			const void *blob = sqlite3_column_blob(statement, column_idx_data);
-			int blobSize = sqlite3_column_bytes(statement, column_idx_data);
-			
-			result = [[NSData alloc] initWithBytes:blob length:blobSize];
-		}
-		else if (status == SQLITE_ERROR)
-		{
-			YDBLogError(@"Error executing 'getDataForRowidStatement': %d %s", status, sqlite3_errmsg(connection->db));
-		}
-		
-		sqlite3_clear_bindings(statement);
-		sqlite3_reset(statement);
+        sqlite3_blob *blob = [connection getDataForRowidBlob:rowid];
+
+        if (blob == NULL) {
+            return nil;
+        }
+
+        int status = sqlite3_blob_reopen(blob, rowid);
+
+        if (status != SQLITE_OK) {
+            YDBLogError(@"Error calling 'sqlite3_blob_reopen': %d %s", status, sqlite3_errmsg(connection->db));
+        }
+
+        int size = sqlite3_blob_bytes(blob);
+        void *bytes = malloc(size);
+
+        status = sqlite3_blob_read(blob, bytes, size, 0);
+
+        if (status == SQLITE_OK) {
+            result = [NSData dataWithBytesNoCopy:bytes length:size freeWhenDone:YES];
+        } else {
+            YDBLogError(@"Error executing 'sqlite3_blob_read': %d %s", status, sqlite3_errmsg(connection->db));
+
+            free(bytes);
+        }
 	}
 	else
 	{
