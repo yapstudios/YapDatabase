@@ -124,8 +124,6 @@ static int connectionBusyHandler(void *ptr, int count)
 	sqlite3_stmt *getCountForRowidStatement;
 	sqlite3_stmt *getRowidForKeyStatement;
 	sqlite3_stmt *getKeyForRowidStatement;
-	sqlite3_stmt *getDataForRowidStatement;
-	sqlite3_stmt *getMetadataForRowidStatement;
 	sqlite3_stmt *getAllForRowidStatement;
 	sqlite3_stmt *getDataForKeyStatement;
 	sqlite3_stmt *getMetadataForKeyStatement;
@@ -148,7 +146,10 @@ static int connectionBusyHandler(void *ptr, int count)
 	sqlite3_stmt *enumerateKeysAndObjectsInAllCollectionsStatement;
 	sqlite3_stmt *enumerateRowsInCollectionStatement;
 	sqlite3_stmt *enumerateRowsInAllCollectionsStatement;
-	
+
+    sqlite3_blob *getDataForRowidBlob;
+    sqlite3_blob *getMetadataForRowidBlob;
+
 	OSSpinLock lock;
 	BOOL writeQueueSuspended;
 	BOOL activeReadWriteTransaction;
@@ -486,8 +487,6 @@ static int connectionBusyHandler(void *ptr, int count)
 	sqlite_finalize_null(&getCountForRowidStatement);
 	sqlite_finalize_null(&getRowidForKeyStatement);
 	sqlite_finalize_null(&getKeyForRowidStatement);
-	sqlite_finalize_null(&getDataForRowidStatement);
-	sqlite_finalize_null(&getMetadataForRowidStatement);
 	sqlite_finalize_null(&getAllForRowidStatement);
 	sqlite_finalize_null(&getDataForKeyStatement);
 	sqlite_finalize_null(&getMetadataForKeyStatement);
@@ -510,6 +509,8 @@ static int connectionBusyHandler(void *ptr, int count)
 	sqlite_finalize_null(&enumerateKeysAndObjectsInAllCollectionsStatement);
 	sqlite_finalize_null(&enumerateRowsInCollectionStatement);
 	sqlite_finalize_null(&enumerateRowsInAllCollectionsStatement);
+
+    sqlite3_blob_close(getDataForRowidBlob);
 }
 
 - (void)_flushMemoryWithFlags:(YapDatabaseConnectionFlushMemoryFlags)flags
@@ -1149,42 +1150,6 @@ static int connectionBusyHandler(void *ptr, int count)
 	return *statement;
 }
 
-- (sqlite3_stmt *)getDataForRowidStatement
-{
-	sqlite3_stmt **statement = &getDataForRowidStatement;
-	if (*statement == NULL)
-	{
-		const char *stmt = "SELECT \"data\" FROM \"database2\" WHERE \"rowid\" = ?;";
-		int stmtLen = (int)strlen(stmt);
-		
-		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
-		if (status != SQLITE_OK)
-		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
-		}
-	}
-	
-	return *statement;
-}
-
-- (sqlite3_stmt *)getMetadataForRowidStatement
-{
-	sqlite3_stmt **statement = &getMetadataForRowidStatement;
-	if (*statement == NULL)
-	{
-		const char *stmt = "SELECT \"metadata\" FROM \"database2\" WHERE \"rowid\" = ?;";
-		int stmtLen = (int)strlen(stmt);
-		
-		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
-		if (status != SQLITE_OK)
-		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
-		}
-	}
-	
-	return *statement;
-}
-
 - (sqlite3_stmt *)getAllForRowidStatement
 {
 	sqlite3_stmt **statement = &getAllForRowidStatement;
@@ -1797,6 +1762,36 @@ static int connectionBusyHandler(void *ptr, int count)
 	NSParameterAssert(needsFinalizePtr != NULL);
 	*needsFinalizePtr = needsFinalize;
 	return result;
+}
+
+- (sqlite3_blob *)getDataForRowidBlob:(int64_t)rowid
+{
+    sqlite3_blob **blob = &getDataForRowidBlob;
+    if (*blob == NULL)
+    {
+        int status = sqlite3_blob_open(db, "main", "database2", "data", rowid, 0, blob);
+        if (status != SQLITE_OK)
+        {
+            YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+        }
+    }
+
+    return *blob;
+}
+
+- (sqlite3_blob *)getMetadataForRowidBlob:(int64_t)rowid
+{
+    sqlite3_blob **blob = &getMetadataForRowidBlob;
+    if (*blob == NULL)
+    {
+        int status = sqlite3_blob_open(db, "main", "database2", "metadata", rowid, 0, blob);
+        if (status != SQLITE_OK)
+        {
+            YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+        }
+    }
+
+    return *blob;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
