@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * You may optionally use a custom serializer/deserializer for the objects and/or metadata.
 **/
 typedef NSData * __nonnull (^YapDatabaseSerializer)(NSString *collection, NSString *key, id object);
-typedef id __nonnull (^YapDatabaseDeserializer)(NSString *collection, NSString *key, NSData *data);
+typedef id __nullable (^YapDatabaseDeserializer)(NSString *collection, NSString *key, NSData *data);
 
 /**
  * The sanitizer block allows you to enforce desired behavior of the objects you put into the database.
