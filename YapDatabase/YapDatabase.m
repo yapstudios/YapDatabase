@@ -151,8 +151,14 @@ static int connectionBusyHandler(void *ptr, int count) {
 **/
 + (YapDatabaseDeserializer)defaultDeserializer
 {
-	return ^ id (NSString __unused *collection, NSString __unused *key, NSData *data){
-		return data && data.length > 0 ? [NSKeyedUnarchiver unarchiveObjectWithData:data] : nil;
+	return ^ id (NSString *collection, NSString *key, NSData *data){
+        NSError *error = nil;
+        id object = data && data.length > 0 ? [NSKeyedUnarchiver unarchiveTopLevelObjectWithData:data error:&error] : nil;
+        if (error)
+        {
+            YDBLogError(@"Could not deserialize object in collection: %@ for key: %@ because of: %@", collection, key, error);
+        }
+        return object;
 	};
 }
 
