@@ -190,9 +190,10 @@ withRegisteredExtensions:(NSDictionary __unused *)registeredExtensions
 **/
 - (YapDatabaseExtensionConnection *)newConnection:(YapDatabaseConnection *)databaseConnection
 {
-	NSAssert(NO, @"Missing required method(%@) in subclass(%@)", NSStringFromSelector(_cmd), [self class]);
+	// Subclasses should override this method,
+	// and return an instance of their own subclass.
 	
-	return nil;
+	return [[YapDatabaseCloudCoreConnection alloc] initWithParent:self databaseConnection:databaseConnection];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
