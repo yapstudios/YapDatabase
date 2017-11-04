@@ -23,7 +23,7 @@ framework module YapDatabase {
 	}
 	
 	// Extension: View
-	
+
 	explicit module YapDatabaseView {
 		header "YapDatabaseView.h"
 		header "YapDatabaseViewOptions.h"
@@ -157,5 +157,19 @@ framework module YapDatabase {
 		header "YapDatabaseCrossProcessNotification.h"
 		header "YapDatabaseCrossProcessNotificationConnection.h"
 		header "YapDatabaseCrossProcessNotificationTransaction.h"
+	}
+	
+	// Extension: CloudCore
+	
+	explicit module YapDatabaseCloudCore {
+		header "YapDatabaseCloudCore.h"
+		header "YapDatabaseCloudCoreOptions.h"
+		header "YapDatabaseCloudCoreConnection.h"
+		header "YapDatabaseCloudCoreTransaction.h"
+		header "YapManyToManyCache.h"
+		header "YapDatabaseCloudCoreOperation.h"
+		header "YapDatabaseCloudCorePipelineDelegate.h"
+		header "YapDatabaseCloudCorePipeline.h"
+		header "YapDatabaseCloudCoreGraph.h"
 	}
 }
