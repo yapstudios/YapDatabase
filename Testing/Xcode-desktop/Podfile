@@ -1,5 +1,5 @@
 project 'YapDatabaseTesting.xcodeproj'
-platform :osx, '10.10'
+platform :osx, '10.12'
 
 target 'YapDatabase' do
 	pod "YapDatabase", path: '../../'
