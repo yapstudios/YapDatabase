@@ -4217,4 +4217,52 @@
 	XCTAssert(count == 4);
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Issue #426 - https://github.com/yapstudios/YapDatabase/issues/426
+**/
+- (void)testDeleteAndNotify
+{
+	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	
+	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	
+	XCTAssertNotNil(database);
+	
+	YapDatabaseConnection *connection = [database newConnection];
+	
+	YapDatabaseRelationship *relationship = [[YapDatabaseRelationship alloc] init];
+	
+	BOOL registered = [database registerExtension:relationship withName:@"relationship"];
+	
+	XCTAssertTrue(registered, @"Error registering extension");
+	
+	__block NSString *parentKey = nil;
+	
+	[connection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+		
+		Node_NotifyCount *child = [[Node_NotifyCount alloc] init];
+		
+		Node_Notify *parent = [[Node_Notify alloc] init];
+		parent.child = child.key;
+		parentKey = parent.key;
+		
+		[transaction setObject:parent forKey:parent.key inCollection:nil];
+		[transaction setObject:child forKey:child.key inCollection:nil];
+	}];
+	
+	XCTAssert([Node_NotifyCount notifyCount] == 0);
+	
+	[connection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+		
+		[transaction removeObjectForKey:parentKey inCollection:nil];
+	}];
+	
+	XCTAssert([Node_NotifyCount notifyCount] == 1);
+}
+
 @end

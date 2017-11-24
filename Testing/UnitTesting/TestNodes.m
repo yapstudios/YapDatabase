@@ -320,3 +320,104 @@
 }
 
 @end
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@implementation Node_Notify
+
+@synthesize key = key;
+@synthesize child = child;
+
+- (id)init
+{
+	if ((self = [super init]))
+	{
+		key = [[NSUUID UUID] UUIDString];
+	}
+	return self;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+	if ((self = [super init]))
+	{
+		key = [decoder decodeObjectForKey:@"key"];
+		child = [decoder decodeObjectForKey:@"child"];
+	}
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+	[coder encodeObject:key forKey:@"key"];
+	[coder encodeObject:child forKey:@"child"];
+}
+
+- (NSArray *)yapDatabaseRelationshipEdges
+{
+	if (child == nil) return nil;
+	
+	YapDatabaseRelationshipEdge *edge =
+	  [YapDatabaseRelationshipEdge edgeWithName:@"child"
+	                             destinationKey:child
+	                                 collection:nil
+	                            nodeDeleteRules:(YDB_DeleteDestinationIfSourceDeleted | YDB_NotifyIfSourceDeleted)];
+	
+	return @[ edge ];
+}
+
+@end
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark -
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+@implementation Node_NotifyCount
+
+static NSUInteger notifyCount = 0;
+
+@synthesize key = key;
+
+- (id)init
+{
+	if ((self = [super init]))
+	{
+		key = [[NSUUID UUID] UUIDString];
+	}
+	return self;
+}
+
+- (id)initWithCoder:(NSCoder *)decoder
+{
+	if ((self = [super init]))
+	{
+		key = [decoder decodeObjectForKey:@"key"];
+	}
+	return self;
+}
+
+- (void)encodeWithCoder:(NSCoder *)coder
+{
+	[coder encodeObject:key forKey:@"key"];
+}
+
+- (NSArray<YapDatabaseRelationshipEdge *> *)yapDatabaseRelationshipEdges
+{
+	return nil;
+}
+
+- (id)yapDatabaseRelationshipEdgeDeleted:(YapDatabaseRelationshipEdge *)edge
+                                       withReason:(YDB_NotifyReason)reason
+{
+	notifyCount++;
+	return nil;
+}
+
++ (NSUInteger)notifyCount
+{
+	return notifyCount;
+}
+
+@end
