@@ -2625,29 +2625,17 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_SourceDeleted;
 				edge->flags |= YDB_EdgeFlags_BadSource;
-                if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
-                {
-                    edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
-                }
 			}
 			else if (srcDeleted)
 			{
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_SourceDeleted;
-                if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
-                {
-                    edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
-                }
 			}
 		}
 		else if ([parentConnection->deletedInfo ydb_containsKey:@(edge->sourceRowid)])
 		{
 			edge->action = YDB_EdgeAction_Delete;
 			edge->flags |= YDB_EdgeFlags_SourceDeleted;
-            if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
-            {
-                edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
-            }
 		}
 		
 		
@@ -2671,29 +2659,27 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_DestinationDeleted;
 				edge->flags |= YDB_EdgeFlags_BadDestination;
-                if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
-                {
-                    edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
-                }
 			}
 			else if (dstDeleted)
 			{
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_DestinationDeleted;
-                if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
-                {
-                    edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
-                }
 			}
 		}
 		else if ([parentConnection->deletedInfo ydb_containsKey:@(edge->destinationRowid)])
 		{
 			edge->action = YDB_EdgeAction_Delete;
 			edge->flags |= YDB_EdgeFlags_DestinationDeleted;
-            if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
-            {
-                edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
-            }
+		}
+		
+		// Ensure 'EdgeNotInDatabase' flag is always set (if needed).
+		// Handles case where manually added edge is immediately deleted.
+		//
+		// Issue #399
+		
+		if (!(edge->state & YDB_EdgeState_HasEdgeRowid))
+		{
+			edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
 		}
 	}
 }

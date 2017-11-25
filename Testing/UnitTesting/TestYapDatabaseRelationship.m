@@ -4222,6 +4222,78 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Issue #399 - https://github.com/yapstudios/YapDatabase/pull/399
+**/
+- (void)testIssue399
+{
+	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	
+	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	
+	XCTAssertNotNil(database);
+	
+	YapDatabaseConnection *connection = [database newConnection];
+	
+	YapDatabaseRelationship *relationship = [[YapDatabaseRelationship alloc] init];
+	
+	BOOL registered = [database registerExtension:relationship withName:@"relationship"];
+	
+	XCTAssertTrue(registered, @"Error registering extension");
+	
+	[connection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+		
+		NSString *srcWithMissingDst = @"src1";
+		NSString *dstWithMissingSrc = @"dst2";
+		
+	//	NSString *missingPath = [self databasePath:@"phoney_baloney"];
+	//	NSURL *missingURL = [NSURL fileURLWithPath:missingPath isDirectory:NO];
+		
+		// We're ensuring we don't get an assertion in [YapDatabaseRelationshipTransaction deleteEdge:]
+		
+		[transaction setObject:srcWithMissingDst forKey:srcWithMissingDst inCollection:nil];
+		[transaction setObject:dstWithMissingSrc forKey:dstWithMissingSrc inCollection:nil];
+		
+		YapDatabaseRelationshipEdge *e1 =
+		  [YapDatabaseRelationshipEdge edgeWithName:@"test1"
+		                                  sourceKey:srcWithMissingDst
+		                                 collection:nil
+		                             destinationKey:@"missing"
+		                                 collection:nil
+		                            nodeDeleteRules:YDB_DeleteDestinationIfSourceDeleted];
+		
+		YapDatabaseRelationshipEdge *e2 =
+		  [YapDatabaseRelationshipEdge edgeWithName:@"test3"
+		                                  sourceKey:@"missing"
+		                                 collection:nil
+		                             destinationKey:dstWithMissingSrc
+		                                 collection:nil
+		                            nodeDeleteRules:YDB_DeleteSourceIfDestinationDeleted];
+		
+		YapDatabaseRelationshipEdge *e3 =
+		  [YapDatabaseRelationshipEdge edgeWithName:@"test4"
+		                                  sourceKey:@"missing"
+		                                 collection:nil
+		                             destinationKey:@"missing"
+		                                 collection:nil
+		                            nodeDeleteRules:YDB_DeleteSourceIfDestinationDeleted];
+		
+	//	YapDatabaseRelationshipEdge *e4 =
+	//	  [YapDatabaseRelationshipEdge edgeWithName:@"test2"
+	//	                                  sourceKey:@"missing"
+	//	                                 collection:nil
+	//	                         destinationFileURL:missingURL
+	//	                            nodeDeleteRules:YDB_DeleteDestinationIfSourceDeleted];
+		
+		[[transaction ext:@"relationship"] addEdge:e1];
+		[[transaction ext:@"relationship"] addEdge:e2];
+		[[transaction ext:@"relationship"] addEdge:e3];
+	//	[[transaction ext:@"relationship"] addEdge:e4];
+	}];
+}
+
+
+/**
  * Issue #426 - https://github.com/yapstudios/YapDatabase/issues/426
 **/
 - (void)testDeleteAndNotify
