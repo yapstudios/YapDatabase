@@ -108,6 +108,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 			if (![self populate]) return NO;
 			
 			[self setStringValue:versionTag forExtensionKey:ext_key__versionTag persistent:YES];
+			[self setStringValue:ftsVersion forExtensionKey:ext_key__ftsVersion persistent:YES];
 			
 			if (hasOldVersion_deprecated)
 				[self removeValueForExtensionKey:ext_key__version_deprecated persistent:YES];
