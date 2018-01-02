@@ -68,7 +68,6 @@ static pid_t currentPid() {
 }
 
 - (void)dealloc {
-    NSLog(@"DEALLOC!");
     [self stop];
 }
 
@@ -76,8 +75,7 @@ static pid_t currentPid() {
     [self stop];
     
     const char* name = [[self channel] cStringUsingEncoding:NSUTF8StringEncoding];
-    
-    NSLog(@"register: %s", name);
+
     __weak YapDatabaseCrossProcessNotification* wSelf = self;
     
     notify_register_dispatch(name, &notifyToken, dispatch_get_main_queue(), ^(int token) {
@@ -87,7 +85,7 @@ static pid_t currentPid() {
         BOOL isExternal = fromPid != (uint64_t)currentPid();
         if (isExternal)
         {
-            NSLog(@"received external modification from %llu", fromPid);
+            YDBLogVerbose(@"received external modification from %llu", fromPid);
             [[NSNotificationCenter defaultCenter] postNotificationName:YapDatabaseModifiedExternallyNotification object:[wSelf registeredDatabase]];
         }
         
