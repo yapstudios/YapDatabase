@@ -2465,7 +2465,8 @@ static int connectionBusyHandler(void *ptr, int count)
 	__block uint64_t minSnapshot = 0;
 	__block YapDatabaseConnectionState *writeStateToSignal = nil;
 	
-	dispatch_sync(database->snapshotQueue, ^{ @autoreleasepool {
+	// dispatch_sync: database->snapshotQueue
+	dispatch_block_t block = ^{ @autoreleasepool {
 		
 		// Post-Read-Transaction: Step 3 of 5
 		//
@@ -2529,7 +2530,19 @@ static int connectionBusyHandler(void *ptr, int count)
 		}
 		
 		YDBLogVerbose(@"YapDatabaseConnection(%p) completing read-only transaction.", self);
-	}});
+	}};
+	
+	// Edge case protection:
+	// This method may be called from dealloc.
+	// Which may, in turn, mean we're already in the snapshotQueue.
+	//
+	// @see Issue #437
+	// https://github.com/yapstudios/YapDatabase/issues/437
+	//
+	if (dispatch_get_specific(database->IsOnSnapshotQueueKey))
+		block();
+	else
+		dispatch_sync(database->snapshotQueue, block);
 	
 	// Post-Read-Transaction: Step 4 of 5
 	//
