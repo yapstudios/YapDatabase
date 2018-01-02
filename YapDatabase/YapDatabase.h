@@ -243,33 +243,33 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * 
  *   YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
 **/
-- (id)initWithPath:(NSString *)path;
+- (nullable id)initWithPath:(NSString *)path;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given options are used instead of the default options.
 **/
-- (id)initWithPath:(NSString *)path
-           options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+                    options:(nullable YapDatabaseOptions *)options;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializer and deserializer are used for both objects and metadata.
  * No sanitizer is used.
 **/
-- (id)initWithPath:(NSString *)path
-        serializer:(nullable YapDatabaseSerializer)serializer
-      deserializer:(nullable YapDatabaseDeserializer)deserializer;
+- (nullable id)initWithPath:(NSString *)path
+                 serializer:(nullable YapDatabaseSerializer)serializer
+               deserializer:(nullable YapDatabaseDeserializer)deserializer;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializer and deserializer are used for both objects and metadata.
  * The given options are used instead of the default options.
 **/
-- (id)initWithPath:(NSString *)path
-        serializer:(nullable YapDatabaseSerializer)serializer
-      deserializer:(nullable YapDatabaseDeserializer)deserializer
-           options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+                 serializer:(nullable YapDatabaseSerializer)serializer
+               deserializer:(nullable YapDatabaseDeserializer)deserializer
+                    options:(nullable YapDatabaseOptions *)options;
 
 /**
  * Opens or creates a sqlite database with the given path.
@@ -277,48 +277,51 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * The given sanitizer is used for both objects and metadata.
  * The given options are used instead of the default options.
 **/
-- (id)initWithPath:(NSString *)path
-        serializer:(nullable YapDatabaseSerializer)serializer
-      deserializer:(nullable YapDatabaseDeserializer)deserializer
-      preSanitizer:(nullable YapDatabasePreSanitizer)preSanitizer
-     postSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
-           options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+                 serializer:(nullable YapDatabaseSerializer)serializer
+               deserializer:(nullable YapDatabaseDeserializer)deserializer
+               preSanitizer:(nullable YapDatabasePreSanitizer)preSanitizer
+              postSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
+                    options:(nullable YapDatabaseOptions *)options;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializers and deserializers are used.
  * No sanitizer is used.
 **/
-- (id)initWithPath:(NSString *)path objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
-                                  objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-                                  metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
-                                metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer;
+- (nullable id)initWithPath:(NSString *)path
+           objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
+         objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+         metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
+       metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializers and deserializers are used.
  * The given sanitizers are used.
 **/
-- (id)initWithPath:(NSString *)path objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
-                                  objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-                                  metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
-                                metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
-                                             options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+           objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
+         objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+         metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
+       metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
+                    options:(nullable YapDatabaseOptions *)options;
 
 /**
  * Opens or creates a sqlite database with the given path.
  * The given serializers and deserializers are used.
  * The given sanitizers are used.
 **/
-- (id)initWithPath:(NSString *)path objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
-                                  objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-                                  metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
-                                metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
-                                  objectPreSanitizer:(nullable YapDatabasePreSanitizer)objectPreSanitizer
-                                 objectPostSanitizer:(nullable YapDatabasePostSanitizer)objectPostSanitizer
-                                metadataPreSanitizer:(nullable YapDatabasePreSanitizer)metadataPreSanitizer
-                               metadataPostSanitizer:(nullable YapDatabasePostSanitizer)metadataPostSanitizer
-                                             options:(nullable YapDatabaseOptions *)options;
+- (nullable id)initWithPath:(NSString *)path
+           objectSerializer:(nullable YapDatabaseSerializer)objectSerializer
+         objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+         metadataSerializer:(nullable YapDatabaseSerializer)metadataSerializer
+       metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
+         objectPreSanitizer:(nullable YapDatabasePreSanitizer)objectPreSanitizer
+        objectPostSanitizer:(nullable YapDatabasePostSanitizer)objectPostSanitizer
+       metadataPreSanitizer:(nullable YapDatabasePreSanitizer)metadataPreSanitizer
+      metadataPostSanitizer:(nullable YapDatabasePostSanitizer)metadataPostSanitizer
+                    options:(nullable YapDatabaseOptions *)options;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Properties
