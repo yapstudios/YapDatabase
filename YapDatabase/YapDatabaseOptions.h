@@ -223,6 +223,39 @@ typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
  * to customize the page size of your encrypted database.
  **/
 @property (nonatomic, assign, readwrite) NSUInteger cipherPageSize;
+
+/**
+ * Set a block here that returns the salt (not the key) for the SQLCipher database.
+ *
+ * This salt that will be passed to SQLCipher via `PRAGMA cipher_salt`.
+ *
+ * This block allows you to fetch the salt from the keychain (or elsewhere)
+ * only when you need it, instead of persisting it in memory.
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * cipherSaltBlock will be ignored if you don't also set cipherKeyBlock.
+ *
+ * Important: If you set a cipherSaltBlock you should also set cipherUnencryptedHeaderLength.
+ **/
+@property (nonatomic, copy, readwrite) YapDatabaseCipherKeyBlock cipherSaltBlock;
+
+/**
+ * If set, this many bytes at the start of the first page of the database will _NOT_
+ * be encrypted.
+ *
+ * This salt that will be passed to SQLCipher via `PRAGMA cipher_plaintext_header_size`.
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * cipherUnencryptedHeaderLength will be ignored if you don't also set cipherKeyBlock and cipherSaltBlock.
+ *
+ * Important: If you set a cipherUnencryptedHeaderLength you should also set cipherSaltBlock.
+ **/
+@property (nonatomic, assign, readwrite) NSUInteger cipherUnencryptedHeaderLength;
+
 #endif
 
 /**

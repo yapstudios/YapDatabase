@@ -24,6 +24,9 @@
 @synthesize kdfIterNumber = kdfIterNumber;
 @synthesize cipherDefaultkdfIterNumber = cipherDefaultkdfIterNumber;
 @synthesize cipherPageSize = cipherPageSize;
+@synthesize cipherSaltBlock = cipherSaltBlock;
+@synthesize cipherUnencryptedHeaderLength = cipherUnencryptedHeaderLength;
+
 #endif
 @synthesize aggressiveWALTruncationSize = aggressiveWALTruncationSize;
 @synthesize enableMultiProcessSupport = enableMultiProcessSupport;
@@ -56,6 +59,8 @@
     copy->kdfIterNumber = kdfIterNumber;
     copy->cipherDefaultkdfIterNumber = cipherDefaultkdfIterNumber;
     copy->cipherPageSize = cipherPageSize;
+    copy->cipherSaltBlock = cipherSaltBlock;
+    copy->cipherUnencryptedHeaderLength = cipherUnencryptedHeaderLength;
 #endif
 	copy->aggressiveWALTruncationSize = aggressiveWALTruncationSize;
     copy->enableMultiProcessSupport = enableMultiProcessSupport;

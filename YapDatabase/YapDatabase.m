@@ -829,7 +829,38 @@ static int connectionBusyHandler(void *ptr, int count) {
 			NSAssert(NO, @"YapDatabaseOptions.cipherKeyBlock cannot return nil!");
 			return NO;
 		}
-		
+        
+//        BOOL hasUnencryptedHeader = NO;
+//        if (!options.cipherSaltBlock &&
+//            options.cipherUnencryptedHeaderLength == 0) {
+//            // Custom salt + unencrypted header not activated.
+//        } else if (options.cipherSaltBlock &&
+//                   options.cipherUnencryptedHeaderLength > 0) {
+//            NSData *_Nullable saltData = options.cipherSaltBlock();
+//
+//            if (saltData == nil)
+//            {
+//                NSAssert(NO, @"YapDatabaseOptions.cipherSaltBlock cannot return nil!");
+//                return NO;
+//            }
+//
+//            char *errorMsg;
+//            // Example: PRAGMA cipher_salt = "x'01010101010101010101010101010101';";
+//            NSString *cipherSaltPragma = [NSString stringWithFormat:@"PRAGMA cipher_salt = \"%@\";", [self hexadecimalStringForData:saltData]];
+//            // TODO: Remove.
+//            YDBLogError(@"cipherSaltPragma: %@", cipherSaltPragma);
+//            if (sqlite3_exec(sqlite, [cipherSaltPragma UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
+//            {
+//                YDBLogError(@"failed to set database cipher_default_kdf_iter: %s", errorMsg);
+//                return NO;
+//            }
+//
+//            hasUnencryptedHeader = YES;
+//        } else {
+//            NSAssert(NO, @"Either both YapDatabaseOptions.cipherSaltBlock and YapDatabaseOptions.cipherUnencryptedHeaderLength should be set or neither should be set!");
+//            return NO;
+//        }
+
         //Setting the PBKDF2 default iteration number (this will have effect next time database is opened)
         if (options.cipherDefaultkdfIterNumber > 0) {
             char *errorMsg;
@@ -869,10 +900,73 @@ static int connectionBusyHandler(void *ptr, int count) {
 			YDBLogError(@"Error setting SQLCipher key: %d %s", status, sqlite3_errmsg(sqlite));
 			return NO;
 		}
+        
+        BOOL hasUnencryptedHeader = NO;
+        if (!options.cipherSaltBlock &&
+            options.cipherUnencryptedHeaderLength == 0) {
+            // Custom salt + unencrypted header not activated.
+        } else if (options.cipherSaltBlock &&
+                   options.cipherUnencryptedHeaderLength > 0) {
+            NSData *_Nullable saltData = options.cipherSaltBlock();
+            
+            if (saltData == nil)
+            {
+                NSAssert(NO, @"YapDatabaseOptions.cipherSaltBlock cannot return nil!");
+                return NO;
+            }
+            
+            char *errorMsg;
+            // Example: PRAGMA cipher_salt = "x'01010101010101010101010101010101';";
+            NSString *cipherSaltPragma = [NSString stringWithFormat:@"PRAGMA cipher_salt = \"%@\";", [self hexadecimalStringForData:saltData]];
+            // TODO: Remove.
+            YDBLogError(@"cipherSaltPragma: %@", cipherSaltPragma);
+            if (sqlite3_exec(sqlite, [cipherSaltPragma UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
+            {
+                YDBLogError(@"failed to set database cipher_default_kdf_iter: %s", errorMsg);
+                return NO;
+            }
+            
+            hasUnencryptedHeader = YES;
+        } else {
+            NSAssert(NO, @"Either both YapDatabaseOptions.cipherSaltBlock and YapDatabaseOptions.cipherUnencryptedHeaderLength should be set or neither should be set!");
+            return NO;
+        }
+        
+        if (hasUnencryptedHeader) {
+            
+            NSString *setPlainTextHeaderPragma =
+            [NSString stringWithFormat:@"PRAGMA cipher_plaintext_header_size = %zd;", options.cipherUnencryptedHeaderLength];
+            // TODO: Remove.
+            YDBLogError(@"setPlainTextHeaderPragma: %@", setPlainTextHeaderPragma);
+            int status = sqlite3_exec(db, [setPlainTextHeaderPragma UTF8String], NULL, NULL, NULL);
+            if (status != SQLITE_OK) {
+                YDBLogError(@"Error setting PRAGMA cipher_plaintext_header_size = %zd: status: %d, error: %s",
+                            options.cipherUnencryptedHeaderLength,
+                            status,
+                            sqlite3_errmsg(db));
+                return NO;
+            }
+        }
 	}
 	
 	return YES;
 }
+
+- (NSString *)hexadecimalStringForData:(NSData *)data {
+    /* Returns hexadecimal string of NSData. Empty string if data is empty. */
+    const unsigned char *dataBuffer = (const unsigned char *)[data bytes];
+    if (!dataBuffer)
+        return [NSString string];
+    
+    NSUInteger dataLength = [data length];
+    NSMutableString *hexString = [NSMutableString stringWithCapacity:(dataLength * 2)];
+    
+    for (NSUInteger i = 0; i < dataLength; ++i) {
+        [hexString appendFormat:@"%02x", dataBuffer[i]];
+    }
+    return [NSString stringWithString:hexString];
+}
+
 #endif
 
 /**
