@@ -235,9 +235,10 @@ typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
  * You must use the 'YapDatabase/SQLCipher' subspec
  * in your Podfile for this option to take effect.
  *
- * cipherSaltBlock will be ignored if you don't also set cipherKeyBlock.
+ * cipherSaltBlock will be ignored if you don't also set cipherKeyBlock and cipherUnencryptedHeaderLength.
  *
- * Important: If you set a cipherSaltBlock you should also set cipherUnencryptedHeaderLength.
+ * See comments on cipherUnencryptedHeaderLength.  These two properties are
+ * intended to be used in conjunction.
  **/
 @property (nonatomic, copy, readwrite) YapDatabaseCipherKeyBlock cipherSaltBlock;
 
@@ -247,12 +248,34 @@ typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
  *
  * This salt that will be passed to SQLCipher via `PRAGMA cipher_plaintext_header_size`.
  *
+ * iOS will terminate suspended apps which hold a file lock on files in the shared
+ * container.  An exception is made for certain kinds of Sqlite files, so that iOS apps
+ * can share databases with their app extensions.  Unfortunately, this exception does
+ * not apply for SQLCipher databases which have encrypted the Sqlite file header,
+ * which is the default behavior. Therefore apps which try to share an SQLCipher
+ * database with their app extensions and use WAL (write-ahead logging) will be
+ * terminated whenever they are sent to the background (0x10deadcc terminations).
+ *
+ * The solution is to have SQLCipher encrypt everything _except_ the first 32 bytes
+ * of the Sqlite file.  This is accomplished using the cipher_plaintext_header_size
+ * PRAGMA.  The header does not contain any user data.
+ *
+ * However, Sqlite normally uses the first 16 bytes of the Sqlite header to store
+ * a salt value.  Therefore when using unencrypted headers, it is also necessary
+ * to explicitly specify a salt value.
+ *
+ * NOTE: When converting SQLCipher databases from using encrypted headers to using
+ * unencrypted headers, the salt can extracted and preserved by reading the first
+ * 16 bytes of the file.
+ *
+ * See: https://developer.apple.com/library/content/technotes/tn2151/_index.html
+ *
  * You must use the 'YapDatabase/SQLCipher' subspec
  * in your Podfile for this option to take effect.
  *
  * cipherUnencryptedHeaderLength will be ignored if you don't also set cipherKeyBlock and cipherSaltBlock.
  *
- * Important: If you set a cipherUnencryptedHeaderLength you should also set cipherSaltBlock.
+ * See comments on cipherSaltBlock.  These two properties are intended to be used in conjunction.
  **/
 @property (nonatomic, assign, readwrite) NSUInteger cipherUnencryptedHeaderLength;
 
