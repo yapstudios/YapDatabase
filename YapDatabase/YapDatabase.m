@@ -875,6 +875,9 @@ static int connectionBusyHandler(void *ptr, int count) {
             // Custom salt + unencrypted header not activated.
         } else if (options.cipherSaltBlock &&
                    options.cipherUnencryptedHeaderLength > 0) {
+            
+            YDBLogInfo(@"YapDatabase using cipher salt and unencrypted header.");
+            
             NSData *_Nullable saltData = options.cipherSaltBlock();
             
             if (saltData == nil)
@@ -895,29 +898,16 @@ static int connectionBusyHandler(void *ptr, int count) {
             }
             
             {
-                
+                // We use cipher_plaintext_header_size NOT cipher_default_plaintext_header_size,
+                // since the _default_ pragma affects a static variable.
                 NSString *pragmaSql =
                 [NSString stringWithFormat:@"PRAGMA cipher_plaintext_header_size = %zd;", options.cipherUnencryptedHeaderLength];
-                int status = sqlite3_exec(db, [pragmaSql UTF8String], NULL, NULL, NULL);
+                int status = sqlite3_exec(sqlite, [pragmaSql UTF8String], NULL, NULL, NULL);
                 if (status != SQLITE_OK) {
                     YDBLogError(@"Error setting PRAGMA cipher_plaintext_header_size = %zd: status: %d, error: %s",
                                 options.cipherUnencryptedHeaderLength,
                                 status,
-                                sqlite3_errmsg(db));
-                    return NO;
-                }
-            }
-
-            {
-                
-                NSString *pragmaSql =
-                [NSString stringWithFormat:@"PRAGMA cipher_default_plaintext_header_size = %zd;", options.cipherUnencryptedHeaderLength];
-                int status = sqlite3_exec(db, [pragmaSql UTF8String], NULL, NULL, NULL);
-                if (status != SQLITE_OK) {
-                    YDBLogError(@"Error setting PRAGMA cipher_default_plaintext_header_size = %zd: status: %d, error: %s",
-                                options.cipherUnencryptedHeaderLength,
-                                status,
-                                sqlite3_errmsg(db));
+                                sqlite3_errmsg(sqlite));
                     return NO;
                 }
             }
