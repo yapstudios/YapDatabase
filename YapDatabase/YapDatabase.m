@@ -923,16 +923,17 @@ static int connectionBusyHandler(void *ptr, int count) {
 - (NSString *)hexadecimalStringForData:(NSData *)data {
     /* Returns hexadecimal string of NSData. Empty string if data is empty. */
     const unsigned char *dataBuffer = (const unsigned char *)[data bytes];
-    if (!dataBuffer)
-        return [NSString string];
-    
+    if (!dataBuffer) {
+        return @"";
+    }
+        
     NSUInteger dataLength = [data length];
     NSMutableString *hexString = [NSMutableString stringWithCapacity:(dataLength * 2)];
     
     for (NSUInteger i = 0; i < dataLength; ++i) {
         [hexString appendFormat:@"%02x", dataBuffer[i]];
     }
-    return [NSString stringWithString:hexString];
+    return [hexString copy];
 }
 
 #endif
