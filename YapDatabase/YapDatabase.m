@@ -902,9 +902,9 @@ static int connectionBusyHandler(void *ptr, int count) {
              options.cipherSaltBlock)) {
              
             if (options.cipherKeySpecBlock) {
-                YDBLogInfo(@"YapDatabase using cipher key spec and unencrypted header.");
+                // YapDatabase using cipher key spec and unencrypted header.
             } else {
-                YDBLogInfo(@"YapDatabase using cipher salt and unencrypted header.");
+                // YapDatabase using cipher salt and unencrypted header.
                 
                 NSData *_Nullable saltData = options.cipherSaltBlock();
                 
