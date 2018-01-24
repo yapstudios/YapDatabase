@@ -3243,4 +3243,24 @@ static int connectionBusyHandler(void *ptr, int count) {
 	}
 }
 
+#ifdef DEBUG
+
+// This method is only used by tests.
+- (void)flushInternalQueue
+{
+    dispatch_sync(internalQueue,
+                  ^{
+                  });
+}
+
+// This method is only used by tests.
+- (void)flushCheckpointQueue
+{
+    dispatch_sync(checkpointQueue,
+                  ^{
+                  });
+}
+
+#endif
+
 @end
