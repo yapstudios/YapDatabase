@@ -243,10 +243,28 @@ typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
 @property (nonatomic, copy, readwrite) YapDatabaseCipherKeyBlock cipherSaltBlock;
 
 /**
+ * Set a block here that returns the key spec (not the key) for the SQLCipher database.
+ *
+ * This key spec incorporates the "derived key" and the "salt".
+ *
+ * This block allows you to fetch the key spec from the keychain (or elsewhere)
+ * only when you need it, instead of persisting it in memory.
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * cipherKeySpecBlock will be ignored if you don't also set cipherUnencryptedHeaderLength.
+ *
+ * See comments on cipherUnencryptedHeaderLength.  These two properties are
+ * intended to be used in conjunction.
+ **/
+@property (nonatomic, copy, readwrite) YapDatabaseCipherKeyBlock cipherKeySpecBlock;
+
+/**
  * If set, this many bytes at the start of the first page of the database will _NOT_
  * be encrypted.
  *
- * This salt that will be passed to SQLCipher via `PRAGMA cipher_plaintext_header_size`.
+ * This value will be passed to SQLCipher via `PRAGMA cipher_plaintext_header_size`.
  *
  * iOS will terminate suspended apps which hold a file lock on files in the shared
  * container.  An exception is made for certain kinds of Sqlite files, so that iOS apps
@@ -273,9 +291,11 @@ typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
  * You must use the 'YapDatabase/SQLCipher' subspec
  * in your Podfile for this option to take effect.
  *
- * cipherUnencryptedHeaderLength will be ignored if you don't also set cipherKeyBlock and cipherSaltBlock.
+ * cipherUnencryptedHeaderLength will be ignored if you don't also set
+ * ((cipherKeyBlock AND cipherSaltBlock) OR cipherKeySpecBlock).
  *
- * See comments on cipherSaltBlock.  These two properties are intended to be used in conjunction.
+ * See comments on cipherSaltBlock and cipherKeySpecBlock.  These properties are
+ * intended to be used in conjunction.
  **/
 @property (nonatomic, assign, readwrite) NSUInteger cipherUnencryptedHeaderLength;
 

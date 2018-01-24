@@ -820,15 +820,26 @@ static int connectionBusyHandler(void *ptr, int count) {
 **/
 - (BOOL)configureEncryptionForDatabase:(sqlite3 *)sqlite
 {
-    if (options.cipherKeyBlock)
+    if (options.cipherKeyBlock ||
+        options.cipherKeySpecBlock)
 	{
-		NSData *keyData = options.cipherKeyBlock();
-		
-		if (keyData == nil)
-		{
-			NSAssert(NO, @"YapDatabaseOptions.cipherKeyBlock cannot return nil!");
-			return NO;
-		}
+        NSData *_Nullable keyData = nil;
+        if (options.cipherKeySpecBlock)
+        {
+            keyData = options.cipherKeySpecBlock();
+            if (!keyData)
+            {
+                NSAssert(NO, @"YapDatabaseOptions.cipherKeySpecBlock cannot return nil!");
+                return NO;
+            }
+        } else {
+            keyData = options.cipherKeyBlock();
+            if (!keyData)
+            {
+                NSAssert(NO, @"YapDatabaseOptions.cipherKeyBlock cannot return nil!");
+                return NO;
+            }
+        }
         
         //Setting the PBKDF2 default iteration number (this will have effect next time database is opened)
         if (options.cipherDefaultkdfIterNumber > 0) {
@@ -863,37 +874,55 @@ static int connectionBusyHandler(void *ptr, int count) {
             }
         }
         
-		int status = sqlite3_key(sqlite, [keyData bytes], (int)[keyData length]);
-		if (status != SQLITE_OK)
-		{
-			YDBLogError(@"Error setting SQLCipher key: %d %s", status, sqlite3_errmsg(sqlite));
-			return NO;
-		}
-        
-        if (!options.cipherSaltBlock &&
-            options.cipherUnencryptedHeaderLength == 0) {
-            // Custom salt + unencrypted header not activated.
-        } else if (options.cipherSaltBlock &&
-                   options.cipherUnencryptedHeaderLength > 0) {
-            
-            YDBLogInfo(@"YapDatabase using cipher salt and unencrypted header.");
-            
-            NSData *_Nullable saltData = options.cipherSaltBlock();
-            
-            if (saltData == nil)
+        if (options.cipherKeySpecBlock) {
+            // Use a raw key spec, where the 96 hexadecimal digits are provided
+            // (i.e. 64 hex for the 256 bit key, followed by 32 hex for the 128 bit salt)
+            // using explicit BLOB syntax, e.g.:
+            //
+            // x'98483C6EB40B6C31A448C22A66DED3B5E5E8D5119CAC8327B655C8B5C483648101010101010101010101010101010101'
+            NSString *keySpecString = [NSString stringWithFormat:@"x'%@'", [self hexadecimalStringForData:keyData]];
+            NSData *keySpecStringData = [keySpecString dataUsingEncoding:NSUTF8StringEncoding];
+            int status = sqlite3_key(sqlite, [keySpecStringData bytes], (int)[keySpecStringData length]);
+            if (status != SQLITE_OK)
             {
-                NSAssert(NO, @"YapDatabaseOptions.cipherSaltBlock cannot return nil!");
+                YDBLogError(@"Error setting SQLCipher key: %d %s", status, sqlite3_errmsg(sqlite));
                 return NO;
             }
-            
+        } else {
+            int status = sqlite3_key(sqlite, [keyData bytes], (int)[keyData length]);
+            if (status != SQLITE_OK)
             {
-                char *errorMsg;
-                // Example: PRAGMA cipher_salt = "x'01010101010101010101010101010101';";
-                NSString *pragmaSql = [NSString stringWithFormat:@"PRAGMA cipher_salt = \"x'%@'\";", [self hexadecimalStringForData:saltData]];
-                if (sqlite3_exec(sqlite, [pragmaSql UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
+                YDBLogError(@"Error setting SQLCipher key: %d %s", status, sqlite3_errmsg(sqlite));
+                return NO;
+            }
+        }
+        
+        if (options.cipherUnencryptedHeaderLength > 0 &&
+            (options.cipherKeySpecBlock ||
+             options.cipherSaltBlock)) {
+             
+            if (options.cipherKeySpecBlock) {
+                YDBLogInfo(@"YapDatabase using cipher key spec and unencrypted header.");
+            } else {
+                YDBLogInfo(@"YapDatabase using cipher salt and unencrypted header.");
+                
+                NSData *_Nullable saltData = options.cipherSaltBlock();
+                
+                if (saltData == nil)
                 {
-                    YDBLogError(@"failed to set database cipher_default_kdf_iter: %s", errorMsg);
+                    NSAssert(NO, @"YapDatabaseOptions.cipherSaltBlock cannot return nil!");
                     return NO;
+                }
+
+                {
+                    char *errorMsg;
+                    // Example: PRAGMA cipher_salt = "x'01010101010101010101010101010101';";
+                    NSString *pragmaSql = [NSString stringWithFormat:@"PRAGMA cipher_salt = \"x'%@'\";", [self hexadecimalStringForData:saltData]];
+                    if (sqlite3_exec(sqlite, [pragmaSql UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
+                    {
+                        YDBLogError(@"failed to set database cipher_default_kdf_iter: %s", errorMsg);
+                        return NO;
+                    }
                 }
             }
             
@@ -912,8 +941,18 @@ static int connectionBusyHandler(void *ptr, int count) {
                 }
             }
         } else {
-            NSAssert(NO, @"Either both YapDatabaseOptions.cipherSaltBlock and YapDatabaseOptions.cipherUnencryptedHeaderLength should be set or neither should be set!");
-            return NO;
+            if (options.cipherUnencryptedHeaderLength > 0) {
+                NSAssert(NO, @"YapDatabaseOptions.cipherUnencryptedHeaderLength should not be used without cipherKeySpecBlock or cipherSaltBlock!");
+                return NO;
+            }
+            if (options.cipherKeySpecBlock) {
+                NSAssert(NO, @"YapDatabaseOptions.cipherKeySpecBlock should not be used without setting cipherUnencryptedHeaderLength!");
+                return NO;
+            }
+            if (options.cipherSaltBlock) {
+                NSAssert(NO, @"YapDatabaseOptions.cipherSaltBlock should not be used without setting cipherUnencryptedHeaderLength!");
+                return NO;
+            }
         }
 	}
 	
