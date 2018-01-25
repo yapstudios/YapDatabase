@@ -114,6 +114,8 @@ NSError *YDBErrorWithDescription(NSString *description)
 
     @autoreleasepool {
         NSError *error;
+        // Use memory-mapped NSData to avoid reading the entire file into memory.
+        //
         // We use NSDataReadingMappedAlways instead of NSDataReadingMappedIfSafe because
         // we know the database will always exist for the duration of this instance of NSData.
         NSData *_Nullable data = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:filePath]
