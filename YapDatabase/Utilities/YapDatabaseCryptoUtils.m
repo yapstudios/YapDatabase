@@ -10,6 +10,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#ifdef SQLITE_HAS_CODEC
+
 #if DEBUG
 static const int ydbLogLevel = YDB_LOG_LEVEL_INFO;
 #else
@@ -488,5 +490,7 @@ NSError *YDBErrorWithDescription(NSString *description)
 }
 
 @end
+
+#endif
 
 NS_ASSUME_NONNULL_END
