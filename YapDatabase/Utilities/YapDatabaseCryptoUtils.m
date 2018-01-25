@@ -84,6 +84,12 @@ NSCAssert(0, message);                                                          
 
 #endif
 
+#define YapRaiseException(name, formatString, ...) \
+{ \
+    [DDLog flushLog]; \
+    [NSException raise:name format:formatString, ##__VA_ARGS__]; \
+}
+
 const NSUInteger kSqliteHeaderLength = 32;
 const NSUInteger kSQLCipherSaltLength = 16;
 const NSUInteger kSQLCipherDerivedKeyLength = 32;
@@ -97,12 +103,6 @@ NSError *YDBErrorWithDescription(NSString *description)
                                code:0
                            userInfo:@{ NSLocalizedDescriptionKey: description }];
 }
-
-//@interface YapStorage (YapDatabaseCryptoUtils)
-//
-//+ (YapDatabaseDeserializer)logOnFailureDeserializer;
-//
-//@end
 
 #pragma mark -
 
@@ -121,15 +121,12 @@ NSError *YDBErrorWithDescription(NSString *description)
                                                          error:&error];
         if (!data || error) {
             YDBLogError(@"%@ Couldn't read database file header.", self.logTag);
-            // TODO: Make a convenience method (on a category of NSException?) that
-            // flushes YDBLog before raising a terminal exception.
-            [NSException raise:@"Couldn't read database file header" format:@""];
+            YapRaiseException(@"Couldn't read database file header", @"");
         }
         // Pull this constant out so that we can use it in our YapDatabase fork.
         NSData *_Nullable headerData = [data subdataWithRange:NSMakeRange(0, byteCount)];
         if (!headerData || headerData.length != byteCount) {
-            [NSException raise:@"Database file header has unexpected length"
-                        format:@"Database file header has unexpected length: %zd", headerData.length];
+            YapRaiseException(@"Database file header has unexpected length", @"Database file header has unexpected length: %zd", headerData.length);
         }
         return [headerData copy];
     }
@@ -159,8 +156,6 @@ NSError *YDBErrorWithDescription(NSString *description)
     return YES;
 }
 
-// TODO upon failure show user error UI
-// TODO upon failure anything we need to do "back out" partial migration
 + (nullable NSError *)convertDatabaseIfNecessary:(NSString *)databaseFilePath
                                 databasePassword:(NSData *)databasePassword
                                        saltBlock:(YapDatabaseSaltBlock)saltBlock
@@ -263,7 +258,6 @@ NSError *YDBErrorWithDescription(NSString *description)
             return error;
         }
 
-        // TODO verify we need to do this.
         // Set synchronous to normal for THIS sqlite instance.
         //
         // This does NOT affect normal connections.
