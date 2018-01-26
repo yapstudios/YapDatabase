@@ -164,6 +164,7 @@ NSError *YDBErrorWithDescription(NSString *description)
                                     keySpecBlock:(YapDatabaseKeySpecBlock)keySpecBlock
 {
     if (![self doesDatabaseNeedToBeConverted:databaseFilePath]) {
+        YDBLogInfo(@"%@ convertDatabaseIfNecessary: database does not need to be converted.", self.logTag);
         return nil;
     }
 
@@ -183,6 +184,8 @@ NSError *YDBErrorWithDescription(NSString *description)
     YapAssert(saltBlock);
     YapAssert(keySpecBlock);
 
+    YDBLogInfo(@"%@ convertDatabase.", self.logTag);
+
     NSData *saltData;
     {
         NSData *headerData = [self readFirstNBytesOfDatabaseFile:databaseFilePath byteCount:kSqliteHeaderLength];
@@ -196,6 +199,8 @@ NSError *YDBErrorWithDescription(NSString *description)
         // unrecoverable state.
         saltBlock(saltData);
     }
+
+    YDBLogInfo(@"%@ convertDatabase: salt extracted.", self.logTag);
 
     {
         NSData *_Nullable keySpecData = [self databaseKeySpecForPassword:databasePassword saltData:saltData];
@@ -211,6 +216,8 @@ NSError *YDBErrorWithDescription(NSString *description)
         // unrecoverable state.
         keySpecBlock(keySpecData);
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: key spec derived.", self.logTag);
 
     // -----------------------------------------------------------
     //
@@ -235,6 +242,8 @@ NSError *YDBErrorWithDescription(NSString *description)
             return YDBErrorWithDescription(@"Failed to open database");
         }
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: database open.", self.logTag);
 
     // -----------------------------------------------------------
     //
@@ -248,6 +257,8 @@ NSError *YDBErrorWithDescription(NSString *description)
             return YDBErrorWithDescription(@"Failed to set SQLCipher key");
         }
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: database keyed.", self.logTag);
 
     // -----------------------------------------------------------
     //
@@ -302,6 +313,8 @@ NSError *YDBErrorWithDescription(NSString *description)
         // END DB setup copied from YapDatabase
         // BEGIN SQLCipher migration
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: database configured.", self.logTag);
 
 #ifdef DEBUG
     // We can obtain the database salt in two ways: by reading the first 16 bytes of the encrypted
@@ -313,6 +326,8 @@ NSError *YDBErrorWithDescription(NSString *description)
 
         YapAssert([[self hexadecimalStringForData:saltData] isEqualToString:saltString]);
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: salt confirmed.", self.logTag);
 #endif
 
     // -----------------------------------------------------------
@@ -327,6 +342,8 @@ NSError *YDBErrorWithDescription(NSString *description)
         if (error) {
             return error;
         }
+        
+        YDBLogInfo(@"%@ convertDatabase: encrypted header configured.", self.logTag);
 
         // Modify the first page, so that SQLCipher will overwrite, respecting our new cipher_plaintext_header_size
         NSString *tableName = [NSString stringWithFormat:@"signal-migration-%@", [NSUUID new].UUIDString];
@@ -340,6 +357,8 @@ NSError *YDBErrorWithDescription(NSString *description)
         if (error) {
             return error;
         }
+        
+        YDBLogInfo(@"%@ convertDatabase: database dirtied.", self.logTag);
 
         // Force a checkpoint so that the plaintext is written to the actual DB file, not just living in the WAL.
         int log, ckpt;
@@ -348,8 +367,12 @@ NSError *YDBErrorWithDescription(NSString *description)
             YDBLogError(@"%@ Error forcing checkpoint. status: %d, log: %d, ckpt: %d, error: %s", self.logTag, status, log, ckpt, sqlite3_errmsg(db));
             return YDBErrorWithDescription(@"Error forcing checkpoint.");
         }
+        
+        YDBLogInfo(@"%@ convertDatabase: checkpoint completed.", self.logTag);
 
         sqlite3_close(db);
+        
+        YDBLogInfo(@"%@ convertDatabase: database closed.", self.logTag);
     }
 
     return nil;
