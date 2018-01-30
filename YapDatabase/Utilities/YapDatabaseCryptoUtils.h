@@ -58,13 +58,14 @@ typedef void (^YapDatabaseKeySpecBlock)(NSData *keySpecData);
 // The header does not contain any user data.  See:
 // https://www.sqlite.org/fileformat.html#the_database_header
 //
-// However, Sqlite normally uses the first 16 bytes of the Sqlite header to store
+// However, SQLCipher normally uses the first 16 bytes of the Sqlite header to store
 // a salt value.  Therefore when using unencrypted headers, it is also necessary
 // to explicitly specify a salt value.
 //
 // It is possible to convert SQLCipher databases with encrypted headers to use
 // unencrypted headers.  However, during this conversion, the salt must be extracted
-// and preserved by reading the first 16 bytes of the unconverted file.
+// by reading the first 16 bytes of the unconverted file and preserving it elsewhere,
+// e.g. the keychain.
 //
 //
 // Implementation
@@ -101,7 +102,7 @@ typedef void (^YapDatabaseKeySpecBlock)(NSData *keySpecData);
 // * If convertDatabaseIfNecessary converts the database, it will use its
 //   saltBlock and keySpecBlock parameters to inform you of the salt
 //   and keyspec for this database.  These values will be needed when
-//   opening the database, so they should presumably stored in the
+//   opening the database, so they should presumably be stored in the
 //   keychain (like the database password).
 //
 //
@@ -133,7 +134,7 @@ typedef void (^YapDatabaseKeySpecBlock)(NSData *keySpecData);
 // * If convertDatabaseIfNecessary converts the database, it will use its
 //   saltBlock and keySpecBlock parameters to inform you of the salt
 //   and keyspec for this database.  These values will be needed when
-//   opening the database, so they should presumably stored in the
+//   opening the database, so they should presumably be stored in the
 //   keychain (like the database password).
 + (nullable NSError *)convertDatabaseIfNecessary:(NSString *)databaseFilePath
                                 databasePassword:(NSData *)databasePassword

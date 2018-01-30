@@ -244,7 +244,19 @@ typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
 /**
  * Set a block here that returns the key spec (not the key) for the SQLCipher database.
  *
- * This key spec incorporates the "derived key" and the "salt".
+ * The key spec incorporates the "derived key" and the "salt".
+ *
+ * The key spec should be kSQLCipherKeySpecLength bytes in length.
+ *
+ * If you a key spec, you do NOT need to specify the salt (using cipherSaltBlock)
+ * and "key/password" (using cipherKeyBlock).
+ *
+ * For new databases, the key spec can be any N bytes where N is kSQLCipherKeySpecLength.
+ * You should consider generating them with SecRandomCopyBytes().
+ *
+ * For existing databases that were created using a "key/password" (i.e. cipherKeyBlock),
+ * you can derive a key spec using that key/password and the database's salt.  See
+ * comments in YapDatabaseCryptoUtils.h.
  *
  * This block allows you to fetch the key spec from the keychain (or elsewhere)
  * only when you need it, instead of persisting it in memory.

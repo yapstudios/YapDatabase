@@ -7,6 +7,7 @@
 #import "YapDatabaseConnectionState.h"
 #import "YapDatabaseLogging.h"
 #import "YapDatabaseString.h"
+#import "YapDatabaseCryptoUtils.h"
 
 #import "sqlite3.h"
 
@@ -830,18 +831,50 @@ static int connectionBusyHandler(void *ptr, int count) {
 **/
 - (BOOL)configureEncryptionForDatabase:(sqlite3 *)sqlite
 {
+    if (options.cipherUnencryptedHeaderLength > 0) {
+        if (options.cipherKeySpecBlock)
+        {
+            // Do nothing.
+        } else if (!options.cipherKeyBlock ||
+                   options.cipherSaltBlock) {
+            NSAssert(NO, @"If you're using YapDatabaseOptions.cipherUnencryptedHeaderLength, you need to set either cipherKeySpecBlock or both cipherKeyBlock and cipherSaltBlock.");
+            return NO;
+        }
+    }        
+
     if (options.cipherKeyBlock ||
         options.cipherKeySpecBlock)
 	{
         NSData *_Nullable keyData = nil;
         if (options.cipherKeySpecBlock)
         {
-            keyData = options.cipherKeySpecBlock();
-            if (!keyData)
+            if (options.cipherKeyBlock) {
+                NSAssert(NO, @"If you're using YapDatabaseOptions.cipherKeySpecBlock, you don't need to set a cipherKeySpecBlock.");
+                return NO;
+            }
+            if (options.cipherSaltBlock) {
+                NSAssert(NO, @"If you're using YapDatabaseOptions.cipherKeySpecBlock, you don't need to set a cipherSaltBlock.");
+                return NO;
+            }
+
+            NSData *_Nullable keySpecData = options.cipherKeySpecBlock();
+            if (!keySpecData)
             {
                 NSAssert(NO, @"YapDatabaseOptions.cipherKeySpecBlock cannot return nil!");
                 return NO;
             }
+            if (keySpecData.length != kSQLCipherKeySpecLength) {
+                NSAssert(NO, @"YapDatabaseOptions.cipherKeySpecBlock returned a key spec of unexpected length: %zd.", keySpecData.length);
+                return NO;
+            }
+
+            // Use a raw key spec, where the 96 hexadecimal digits are provided
+            // (i.e. 64 hex for the 256 bit key, followed by 32 hex for the 128 bit salt)
+            // using explicit BLOB syntax, e.g.:
+            //
+            // x'98483C6EB40B6C31A448C22A66DED3B5E5E8D5119CAC8327B655C8B5C483648101010101010101010101010101010101'
+            NSString *keySpecString = [NSString stringWithFormat:@"x'%@'", [self hexadecimalStringForData:keySpecData]];
+            keyData = [keySpecString dataUsingEncoding:NSUTF8StringEncoding];
         } else {
             keyData = options.cipherKeyBlock();
             if (!keyData)
@@ -884,27 +917,11 @@ static int connectionBusyHandler(void *ptr, int count) {
             }
         }
         
-        if (options.cipherKeySpecBlock) {
-            // Use a raw key spec, where the 96 hexadecimal digits are provided
-            // (i.e. 64 hex for the 256 bit key, followed by 32 hex for the 128 bit salt)
-            // using explicit BLOB syntax, e.g.:
-            //
-            // x'98483C6EB40B6C31A448C22A66DED3B5E5E8D5119CAC8327B655C8B5C483648101010101010101010101010101010101'
-            NSString *keySpecString = [NSString stringWithFormat:@"x'%@'", [self hexadecimalStringForData:keyData]];
-            NSData *keySpecStringData = [keySpecString dataUsingEncoding:NSUTF8StringEncoding];
-            int status = sqlite3_key(sqlite, [keySpecStringData bytes], (int)[keySpecStringData length]);
-            if (status != SQLITE_OK)
-            {
-                YDBLogError(@"Error setting SQLCipher key: %d %s", status, sqlite3_errmsg(sqlite));
-                return NO;
-            }
-        } else {
-            int status = sqlite3_key(sqlite, [keyData bytes], (int)[keyData length]);
-            if (status != SQLITE_OK)
-            {
-                YDBLogError(@"Error setting SQLCipher key: %d %s", status, sqlite3_errmsg(sqlite));
-                return NO;
-            }
+        int status = sqlite3_key(sqlite, [keyData bytes], (int)[keyData length]);
+        if (status != SQLITE_OK)
+        {
+            YDBLogError(@"Error setting SQLCipher key: %d %s", status, sqlite3_errmsg(sqlite));
+            return NO;
         }
         
         if (options.cipherUnencryptedHeaderLength > 0 &&
@@ -921,6 +938,10 @@ static int connectionBusyHandler(void *ptr, int count) {
                 if (saltData == nil)
                 {
                     NSAssert(NO, @"YapDatabaseOptions.cipherSaltBlock cannot return nil!");
+                    return NO;
+                }
+                if (saltData.length != kSQLCipherSaltLength) {
+                    NSAssert(NO, @"YapDatabaseOptions.cipherSaltBlock returned a salt of unexpected length: %zd.", saltData.length);
                     return NO;
                 }
 

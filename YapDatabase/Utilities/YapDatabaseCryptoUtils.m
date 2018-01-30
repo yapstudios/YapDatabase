@@ -433,7 +433,7 @@ NSError *YDBErrorWithDescription(NSString *description)
 
     unsigned char *derivedKeyBytes = malloc((size_t)kSQLCipherDerivedKeyLength);
     YapAssert(derivedKeyBytes);
-    // See: PBKDF2_ITER.
+    // See: PBKDF2_ITER from SQLCipher.
     const unsigned int workfactor = 64000;
 
     int result = CCKeyDerivationPBKDF(kCCPBKDF2,
