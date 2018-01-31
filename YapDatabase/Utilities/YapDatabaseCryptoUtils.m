@@ -411,9 +411,12 @@ NSError *YDBErrorWithDescription(NSString *description)
     YapAssert(passwordData.length > 0);
     YapAssert(saltData.length == kSQLCipherSaltLength);
 
-    // FIXME memory leak. manage with NSData.
-    unsigned char *derivedKeyBytes = malloc((size_t)kSQLCipherKeyLength);
-    YapAssert(derivedKeyBytes);
+    NSMutableData *_Nullable derivedKeyData = [NSMutableData dataWithLength:kSQLCipherKeyLength];
+    if (!derivedKeyData) {
+        YapFail(@"failed to allocate derivedKeyData");
+        return nil;
+    }
+
     // See: PBKDF2_ITER from SQLCipher.
     const unsigned int workfactor = 64000;
 
@@ -424,20 +427,15 @@ NSError *YDBErrorWithDescription(NSString *description)
         (size_t)saltData.length,
         kCCPRFHmacAlgSHA1,
         workfactor,
-        derivedKeyBytes,
-        kSQLCipherKeyLength);
+        derivedKeyData.mutableBytes,
+        (size_t)derivedKeyData.length);
+
     if (result != kCCSuccess) {
         YDBLogError(@"Error deriving key: %d", result);
         return nil;
     }
 
-    NSData *_Nullable derivedKeyData = [NSData dataWithBytes:derivedKeyBytes length:kSQLCipherKeyLength];
-    if (!derivedKeyData || derivedKeyData.length != kSQLCipherKeyLength) {
-        YDBLogError(@"Invalid derived key: %d", result);
-        return nil;
-    }
-
-    return derivedKeyData;
+    return [derivedKeyData copy];
 }
 
 + (nullable NSData *)deriveDatabaseKeySpecForPassword:(NSData *)passwordData saltData:(NSData *)saltData
