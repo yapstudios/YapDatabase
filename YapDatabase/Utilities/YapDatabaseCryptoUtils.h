@@ -10,11 +10,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern const NSUInteger kSqliteHeaderLength;
 extern const NSUInteger kSQLCipherSaltLength;
-extern const NSUInteger kSQLCipherDerivedKeyLength;
+extern const NSUInteger kSQLCipherKeyLength;
 extern const NSUInteger kSQLCipherKeySpecLength;
 
 typedef void (^YapDatabaseSaltBlock)(NSData *saltData);
-typedef void (^YapDatabaseKeySpecBlock)(NSData *keySpecData);
 
 // This class contains utility methods for use with SQLCipher encrypted
 // databases, specifically to address an issue around database files that
@@ -100,7 +99,7 @@ typedef void (^YapDatabaseKeySpecBlock)(NSData *keySpecData);
 // * This method should always be pretty fast, and should be safe to
 //   call from within [UIApplicationDelegate application: didFinishLaunchingWithOptions:].
 // * If convertDatabaseIfNecessary converts the database, it will use its
-//   saltBlock and keySpecBlock parameters to inform you of the salt
+//   recordSaltBlock to inform you of the salt
 //   and keyspec for this database.  These values will be needed when
 //   opening the database, so they should presumably be stored in the
 //   keychain (like the database password).
@@ -131,23 +130,21 @@ typedef void (^YapDatabaseKeySpecBlock)(NSData *keySpecData);
 // * This method will have no effect if the YapDatabase has already been converted.
 // * This method should always be pretty fast, and should be safe to
 //   call from within [UIApplicationDelegate application: didFinishLaunchingWithOptions:].
-// * If convertDatabaseIfNecessary converts the database, it will use its
-//   saltBlock and keySpecBlock parameters to inform you of the salt
-//   and keyspec for this database.  These values will be needed when
-//   opening the database, so they should presumably be stored in the
-//   keychain (like the database password).
+// * IMPORTANT: If you fail to record the salt during conversion you will not be able to decrypt
+//   the database in the future, effectively losing all data.  If convertDatabaseIfNecessary
+//   converts the database, it will use its recordSaltBlock parameter to inform you of the salt
+//   for this database. Within that block you must store the salt somewhere durable.
 + (nullable NSError *)convertDatabaseIfNecessary:(NSString *)databaseFilePath
                                 databasePassword:(NSData *)databasePassword
-                                       saltBlock:(YapDatabaseSaltBlock)saltBlock
-                                    keySpecBlock:(YapDatabaseKeySpecBlock)keySpecBlock;
+                                 recordSaltBlock:(YapDatabaseSaltBlock)recordSaltBlock;
 
 // This method can be used to derive a SQLCipher "key spec" from a
 // database password and salt.  Key spec derivation is somewhat costly.
 // The key spec is needed every time the database file is opened
-// (including every time YapDatabse makes a new database connection),
+// (including every time YapDatabase makes a new database connection),
 // So it benefits performance to pass a pre-derived key spec to
 // YapDatabase.
-+ (nullable NSData *)databaseKeySpecForPassword:(NSData *)passwordData saltData:(NSData *)saltData;
++ (nullable NSData *)deriveDatabaseKeySpecForPassword:(NSData *)passwordData saltData:(NSData *)saltData;
 
 #pragma mark - Utils
 
