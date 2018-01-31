@@ -10,7 +10,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern const NSUInteger kSqliteHeaderLength;
 extern const NSUInteger kSQLCipherSaltLength;
-extern const NSUInteger kSQLCipherKeyLength;
+extern const NSUInteger kSQLCipherDerivedKeyLength;
 extern const NSUInteger kSQLCipherKeySpecLength;
 
 typedef void (^YapDatabaseSaltBlock)(NSData *saltData);

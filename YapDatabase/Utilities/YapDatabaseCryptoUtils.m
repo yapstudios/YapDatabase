@@ -92,7 +92,7 @@ NSCAssert(0, message);                                                          
 
 const NSUInteger kSqliteHeaderLength = 32;
 const NSUInteger kSQLCipherSaltLength = 16;
-const NSUInteger kSQLCipherKeyLength = 32;
+const NSUInteger kSQLCipherDerivedKeyLength = 32;
 const NSUInteger kSQLCipherKeySpecLength = 48;
 
 NSString *const YapDatabaseErrorDomain = @"YapDatabaseErrorDomain";
@@ -169,7 +169,7 @@ NSError *YDBErrorWithDescription(NSString *description)
 
     return [self convertDatabase:databaseFilePath
                 databasePassword:databasePassword
-                       recordSaltBlock:recordSaltBlock];
+                 recordSaltBlock:recordSaltBlock];
 }
 
 + (nullable NSError *)convertDatabase:(NSString *)databaseFilePath
@@ -411,7 +411,7 @@ NSError *YDBErrorWithDescription(NSString *description)
     YapAssert(passwordData.length > 0);
     YapAssert(saltData.length == kSQLCipherSaltLength);
 
-    NSMutableData *_Nullable derivedKeyData = [NSMutableData dataWithLength:kSQLCipherKeyLength];
+    NSMutableData *_Nullable derivedKeyData = [NSMutableData dataWithLength:kSQLCipherDerivedKeyLength];
     if (!derivedKeyData) {
         YapFail(@"failed to allocate derivedKeyData");
         return nil;
@@ -444,7 +444,7 @@ NSError *YDBErrorWithDescription(NSString *description)
     YapAssert(saltData.length == kSQLCipherSaltLength);
 
     NSData *_Nullable derivedKeyData = [self deriveDatabaseKeyForPassword:passwordData saltData:saltData];
-    if (!derivedKeyData || derivedKeyData.length != kSQLCipherKeyLength) {
+    if (!derivedKeyData || derivedKeyData.length != kSQLCipherDerivedKeyLength) {
         YDBLogError(@"Error deriving key");
         return nil;
     }
