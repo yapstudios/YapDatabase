@@ -835,8 +835,7 @@ static int connectionBusyHandler(void *ptr, int count) {
         if (options.cipherKeySpecBlock)
         {
             // Do nothing.
-        } else if (!options.cipherKeyBlock ||
-                   options.cipherSaltBlock) {
+        } else if (!(options.cipherKeyBlock && options.cipherSaltBlock)) {
             NSAssert(NO, @"If you're using YapDatabaseOptions.cipherUnencryptedHeaderLength, you need to set either cipherKeySpecBlock or both cipherKeyBlock and cipherSaltBlock.");
             return NO;
         }
