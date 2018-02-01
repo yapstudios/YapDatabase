@@ -160,7 +160,7 @@ NSError *YDBErrorWithDescription(NSString *description)
 
 + (nullable NSError *)convertDatabaseIfNecessary:(NSString *)databaseFilePath
                                 databasePassword:(NSData *)databasePassword
-                                 recordSaltBlock:(YapDatabaseSaltBlock)recordSaltBlock
+                                 recordSaltBlock:(YapRecordDatabaseSaltBlock)recordSaltBlock
 {
     if (![self doesDatabaseNeedToBeConverted:databaseFilePath]) {
         YDBLogInfo(@"%@ convertDatabaseIfNecessary: database does not need to be converted.", self.logTag);
@@ -174,7 +174,7 @@ NSError *YDBErrorWithDescription(NSString *description)
 
 + (nullable NSError *)convertDatabase:(NSString *)databaseFilePath
                      databasePassword:(NSData *)databasePassword
-                      recordSaltBlock:(YapDatabaseSaltBlock)recordSaltBlock
+                      recordSaltBlock:(YapRecordDatabaseSaltBlock)recordSaltBlock
 {
     YapAssert(databaseFilePath.length > 0);
     YapAssert(databasePassword.length > 0);
@@ -194,7 +194,11 @@ NSError *YDBErrorWithDescription(NSString *description)
         // proceeding with the database conversion or we could leave the app in an
         // unrecoverable state.
         YDBLogInfo(@"%@ convertDatabase: salt extracted.", self.logTag);
-        recordSaltBlock(saltData);
+        BOOL success = recordSaltBlock(saltData);
+        if (!success) {
+            YDBLogError(@"Failed to record salt, aborting conversion");
+            return YDBErrorWithDescription(@"Failed to record salt");
+        }
     }
     
     YDBLogInfo(@"%@ convertDatabase: key spec derived.", self.logTag);

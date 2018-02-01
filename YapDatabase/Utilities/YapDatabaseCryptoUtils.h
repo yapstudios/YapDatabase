@@ -13,7 +13,12 @@ extern const NSUInteger kSQLCipherSaltLength;
 extern const NSUInteger kSQLCipherDerivedKeyLength;
 extern const NSUInteger kSQLCipherKeySpecLength;
 
-typedef void (^YapDatabaseSaltBlock)(NSData *saltData);
+// User specified block used to notify the caller of a database's salt when
+// converting SQLCipher headers to plaintext. Failing to properly record the
+// salt will leave the database unreadable.
+// @returns BOOL indicating if the salt was successfully recorded. Conversion
+//          will not proceed if recording the salt fails.
+typedef BOOL (^YapRecordDatabaseSaltBlock)(NSData *saltData);
 
 // This class contains utility methods for use with SQLCipher encrypted
 // databases, specifically to address an issue around database files that
@@ -136,7 +141,7 @@ typedef void (^YapDatabaseSaltBlock)(NSData *saltData);
 //   for this database. Within that block you must store the salt somewhere durable.
 + (nullable NSError *)convertDatabaseIfNecessary:(NSString *)databaseFilePath
                                 databasePassword:(NSData *)databasePassword
-                                 recordSaltBlock:(YapDatabaseSaltBlock)recordSaltBlock;
+                                 recordSaltBlock:(YapRecordDatabaseSaltBlock)recordSaltBlock;
 
 // This method can be used to derive a SQLCipher "key spec" from a
 // database password and salt.  Key spec derivation is somewhat costly.
