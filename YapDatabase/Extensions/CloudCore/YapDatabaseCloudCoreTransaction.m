@@ -2701,33 +2701,49 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	if (enumBlock == nil) return;
 	
 	__block BOOL stop = NO;
-	__block BOOL pipelineHasOps = NO;
-	__block NSUInteger lastGraphIdx = 0;
 	
-	[pipeline _enumerateOperationsUsingBlock:
-	  ^(YapDatabaseCloudCoreOperation *queuedOp, NSUInteger graphIdx, BOOL *innerStop)
+	NSArray<NSArray<YapDatabaseCloudCoreOperation *> *> *graphOperations = pipeline.graphOperations;
+	
+	[graphOperations enumerateObjectsUsingBlock:
+		^(NSArray<YapDatabaseCloudCoreOperation *> *operations, NSUInteger idx, BOOL *innerStop)
 	{
-		pipelineHasOps = YES;
-		
-		if (lastGraphIdx != graphIdx)
+		if (flags & YDBCloudCore_EnumOps_Existing)
 		{
-			if (flags & YDBCloudCore_EnumOps_Inserted)
+			for (YapDatabaseCloudCoreOperation *queuedOp in operations)
 			{
-				NSDictionary *insertedGraphs = parentConnection->operations_inserted[pipeline.name];
-				NSMutableArray<YapDatabaseCloudCoreOperation *> *insertedOps = insertedGraphs[@(lastGraphIdx)];
-				
-				for (NSUInteger i = 0; i < insertedOps.count; i++)
+				YapDatabaseCloudCoreOperation *modifiedOp = parentConnection->operations_modified[queuedOp.uuid];
+			
+				if (modifiedOp)
+					modifiedOp = enumBlock(modifiedOp, idx, &stop);
+				else
+					modifiedOp = enumBlock(queuedOp, idx, &stop);
+			
+				if (modifiedOp)
 				{
-					YapDatabaseCloudCoreOperation *op = insertedOps[i];
-					
-					YapDatabaseCloudCoreOperation *modifiedOp = enumBlock(op, lastGraphIdx, &stop);
-					
-					if (modifiedOp)
-					{
-						insertedOps[i] = modifiedOp;
-					}
-					
-					if (stop) break;
+					parentConnection->operations_modified[modifiedOp.uuid] = modifiedOp;
+				}
+			
+				if (stop) {
+					*innerStop = YES;
+					return;
+				}
+			}
+		}
+		
+		if (flags & YDBCloudCore_EnumOps_Inserted)
+		{
+			NSDictionary *insertedGraphs = parentConnection->operations_inserted[pipeline.name];
+			NSMutableArray<YapDatabaseCloudCoreOperation *> *insertedOps = insertedGraphs[@(idx)];
+			
+			for (NSUInteger i = 0; i < insertedOps.count; i++)
+			{
+				YapDatabaseCloudCoreOperation *op = insertedOps[i];
+				
+				YapDatabaseCloudCoreOperation *modifiedOp = enumBlock(op, idx, &stop);
+				
+				if (modifiedOp)
+				{
+					insertedOps[i] = modifiedOp;
 				}
 				
 				if (stop) {
@@ -2735,31 +2751,13 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 					return;
 				}
 			}
-			
-			lastGraphIdx = graphIdx;
-		}
-		
-		if (flags & YDBCloudCore_EnumOps_Existing)
-		{
-			YapDatabaseCloudCoreOperation *modifiedOp = parentConnection->operations_modified[queuedOp.uuid];
-			
-			if (modifiedOp)
-				modifiedOp = enumBlock(modifiedOp, graphIdx, &stop);
-			else
-				modifiedOp = enumBlock(queuedOp, graphIdx, &stop);
-			
-			if (modifiedOp)
-			{
-				parentConnection->operations_modified[modifiedOp.uuid] = modifiedOp;
-			}
-			
-			if (stop) *innerStop = YES;
 		}
 	}];
 	
 	if (!stop && (flags & YDBCloudCore_EnumOps_Added))
 	{
-		NSUInteger nextGraphIdx = pipelineHasOps ? (lastGraphIdx + 1) : 0;
+		NSUInteger lastGraphIdx = graphOperations.count;
+		NSUInteger nextGraphIdx = (lastGraphIdx == 0) ? 0 : (lastGraphIdx + 1);
 		
 		NSMutableArray<YapDatabaseCloudCoreOperation *> *addedOps =
 		  parentConnection->operations_added[pipeline.name];
