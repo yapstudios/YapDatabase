@@ -2403,6 +2403,26 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 }
 
 /**
+ * Fetches the graph index that corresponds to newly added operations.
+ * That is, operations that are added during this commit (read-write transaction).
+ *
+ * This may be useful if you need to find and modify operations added during the current read/write transaction.
+ *
+ * @return
+ *   The index of the graph that will contain newly added operations from this commit.
+ *   Or NSNotFound if the pipeline isn't found.
+**/
+- (NSUInteger)graphForAddedOperationsInPipeline:(NSString *)pipelineName
+{
+	YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
+	
+	if (pipeline)
+		return pipeline.graphCount;
+	else
+		return NSNotFound;
+}
+
+/**
  * @param operation
  *   The operation to search for.
  *   The operation.pipeline property specifies which pipeline to use.
@@ -2503,6 +2523,47 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 									  usingBlock:^(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
 	{
 		enumBlock([operation copy], graphIdx, stop);
+	}];
+}
+
+/**
+ * Public API
+**/
+- (void)enumerateAddedOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                     YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock
+{
+	if (enumBlock == nil) return;
+	if (databaseTransaction->isReadWriteTransaction == NO) return;
+	
+	[self _enumerateAndModifyOperations:YDBCloudCore_EnumOps_Added
+	                         usingBlock:
+	  ^YapDatabaseCloudCoreOperation *(YapDatabaseCloudCorePipeline *pipeline,
+	                                   YapDatabaseCloudCoreOperation *operation,
+	                                   NSUInteger graphIdx, BOOL *stop)
+	{
+		enumBlock(pipeline, [operation copy], graphIdx, stop);
+		return nil;
+	}];
+}
+
+/**
+ * Public API
+**/
+- (void)enumerateAddedOperationsInPipeline:(NSString *)pipeline
+                                usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock
+{
+	if (enumBlock == nil) return;
+	if (databaseTransaction->isReadWriteTransaction == NO) return;
+	
+	[self _enumerateAndModifyOperations:YDBCloudCore_EnumOps_All
+	                         inPipeline:pipeline
+	                         usingBlock:
+	  ^YapDatabaseCloudCoreOperation *(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
+	{
+		enumBlock([operation copy], graphIdx, stop);
+		return nil;
 	}];
 }
 

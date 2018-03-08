@@ -111,6 +111,18 @@
 - (YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid inPipeline:(NSString *)pipelineName;
 
 /**
+ * Fetches the graph index that corresponds to newly added operations.
+ * That is, operations that are added during this commit (read-write transaction).
+ *
+ * This may be useful if you need to find and modify operations added during the current read/write transaction.
+ *
+ * @return
+ *   The index of the graph that will contain newly added operations from this commit.
+ *   Or NSNotFound if the pipeline isn't found.
+**/
+- (NSUInteger)graphForAddedOperationsInPipeline:(NSString *)pipelineName;
+
+/**
  * @param operation
  *   The operation to search for.
  *   The operation.pipeline property specifies which pipeline to use.
@@ -157,6 +169,25 @@
 - (void)enumerateOperationsInPipeline:(NSString *)pipeline
                       usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
                                            NSUInteger graphIdx, BOOL *stop))enumBlock;
+
+/**
+ * Enumerates only those operations that have been added during this commit.
+ * 
+ * That is, the operations added via the `addOperation:` method,
+ * within the current readWriteTransaction.
+**/
+- (void)enumerateAddedOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                     YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock;
+/**
+ * Enumerates only those operations that have been added during this commit.
+ *
+ * That is, the operations added via the `addOperation:` method,
+ * within the current readWriteTransaction.
+**/
+- (void)enumerateAddedOperationsInPipeline:(NSString *)pipeline
+                                usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 #pragma mark Tag Support
 
