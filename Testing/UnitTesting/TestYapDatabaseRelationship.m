@@ -4292,6 +4292,66 @@
 	}];
 }
 
+/**
+ * Issue #399 refers to a crash when:
+ * - manual edges are being used
+ * - an edge is being immediately deleted
+ * - but the NotInDatabase flag wasn't being set
+ *
+ * We discovered a similar crash when using protocolEdges.
+**/
+- (void)testIssue399_protocol
+{
+	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	
+	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	
+	XCTAssertNotNil(database);
+	
+	YapDatabaseConnection *connection = [database newConnection];
+	
+	YapDatabaseRelationship *relationship = [[YapDatabaseRelationship alloc] init];
+	
+	BOOL registered = [database registerExtension:relationship withName:@"relationship"];
+	
+	XCTAssertTrue(registered, @"Error registering extension");
+	
+	__block Node_Standard *node = nil;
+	
+	[connection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+		
+		[transaction setObject:@"string" forKey:@"valid" inCollection:nil];
+		
+		node = [[Node_Standard alloc] init];
+		node.childKeys = @[@"valid", @"invalid-1"];
+		
+		// The node.childKeys has 2 items,
+		// and so it will attempt to create 2 edges.
+		// - The first is valid
+		// - The second is invalid
+		//
+		// The invalid edge should be deleted during [YapDBRelationshipTransaction flush].
+		//
+		// Note:
+		//   In this case, 'node' is a newly inserted item in the database.
+		//   Which means the code path taken is different from a modified item.
+		//   So we need another unit test to achieve proper unit test coverage for this issue.
+		//
+		[transaction setObject:node forKey:node.key inCollection:nil];
+	}];
+	
+	[connection readWriteWithBlock:^(YapDatabaseReadWriteTransaction * _Nonnull transaction) {
+		
+		node = [transaction objectForKey:node.key inCollection:nil];
+		node.childKeys = @[@"valid", @"invalid-2"];
+		
+		// In this case, 'node' is a modified item in the database.
+		// Which means the code path taken is different from an inserted item.
+		//
+		[transaction setObject:node forKey:node.key inCollection:nil];
+	}];
+}
 
 /**
  * Issue #426 - https://github.com/yapstudios/YapDatabase/issues/426

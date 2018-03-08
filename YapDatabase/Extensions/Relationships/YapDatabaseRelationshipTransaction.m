@@ -2431,23 +2431,9 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	//
 	// Pre-process the updated edges.
 	// This involves looking up the destinationRowid for each edge.
-	//
-	// Implementation details:
-	//
-	// We use the offset & protocolEdgesCount to mark the range of unprocessed edges in the array:
-	// - All nodes at index < offset have already been processed.
-	// - All nodes at index >= protocolEdgesCount were added to the array and should be ignored.
-	//
-	// These added nodes represent existing edges in the database that were
-	// implicitly deleted by removing from edge list.
 	
-	__block NSUInteger offset = 0;
-	NSUInteger protocolEdgesCount = [protocolEdges count];
-	
-	for (NSUInteger i = 0; i < protocolEdgesCount; i++)
+	for (YapDatabaseRelationshipEdge *edge in protocolEdges)
 	{
-		YapDatabaseRelationshipEdge *edge = [protocolEdges objectAtIndex:i];
-		
 		if (edge->state & YDB_EdgeState_DestinationFileURL)
 		{
 			continue;
@@ -2469,21 +2455,34 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_DestinationDeleted;
 				edge->flags |= YDB_EdgeFlags_BadDestination;
-				
-				[protocolEdges exchangeObjectAtIndex:i withObjectAtIndex:offset];
-				offset++;
 			}
 			else if (dstDeleted)
 			{
 				edge->action = YDB_EdgeAction_Delete;
 				edge->flags |= YDB_EdgeFlags_DestinationDeleted;
 			}
+			
+			// Note: We're not done processing this edge yet.
+			// We still don't know if it actually exists in the databse yet.
+			// So we may not need to (be able to) delete it.
 		}
 	}
 	
 	// Step 2 :
 	//
 	// Enumerate the existing edges in the database, and try to match them up with edges from the new set.
+	//
+	// Implementation notes:
+	//
+	// We use the offset & protocolEdgesCount to mark the range of unprocessed edges in the array:
+	// - All nodes at index < offset have already been matched.
+	// - All nodes at index >= protocolEdgesCount were added to the array and should be ignored (by step 3).
+	//
+	// These added nodes represent existing edges in the database that were
+	// implicitly deleted by removing from edge list.
+	
+	__block NSUInteger offset = 0;
+	NSUInteger protocolEdgesCount = protocolEdges.count;
 	
 	[self enumerateExistingEdgesWithSource:srcRowid usingBlock:^(YapDatabaseRelationshipEdge *existingEdge) {
 		
@@ -2568,7 +2567,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			}
 			
 			[protocolEdges addObject:edge];
-			// Note: Do NOT increment protocolEdgesCount.
+			// Do NOT increment offset.
+			// Do NOT increment protocolEdgesCount.
 		}
 	}];
 	
@@ -2580,13 +2580,12 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	{
 		YapDatabaseRelationshipEdge *edge = [protocolEdges objectAtIndex:i];
 		
-		edge->action = YDB_EdgeAction_Insert;
+		edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
 		
 		if (srcDeleted)
 		{
 			edge->action = YDB_EdgeAction_Delete;
 			edge->flags |= YDB_EdgeFlags_SourceDeleted;
-			edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
 		}
 		
 		if (!(edge->state & YDB_EdgeState_DestinationFileURL) &&
@@ -2594,7 +2593,11 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		{
 			edge->action = YDB_EdgeAction_Delete;
 			edge->flags |= YDB_EdgeFlags_DestinationDeleted;
-			edge->flags |= YDB_EdgeFlags_EdgeNotInDatabase;
+		}
+		
+		if (edge->action == YDB_EdgeAction_None) // May have been set to Delete in step 1
+		{
+			edge->action = YDB_EdgeAction_Insert;
 		}
 	}
 }
