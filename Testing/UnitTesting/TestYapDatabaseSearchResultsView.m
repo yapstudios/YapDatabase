@@ -169,7 +169,7 @@
 	// Setup FTS
 	
 	YapDatabaseFullTextSearchHandler *handler = [YapDatabaseFullTextSearchHandler withObjectBlock:
-	    ^(NSMutableDictionary *dict, NSString *collection, NSString *key, id object){
+	    ^(YapDatabaseReadTransaction *transaction, NSMutableDictionary *dict, NSString *collection, NSString *key, id object){
 		
 		[dict setObject:object forKey:@"content"];
 	}];
@@ -259,7 +259,7 @@
 	// Setup FTS
 	
 	YapDatabaseFullTextSearchHandler *handler = [YapDatabaseFullTextSearchHandler withObjectBlock:
-	    ^(NSMutableDictionary *dict, NSString *collection, NSString *key, id object){
+	    ^(YapDatabaseReadTransaction *transaction, NSMutableDictionary *dict, NSString *collection, NSString *key, id object){
 		
 		[dict setObject:object forKey:@"content"];
 	}];

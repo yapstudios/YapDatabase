@@ -246,7 +246,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 		[databaseTransaction _enumerateKeysInAllCollectionsUsingBlock:
 		    ^(int64_t rowid, NSString *collection, NSString *key, BOOL __unused *stop) {
 			
-			block(parentConnection->blockDict, collection, key);
+			block(databaseTransaction, parentConnection->blockDict, collection, key);
 			
 			if ([parentConnection->blockDict count] > 0)
 			{
@@ -263,7 +263,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 		[databaseTransaction _enumerateKeysAndObjectsInAllCollectionsUsingBlock:
 		    ^(int64_t rowid, NSString *collection, NSString *key, id object, BOOL __unused *stop) {
 			
-			block(parentConnection->blockDict, collection, key, object);
+			block(databaseTransaction, parentConnection->blockDict, collection, key, object);
 			
 			if ([parentConnection->blockDict count] > 0)
 			{
@@ -280,7 +280,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 		[databaseTransaction _enumerateKeysAndMetadataInAllCollectionsUsingBlock:
 		    ^(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL __unused *stop) {
 			
-			block(parentConnection->blockDict, collection, key, metadata);
+			block(databaseTransaction, parentConnection->blockDict, collection, key, metadata);
 			
 			if ([parentConnection->blockDict count] > 0)
 			{
@@ -297,7 +297,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 		[databaseTransaction _enumerateRowsInAllCollectionsUsingBlock:
 		    ^(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL __unused *stop) {
 			
-			block(parentConnection->blockDict, collection, key, object, metadata);
+			block(databaseTransaction, parentConnection->blockDict, collection, key, object, metadata);
 			
 			if ([parentConnection->blockDict count] > 0)
 			{
@@ -573,28 +573,28 @@ static NSString *const ext_key__version_deprecated = @"version";
 		__unsafe_unretained YapDatabaseFullTextSearchWithKeyBlock block =
 		    (YapDatabaseFullTextSearchWithKeyBlock)handler->block;
 		
-		block(parentConnection->blockDict, collection, key);
+		block(databaseTransaction, parentConnection->blockDict, collection, key);
 	}
 	else if (handler->blockType == YapDatabaseBlockTypeWithObject)
 	{
 		__unsafe_unretained YapDatabaseFullTextSearchWithObjectBlock block =
 		    (YapDatabaseFullTextSearchWithObjectBlock)handler->block;
 		
-		block(parentConnection->blockDict, collection, key, object);
+		block(databaseTransaction, parentConnection->blockDict, collection, key, object);
 	}
 	else if (handler->blockType == YapDatabaseBlockTypeWithMetadata)
 	{
 		__unsafe_unretained YapDatabaseFullTextSearchWithMetadataBlock block =
 		    (YapDatabaseFullTextSearchWithMetadataBlock)handler->block;
 		
-		block(parentConnection->blockDict, collection, key, metadata);
+		block(databaseTransaction, parentConnection->blockDict, collection, key, metadata);
 	}
 	else
 	{
 		__unsafe_unretained YapDatabaseFullTextSearchWithRowBlock block =
 		    (YapDatabaseFullTextSearchWithRowBlock)handler->block;
 		
-		block(parentConnection->blockDict, collection, key, object, metadata);
+		block(databaseTransaction, parentConnection->blockDict, collection, key, object, metadata);
 	}
 	
 	if ([parentConnection->blockDict count] == 0)
