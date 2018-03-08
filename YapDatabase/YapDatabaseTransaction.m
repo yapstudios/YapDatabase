@@ -4129,7 +4129,7 @@
 		// Bind parameters.
 		// And move objects from the missingIndexes array into keyIndexDict.
 		
-		if (keyIndexDict)
+		if (!keyIndexDict)
 			keyIndexDict = [NSMutableDictionary dictionaryWithCapacity:numKeyParams];
 		else
 			[keyIndexDict removeAllObjects];
