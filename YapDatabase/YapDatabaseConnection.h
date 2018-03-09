@@ -780,7 +780,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *   The progress in cancellable, meaning that invoking [progress cancel] will abort the backup operation.
 **/
 - (NSProgress *)asyncBackupToPath:(NSString *)backupDatabasePath
-                  completionBlock:(nullable void (^)(NSError *error))completionBlock;
+                  completionBlock:(nullable void (^)(NSError * _Nullable))completionBlock;
 
 /**
  * This method backs up the database by exporting all the tables to another sqlite database.
@@ -807,7 +807,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
 **/
 - (NSProgress *)asyncBackupToPath:(NSString *)backupDatabasePath
                   completionQueue:(nullable dispatch_queue_t)completionQueue
-                  completionBlock:(nullable void (^)(NSError *))completionBlock;
+                  completionBlock:(nullable void (^)(NSError * _Nullable))completionBlock;
 
 @end
 
