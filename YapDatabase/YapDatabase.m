@@ -1605,156 +1605,79 @@ static int connectionBusyHandler(void *ptr, int count) {
 
 - (YapDatabaseConnectionConfig *)connectionDefaults
 {
-	__block YapDatabaseConnectionConfig *result = nil;
-	
-	dispatch_sync(internalQueue, ^{
-		
-		result = [connectionDefaults copy];
-	});
-	
-	return result;
+	return connectionDefaults;
 }
 
 - (BOOL)defaultObjectCacheEnabled
 {
-	__block BOOL result = NO;
-	
-	dispatch_sync(internalQueue, ^{
-		
-		result = connectionDefaults.objectCacheEnabled;
-	});
-	
-	return result;
+	return connectionDefaults.objectCacheEnabled;
 }
 
 - (void)setDefaultObjectCacheEnabled:(BOOL)defaultObjectCacheEnabled
 {
-	dispatch_sync(internalQueue, ^{
-		
-		connectionDefaults.objectCacheEnabled = defaultObjectCacheEnabled;
-	});
+	connectionDefaults.objectCacheEnabled = defaultObjectCacheEnabled;
 }
 
 - (NSUInteger)defaultObjectCacheLimit
 {
-	__block NSUInteger result = NO;
-	
-	dispatch_sync(internalQueue, ^{
-		
-		result = connectionDefaults.objectCacheLimit;
-	});
-	
-	return result;
+	return connectionDefaults.objectCacheLimit;
 }
 
 - (void)setDefaultObjectCacheLimit:(NSUInteger)defaultObjectCacheLimit
 {
-	dispatch_sync(internalQueue, ^{
-		
-		connectionDefaults.objectCacheLimit = defaultObjectCacheLimit;
-	});
+	connectionDefaults.objectCacheLimit = defaultObjectCacheLimit;
 }
 
 - (BOOL)defaultMetadataCacheEnabled
 {
-	__block BOOL result = NO;
-	
-	dispatch_sync(internalQueue, ^{
-		
-		result = connectionDefaults.metadataCacheEnabled;
-	});
-	
-	return result;
+	return connectionDefaults.metadataCacheEnabled;
 }
 
 - (void)setDefaultMetadataCacheEnabled:(BOOL)defaultMetadataCacheEnabled
 {
-	dispatch_sync(internalQueue, ^{
-		
-		connectionDefaults.metadataCacheEnabled = defaultMetadataCacheEnabled;
-	});
+	connectionDefaults.metadataCacheEnabled = defaultMetadataCacheEnabled;
 }
 
 - (NSUInteger)defaultMetadataCacheLimit
 {
-	__block NSUInteger result = 0;
-	
-	dispatch_sync(internalQueue, ^{
-		
-		result = connectionDefaults.metadataCacheLimit;
-	});
-	
-	return result;
+	return connectionDefaults.metadataCacheLimit;
 }
 
 - (void)setDefaultMetadataCacheLimit:(NSUInteger)defaultMetadataCacheLimit
 {
-	dispatch_sync(internalQueue, ^{
-		
-		connectionDefaults.metadataCacheLimit = defaultMetadataCacheLimit;
-	});
+	connectionDefaults.metadataCacheLimit = defaultMetadataCacheLimit;
 }
 
 - (YapDatabasePolicy)defaultObjectPolicy
 {
-	__block YapDatabasePolicy result = YapDatabasePolicyShare;
-	
-	dispatch_sync(internalQueue, ^{
-		
-		result = connectionDefaults.objectPolicy;
-	});
-	
-	return result;
+	return connectionDefaults.objectPolicy;
 }
 
 - (void)setDefaultObjectPolicy:(YapDatabasePolicy)defaultObjectPolicy
 {
-	dispatch_sync(internalQueue, ^{
-		
-		connectionDefaults.objectPolicy = defaultObjectPolicy;
-	});
+	connectionDefaults.objectPolicy = defaultObjectPolicy;
 }
 
 - (YapDatabasePolicy)defaultMetadataPolicy
 {
-	__block YapDatabasePolicy result = YapDatabasePolicyShare;
-	
-	dispatch_sync(internalQueue, ^{
-		
-		result = connectionDefaults.metadataPolicy;
-	});
-	
-	return result;
+	return connectionDefaults.metadataPolicy;
 }
 
 - (void)setDefaultMetadataPolicy:(YapDatabasePolicy)defaultMetadataPolicy
 {
-	dispatch_sync(internalQueue, ^{
-		
-		connectionDefaults.metadataPolicy = defaultMetadataPolicy;
-	});
+	connectionDefaults.metadataPolicy = defaultMetadataPolicy;
 }
 
 #if TARGET_OS_IOS || TARGET_OS_TV
 
 - (YapDatabaseConnectionFlushMemoryFlags)defaultAutoFlushMemoryFlags
 {
-	__block YapDatabaseConnectionFlushMemoryFlags result = YapDatabaseConnectionFlushMemoryFlags_None;
-	
-	dispatch_sync(internalQueue, ^{
-		
-		result = connectionDefaults.autoFlushMemoryFlags;
-	});
-	
-	return result;
+	return connectionDefaults.autoFlushMemoryFlags;
 }
 
 - (void)setDefaultAutoFlushMemoryFlags:(YapDatabaseConnectionFlushMemoryFlags)defaultAutoFlushMemoryFlags
 {
-	dispatch_sync(internalQueue, ^{
-		
-		connectionDefaults.autoFlushMemoryFlags = defaultAutoFlushMemoryFlags;
-	});
+	connectionDefaults.autoFlushMemoryFlags = defaultAutoFlushMemoryFlags;
 }
 
 #endif

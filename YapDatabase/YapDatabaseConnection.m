@@ -207,7 +207,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		
 		enableMultiProcessSupport = options.enableMultiProcessSupport;
 		
-		YapDatabaseConnectionConfig *defaults = [database connectionDefaults];
+		YapDatabaseConnectionConfig *defaults = [database.connectionDefaults copy];
 		
 		objectCacheLimit = defaults.objectCacheLimit;
 		metadataCacheLimit = defaults.metadataCacheLimit;

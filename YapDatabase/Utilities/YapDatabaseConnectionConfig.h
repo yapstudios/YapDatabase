@@ -8,30 +8,32 @@
  *
  * Of course, the connection may then override these default configuration values, and configure itself as needed.
  *
- * @see YapDatabase defaultObjectCacheEnabled
- * @see YapDatabase defaultObjectCacheLimit
+ * For more detailed documentation on these properties, see the YapDatabaseConnection header file.
+ *
+ * @see YapDatabaseConnection objectCacheEnabled
+ * @see YapDatabaseConnection objectCacheLimit
  * 
- * @see YapDatabase defaultMetadataCacheEnabled
- * @see YapDatabase defaultMetadataCacheLimit
+ * @see YapDatabaseConnection metadataCacheEnabled
+ * @see YapDatabaseConnection metadataCacheLimit
  * 
- * @see YapDatabase defaultObjectPolicy
- * @see YapDatabase defaultMetadataPolicy
+ * @see YapDatabaseConnection objectPolicy
+ * @see YapDatabaseConnection metadataPolicy
  * 
- * @see YapDatabase defaultAutoFlushMemoryLevel
+ * @see YapDatabaseConnection autoFlushMemoryLevel
 **/
 @interface YapDatabaseConnectionConfig : NSObject <NSCopying>
 
-@property (nonatomic, assign, readwrite) BOOL objectCacheEnabled;
-@property (nonatomic, assign, readwrite) NSUInteger objectCacheLimit;
+@property (atomic, assign, readwrite) BOOL objectCacheEnabled;
+@property (atomic, assign, readwrite) NSUInteger objectCacheLimit;
 
-@property (nonatomic, assign, readwrite) BOOL metadataCacheEnabled;
-@property (nonatomic, assign, readwrite) NSUInteger metadataCacheLimit;
+@property (atomic, assign, readwrite) BOOL metadataCacheEnabled;
+@property (atomic, assign, readwrite) NSUInteger metadataCacheLimit;
 
-@property (nonatomic, assign, readwrite) YapDatabasePolicy objectPolicy;
-@property (nonatomic, assign, readwrite) YapDatabasePolicy metadataPolicy;
+@property (atomic, assign, readwrite) YapDatabasePolicy objectPolicy;
+@property (atomic, assign, readwrite) YapDatabasePolicy metadataPolicy;
 
 #if TARGET_OS_IOS || TARGET_OS_TV
-@property (nonatomic, assign, readwrite) YapDatabaseConnectionFlushMemoryFlags autoFlushMemoryFlags;
+@property (atomic, assign, readwrite) YapDatabaseConnectionFlushMemoryFlags autoFlushMemoryFlags;
 #endif
 
 @end

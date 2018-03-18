@@ -112,11 +112,6 @@ static NSString *const ext_key_class = @"class";
 + (NSDictionary *)columnNamesAndAffinityForTable:(NSString *)tableName using:(sqlite3 *)aDb;
 
 /**
- * New connections inherit their default values from this structure.
-**/
-- (YapDatabaseConnectionConfig *)connectionDefaults;
-
-/**
  * Called from YapDatabaseConnection's dealloc method to remove connection's state from connectionStates array.
 **/
 - (void)removeConnection:(YapDatabaseConnection *)connection;

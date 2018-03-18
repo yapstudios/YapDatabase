@@ -418,6 +418,18 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Allows you to configure the default values for new connections.
+ *
+ * When you create a connection via [database newConnection], that new connection will inherit
+ * its initial configuration via the default values configured for the parent database.
+ * Of course, the connection may then override these default configuration values, and configure itself as needed.
+ *
+ * Changing the default values only affects future connections that will be created.
+ * It does not affect connections that have already been created.
+**/
+@property (atomic, readonly) YapDatabaseConnectionConfig *connectionDefaults;
+
+/**
  * Allows you to set the default objectCacheEnabled and objectCacheLimit for all new connections.
  *
  * When you create a connection via [database newConnection], that new connection will inherit
@@ -430,12 +442,10 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * The default defaultObjectCacheEnabled is YES.
  * The default defaultObjectCacheLimit is 250.
  *
- * For more detailed documentation on these properties, see the YapDatabaseConnection header file.
- * @see YapDatabaseConnection objectCacheEnabled
- * @see YapDatabaseConnection objectCacheLimit
+ * @deprecated Use `connectionDefaults` property instead.
 **/
-@property (atomic, assign, readwrite) BOOL defaultObjectCacheEnabled;
-@property (atomic, assign, readwrite) NSUInteger defaultObjectCacheLimit;
+@property (atomic, assign, readwrite) BOOL defaultObjectCacheEnabled __attribute((deprecated));
+@property (atomic, assign, readwrite) NSUInteger defaultObjectCacheLimit __attribute((deprecated));
 
 /**
  * Allows you to set the default metadataCacheEnabled and metadataCacheLimit for all new connections.
@@ -450,12 +460,10 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * The default defaultMetadataCacheEnabled is YES.
  * The default defaultMetadataCacheLimit is 500.
  *
- * For more detailed documentation on these properties, see the YapDatabaseConnection header file.
- * @see YapDatabaseConnection metadataCacheEnabled
- * @see YapDatabaseConnection metadataCacheLimit
+ * @deprecated Use `connectionDefaults` property instead.
 **/
-@property (atomic, assign, readwrite) BOOL defaultMetadataCacheEnabled;
-@property (atomic, assign, readwrite) NSUInteger defaultMetadataCacheLimit;
+@property (atomic, assign, readwrite) BOOL defaultMetadataCacheEnabled __attribute((deprecated));
+@property (atomic, assign, readwrite) NSUInteger defaultMetadataCacheLimit __attribute((deprecated));
 
 /**
  * Allows you to set the default objectPolicy and metadataPolicy for all new connections.
@@ -469,13 +477,11 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * 
  * The default defaultObjectPolicy is YapDatabasePolicyContainment.
  * The default defaultMetadataPolicy is YapDatabasePolicyContainment.
- * 
- * For more detailed documentation on these properties, see the YapDatabaseConnection header file.
- * @see YapDatabaseConnection objectPolicy
- * @see YapDatabaseConnection metadataPolicy
+ *
+ * @deprecated Use `connectionDefaults` property instead.
 **/
-@property (atomic, assign, readwrite) YapDatabasePolicy defaultObjectPolicy;
-@property (atomic, assign, readwrite) YapDatabasePolicy defaultMetadataPolicy;
+@property (atomic, assign, readwrite) YapDatabasePolicy defaultObjectPolicy __attribute((deprecated));
+@property (atomic, assign, readwrite) YapDatabasePolicy defaultMetadataPolicy __attribute((deprecated));
 
 #if TARGET_OS_IOS || TARGET_OS_TV
 /**
@@ -490,10 +496,9 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * 
  * The default defaultAutoFlushMemoryFlags is YapDatabaseConnectionFlushMemoryFlags_All.
  *
- * For more detailed documentation on these properties, see the YapDatabaseConnection header file.
- * @see YapDatabaseConnection autoFlushMemoryFlags
+ * @deprecated Use `connectionDefaults` property instead.
 **/
-@property (atomic, assign, readwrite) YapDatabaseConnectionFlushMemoryFlags defaultAutoFlushMemoryFlags;
+@property (atomic, assign, readwrite) YapDatabaseConnectionFlushMemoryFlags defaultAutoFlushMemoryFlags __attribute((deprecated));
 #endif
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
