@@ -2550,12 +2550,14 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 /**
  * Public API
 **/
-- (void)enumerateAddedOperationsInPipeline:(NSString *)pipeline
+- (void)enumerateAddedOperationsInPipeline:(NSString *)pipelineName
                                 usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
                                                      NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	if (enumBlock == nil) return;
 	if (databaseTransaction->isReadWriteTransaction == NO) return;
+	
+	YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
 	
 	[self _enumerateAndModifyOperations:YDBCloudCore_EnumOps_All
 	                         inPipeline:pipeline
