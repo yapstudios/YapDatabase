@@ -2054,9 +2054,6 @@ static int connectionBusyHandler(void *ptr, int count)
 	}
 #endif
 	
-	if (completionQueue == NULL && completionBlock != NULL)
-		completionQueue = dispatch_get_main_queue();
-	
 	dispatch_async(connectionQueue, ^{ @autoreleasepool {
 		
 		if (longLivedReadTransaction)
@@ -2072,8 +2069,9 @@ static int connectionBusyHandler(void *ptr, int count)
 			[self postReadTransaction:transaction];
 		}
 		
-		if (completionBlock)
-			dispatch_async(completionQueue, completionBlock);
+		if (completionBlock) {
+			dispatch_async(completionQueue ?: dispatch_get_main_queue(), completionBlock);
+		}
 	}});
 }
 
@@ -2137,9 +2135,6 @@ static int connectionBusyHandler(void *ptr, int count)
 	}
 #endif
 	
-	if (completionQueue == NULL && completionBlock != NULL)
-		completionQueue = dispatch_get_main_queue();
-	
 	// Order matters.
 	// First go through the serial connection queue.
 	// Then go through serial write queue for the database.
@@ -2184,8 +2179,9 @@ static int connectionBusyHandler(void *ptr, int count)
 				}
 			}
 			
-			if (completionBlock)
-				dispatch_async(completionQueue, completionBlock);
+			if (completionBlock) {
+				dispatch_async(completionQueue ?: dispatch_get_main_queue(), completionBlock);
+			}
 			
 		}}); // End dispatch_sync(database->writeQueue)
 		
@@ -2217,12 +2213,9 @@ static int connectionBusyHandler(void *ptr, int count)
 {
 	if (completionBlock == NULL) return;
 	
-	if (completionQueue == NULL && completionBlock != NULL)
-		completionQueue = dispatch_get_main_queue();
-	
 	dispatch_async(connectionQueue, ^{
 		
-		dispatch_async(completionQueue, completionBlock);
+		dispatch_async(completionQueue ?: dispatch_get_main_queue(), completionBlock);
 	});
 }
 
