@@ -1769,6 +1769,17 @@ static int connectionBusyHandler(void *ptr, int count) {
 	return connection;
 }
 
+/**
+ * This is a public method called to create a new connection.
+**/
+- (YapDatabaseConnection *)newConnection:(YapDatabaseConnectionConfig *)config
+{
+	YapDatabaseConnection *connection = [[YapDatabaseConnection alloc] initWithDatabase:self config:config];
+	
+	[self addConnection:connection];
+	return connection;
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Extensions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

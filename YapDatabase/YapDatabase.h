@@ -527,6 +527,7 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * Creating a new connection everytime you need to access the database is a recipe for foolishness.
 **/
 - (YapDatabaseConnection *)newConnection;
+- (YapDatabaseConnection *)newConnection:(nullable YapDatabaseConnectionConfig *)config;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Extensions

@@ -180,6 +180,11 @@ static int connectionBusyHandler(void *ptr, int count)
 
 - (id)initWithDatabase:(YapDatabase *)inDatabase
 {
+	return [self initWithDatabase:inDatabase config:nil];
+}
+
+- (instancetype)initWithDatabase:(YapDatabase *)inDatabase config:(YapDatabaseConnectionConfig *)inConfig
+{
 	if ((self = [super init]))
 	{
 		database = inDatabase;
@@ -207,7 +212,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		
 		enableMultiProcessSupport = options.enableMultiProcessSupport;
 		
-		YapDatabaseConnectionConfig *defaults = [database.connectionDefaults copy];
+		YapDatabaseConnectionConfig *defaults = inConfig ?: database.connectionDefaults;
 		
 		objectCacheLimit = defaults.objectCacheLimit;
 		metadataCacheLimit = defaults.metadataCacheLimit;

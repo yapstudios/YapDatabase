@@ -236,7 +236,8 @@ static NSString *const ext_key_class = @"class";
 	YapMutationStack_Bool *mutationStack;
 }
 
-- (id)initWithDatabase:(YapDatabase *)database;
+- (instancetype)initWithDatabase:(YapDatabase *)database;
+- (instancetype)initWithDatabase:(YapDatabase *)database config:(YapDatabaseConnectionConfig *)config;
 
 - (sqlite3_stmt *)beginTransactionStatement;
 - (sqlite3_stmt *)beginImmediateTransactionStatement;
