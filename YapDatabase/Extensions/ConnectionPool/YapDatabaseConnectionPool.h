@@ -63,6 +63,12 @@ NS_ASSUME_NONNULL_BEGIN
 @property (atomic, strong, readwrite) YapDatabaseConnectionConfig *connectionDefaults;
 
 /**
+ * Allows you to perform additional configuration on a newly created connection.
+ * This block is invoked BEFORE the connection is returned to the caller.
+**/
+@property (atomic, copy, readwrite) void(^didCreateNewConnectionBlock)(YapDatabaseConnection *newConnection);
+
+/**
  * Returns an existing connection from the pool, or creates a new connection, depending upon the pool's configuration,
  * and the number of pending/active transactions for existing connections.
  *

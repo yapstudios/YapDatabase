@@ -15,6 +15,7 @@
 
 @dynamic connectionLimit;
 @dynamic connectionDefaults;
+@synthesize didCreateNewConnectionBlock;
 
 - (instancetype)initWithDatabase:(YapDatabase *)inDatabase
 {
@@ -78,6 +79,7 @@
 - (YapDatabaseConnection *)connection
 {
 	__block YapDatabaseConnection *result = nil;
+	__block BOOL isNewConnection = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
 		
@@ -117,8 +119,18 @@
 		{
 			result = [database newConnection:connectionDefaults];
 			[connections addObject:result];
+			
+			isNewConnection = YES;
 		}
 	}});
+	
+	if (isNewConnection)
+	{
+		void (^block)(YapDatabaseConnection*) = self.didCreateNewConnectionBlock;
+		if (block) { @autoreleasepool {
+			block(result);
+		}}
+	}
 	
 	return result;
 }
