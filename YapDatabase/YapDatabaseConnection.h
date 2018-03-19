@@ -283,6 +283,17 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
 **/
 @property (atomic, assign, readonly) uint64_t snapshot;
 
+/**
+ * Returns the number of pending/active transactions for the connection.
+ *
+ * Note that if a transaction is currently in progress (active),
+ * it's still considered "pending" since it hasn't completed yet.
+ *
+ * This is a generalized way to estimate the load on a connection,
+ * and can be used for load balancing, such as done by YapDatabaseConnectionPool.
+**/
+@property (atomic, assign, readonly) uint64_t pendingTransactionCount;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Transactions
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -11,8 +11,9 @@
 #import "YapSet.h"
 #import "YapTouch.h"
 
-#import <objc/runtime.h>
 #import <mach/mach_time.h>
+#import <objc/runtime.h>
+#import <stdatomic.h>
 
 #if TARGET_OS_IOS || TARGET_OS_TV
 #import <UIKit/UIKit.h>
@@ -106,6 +107,8 @@ static int connectionBusyHandler(void *ptr, int count)
 	NSMutableDictionary *extensions;
 	BOOL extensionsReady;
 	id sharedKeySetForExtensions;
+	
+	atomic_ullong pendingTransactionCount;
 	
 	sqlite3_stmt *beginTransactionStatement;
 	sqlite3_stmt *beginImmediateTransactionStatement;
@@ -598,6 +601,7 @@ static int connectionBusyHandler(void *ptr, int count)
 #endif
 
 @dynamic snapshot;
+@dynamic pendingTransactionCount;
 
 - (BOOL)objectCacheEnabled
 {
@@ -850,6 +854,12 @@ static int connectionBusyHandler(void *ptr, int count)
 	else
 		dispatch_sync(connectionQueue, block);
 	
+	return result;
+}
+
+- (uint64_t)pendingTransactionCount
+{
+	uint64_t result = atomic_load_explicit(&pendingTransactionCount, memory_order_relaxed);
 	return result;
 }
 
@@ -1894,6 +1904,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	}
 #endif
 	
+	atomic_fetch_add_explicit(&pendingTransactionCount, (uint64_t)1, memory_order_relaxed);
 	dispatch_sync(connectionQueue, ^{ @autoreleasepool {
 		
 		if (longLivedReadTransaction)
@@ -1908,6 +1919,8 @@ static int connectionBusyHandler(void *ptr, int count)
 			block(transaction);
 			[self postReadTransaction:transaction];
 		}
+		
+		atomic_fetch_sub_explicit(&pendingTransactionCount, (uint64_t)1, memory_order_relaxed);
 	}});
 }
 
@@ -1954,6 +1967,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	// Once we're inside the database writeQueue, we know that we are the only write transaction.
 	// No other transaction can possibly modify the database except us, even in other connections.
 	
+	atomic_fetch_add_explicit(&pendingTransactionCount, (uint64_t)1, memory_order_relaxed);
 	dispatch_sync(connectionQueue, ^{
 		
 		if (longLivedReadTransaction)
@@ -1992,6 +2006,8 @@ static int connectionBusyHandler(void *ptr, int count)
 			}
 			
 		}}); // End dispatch_sync(database->writeQueue)
+		
+		atomic_fetch_sub_explicit(&pendingTransactionCount, (uint64_t)1, memory_order_relaxed);
 		
 	}); // End dispatch_sync(connectionQueue)
 }
@@ -2054,6 +2070,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	}
 #endif
 	
+	atomic_fetch_add_explicit(&pendingTransactionCount, (uint64_t)1, memory_order_relaxed);
 	dispatch_async(connectionQueue, ^{ @autoreleasepool {
 		
 		if (longLivedReadTransaction)
@@ -2072,6 +2089,8 @@ static int connectionBusyHandler(void *ptr, int count)
 		if (completionBlock) {
 			dispatch_async(completionQueue ?: dispatch_get_main_queue(), completionBlock);
 		}
+		
+		atomic_fetch_sub_explicit(&pendingTransactionCount, (uint64_t)1, memory_order_relaxed);
 	}});
 }
 
@@ -2142,6 +2161,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	// Once we're inside the database writeQueue, we know that we are the only write transaction.
 	// No other transaction can possibly modify the database except us, even in other connections.
 	
+	atomic_fetch_add_explicit(&pendingTransactionCount, (uint64_t)1, memory_order_relaxed);
 	dispatch_async(connectionQueue, ^{
 		
 		if (longLivedReadTransaction)
@@ -2184,6 +2204,8 @@ static int connectionBusyHandler(void *ptr, int count)
 			}
 			
 		}}); // End dispatch_sync(database->writeQueue)
+		
+		atomic_fetch_sub_explicit(&pendingTransactionCount, (uint64_t)1, memory_order_relaxed);
 		
 	}); // End dispatch_async(connectionQueue)
 }
