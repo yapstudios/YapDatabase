@@ -580,6 +580,15 @@ static int connectionBusyHandler(void *ptr, int count)
 @synthesize database = database;
 @synthesize name = _name;
 
+@dynamic objectCacheEnabled;
+@dynamic objectCacheLimit;
+
+@dynamic metadataCacheEnabled;
+@dynamic metadataCacheLimit;
+
+@dynamic objectPolicy;
+@dynamic metadataPolicy;
+
 #if YapDatabaseEnforcePermittedTransactions
 @synthesize permittedTransactions = _mustUseAtomicProperty_permittedTransactions;
 #endif
@@ -587,6 +596,8 @@ static int connectionBusyHandler(void *ptr, int count)
 #if TARGET_OS_IOS || TARGET_OS_TV
 @synthesize autoFlushMemoryFlags;
 #endif
+
+@dynamic snapshot;
 
 - (BOOL)objectCacheEnabled
 {
