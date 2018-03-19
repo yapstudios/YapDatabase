@@ -109,6 +109,10 @@ Pod::Spec.new do |s|
       sse.subspec 'ConnectionProxy' do |ssee|
         ssee.source_files = 'YapDatabase/Extensions/ConnectionProxy/**/*.{h,m,mm,c}'
       end
+		
+      sse.subspec 'ConnectionPool' do |ssee|
+        ssee.source_files = 'YapDatabase/Extensions/ConnectionPool/**/*.{h,m,mm,c}'
+      end
 
       sse.subspec 'ActionManager' do |ssee|
         ssee.osx.framework   = 'SystemConfiguration'
@@ -209,6 +213,10 @@ Pod::Spec.new do |s|
 
       sse.subspec 'ConnectionProxy' do |ssee|
         ssee.source_files = 'YapDatabase/Extensions/ConnectionProxy/**/*.{h,m,mm,c}'
+      end
+		
+      sse.subspec 'ConnectionPool' do |ssee|
+        ssee.source_files = 'YapDatabase/Extensions/ConnectionPool/**/*.{h,m,mm,c}'
       end
 
       sse.subspec 'ActionManager' do |ssee|

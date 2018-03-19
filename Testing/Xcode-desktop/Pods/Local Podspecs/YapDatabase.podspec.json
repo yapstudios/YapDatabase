@@ -140,6 +140,10 @@
               "source_files": "YapDatabase/Extensions/ConnectionProxy/**/*.{h,m,mm,c}"
             },
             {
+              "name": "ConnectionPool",
+              "source_files": "YapDatabase/Extensions/ConnectionPool/**/*.{h,m,mm,c}"
+            },
+            {
               "name": "ActionManager",
               "osx": {
                 "frameworks": "SystemConfiguration"
@@ -287,6 +291,10 @@
             {
               "name": "ConnectionProxy",
               "source_files": "YapDatabase/Extensions/ConnectionProxy/**/*.{h,m,mm,c}"
+            },
+            {
+              "name": "ConnectionPool",
+              "source_files": "YapDatabase/Extensions/ConnectionPool/**/*.{h,m,mm,c}"
             },
             {
               "name": "ActionManager",

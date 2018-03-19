@@ -140,6 +140,12 @@ framework module YapDatabase {
 		header "YapDatabaseConnectionProxy.h"
 	}
 	
+	// Extension: ConnectionPool
+	
+	explicit module YapDatabaseConnectionPool {
+		header "YapDatabaseConnectionPool.h"
+	}
+	
 	// Extension: ActionManager
 	
 	explicit module YapDatabaseActionManager {

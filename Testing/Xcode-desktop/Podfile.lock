@@ -18,6 +18,7 @@ PODS:
     - YapDatabase/Standard/Extensions/AutoView (= 3.0.2)
     - YapDatabase/Standard/Extensions/CloudCore (= 3.0.2)
     - YapDatabase/Standard/Extensions/CloudKit (= 3.0.2)
+    - YapDatabase/Standard/Extensions/ConnectionPool (= 3.0.2)
     - YapDatabase/Standard/Extensions/ConnectionProxy (= 3.0.2)
     - YapDatabase/Standard/Extensions/CrossProcessNotification (= 3.0.2)
     - YapDatabase/Standard/Extensions/FilteredView (= 3.0.2)
@@ -38,6 +39,8 @@ PODS:
   - YapDatabase/Standard/Extensions/CloudCore (3.0.2):
     - YapDatabase/Standard/Core
   - YapDatabase/Standard/Extensions/CloudKit (3.0.2):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/ConnectionPool (3.0.2):
     - YapDatabase/Standard/Core
   - YapDatabase/Standard/Extensions/ConnectionProxy (3.0.2):
     - YapDatabase/Standard/Core
@@ -75,7 +78,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   CocoaLumberjack: 2e258a064cacc8eb9a2aca318e24d02a0a7fd56d
-  YapDatabase: 3c5115e206a98e8bc5bd43d27bc9346a22d5ee16
+  YapDatabase: 972eccb0c997d0dafe8192dccf7f58351914baf1
 
 PODFILE CHECKSUM: 8dceb5c937bc6e9558d8d75103d141eef959b637
 

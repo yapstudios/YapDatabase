@@ -16,6 +16,7 @@
 @import YapDatabase.YapDatabaseHooks;
 @import YapDatabase.YapDatabaseRTreeIndex;
 @import YapDatabase.YapDatabaseConnectionProxy;
+@import YapDatabase.YapDatabaseConnectionPool;
 @import YapDatabase.YapDatabaseActionManager;
 #if !TARGET_OS_WATCH
 @import YapDatabase.YapDatabaseCloudKit;
