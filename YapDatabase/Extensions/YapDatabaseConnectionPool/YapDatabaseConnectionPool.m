@@ -1,0 +1,126 @@
+#import "YapDatabaseConnectionPool.h"
+
+#define DEFAULT_CONNECTION_LIMIT ((NSUInteger)3)
+
+@implementation YapDatabaseConnectionPool {
+	
+	YapDatabase *database;
+	
+	dispatch_queue_t queue;
+	NSMutableArray<YapDatabaseConnection *> *connections;
+	
+	NSUInteger connectionLimit;
+	YapDatabaseConnectionConfig *connectionDefaults;
+}
+
+@dynamic connectionLimit;
+@dynamic connectionDefaults;
+
+- (instancetype)initWithDatabase:(YapDatabase *)inDatabase
+{
+	NSParameterAssert(inDatabase != nil);
+	
+	if ((self = [super init]))
+	{
+		database = inDatabase;
+		
+		queue = dispatch_queue_create("YapDatabaseConnectionPool", DISPATCH_QUEUE_SERIAL);
+		connections = [[NSMutableArray alloc] init];
+		
+		connectionLimit = DEFAULT_CONNECTION_LIMIT;
+	}
+	return self;
+}
+
+- (NSUInteger)connectionLimit
+{
+	__block NSUInteger result = 0;
+	dispatch_sync(queue, ^{
+		result = connectionLimit;
+	});
+	
+	return result;
+}
+
+- (void)setConnectionLimit:(NSUInteger)limit
+{
+	if (limit == 0) {
+		limit = DEFAULT_CONNECTION_LIMIT;
+	}
+	
+	dispatch_sync(queue, ^{ @autoreleasepool {
+		connectionLimit = limit;
+		
+		while (connections.count > connectionLimit)
+		{
+			[connections removeLastObject];
+		}
+	}});
+}
+
+- (YapDatabaseConnectionConfig *)connectionDefaults
+{
+	__block YapDatabaseConnectionConfig *result = nil;
+	dispatch_sync(queue, ^{
+		result = connectionDefaults;
+	});
+	
+	return result;
+}
+
+- (void)setConnectionDefaults:(YapDatabaseConnectionConfig *)config
+{
+	dispatch_sync(queue, ^{
+		connectionDefaults = config;
+	});
+}
+
+- (YapDatabaseConnection *)connection
+{
+	__block YapDatabaseConnection *result = nil;
+	
+	dispatch_sync(queue, ^{ @autoreleasepool {
+		
+		uint64_t minLoad = 0;
+		
+		for (YapDatabaseConnection *connection in connections)
+		{
+			uint64_t load = connection.pendingTransactionCount;
+			
+			if (!result || load < minLoad)
+			{
+				result = connection;
+				minLoad = load;
+			}
+			
+			if (minLoad == 0) {
+				// Found what we needed.
+				// We can stop looking now.
+				break;
+			}
+		}
+		
+		BOOL createNewConnection = NO;
+		
+		if (result == nil)
+		{
+			createNewConnection = YES;
+		}
+		else if (minLoad > 0)
+		{
+			if (connections.count < connectionLimit) {
+				createNewConnection = YES;
+			}
+		}
+		
+		if (createNewConnection)
+		{
+			result = [database newConnection:connectionDefaults];
+			[connections addObject:result];
+		}
+	}});
+	
+	return result;
+}
+
+@end
