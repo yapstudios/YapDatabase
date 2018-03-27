@@ -2776,6 +2776,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	// Forward the changeset to all other connections so they can perform any needed updates.
 	// Generally this means updating the in-memory components such as the cache.
 	
+	NSMutableArray<YapDatabaseConnection *> *strongConnections = nil;
 	dispatch_group_t group = NULL;
 	
 	for (YapDatabaseConnectionState *state in connectionStates)
@@ -2787,6 +2788,11 @@ static int connectionBusyHandler(void *ptr, int count) {
 			
 			if (connection)
 			{
+				if (strongConnections == nil)
+					strongConnections = [NSMutableArray array];
+				
+				[strongConnections addObject:connection];
+				
 				if (group == NULL)
 					group = dispatch_group_create();
 				
@@ -2830,6 +2836,22 @@ static int connectionBusyHandler(void *ptr, int count) {
 		dispatch_group_notify(group, snapshotQueue, block);
 	else
 		block();
+	
+	if (strongConnections)
+	{
+		// Edge case protection:
+		// Bug fix for issues: #437, #441
+		//
+		// Deadlock crash if:
+		// - YapDatabase is the last one holding a strong reference to a YapDatabaseConnection instance
+		// - The [connection dealloc] call occurs within the snapshotQueue
+		//
+		// This is a workaround to ensure that the dealloc occurs outside the snapshotQueue.
+		//
+		dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{ @autoreleasepool {
+			[strongConnections removeAllObjects];
+		}});
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -3147,7 +3169,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 {
 	NSAssert(dispatch_get_specific(IsOnWriteQueueKey), @"Must go through writeQueue.");
 	
-	dispatch_group_t group = dispatch_group_create();
+	__block NSMutableArray<YapDatabaseConnection *> *strongConnections = nil;
+	__block dispatch_group_t group = NULL;
 	
 	__block YAPUnfairLock spinLock = YAP_UNFAIR_LOCK_INIT;
 	__block atomic_bool hasWriteQueue = true;
@@ -3158,9 +3181,19 @@ static int connectionBusyHandler(void *ptr, int count) {
 		{
 			if (state->activeReadTransaction && state->longLivedReadTransaction)
 			{
+				// Create strong reference (state->connection is weak)
 				__strong YapDatabaseConnection *connection = state->connection;
+				
 				if (connection)
 				{
+					if (strongConnections == nil)
+						strongConnections = [NSMutableArray array];
+					
+					[strongConnections addObject:connection];
+					
+					if (group == NULL)
+						group = dispatch_group_create();
+					
 					dispatch_group_async(group, connection->connectionQueue, ^{
 						
 						YAPUnfairLockLock(&spinLock);
@@ -3177,7 +3210,28 @@ static int connectionBusyHandler(void *ptr, int count) {
 		}
 	}});
 	
-	long ready = dispatch_group_wait(group, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(50 * NSEC_PER_MSEC)));
+	if (strongConnections)
+	{
+		// Edge case protection:
+		// Bug fix for issues: #437, #441
+		//
+		// Deadlock crash if:
+		// - YapDatabase is the last one holding a strong reference to a YapDatabaseConnection instance
+		// - The [connection dealloc] call occurs within the snapshotQueue
+		//
+		// This is a workaround to ensure that the dealloc occurs outside the snapshotQueue.
+		//
+		[strongConnections removeAllObjects];
+	}
+	
+	// dispatch_group_wait():
+	// Returns zero on success (all blocks associated with the group completed before the specified timeout)
+	// or non-zero on error (timeout occurred).
+	//
+	long ready = 0;
+	if (group) {
+		ready = dispatch_group_wait(group, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(50 * NSEC_PER_MSEC)));
+	}
 	
 	if (ready != 0)
 	{
