@@ -52,8 +52,8 @@
 	sqlite3_stmt *countForNameStatement;
 	sqlite3_stmt *countForSrcDstStatement;
 	sqlite3_stmt *countForSrcDstNameStatement;
-	sqlite3_stmt *countForSrcNameExcludingDstStatement;
-	sqlite3_stmt *countForDstNameExcludingSrcStatement;
+	sqlite3_stmt *countForSrcExcludingDstStatement;
+	sqlite3_stmt *countForDstExcludingSrcStatement;
 	sqlite3_stmt *removeAllStatement;
 	sqlite3_stmt *removeAllProtocolStatement;
 }
@@ -109,8 +109,8 @@
 	sqlite_finalize_null(&countForNameStatement);
 	sqlite_finalize_null(&countForSrcDstStatement);
 	sqlite_finalize_null(&countForSrcDstNameStatement);
-	sqlite_finalize_null(&countForSrcNameExcludingDstStatement);
-	sqlite_finalize_null(&countForDstNameExcludingSrcStatement);
+	sqlite_finalize_null(&countForSrcExcludingDstStatement);
+	sqlite_finalize_null(&countForDstExcludingSrcStatement);
 	sqlite_finalize_null(&removeAllStatement);
 	sqlite_finalize_null(&removeAllProtocolStatement);
 }
@@ -1022,13 +1022,13 @@
 	return result;
 }
 
-- (sqlite3_stmt *)countForSrcNameExcludingDstStatement
+- (sqlite3_stmt *)countForSrcExcludingDstStatement
 {
-	sqlite3_stmt **statement = &countForSrcNameExcludingDstStatement;
+	sqlite3_stmt **statement = &countForSrcExcludingDstStatement;
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
-		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"src\" = ? AND \"dst\" != ? AND \"name\" = ?;",
+		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"src\" = ? AND \"dst\" != ?;",
 		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
@@ -1037,13 +1037,13 @@
 	return *statement;
 }
 
-- (sqlite3_stmt *)countForDstNameExcludingSrcStatement
+- (sqlite3_stmt *)countForDstExcludingSrcStatement
 {
-	sqlite3_stmt **statement = &countForDstNameExcludingSrcStatement;
+	sqlite3_stmt **statement = &countForDstExcludingSrcStatement;
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
-		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"dst\" = ? AND \"src\" != ? AND \"name\" = ?;",
+		  @"SELECT COUNT(*) AS NumberOfRows FROM \"%@\" WHERE \"dst\" = ? AND \"src\" != ?;",
 		  [parent tableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
