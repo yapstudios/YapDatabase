@@ -118,7 +118,7 @@ static NSString *const changeset_key_reset         = @"reset";
 - (sqlite3_stmt *)enumerateDstFileURLWithSrcStatement:(BOOL *)needsFinalizePtr;
 - (sqlite3_stmt *)enumerateDstFileURLWithSrcNameStatement:(BOOL *)needsFinalizePtr;
 - (sqlite3_stmt *)enumerateDstFileURLWithNameStatement:(BOOL *)needsFinalizePtr;
-- (sqlite3_stmt *)enumerateDstFileURLWithNameExcludingSrcStatement:(BOOL *)needsFinalizePtr;
+- (sqlite3_stmt *)enumerateDstFileURLExcludingSrcStatement:(BOOL *)needsFinalizePtr;
 - (sqlite3_stmt *)enumerateAllDstFileURLStatement:(BOOL *)needsFinalizePtr;
 - (sqlite3_stmt *)enumerateForSrcStatement:(BOOL *)needsFinalizePtr;
 - (sqlite3_stmt *)enumerateForDstStatement:(BOOL *)needsFinalizePtr;

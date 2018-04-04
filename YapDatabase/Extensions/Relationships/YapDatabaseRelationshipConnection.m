@@ -36,7 +36,7 @@
 	sqlite3_stmt *enumerateDstFileURLWithSrcStatement;
 	sqlite3_stmt *enumerateDstFileURLWithSrcNameStatement;
 	sqlite3_stmt *enumerateDstFileURLWithNameStatement;
-	sqlite3_stmt *enumerateDstFileURLWithNameExcludingSrcStatement;
+	sqlite3_stmt *enumerateDstFileURLExcludingSrcStatement;
 	sqlite3_stmt *enumerateAllDstFileURLStatement;
 	sqlite3_stmt *enumerateForSrcStatement;
 	sqlite3_stmt *enumerateForDstStatement;
@@ -93,7 +93,7 @@
 	sqlite_finalize_null(&enumerateDstFileURLWithSrcStatement);
 	sqlite_finalize_null(&enumerateDstFileURLWithSrcNameStatement);
 	sqlite_finalize_null(&enumerateDstFileURLWithNameStatement);
-	sqlite_finalize_null(&enumerateDstFileURLWithNameExcludingSrcStatement);
+	sqlite_finalize_null(&enumerateDstFileURLExcludingSrcStatement);
 	sqlite_finalize_null(&enumerateAllDstFileURLStatement);
 	sqlite_finalize_null(&enumerateForSrcStatement);
 	sqlite_finalize_null(&enumerateForDstStatement);
@@ -651,9 +651,9 @@
 	return result;
 }
 
-- (sqlite3_stmt *)enumerateDstFileURLWithNameExcludingSrcStatement:(BOOL *)needsFinalizePtr
+- (sqlite3_stmt *)enumerateDstFileURLExcludingSrcStatement:(BOOL *)needsFinalizePtr
 {
-	sqlite3_stmt **statement = &enumerateDstFileURLWithNameExcludingSrcStatement;
+	sqlite3_stmt **statement = &enumerateDstFileURLExcludingSrcStatement;
 	
 	sqlite3_stmt* (^CreateStatement)(void) = ^{
 	
@@ -672,8 +672,8 @@
 		// For more information, see the documentation: http://www.sqlite.org/datatype3.html
 		
 		NSString *string = [NSString stringWithFormat:
-		  @"SELECT \"rowid\", \"src\", \"dst\", \"rules\", \"manual\" FROM \"%@\""
-		  @" WHERE \"dst\" > %lld AND \"src\" != ? AND \"name\" = ?;",
+		  @"SELECT \"rowid\", \"name\", \"src\", \"dst\", \"rules\", \"manual\" FROM \"%@\""
+		  @" WHERE \"dst\" > %lld AND \"src\" != ?;",
 		  [parent tableName], INT64_MAX];
 		
 		sqlite3_stmt *stmt = NULL;
