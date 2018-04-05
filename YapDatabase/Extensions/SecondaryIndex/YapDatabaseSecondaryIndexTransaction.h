@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)enumerateKeysAndMetadataMatchingQuery:(YapDatabaseQuery *)query
                                    usingBlock:
-                            (void (^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block;
+                            (void (^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block;
 
 - (BOOL)enumerateKeysAndObjectsMatchingQuery:(YapDatabaseQuery *)query
                                   usingBlock:
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)enumerateRowsMatchingQuery:(YapDatabaseQuery *)query
                         usingBlock:
-                            (void (^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
+                            (void (^)(NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block;
 
 - (BOOL)enumerateIndexedValuesInColumn:(NSString *)column matchingQuery:(YapDatabaseQuery *)query usingBlock:(void(^)(id indexedValue, BOOL *stop))block;
 

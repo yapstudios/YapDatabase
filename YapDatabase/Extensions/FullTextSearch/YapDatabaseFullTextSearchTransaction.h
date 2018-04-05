@@ -36,13 +36,13 @@ NS_ASSUME_NONNULL_BEGIN
                    usingBlock:(void (^)(NSString *collection, NSString *key, BOOL *stop))block;
 
 - (void)enumerateKeysAndMetadataMatching:(NSString *)query
-                              usingBlock:(void (^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block;
+                              usingBlock:(void (^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block;
 
 - (void)enumerateKeysAndObjectsMatching:(NSString *)query
                              usingBlock:(void (^)(NSString *collection, NSString *key, id object, BOOL *stop))block;
 
 - (void)enumerateRowsMatching:(NSString *)query
-                   usingBlock:(void (^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
+                   usingBlock:(void (^)(NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block;
 
 // FTS5 bm25 ordering
 
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enumerateBm25OrderedKeysAndMetadataMatching:(NSString *)query
                                         withWeights:(nullable NSArray<NSNumber *> *)weights
-                                         usingBlock:(void (^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block;
+                                         usingBlock:(void (^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block;
 
 - (void)enumerateBm25OrderedKeysAndObjectsMatching:(NSString *)query
                                        withWeights:(nullable NSArray<NSNumber *> *)weights
@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enumerateBm25OrderedRowsMatching:(NSString *)query
                              withWeights:(nullable NSArray<NSNumber *> *)weights
-                              usingBlock:(void (^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
+                              usingBlock:(void (^)(NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block;
 
 // Query matching + Snippets
 
@@ -72,7 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)enumerateKeysAndMetadataMatching:(NSString *)query
                       withSnippetOptions:(nullable YapDatabaseFullTextSearchSnippetOptions *)options
                               usingBlock:
-            (void (^)(NSString *snippet, NSString *collection, NSString *key, id metadata, BOOL *stop))block;
+            (void (^)(NSString *snippet, NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block;
 
 - (void)enumerateKeysAndObjectsMatching:(NSString *)query
                      withSnippetOptions:(nullable YapDatabaseFullTextSearchSnippetOptions *)options
@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)enumerateRowsMatching:(NSString *)query
            withSnippetOptions:(nullable YapDatabaseFullTextSearchSnippetOptions *)options
                    usingBlock:
-            (void (^)(NSString *snippet, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
+            (void (^)(NSString *snippet, NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block;
 
 @end
 

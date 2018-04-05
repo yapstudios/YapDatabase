@@ -128,15 +128,15 @@
  * 
  * All key/value tuples accessed during enumeration are moved to the beginning of the most-recently-used linked-list.
 **/
-- (void)enumerateValuesForKey:(id)key withBlock:(void (^)(id value, id metadata, BOOL *stop))block;
-- (void)enumerateKeysForValue:(id)value withBlock:(void (^)(id value, id metadata, BOOL *stop))block;
+- (void)enumerateValuesForKey:(id)key withBlock:(void (^)(id value, __nullable id metadata, BOOL *stop))block;
+- (void)enumerateKeysForValue:(id)value withBlock:(void (^)(id value, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Enumerates all key/value pairs in the cache.
  * 
  * As this method is designed to enumerate all values, it ddes not affect the most-recently-used linked-list.
 **/
-- (void)enumerateWithBlock:(void (^)(id key, id value, id metadata, BOOL *stop))block;
+- (void)enumerateWithBlock:(void (^)(id key, id value, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Removes the tuple that matches the given key/value pair.
