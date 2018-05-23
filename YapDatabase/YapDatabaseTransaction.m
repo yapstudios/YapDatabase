@@ -351,7 +351,7 @@
 	}
 	
 	NSNumber *cachedRowid = [connection->keyCache keyForObject:cacheKey];
-	if (cachedRowid)
+	if (cachedRowid != nil)
 	{
 		if (rowidPtr) *rowidPtr = [cachedRowid longLongValue];
 		return YES;
@@ -811,7 +811,7 @@
 		return object;
 	
 	NSNumber *cachedRowid = [connection->keyCache keyForObject:cacheKey];
-	if (cachedRowid)
+	if (cachedRowid != nil)
 	{
 		int64_t rowid = [cachedRowid longLongValue];
 		
@@ -920,7 +920,7 @@
 	}
 	
 	NSNumber *cachedRowid = [connection->keyCache keyForObject:cacheKey];
-	if (cachedRowid)
+	if (cachedRowid != nil)
 	{
 		int64_t rowid = [cachedRowid longLongValue];
 		
@@ -1064,7 +1064,7 @@
 		// Fetch via query.
 		
 		NSNumber *cachedRowid = [connection->keyCache keyForObject:cacheKey];
-		if (cachedRowid)
+		if (cachedRowid != nil)
 		{
 			int64_t rowid = [cachedRowid longLongValue];
 			
@@ -1233,7 +1233,7 @@
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
 	
 	NSNumber *cachedRowid = [connection->keyCache keyForObject:cacheKey];
-	if (cachedRowid)
+	if (cachedRowid != nil)
 	{
 		int64_t rowid = [cachedRowid longLongValue];
 		
@@ -1328,7 +1328,7 @@
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
 	
 	NSNumber *cachedRowid = [connection->keyCache keyForObject:cacheKey];
-	if (cachedRowid)
+	if (cachedRowid != nil)
 	{
 		int64_t rowid = [cachedRowid longLongValue];
 		
@@ -1434,7 +1434,7 @@
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
 	
 	NSNumber *cachedRowid = [connection->keyCache keyForObject:cacheKey];
-	if (cachedRowid)
+	if (cachedRowid != nil)
 	{
 		int64_t rowid = [cachedRowid longLongValue];
 		

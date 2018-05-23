@@ -241,7 +241,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 
 - (BOOL)pendingStatusIsSkippedOrCompleted
 {
-	if (pendingStatus)
+	if (pendingStatus != nil)
 	{
 		YDBCloudCoreOperationStatus status = (YDBCloudCoreOperationStatus)[pendingStatus integerValue];
 		
@@ -255,7 +255,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 
 - (BOOL)pendingStatusIsCompleted
 {
-	if (pendingStatus)
+	if (pendingStatus != nil)
 		return ([pendingStatus integerValue] == YDBCloudOperationStatus_Completed);
 	else
 		return NO;
@@ -263,7 +263,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 
 - (BOOL)pendingStatusIsSkipped
 {
-	if (pendingStatus)
+	if (pendingStatus != nil)
 		return ([pendingStatus integerValue] == YDBCloudOperationStatus_Skipped);
 	else
 		return NO;
