@@ -112,29 +112,36 @@
 
 - (void)asyncCheckpoint:(int64_t)minSnapshot
 {
+	__weak YapMemoryTable *weakSelf = self;
+	
 	dispatch_barrier_async(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic warning "-Wimplicit-retain-self" // Turning warnings *** ON ***
+		
+		__strong YapMemoryTable *strongSelf = weakSelf;
+		if (strongSelf == nil) return;
 		
 		while (YES) // using manual return
 		{
 			int64_t snapshot = 0;
 			NSSet *changedKeys = nil;
 			
-			[lock lock];
+			[strongSelf->lock lock];
 			
-			if ([snapshots count] > 0)
+			if ([strongSelf->snapshots count] > 0)
 			{
-				snapshot = [[snapshots objectAtIndex:0] longLongValue];
+				snapshot = [[strongSelf->snapshots objectAtIndex:0] longLongValue];
 				
 				if (snapshot < minSnapshot)
 				{
-					changedKeys = [changes objectAtIndex:0];
+					changedKeys = [strongSelf->changes objectAtIndex:0];
 			
-					[snapshots removeObjectAtIndex:0];
-					[changes removeObjectAtIndex:0];
+					[strongSelf->snapshots removeObjectAtIndex:0];
+					[strongSelf->changes removeObjectAtIndex:0];
 				}
 			}
 			
-			[lock unlock];
+			[strongSelf->lock unlock];
 			
 			if (changedKeys == nil)
 			{
@@ -146,7 +153,7 @@
 				BOOL hasObject = NO;
 				
 				__unsafe_unretained YapMemoryTableValue *prvValue = nil;
-				__unsafe_unretained YapMemoryTableValue *value = [dict objectForKey:key];
+				__unsafe_unretained YapMemoryTableValue *value = [strongSelf->dict objectForKey:key];
 				
 				while (value && value->snapshot >= (uint64_t)minSnapshot)
 				{
@@ -168,7 +175,7 @@
 							// All values >= minSnapshot represent a deletion.
 							// So we can just dump all values.
 							
-							[dict removeObjectForKey:key];
+							[strongSelf->dict removeObjectForKey:key];
 						}
 						else
 						{
@@ -189,7 +196,7 @@
 							// And 'value' represents a deletion.
 							// So we can just dump all values.
 							
-							[dict removeObjectForKey:key];
+							[strongSelf->dict removeObjectForKey:key];
 						}
 						else
 						{
@@ -206,29 +213,40 @@
 			} // end: for (id key in changedKeys)
 			
 		} // end: while (YES)
+		
+	#pragma clang diagnostic pop
 	}});
 }
 
 - (void)asyncRollback:(int64_t)snapshot withChanges:(NSSet *)changedKeys
 {
+	__weak YapMemoryTable *weakSelf = self;
+	
 	dispatch_barrier_async(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic warning "-Wimplicit-retain-self" // Turning warnings *** ON ***
+		
+		__strong YapMemoryTable *strongSelf = weakSelf;
+		if (strongSelf == nil) return;
 		
 		for (id key in changedKeys)
 		{
-			__unsafe_unretained YapMemoryTableValue *value = [dict objectForKey:key];
+			__unsafe_unretained YapMemoryTableValue *value = [strongSelf->dict objectForKey:key];
 			
 			if (value && value->snapshot == (uint64_t)snapshot)
 			{
 				if (value->olderValue == nil)
 				{
-					[dict removeObjectForKey:key];
+					[strongSelf->dict removeObjectForKey:key];
 				}
 				else
 				{
-					[dict setObject:value->olderValue forKey:key];
+					[strongSelf->dict setObject:value->olderValue forKey:key];
 				}
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 }
 
@@ -251,6 +269,8 @@
 	__block id result = nil;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		__unsafe_unretained YapMemoryTableValue *value = [table->dict objectForKey:key];
 		
@@ -266,6 +286,8 @@
 				value = value->olderValue;
 			}
 		}
+	
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(table->IsOnQueueKey))
@@ -279,6 +301,8 @@
 - (void)enumerateKeysWithBlock:(void (^)(id key, BOOL *stop))userBlock
 {
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		[table->dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
 			
@@ -299,6 +323,8 @@
 				}
 			}
 		}];
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(table->IsOnQueueKey))
@@ -310,6 +336,8 @@
 - (void)enumerateKeysAndObjectsWithBlock:(void (^)(id key, id obj, BOOL *stop))userBlock
 {
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		[table->dict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
 			
@@ -330,6 +358,8 @@
 				}
 			}
 		}];
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(table->IsOnQueueKey))
@@ -352,6 +382,8 @@
 		changedKeys = [[NSMutableSet alloc] init];
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		__unsafe_unretained YapMemoryTableValue *value = [table->dict objectForKey:key];
 		
@@ -374,6 +406,8 @@
 			
 			[changedKeys addObject:key];
 		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(table->IsOnQueueKey))
@@ -396,6 +430,8 @@
 		changedKeys = [[NSMutableSet alloc] init];
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		__unsafe_unretained YapMemoryTableValue *value = [table->dict objectForKey:key];
 		
@@ -436,6 +472,8 @@
 				[changedKeys addObject:key];
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(table->IsOnQueueKey))
@@ -455,6 +493,8 @@
 		changedKeys = [[NSMutableSet alloc] init];
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		for (id key in keys)
 		{
@@ -501,6 +541,8 @@
 				}
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(table->IsOnQueueKey))
@@ -517,6 +559,8 @@
 		changedKeys = [[NSMutableSet alloc] init];
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		// Grab all keys
 		NSArray *keys = [table->dict allKeys];
@@ -561,6 +605,8 @@
 				[table->dict setObject:newValue forKey:key];
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(table->IsOnQueueKey))

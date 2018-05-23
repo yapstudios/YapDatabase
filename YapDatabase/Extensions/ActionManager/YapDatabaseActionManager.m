@@ -549,6 +549,8 @@
 			}
 			
 		} usingBlock:^(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop) {
+		#pragma clang diagnostic push // silence warnings: synchronous access
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 			
 			//
 			// Processing Block
@@ -583,6 +585,8 @@
 					}
 				}
 			}
+			
+		#pragma clang diagnostic pop
 		}];
 		
 	}

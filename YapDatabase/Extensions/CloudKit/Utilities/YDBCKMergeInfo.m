@@ -53,9 +53,9 @@
 		{
 			[newerOriginalValues enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
 				
-				if ([originalValues objectForKey:key] == nil)
+				if ([self->originalValues objectForKey:key] == nil)
 				{
-					[originalValues setObject:obj forKey:key];
+					[self->originalValues setObject:obj forKey:key];
 				}
 			}];
 		}

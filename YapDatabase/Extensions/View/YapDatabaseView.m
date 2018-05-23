@@ -177,8 +177,12 @@
 	
 	__block NSString *mostRecentVersionTag = nil;
 	dispatch_block_t block = ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		mostRecentVersionTag = versionTag;
+		
+	#pragma clang diagnostic pop
 	};
 	
 	__strong YapDatabase *database = self.registeredDatabase;
@@ -275,6 +279,8 @@
 	
 	int64_t extConnectionSnapshot = [databaseConnection snapshot];
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		int64_t extSnapshot = [database snapshot];
 		
@@ -283,6 +289,8 @@
 			result = YES;
 			state = latestState;
 		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(database->IsOnSnapshotQueueKey))

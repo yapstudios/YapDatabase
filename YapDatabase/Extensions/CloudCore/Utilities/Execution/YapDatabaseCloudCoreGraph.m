@@ -120,12 +120,16 @@
 			[newOperations addObjectsFromArray:insertedOperations];
 		
 		[indexesToReplace enumerateIndexesUsingBlock:^(NSUInteger index, BOOL *stop) {
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 			
 			YapDatabaseCloudCoreOperation *oldOperation = operations[index];
 			YapDatabaseCloudCoreOperation *newOperation = modifiedOperations[oldOperation.uuid];
 			
 			[newOperations replaceObjectAtIndex:index withObject:newOperation];
 			[matchedModifiedOperations addObject:newOperation];
+			
+		#pragma clang diagnostic pop
 		}];
 		
 		operations = [[self class] sortOperationsByPriority:newOperations];

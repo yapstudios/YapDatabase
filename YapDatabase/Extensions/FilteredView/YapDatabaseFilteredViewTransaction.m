@@ -67,7 +67,7 @@
 		
 		InvokeFilterBlock = ^(NSString *group, int64_t __unused rowid, YapCollectionKey *ck){
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key);
 		};
 	}
 	else if (filtering->blockType == YapDatabaseBlockTypeWithObject)
@@ -77,9 +77,9 @@
 		
 		InvokeFilterBlock = ^(NSString *group, int64_t rowid, YapCollectionKey *ck){
 			
-			id object = [databaseTransaction objectForCollectionKey:ck withRowid:rowid];
+			id object = [self->databaseTransaction objectForCollectionKey:ck withRowid:rowid];
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key, object);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key, object);
 		};
 	}
 	else if (filtering->blockType == YapDatabaseBlockTypeWithMetadata)
@@ -89,9 +89,9 @@
 		
 		InvokeFilterBlock = ^(NSString *group, int64_t rowid, YapCollectionKey *ck){
 			
-			id metadata = [databaseTransaction metadataForCollectionKey:ck withRowid:rowid];
+			id metadata = [self->databaseTransaction metadataForCollectionKey:ck withRowid:rowid];
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key, metadata);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key, metadata);
 		};
 	}
 	else // if (filtering->blockType == YapDatabaseBlockTypeWithRow)
@@ -103,9 +103,9 @@
 			
 			id object = nil;
 			id metadata = nil;
-			[databaseTransaction getObject:&object metadata:&metadata forCollectionKey:ck withRowid:rowid];
+			[self->databaseTransaction getObject:&object metadata:&metadata forCollectionKey:ck withRowid:rowid];
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key, object, metadata);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key, object, metadata);
 		};
 	}
 	
@@ -118,7 +118,7 @@
 		[parentViewTransaction enumerateRowidsInGroup:group
 		                                   usingBlock:^(int64_t rowid, NSUInteger __unused parentIndex, BOOL __unused *stop)
 		{
-			YapCollectionKey *ck = [databaseTransaction collectionKeyForRowid:rowid];
+			YapCollectionKey *ck = [self->databaseTransaction collectionKeyForRowid:rowid];
 			
 			if (InvokeFilterBlock(group, rowid, ck))
 			{
@@ -168,6 +168,8 @@
 	// The changeset mechanism will automatically consolidate all changes to the minimum.
 	
 	[self enumerateGroupsUsingBlock:^(NSString *group, BOOL __unused *outerStop) {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		// We must add the changes in reverse order.
 		// Either that, or the change index of each item would have to be zero,
@@ -184,6 +186,8 @@
 		}];
 		
 		[parentConnection->changes addObject:[YapDatabaseViewSectionChange deleteGroup:group]];
+		
+	#pragma clang diagnostic pop
 	}];
 	
 	isRepopulate = YES;
@@ -236,7 +240,7 @@
 		
 		InvokeFilterBlock = ^(NSString *group, int64_t __unused rowid, YapCollectionKey *ck){
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key);
 		};
 	}
 	else if (filtering->blockType == YapDatabaseBlockTypeWithObject)
@@ -246,9 +250,9 @@
 		
 		InvokeFilterBlock = ^(NSString *group, int64_t rowid, YapCollectionKey *ck){
 			
-			id object = [databaseTransaction objectForCollectionKey:ck withRowid:rowid];
+			id object = [self->databaseTransaction objectForCollectionKey:ck withRowid:rowid];
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key, object);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key, object);
 		};
 	}
 	else if (filtering->blockType == YapDatabaseBlockTypeWithMetadata)
@@ -258,9 +262,9 @@
 		
 		InvokeFilterBlock = ^(NSString *group, int64_t rowid, YapCollectionKey *ck){
 			
-			id metadata = [databaseTransaction metadataForCollectionKey:ck withRowid:rowid];
+			id metadata = [self->databaseTransaction metadataForCollectionKey:ck withRowid:rowid];
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key, metadata);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key, metadata);
 		};
 	}
 	else // if (filtering->blockType == YapDatabaseBlockTypeWithRow)
@@ -272,9 +276,9 @@
 			
 			id object = nil;
 			id metadata = nil;
-			[databaseTransaction getObject:&object metadata:&metadata forCollectionKey:ck withRowid:rowid];
+			[self->databaseTransaction getObject:&object metadata:&metadata forCollectionKey:ck withRowid:rowid];
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key, object, metadata);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key, object, metadata);
 		};
 	}
 	
@@ -296,6 +300,9 @@
 		[parentViewTransaction enumerateRowidsInGroup:group
 		                                   usingBlock:^(int64_t rowid, NSUInteger __unused parentIndex, BOOL __unused *stop)
 		{
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+			
 			if (existing && ((existingRowid == rowid)))
 			{
 				// Shortcut #1
@@ -375,6 +382,8 @@
 					// and is still not in our view (filtered).
 				}
 			}
+			
+		#pragma clang diagnostic pop
 		}];
 		
 		while (existing)
@@ -438,7 +447,7 @@
 		
 		InvokeFilterBlock = ^(NSString *group, int64_t __unused rowid, YapCollectionKey *ck){
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key);
 		};
 	}
 	else if (filtering->blockType == YapDatabaseBlockTypeWithObject)
@@ -448,9 +457,9 @@
 		
 		InvokeFilterBlock = ^(NSString *group, int64_t rowid, YapCollectionKey *ck){
 			
-			id object = [databaseTransaction objectForCollectionKey:ck withRowid:rowid];
+			id object = [self->databaseTransaction objectForCollectionKey:ck withRowid:rowid];
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key, object);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key, object);
 		};
 	}
 	else if (filtering->blockType == YapDatabaseBlockTypeWithMetadata)
@@ -460,9 +469,9 @@
 		
 		InvokeFilterBlock = ^(NSString *group, int64_t rowid, YapCollectionKey *ck){
 			
-			id metadata = [databaseTransaction metadataForCollectionKey:ck withRowid:rowid];
+			id metadata = [self->databaseTransaction metadataForCollectionKey:ck withRowid:rowid];
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key, metadata);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key, metadata);
 		};
 	}
 	else // if (filteringBlockType == YapDatabaseBlockTypeWithRow)
@@ -474,9 +483,9 @@
 			
 			id object = nil;
 			id metadata = nil;
-			[databaseTransaction getObject:&object metadata:&metadata forCollectionKey:ck withRowid:rowid];
+			[self->databaseTransaction getObject:&object metadata:&metadata forCollectionKey:ck withRowid:rowid];
 			
-			return filterBlock(databaseTransaction, group, ck.collection, ck.key, object, metadata);
+			return filterBlock(self->databaseTransaction, group, ck.collection, ck.key, object, metadata);
 		};
 	}
 	
@@ -494,7 +503,7 @@
 		[parentViewTransaction enumerateRowidsInGroup:group
 		                                   usingBlock:^(int64_t rowid, NSUInteger __unused parentIndex, BOOL __unused *stop)
 		{
-			YapCollectionKey *ck = [databaseTransaction collectionKeyForRowid:rowid];
+			YapCollectionKey *ck = [self->databaseTransaction collectionKeyForRowid:rowid];
 			
 			if (InvokeFilterBlock(group, rowid, ck))
 			{
@@ -1273,7 +1282,7 @@
 		
 		if ([extDependencies containsObject:registeredName])
 		{
-			YapDatabaseExtensionTransaction *extTransaction = [databaseTransaction ext:extName];
+			YapDatabaseExtensionTransaction *extTransaction = [self->databaseTransaction ext:extName];
 			
 			if ([extTransaction respondsToSelector:@selector(view:didRepopulateWithFlags:)])
 			{
@@ -1336,7 +1345,7 @@
 		
 		if ([extDependencies containsObject:registeredName])
 		{
-			YapDatabaseExtensionTransaction *extTransaction = [databaseTransaction ext:extName];
+			YapDatabaseExtensionTransaction *extTransaction = [self->databaseTransaction ext:extName];
 			
 			if ([extTransaction respondsToSelector:@selector(view:didRepopulateWithFlags:)])
 			{

@@ -2709,6 +2709,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	[graphOperations enumerateObjectsUsingBlock:
 		^(NSArray<YapDatabaseCloudCoreOperation *> *operations, NSUInteger idx, BOOL *innerStop)
 	{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
 		if (flags & YDBCloudCore_EnumOps_Existing)
 		{
 			for (YapDatabaseCloudCoreOperation *queuedOp in operations)
@@ -2754,6 +2757,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 				}
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}];
 	
 	if (!stop && (flags & YDBCloudCore_EnumOps_Added))
@@ -3384,18 +3389,23 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		
 		[parentConnection->operations_added enumerateKeysAndObjectsUsingBlock:
 		    ^(NSString *pipelineName, NSArray *allAddedOperationsForPipeline, BOOL *stop)
-		 {
-			 YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
-			 NSUInteger graphIdx = pipeline.graphCount;
+		{
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+			
+			YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
+			NSUInteger graphIdx = pipeline.graphCount;
 			 
-			 NSArray *processedOperationsForPipeline =
-			   [self processOperations:allAddedOperationsForPipeline inPipeline:pipeline withGraphIdx:graphIdx];
-			 
-			 if (processedOperationsForPipeline.count > 0)
-			 {
-				 processedAddedOps[pipelineName] = processedOperationsForPipeline;
-			 }
-		 }];
+			NSArray *processedOperationsForPipeline =
+			  [self processOperations:allAddedOperationsForPipeline inPipeline:pipeline withGraphIdx:graphIdx];
+			
+			if (processedOperationsForPipeline.count > 0)
+			{
+				processedAddedOps[pipelineName] = processedOperationsForPipeline;
+			}
+			
+		#pragma clang diagnostic pop
+		}];
 	}
 	
 	// Step 3 of 5:
@@ -3405,6 +3415,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	[processedAddedOps enumerateKeysAndObjectsUsingBlock:
 	    ^(NSString *pipelineName, NSArray *operations, BOOL *stop)
 	{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
 		YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
 		uint64_t nextGraphID = [pipeline nextGraphID];
 		
@@ -3416,6 +3429,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		  [[YapDatabaseCloudCoreGraph alloc] initWithPersistentOrder:nextGraphID operations:operations];
 		
 		[parentConnection->graphs_added setObject:graph forKey:pipelineName];
+		
+	#pragma clang diagnostic pop
 	}];
 	
 	for (YapDatabaseCloudCorePipeline *pipeline in pipelines)

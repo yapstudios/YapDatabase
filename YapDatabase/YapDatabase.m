@@ -278,7 +278,12 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__block NSString *result = nil;
 	
 	dispatch_sync(snapshotQueue, ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
 		result = sqliteVersion;
+		
+	#pragma clang diagnostic pop
 	});
 	
 	return result;
@@ -435,7 +440,9 @@ static int connectionBusyHandler(void *ptr, int count) {
 		__block BOOL isNewDatabaseFile = ![[NSFileManager defaultManager] fileExistsAtPath:databasePath];
 		
 		BOOL(^openConfigCreate)(void) = ^BOOL (void) { @autoreleasepool {
-		
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+			
 			BOOL result = YES;
 			
 			if (result) result = [self openDatabase];
@@ -452,6 +459,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 			}
 			
 			return result;
+			
+		#pragma clang diagnostic pop
 		}};
 		
 		BOOL result = openConfigCreate();
@@ -1703,6 +1712,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 	// We'd like to avoid blocking the very next line of code and allow the asynchronous prepare to continue.
 	
 	dispatch_async(connection->connectionQueue, ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		dispatch_sync(snapshotQueue, ^{ @autoreleasepool {
 			
@@ -1720,6 +1731,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 			
 			[connection prepare];
 		}});
+		
+	#pragma clang diagnostic pop
 	});
 }
 
@@ -1729,6 +1742,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 - (void)removeConnection:(YapDatabaseConnection *)connection
 {
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		NSUInteger index = 0;
 		for (YapDatabaseConnectionState *state in connectionStates)
@@ -1745,6 +1760,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 		YDBLogVerbose(@"Removed connection(%p) from <%@ %p: databaseName=%@, connectionCount=%lu>",
 		              connection, [self class], self, [databasePath lastPathComponent],
 		              (unsigned long)[connectionStates count]);
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	// We prefer to invoke this method synchronously.
@@ -2129,11 +2146,25 @@ static int connectionBusyHandler(void *ptr, int count) {
 		registrationConnection = [self newConnection];
 		registrationConnection.name = @"YapDatabase_extensionRegistrationConnection";
 		
+		// These are the rules (regarding instance retainCount):
+		// - a YapDatabaseConnection instance cannot be deallocated if there are existing/pending transactions
+		// - a YapDatabase instance cannot be deallocated if there are existing connections
+		//
+		// Thus, as long as registrationConnection is non-nil,
+		// 'self' (this YapDatabase instance) cannot be deallocated.
+		//
+		
+		__weak YapDatabase *weakSelf = self;
+		
 		NSTimeInterval delayInSeconds = 5.0;
 		dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
 		dispatch_after(popTime, writeQueue, ^(void){
 			
-			registrationConnection = nil;
+			__strong YapDatabase *strongSelf = weakSelf;
+			if (strongSelf)
+			{
+				strongSelf->registrationConnection = nil;
+			}
 		});
 	}
 	
@@ -2255,8 +2286,12 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__block YapDatabaseExtension *result = nil;
 	
 	dispatch_block_t block = ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		result = [registeredExtensions objectForKey:extensionName];
+		
+	#pragma clang diagnostic pop
 	};
 	
 	if (dispatch_get_specific(IsOnSnapshotQueueKey))
@@ -2278,8 +2313,12 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__block NSDictionary *extensionsCopy = nil;
 	
 	dispatch_block_t block = ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		extensionsCopy = registeredExtensions;
+		
+	#pragma clang diagnostic pop
 	};
 	
 	if (dispatch_get_specific(IsOnSnapshotQueueKey))
@@ -2331,8 +2370,12 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__block NSArray *result = nil;
 	
 	dispatch_block_t block = ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		result = [previouslyRegisteredExtensionNames copy];
+		
+	#pragma clang diagnostic pop
 	};
 	
 	if (dispatch_get_specific(IsOnSnapshotQueueKey))
@@ -2352,8 +2395,12 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__block NSUInteger count = 0;
 	
 	dispatch_sync(internalQueue, ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		count = maxConnectionPoolCount;
+		
+	#pragma clang diagnostic pop
 	});
 	
 	return count;
@@ -2362,6 +2409,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 - (void)setMaxConnectionPoolCount:(NSUInteger)count
 {
 	dispatch_sync(internalQueue, ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		// Update ivar
 		maxConnectionPoolCount = count;
@@ -2386,6 +2435,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 			
 			[self resetConnectionPoolTimer];
 		}
+		
+	#pragma clang diagnostic pop
 	});
 }
 
@@ -2394,8 +2445,12 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__block NSTimeInterval lifetime = 0;
 	
 	dispatch_sync(internalQueue, ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		lifetime = connectionPoolLifetime;
+		
+	#pragma clang diagnostic pop
 	});
 	
 	return lifetime;
@@ -2404,12 +2459,16 @@ static int connectionBusyHandler(void *ptr, int count) {
 - (void)setConnectionPoolLifetime:(NSTimeInterval)lifetime
 {
 	dispatch_sync(internalQueue, ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		// Update ivar
 		connectionPoolLifetime = lifetime;
 		
 		// Update timer (if needed)
 		[self resetConnectionPoolTimer];
+		
+	#pragma clang diagnostic pop
 	});
 }
 
@@ -2427,6 +2486,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__block BOOL result = NO;
 	
 	dispatch_sync(internalQueue, ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		if ([connectionPoolValues count] < maxConnectionPoolCount)
 		{
@@ -2454,6 +2515,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 				[self resetConnectionPoolTimer];
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	});
 	
 	return result;
@@ -2474,6 +2537,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__block yap_file *wal_file = NULL;
 	
 	dispatch_sync(internalQueue, ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		if ([connectionPoolValues count] > 0)
 		{
@@ -2490,6 +2555,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 			
 			[self resetConnectionPoolTimer];
 		}
+		
+	#pragma clang diagnostic pop
 	});
 	
 	*pDb = aDb;
@@ -2650,7 +2717,12 @@ static int connectionBusyHandler(void *ptr, int count) {
 		__block uint64_t result = 0;
 		
 		dispatch_sync(snapshotQueue, ^{
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+			
 			result = snapshot;
+			
+		#pragma clang diagnostic pop
 		});
 		
 		return result;
@@ -2807,8 +2879,14 @@ static int connectionBusyHandler(void *ptr, int count) {
 	// Schedule block to be executed once all connections have processed the changes.
 	
 	BOOL isInternalChangeset = (sender == nil);
-
+	__weak YapDatabase *weakSelf = self;
+	
 	dispatch_block_t block = ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic warning "-Wimplicit-retain-self" // Turning warnings *** ON ***
+		
+		__strong YapDatabase *strongSelf = weakSelf;
+		if (strongSelf == nil) return;
 		
 		// All connections have now processed the changes.
 		// So we no longer need to retain the changeset in memory.
@@ -2823,13 +2901,15 @@ static int connectionBusyHandler(void *ptr, int count) {
 			YDBLogVerbose(@"Dropping processed changeset %@ for database: %@",
 			              [changeset objectForKey:YapDatabaseSnapshotKey], self);
 			
-			[changesets removeObjectAtIndex:0];
+			[strongSelf->changesets removeObjectAtIndex:0];
 		}
 		
 		#if !OS_OBJECT_USE_OBJC
 		if (group)
 			dispatch_release(group);
 		#endif
+		
+	#pragma clang diagnostic pop
 	};
 	
 	if (group)
@@ -2893,8 +2973,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__weak YapDatabase *weakSelf = self;
 	
 	dispatch_async(checkpointQueue, ^{ @autoreleasepool {
-#pragma clang diagnostic push
-#pragma clang diagnostic warning "-Wimplicit-retain-self"
+	#pragma clang diagnostic push
+	#pragma clang diagnostic warning "-Wimplicit-retain-self" // Turning warnings *** ON ***
 		
 		__strong YapDatabase *strongSelf = weakSelf;
 		if (strongSelf == nil) return;
@@ -2907,7 +2987,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 		
 		[strongSelf passiveCheckpoint];
 		
-#pragma clang diagnostic pop
+	#pragma clang diagnostic pop
 	}});
 }
 
@@ -2922,7 +3002,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	
 	dispatch_async(writeQueue, ^{
 	#pragma clang diagnostic push
-	#pragma clang diagnostic warning "-Wimplicit-retain-self"
+	#pragma clang diagnostic warning "-Wimplicit-retain-self" // Turning warnings *** ON ***
 		
 		__strong YapDatabase *strongSelf = weakSelf;
 		if (strongSelf == nil) return;
@@ -2996,7 +3076,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 		
 		dispatch_async(writeQueue, ^{ @autoreleasepool {
 		#pragma clang diagnostic push
-		#pragma clang diagnostic warning "-Wimplicit-retain-self"
+		#pragma clang diagnostic warning "-Wimplicit-retain-self" // Turning warnings *** ON ***
 			
 			__strong YapDatabase *strongSelf = weakSelf;
 			if (strongSelf == nil) return;
@@ -3176,6 +3256,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 	__block atomic_bool hasWriteQueue = true;
 	
 	dispatch_sync(snapshotQueue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		for (YapDatabaseConnectionState *state in connectionStates)
 		{
@@ -3208,6 +3290,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 				}
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (strongConnections)

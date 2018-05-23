@@ -37,7 +37,7 @@
 {
 	__block NSUInteger result = 0;
 	dispatch_sync(queue, ^{
-		result = connectionLimit;
+		result = self->connectionLimit;
 	});
 	
 	return result;
@@ -50,12 +50,17 @@
 	}
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
 		connectionLimit = limit;
 		
 		while (connections.count > connectionLimit)
 		{
 			[connections removeLastObject];
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 }
 
@@ -63,7 +68,7 @@
 {
 	__block YapDatabaseConnectionConfig *result = nil;
 	dispatch_sync(queue, ^{
-		result = connectionDefaults;
+		result = self->connectionDefaults;
 	});
 	
 	return result;
@@ -72,7 +77,7 @@
 - (void)setConnectionDefaults:(YapDatabaseConnectionConfig *)config
 {
 	dispatch_sync(queue, ^{
-		connectionDefaults = config;
+		self->connectionDefaults = config;
 	});
 }
 
@@ -82,6 +87,8 @@
 	__block BOOL isNewConnection = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		uint64_t minLoad = 0;
 		
@@ -122,6 +129,8 @@
 			
 			isNewConnection = YES;
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (isNewConnection)

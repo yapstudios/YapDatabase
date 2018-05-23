@@ -33,6 +33,9 @@
 
 - (BOOL)populateView
 {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+	
 	YDBLogAutoTrace();
 	
 	// Remove everything from the database
@@ -389,6 +392,8 @@
 	}
 	
 	return YES;
+	
+#pragma clang diagnostic pop
 }
 
 - (void)repopulateView
@@ -417,6 +422,8 @@
 	// The changeset mechanism will automatically consolidate all changes to the minimum.
 	
 	[self enumerateGroupsUsingBlock:^(NSString *group, BOOL __unused *outerStop) {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		// We must add the changes in reverse order.
 		// Either that, or the change index of each item would have to be zero,
@@ -433,6 +440,8 @@
 		}];
 		
 		[parentConnection->changes addObject:[YapDatabaseViewSectionChange deleteGroup:group]];
+		
+	#pragma clang diagnostic pop
 	}];
 	
 	isRepopulate = YES;
@@ -519,6 +528,8 @@
 	// This block will be invoked repeatedly as we calculate the insertion index.
 	
 	NSComparisonResult (^compare)(NSUInteger) = ^NSComparisonResult (NSUInteger index){
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		int64_t anotherRowid = 0;
 		[self getRowid:&anotherRowid atIndex:index inGroup:group];
@@ -581,6 +592,8 @@
 			                      collectionKey.collection, collectionKey.key,        object,        metadata,
 			                            another.collection,       another.key, anotherObject, anotherMetadata);
 		}
+		
+	#pragma clang diagnostic pop
 	};
 	
 	NSComparisonResult cmp;
@@ -1320,6 +1333,8 @@
 			  (YapDatabaseViewFindWithKeyBlock)find.findBlock;
 			
 			compare = ^NSComparisonResult (NSUInteger index){
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 				
 				int64_t rowid = 0;
 				[self getRowid:&rowid atIndex:index inGroup:group];
@@ -1327,6 +1342,8 @@
 				YapCollectionKey *ck = [databaseTransaction collectionKeyForRowid:rowid];
 				
 				return findBlock(ck.collection, ck.key);
+				
+			#pragma clang diagnostic pop
 			};
 			
 			break;
@@ -1337,6 +1354,8 @@
 			    (YapDatabaseViewFindWithObjectBlock)find.findBlock;
 			
 			compare = ^NSComparisonResult (NSUInteger index){
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 				
 				int64_t rowid = 0;
 				[self getRowid:&rowid atIndex:index inGroup:group];
@@ -1346,6 +1365,8 @@
 				[databaseTransaction getCollectionKey:&ck object:&object forRowid:rowid];
 				
 				return findBlock(ck.collection, ck.key, object);
+				
+			#pragma clang diagnostic pop
 			};
 			
 			break;
@@ -1356,6 +1377,8 @@
 			    (YapDatabaseViewFindWithMetadataBlock)find.findBlock;
 			
 			compare = ^NSComparisonResult (NSUInteger index){
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 				
 				int64_t rowid = 0;
 				[self getRowid:&rowid atIndex:index inGroup:group];
@@ -1365,6 +1388,8 @@
 				[databaseTransaction getCollectionKey:&ck metadata:&metadata forRowid:rowid];
 				
 				return findBlock(ck.collection, ck.key, metadata);
+				
+			#pragma clang diagnostic pop
 			};
 			
 			break;
@@ -1375,6 +1400,8 @@
 			    (YapDatabaseViewFindWithRowBlock)find.findBlock;
 			
 			compare = ^NSComparisonResult (NSUInteger index){
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 				
 				int64_t rowid = 0;
 				[self getRowid:&rowid atIndex:index inGroup:group];
@@ -1385,6 +1412,8 @@
 				[databaseTransaction getCollectionKey:&ck object:&object metadata:&metadata forRowid:rowid];
 				
 				return findBlock(ck.collection, ck.key, object, metadata);
+				
+			#pragma clang diagnostic pop
 			};
 		}
 		
@@ -1527,6 +1556,8 @@
 	NSDictionary *extensionDependencies = databaseTransaction->connection->extensionDependencies;
 	
 	[extensionDependencies enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL __unused *stop){
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		__unsafe_unretained NSString *extName = (NSString *)key;
 		__unsafe_unretained NSSet *extDependencies = (NSSet *)obj;
@@ -1541,6 +1572,8 @@
 				[(id <YapDatabaseViewDependency>)extTransaction view:registeredName didRepopulateWithFlags:flags];
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}];
 }
 

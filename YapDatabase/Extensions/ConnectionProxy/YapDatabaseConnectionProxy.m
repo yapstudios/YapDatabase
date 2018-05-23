@@ -149,6 +149,8 @@
 	__block NSMutableDictionary *metadataBatch = nil;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		if (abortAndResetCount > 0) // user asked to abort this write
 		{
@@ -191,6 +193,8 @@
 		
 		currentObjectBatch   = [[NSMutableSet alloc] init];
 		currentMetadataBatch = [[NSMutableSet alloc] init];
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (objectBatchPtr) *objectBatchPtr = objectBatch;
@@ -202,6 +206,8 @@
 	YDBLogTrace(@"%@ %llu", THIS_METHOD, commit);
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		NSNumber *nextCommit = [pendingBatchCommits firstObject];
 		if (!nextCommit || (nextCommit.unsignedLongLongValue != commit))
@@ -228,6 +234,8 @@
 		[pendingObjectBatches removeObjectAtIndex:0];
 		[pendingMetadataBatches removeObjectAtIndex:0];
 		[pendingBatchCommits removeObjectAtIndex:0];
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -244,7 +252,7 @@
 	__weak YapDatabaseConnectionProxy *weakSelf = self;
 	
 	#pragma clang diagnostic push
-	#pragma clang diagnostic warning "-Wimplicit-retain-self"
+	#pragma clang diagnostic warning "-Wimplicit-retain-self" // Turning warnings *** ON ***
 	[readWriteConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
 	
 		__strong YapDatabaseConnectionProxy *strongSelf = weakSelf;
@@ -322,12 +330,16 @@
 	__block BOOL collectionFiltered = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		object = [pendingObjectCache objectForKey:ck];
 		
 		if (!object && fetchedCollectionsFilter) {
 			collectionFiltered = ![fetchedCollectionsFilter isAllowed:collection];
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (object)
@@ -365,12 +377,16 @@
 	__block BOOL collectionFiltered = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		metadata = [pendingMetadataCache objectForKey:ck];
 		
 		if (!metadata && fetchedCollectionsFilter) {
 			collectionFiltered = ![fetchedCollectionsFilter isAllowed:collection];
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (metadata)
@@ -417,6 +433,8 @@
 	__block BOOL collectionFiltered = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		object = [pendingObjectCache objectForKey:ck];
 		metadata = [pendingMetadataCache objectForKey:ck];
@@ -424,6 +442,8 @@
 		if ((!object || !metadata) && fetchedCollectionsFilter) {
 			collectionFiltered = ![fetchedCollectionsFilter isAllowed:collection];
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (object && metadata)
@@ -506,17 +526,24 @@
 	__block BOOL needsWrite = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		needsWrite = ((currentObjectBatch.count == 0) && (currentMetadataBatch.count == 0));
 		
 		[pendingObjectCache setObject:object forKey:ck];
 		[currentObjectBatch addObject:ck];
 		
-		if (metadata)
+		if (metadata) {
 			[pendingMetadataCache setObject:metadata forKey:ck];
-		else
+		}
+		else {
 			[pendingMetadataCache setObject:[YapNull null] forKey:ck];
+		}
+		
 		[currentMetadataBatch addObject:ck];
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (needsWrite) {
@@ -550,10 +577,14 @@
 	
 	__block BOOL collectionFiltered = NO;
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		if (fetchedCollectionsFilter) {
 			collectionFiltered = ![fetchedCollectionsFilter isAllowed:collection];
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	__block BOOL existsInDatabase = NO;
@@ -569,6 +600,8 @@
 	__block BOOL needsWrite = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		id existing_object = [pendingObjectCache objectForKey:ck];
 		
@@ -594,6 +627,8 @@
 			[pendingObjectCache setObject:object forKey:ck];
 			[currentObjectBatch addObject:ck];
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (needsWrite) {
@@ -621,10 +656,14 @@
 	
 	__block BOOL collectionFiltered = NO;
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		if (fetchedCollectionsFilter) {
 			collectionFiltered = ![fetchedCollectionsFilter isAllowed:collection];
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	__block BOOL existsInDatabase = NO;
@@ -640,6 +679,8 @@
 	__block BOOL needsWrite = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		// Check pendingObjectCache (NOT pendingMetadataCache) to determine row status.
 		
@@ -664,12 +705,17 @@
 		{
 			needsWrite = ((currentObjectBatch.count == 0) && (currentMetadataBatch.count == 0));
 			
-			if (metadata)
+			if (metadata) {
 				[pendingMetadataCache setObject:metadata forKey:ck];
-			else
+			}
+			else {
 				[pendingMetadataCache setObject:[YapNull null] forKey:ck];
+			}
+			
 			[currentMetadataBatch addObject:ck];
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (needsWrite) {
@@ -696,6 +742,8 @@
 	__block BOOL needsWrite = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		needsWrite = ((currentObjectBatch.count == 0) && (currentMetadataBatch.count == 0));
 		
@@ -704,6 +752,8 @@
 		
 		[pendingMetadataCache setObject:[YapNull null] forKey:ck];
 		[currentMetadataBatch addObject:ck];
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (needsWrite) {
@@ -729,6 +779,8 @@
 	__block BOOL needsWrite = NO;
 	
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		needsWrite = ((currentObjectBatch.count == 0) && (currentMetadataBatch.count == 0));
 		
@@ -742,6 +794,8 @@
 			[pendingMetadataCache setObject:[YapNull null] forKey:ck];
 			[currentMetadataBatch addObject:ck];
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	if (needsWrite) {
@@ -766,6 +820,8 @@
 - (void)abortAndReset:(YapWhitelistBlacklist *)filter
 {
 	dispatch_sync(queue, ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		if ((currentObjectBatch.count > 0) && (currentMetadataBatch.count > 0))
 		{
@@ -778,6 +834,8 @@
 		
 		[pendingMetadataCache removeAllObjects];
 		[currentMetadataBatch removeAllObjects];
+		
+	#pragma clang diagnostic pop
 	}});
 }
 
@@ -811,7 +869,7 @@
 	__block YapWhitelistBlacklist *filter = nil;
 	
 	dispatch_block_t block = ^{
-		filter = fetchedCollectionsFilter;
+		filter = self->fetchedCollectionsFilter;
 	};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -825,7 +883,7 @@
 - (void)setFetchedCollectionsFilter:(YapWhitelistBlacklist *)filter
 {
 	dispatch_block_t block = ^{
-		fetchedCollectionsFilter = filter;
+		self->fetchedCollectionsFilter = filter;
 	};
 	
 	if (dispatch_get_specific(IsOnQueueKey))

@@ -207,6 +207,8 @@ static NSString *const ext_key_query           = @"query";
 	__block int processed = 0;
 	
 	[ftsTransaction enumerateRowidsMatching:[self query] usingBlock:^(int64_t rowid, BOOL *stop) {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		YapRowidSetAdd(ftsRowids, rowid);
 		
@@ -217,6 +219,8 @@ static NSString *const ext_key_query           = @"query";
 				*stop = YES;
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}];
 }
 
@@ -252,6 +256,8 @@ static NSString *const ext_key_query           = @"query";
 	// The changeset mechanism will automatically consolidate all changes to the minimum.
 	
 	[self enumerateGroupsUsingBlock:^(NSString *group, BOOL __unused *outerStop) {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		// We must add the changes in reverse order.
 		// Either that, or the change index of each item would have to be zero,
@@ -268,6 +274,8 @@ static NSString *const ext_key_query           = @"query";
 		}];
 		
 		[parentConnection->changes addObject:[YapDatabaseViewSectionChange deleteGroup:group]];
+		
+	#pragma clang diagnostic pop
 	}];
 	
 	isRepopulate = YES;
@@ -362,6 +370,9 @@ static NSString *const ext_key_query           = @"query";
 		[parentViewTransaction enumerateRowidsInGroup:group usingBlock:
 			^(int64_t rowid, NSUInteger __unused parentIndex, BOOL __unused *stop)
 		{
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+			
 			if (existing && ((existingRowid == rowid)))
 			{
 				// Shortcut #1
@@ -440,6 +451,8 @@ static NSString *const ext_key_query           = @"query";
 					// and is still not in our view (filtered).
 				}
 			}
+			
+		#pragma clang diagnostic pop
 		}];
 		
 		while (existing)
@@ -1439,7 +1452,7 @@ static NSString *const ext_key_query           = @"query";
 		
 		if ([extDependencies containsObject:registeredName])
 		{
-			YapDatabaseExtensionTransaction *extTransaction = [databaseTransaction ext:extName];
+			YapDatabaseExtensionTransaction *extTransaction = [self->databaseTransaction ext:extName];
 			
 			if ([extTransaction respondsToSelector:@selector(view:didRepopulateWithFlags:)])
 			{
@@ -1560,6 +1573,9 @@ static NSString *const ext_key_query           = @"query";
 		[parentViewTransaction enumerateRowidsInGroup:group
 		                                   usingBlock:^(int64_t rowid, NSUInteger parentIndex, BOOL *stop)
 		{
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+			
 			if (YapRowidSetContains(ftsRowids, rowid))
 			{
 				// The item matches the FTS query (should be in view)
@@ -1623,6 +1639,8 @@ static NSString *const ext_key_query           = @"query";
 					*stop = YES;
 				}
 			}
+			
+		#pragma clang diagnostic pop
 		}];
 		
 		if ([searchQueue shouldAbortSearchInProgressAndRollback:NULL]) {
@@ -1674,6 +1692,9 @@ static NSString *const ext_key_query           = @"query";
 			                       range:range
 			                  usingBlock:^(int64_t rowid, NSUInteger index, BOOL *stop)
 			{
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+				
 				if (YapRowidSetContains(ftsRowidsLeft, rowid))
 				{
 					// The row was previously in the view (in old search results),
@@ -1721,6 +1742,8 @@ static NSString *const ext_key_query           = @"query";
 						done = YES;
 					}
 				}
+				
+			#pragma clang diagnostic pop
 			}];
 			
 		} while (!done);
@@ -1746,6 +1769,8 @@ static NSString *const ext_key_query           = @"query";
 	                                 sorting:&sorting];
 	
 	YapRowidSetEnumerate(ftsRowidsLeft, ^(int64_t rowid, BOOL *stop) { @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		YapCollectionKey *ck = [databaseTransaction collectionKeyForRowid:rowid];
 		
@@ -1838,6 +1863,8 @@ static NSString *const ext_key_query           = @"query";
 				*stop = YES;
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}});
 	
 	// Dealloc the temporary c++ set

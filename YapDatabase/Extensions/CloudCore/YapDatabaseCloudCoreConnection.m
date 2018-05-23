@@ -318,11 +318,15 @@
 	else
 	{
 		[modifiedMappings enumerateWithBlock:^(NSNumber *rowid, NSString *path, id metadata, BOOL *stop) {
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 			
 			if (metadata == YDBCloudCore_DiryMappingMetadata_NeedsRemove)
 			{
 				[cleanMappingCache removeItemWithKey:rowid value:path];
 			}
+			
+		#pragma clang diagnostic pop
 		}];
 	}
 	

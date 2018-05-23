@@ -141,7 +141,7 @@
 	
 	dispatch_block_t block = ^{
 		
-		result = query;
+		result = self->query;
 	};
 	
 	if (dispatch_get_specific(databaseConnection->IsOnConnectionQueueKey))

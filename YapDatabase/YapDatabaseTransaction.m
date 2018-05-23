@@ -4263,6 +4263,8 @@
 	NSDictionary *extConnections = [connection extensions];
 	
 	[extConnections enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL __unused *stop) {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		__unsafe_unretained NSString *extName = key;
 		__unsafe_unretained YapDatabaseExtensionConnection *extConnection = obj;
@@ -4280,6 +4282,8 @@
 				[extensions setObject:extTransaction forKey:extName];
 			}
 		}
+		
+	#pragma clang diagnostic pop
 	}];
 	
 	if (orderedExtensions == nil)

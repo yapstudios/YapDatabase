@@ -73,7 +73,7 @@
 	__block YapDatabaseViewFiltering *mostRecentFiltering = nil;
 	dispatch_block_t block = ^{
 		
-		mostRecentFiltering = filtering;
+		mostRecentFiltering = self->filtering;
 	};
 	
 	__strong YapDatabase *database = self.registeredDatabase;
@@ -167,7 +167,7 @@
 	
 	dispatch_block_t block = ^{
 	
-		mostRecentFiltering = filtering;
+		mostRecentFiltering = self->filtering;
 	};
 	
 	__strong YapDatabase *database = self.registeredDatabase;

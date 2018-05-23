@@ -515,7 +515,7 @@
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"name\", \"dst\", \"rules\", \"manual\" FROM \"%@\""
 		  @" WHERE \"dst\" > %lld AND \"src\" = ?;",
-		  [parent tableName], INT64_MAX];
+		  [self->parent tableName], INT64_MAX];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -568,7 +568,7 @@
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"dst\", \"rules\", \"manual\" FROM \"%@\""
 		  @" WHERE \"dst\" > %lld AND \"src\" = ? AND \"name\" = ?;",
-		  [parent tableName], INT64_MAX];
+		  [self->parent tableName], INT64_MAX];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -621,7 +621,7 @@
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"src\", \"dst\", \"rules\", \"manual\" FROM \"%@\""
 		  @" WHERE \"dst\" > %lld AND \"name\" = ?;",
-		  [parent tableName], INT64_MAX];
+		  [self->parent tableName], INT64_MAX];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -674,7 +674,7 @@
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"name\", \"src\", \"dst\", \"rules\", \"manual\" FROM \"%@\""
 		  @" WHERE \"dst\" > %lld AND \"src\" != ?;",
-		  [parent tableName], INT64_MAX];
+		  [self->parent tableName], INT64_MAX];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -726,7 +726,7 @@
 		
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"name\", \"src\", \"dst\", \"rules\", \"manual\" FROM \"%@\" WHERE \"dst\" > %lld;",
-		  [parent tableName], INT64_MAX];
+		  [self->parent tableName], INT64_MAX];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -764,7 +764,7 @@
 		
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"name\", \"dst\", \"rules\", \"manual\" FROM \"%@\" WHERE \"src\" = ?;",
-		  [parent tableName]];
+		  [self->parent tableName]];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -802,7 +802,7 @@
 		
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"name\", \"src\", \"rules\", \"manual\" FROM \"%@\" WHERE \"dst\" = ?;",
-		  [parent tableName]];
+		  [self->parent tableName]];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -840,7 +840,7 @@
 		
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"dst\", \"rules\", \"manual\" FROM \"%@\" WHERE \"src\" = ? AND \"name\" = ?;",
-		  [parent tableName]];
+		  [self->parent tableName]];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -878,7 +878,7 @@
 		
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"src\", \"rules\", \"manual\" FROM \"%@\" WHERE \"dst\" = ? AND \"name\" = ?;",
-		  [parent tableName]];
+		  [self->parent tableName]];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -916,7 +916,7 @@
 		
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"src\", \"dst\", \"rules\", \"manual\" FROM \"%@\" WHERE \"name\" = ?;",
-		  [parent tableName]];
+		  [self->parent tableName]];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -954,7 +954,7 @@
 		
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"name\", \"rules\", \"manual\" FROM \"%@\" WHERE \"src\" = ? AND \"dst\" = ?;",
-		  [parent tableName]];
+		  [self->parent tableName]];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];
@@ -992,7 +992,7 @@
 		
 		NSString *string = [NSString stringWithFormat:
 		  @"SELECT \"rowid\", \"rules\", \"manual\" FROM \"%@\" WHERE \"src\" = ? AND \"dst\" = ? AND \"name\" = ?;",
-		  [parent tableName]];
+		  [self->parent tableName]];
 		
 		sqlite3_stmt *stmt = NULL;
 		[self prepareStatement:&stmt withString:string caller:_cmd];

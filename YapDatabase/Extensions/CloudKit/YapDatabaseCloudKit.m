@@ -479,63 +479,70 @@ NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification = @"YDBC
 {
 	YDBLogAutoTrace();
 	
-	// The 'forceNotification' parameter will be YES when this method
-	// is being called after successfully completing a previous operation.
+	__weak YapDatabaseCloudKit *weakSelf = self;
 	
 	dispatch_queue_t bgQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 	dispatch_async(bgQueue, ^{ @autoreleasepool {
 		
-		if (self.isSuspended) // this method is thread-safe
-		{
-			YDBLogVerbose(@"Skipping dispatch operation - suspended");
-			
-			if (forceNotification) {
-				[self postInFlightChangeSetChangedNotification:[masterQueue currentChangeSetUUID]];
-			}
-			return;
-		}
-		
-		BOOL isAlreadyInFlight = NO;
-		YDBCKChangeSet *nextChangeSet = nil;
-		
-		nextChangeSet = [masterQueue makeInFlightChangeSet:&isAlreadyInFlight]; // this method is thread-safe
-		if (nextChangeSet == nil)
-		{
-			if (isAlreadyInFlight) { // <- { brackets } required when YapDatabaseLoggingTechnique_Disabled
-				YDBLogVerbose(@"Skipping dispatch operation - upload in progress");
-			}
-			else {
-				YDBLogVerbose(@"Skipping dispatch operation - nothing to upload");
-			}
-			
-			if (forceNotification) {
-				[self postInFlightChangeSetChangedNotification:[masterQueue currentChangeSetUUID]];
-			}
-			return;
-		}
-		
-		if ([nextChangeSet->deletedRecordIDs count] == 0 &&
-		    [nextChangeSet->modifiedRecords count] == 0)
-		{
-			YDBLogVerbose(@"Dropping empty queued operation: %@", nextChangeSet);
-			
-			NSString *changeSetUUID = nextChangeSet.uuid;
-			
-			[self handleCompletedOperationWithChangeSet:nextChangeSet savedRecords:nil deletedRecordIDs:nil];
-			[self postInFlightChangeSetChangedNotification:changeSetUUID];
-		}
-		else
-		{
-			YDBLogVerbose(@"Queueing operation: %@", nextChangeSet);
-			
-			NSString *changeSetUUID = nextChangeSet.uuid;
-			
-			[self queueOperationForChangeSet:nextChangeSet];
-			[self postInFlightChangeSetChangedNotification:changeSetUUID];
-		}
+		__strong YapDatabaseCloudKit *strongSelf = weakSelf;
+		[strongSelf maybeDispatchNextOperation:forceNotification];
 	}});
 }
 
+- (void)maybeDispatchNextOperation:(BOOL)forceNotification
+{
+	// The 'forceNotification' parameter will be YES when this method
+	// is being called after successfully completing a previous operation.
+	
+	if (self.isSuspended) // this method is thread-safe
+	{
+		YDBLogVerbose(@"Skipping dispatch operation - suspended");
+		
+		if (forceNotification) {
+			[self postInFlightChangeSetChangedNotification:[masterQueue currentChangeSetUUID]];
+		}
+		return;
+	}
+	
+	BOOL isAlreadyInFlight = NO;
+	YDBCKChangeSet *nextChangeSet = nil;
+	
+	nextChangeSet = [masterQueue makeInFlightChangeSet:&isAlreadyInFlight]; // this method is thread-safe
+	if (nextChangeSet == nil)
+	{
+		if (isAlreadyInFlight) { // <- { brackets } required when YapDatabaseLoggingTechnique_Disabled
+			YDBLogVerbose(@"Skipping dispatch operation - upload in progress");
+		}
+		else {
+			YDBLogVerbose(@"Skipping dispatch operation - nothing to upload");
+		}
+		
+		if (forceNotification) {
+			[self postInFlightChangeSetChangedNotification:[masterQueue currentChangeSetUUID]];
+		}
+		return;
+	}
+	
+	if ([nextChangeSet->deletedRecordIDs count] == 0 &&
+	    [nextChangeSet->modifiedRecords count] == 0)
+	{
+		YDBLogVerbose(@"Dropping empty queued operation: %@", nextChangeSet);
+		
+		NSString *changeSetUUID = nextChangeSet.uuid;
+		
+		[self handleCompletedOperationWithChangeSet:nextChangeSet savedRecords:nil deletedRecordIDs:nil];
+		[self postInFlightChangeSetChangedNotification:changeSetUUID];
+	}
+	else
+	{
+		YDBLogVerbose(@"Queueing operation: %@", nextChangeSet);
+		
+		NSString *changeSetUUID = nextChangeSet.uuid;
+		
+		[self queueOperationForChangeSet:nextChangeSet];
+		[self postInFlightChangeSetChangedNotification:changeSetUUID];
+	}
+}
 
 - (YapDatabaseConnection *)completionDatabaseConnection
 {
@@ -677,8 +684,12 @@ NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification = @"YDBC
 	
 	NSString *databaseIdentifier = changeSet.databaseIdentifier;
 	dispatch_async(dispatch_get_main_queue(), ^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		opErrorBlock(databaseIdentifier, operationError);
+		
+	#pragma clang diagnostic pop
 	});
 }
 
@@ -741,10 +752,13 @@ NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification = @"YDBC
 		                                                         deletedRecordIDs:success_deletedRecordIDs];
 		
 	} completionBlock:^{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		// Inform the user about the problem via the operationErrorBlock.
-		
 		opErrorBlock(databaseIdentifier, operationError);
+		
+	#pragma clang diagnostic pop
 	}];
 }
 

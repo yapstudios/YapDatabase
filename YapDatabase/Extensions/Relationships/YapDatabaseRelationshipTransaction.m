@@ -528,7 +528,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				[edges addObject:cleanEdge];
 			}
 			
-			[parentConnection->protocolChanges setObject:edges forKey:@(rowid)];
+			[self->parentConnection->protocolChanges setObject:edges forKey:@(rowid)];
 		}
 	};
 	
@@ -541,7 +541,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			
 			if ([allowedCollections isAllowed:collection])
 			{
-				[databaseTransaction _enumerateKeysAndObjectsInCollection:collection usingBlock:
+				[self->databaseTransaction _enumerateKeysAndObjectsInCollection:collection usingBlock:
 				    ^(int64_t rowid, NSString *key, id object, BOOL __unused *innerStop)
 				{
 					ProcessRow(rowid, collection, key, object);
@@ -2474,6 +2474,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	NSUInteger protocolEdgesCount = protocolEdges.count;
 	
 	[self enumerateExistingEdgesWithSource:srcRowid usingBlock:^(YapDatabaseRelationshipEdge *existingEdge) {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		// Ignore manually created edges
 		if (existingEdge->isManualEdge) return; // continue (next matching row)
@@ -2559,6 +2561,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			// Do NOT increment offset.
 			// Do NOT increment protocolEdgesCount.
 		}
+		
+	#pragma clang diagnostic pop
 	}];
 	
 	// Step 3 :
@@ -3055,6 +3059,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	// So this block need only look at the edgeAction and flags to decide how to process each edge.
 	
 	void (^ProcessEdges)(NSArray *edges) = ^(NSArray *edges){ @autoreleasepool{
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		for (YapDatabaseRelationshipEdge *edge in edges)
 		{
@@ -3309,6 +3315,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			
 		} // end for (YapDatabaseRelationshipEdge *edge in edges)
 		
+	#pragma clang diagnostic pop
 	}}; // end block ProcessEdges(NSMutableArray *edges)
 	
 	
@@ -3322,6 +3329,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	// - deleting edges that were manually removed from the list
 	
 	[parentConnection->protocolChanges enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL __unused *stop){
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		__unsafe_unretained NSNumber *srcRowidNumber = (NSNumber *)key;
 		__unsafe_unretained NSMutableArray *protocolEdges = (NSMutableArray *)obj;
@@ -3351,6 +3360,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		// We're ready for normal edge processing.
 		
 		ProcessEdges(protocolEdges);
+		
+	#pragma clang diagnostic pop
 	}];
 	
 	[parentConnection->protocolChanges removeAllObjects];
@@ -3534,6 +3545,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			YapCollectionKey *src = deletedCollectionKey;
 			
 			[self enumerateExistingEdgesWithSource:srcRowid usingBlock:^(YapDatabaseRelationshipEdge *edge) {
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 				
 				// Reminder:
 				//
@@ -3695,6 +3708,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 						}
 					}
 				} // end else if (!dstFilePath)
+				
+			#pragma clang diagnostic pop
 			}]; // end enumerateExistingRowsWithSrc:usingBlock:
 		
 		} // end "Enumerate all edges where source node is the deleted node"
@@ -3706,6 +3721,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			YapCollectionKey *dst = deletedCollectionKey;
 			
 			[self enumerateExistingEdgesWithDestination:dstRowid usingBlock:^(YapDatabaseRelationshipEdge *edge) {
+			#pragma clang diagnostic push
+			#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 				
 				// Reminder:
 				//
@@ -3826,7 +3843,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 							                                withRowid:edge->sourceRowid];
 					}
 				}
-				
+			
+			#pragma clang diagnostic pop
 			}]; // end enumerateExistingRowsWithDst:usingBlock:
 		
 		} // end "Enumerate all edges where destination node is the deleted node"

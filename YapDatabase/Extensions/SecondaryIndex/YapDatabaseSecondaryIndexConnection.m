@@ -102,7 +102,7 @@
 	
 	dispatch_block_t block = ^{
 		
-		result = (queryCache == nil) ? NO : YES;
+		result = (self->queryCache == nil) ? NO : YES;
 	};
 	
 	if (dispatch_get_specific(databaseConnection->IsOnConnectionQueueKey))
@@ -119,16 +119,16 @@
 		
 		if (queryCacheEnabled)
 		{
-			if (queryCache == nil)
+			if (self->queryCache == nil)
 			{
-				queryCache = [[YapCache alloc] initWithCountLimit:queryCacheLimit];
-				queryCache.allowedKeyClasses = [NSSet setWithObject:[NSString class]];
-				queryCache.allowedObjectClasses = [NSSet setWithObject:[YapDatabaseStatement class]];
+				self->queryCache = [[YapCache alloc] initWithCountLimit:self->queryCacheLimit];
+				self->queryCache.allowedKeyClasses = [NSSet setWithObject:[NSString class]];
+				self->queryCache.allowedObjectClasses = [NSSet setWithObject:[YapDatabaseStatement class]];
 			}
 		}
 		else
 		{
-			queryCache = nil;
+			self->queryCache = nil;
 		}
 	};
 	
@@ -144,7 +144,7 @@
 	
 	dispatch_block_t block = ^{
 		
-		result = queryCacheLimit;
+		result = self->queryCacheLimit;
 	};
 	
 	if (dispatch_get_specific(databaseConnection->IsOnConnectionQueueKey))
@@ -159,8 +159,8 @@
 {
 	dispatch_block_t block = ^{
 		
-		queryCacheLimit = newQueryCacheLimit;
-		queryCache.countLimit = queryCacheLimit;
+		self->queryCacheLimit = newQueryCacheLimit;
+		self->queryCache.countLimit = self->queryCacheLimit;
 	};
 	
 	if (dispatch_get_specific(databaseConnection->IsOnConnectionQueueKey))
