@@ -3474,7 +3474,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			{
 				[self mappingTable_insertRowWithRowid:[rowid unsignedLongLongValue] cloudURI:cloudURI];
 				
-				[parentConnection->cleanMappingCache insertKey:rowid value:cloudURI];
+				[self->parentConnection->cleanMappingCache insertKey:rowid value:cloudURI];
 			}
 			else if (metadata == YDBCloudCore_DiryMappingMetadata_NeedsRemove)
 			{
@@ -3505,7 +3505,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			{
 				[self tagTable_insertOrUpdateRowWithKey:key identifier:identifier tag:tag];
 				
-				[parentConnection->tagCache setObject:tag forKey:tuple];
+				[self->parentConnection->tagCache setObject:tag forKey:tuple];
 			}
 		}];
 	}

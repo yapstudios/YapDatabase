@@ -118,7 +118,7 @@ static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
 		{
 			if (self->queryCache == nil)
 			{
-				self->queryCache = [[YapCache alloc] initWithCountLimit:queryCacheLimit];
+				self->queryCache = [[YapCache alloc] initWithCountLimit:self->queryCacheLimit];
 				self->queryCache.allowedKeyClasses = [NSSet setWithObject:[NSString class]];
 				self->queryCache.allowedObjectClasses = [NSSet setWithObject:[YapDatabaseStatement class]];
 			}
@@ -157,7 +157,7 @@ static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
 	dispatch_block_t block = ^{
 
 		self->queryCacheLimit = newQueryCacheLimit;
-		self->queryCache.countLimit = queryCacheLimit;
+		self->queryCache.countLimit = self->queryCacheLimit;
 	};
 
 	if (dispatch_get_specific(databaseConnection->IsOnConnectionQueueKey))
