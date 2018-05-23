@@ -194,35 +194,20 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeObjectsForKeys:(NSArray<NSString *> *)keys inCollection:(nullable NSString *)collection;
 
 /**
- * Immediately discards all changes that were queued to be written to the database.
- * Thus any pending changes are not written to the database,
- * and any currently queued readWriteTransaction is aborted.
+ * Tells the proxy to discard pending changes (if any) for the given <collection, key> tuple.
  *
- * This method is typically used if you intend to clear the database.
- * For example:
- *
- * // blacklist everything - act as if db is empty
- * YapWhitelistBlacklist *whitelist = [[YapWhitelistBlacklist alloc] initWithWhitelist:nil];
- * [connectionProxy abortAndReset:whitelist];
- * 
- * // Then actually clear the db - but asynchronously
- * [connectionProxy.readWriteConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction){
- * 
- *     [transaction removeAllObjectsInAllCollections];
- *
- * } completionBlock:^{
- *     
- *     // allow the connectionProxy to start reading from the db again
- *     connectionProxy.fetchedCollectionsFilter = nil;
- * }];
- * 
- * @param fetchedCollectionsFilter
- *   This parameter allows you to instruct the connectionProxy to act as if
- *   the readOnlyConnection doesn't see any objects within certain collections.
- *
- * @see fetchedCollectionsFilter
+ * That is, IF the proxy has a pending change (for the tuple) that it intends to write to the database
+ * during the next flush, it will drop the pending change (and not write it to the database).
 **/
-- (void)abortAndReset:(nullable YapWhitelistBlacklist *)fetchedCollectionsFilter;
+- (void)resetObjectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
+
+/**
+ * Tells the proxy to discard ALL pending changes.
+ *
+ * That is, IF the proxy has pending changes that it intends to write to the database
+ * during the next flush, it will instead drop all those pending changes (and not write any of them).
+**/
+- (void)reset;
 
 /**
  * The fetchedCollectionsFilter is useful when you need to delete one or more collections from the database.
@@ -250,6 +235,27 @@ NS_ASSUME_NONNULL_BEGIN
  * That is, it still allows the proxy to write values to any collection.
 **/
 @property (atomic, strong, readwrite, nullable) YapWhitelistBlacklist *fetchedCollectionsFilter;
+
+/**
+ * Replace with the following code:
+ *
+ * // blacklist everything - act as if db is empty
+ * YapWhitelistBlacklist *whitelist = [[YapWhitelistBlacklist alloc] initWithWhitelist:nil];
+ * connectionProxy.fetchedCollectionsFilter = whitelist;
+ * [connectionProxy reset];
+ *
+ * // Then actually clear the db - but asynchronously
+ * [databaseConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction){
+ *
+ *     [transaction removeAllObjectsInAllCollections];
+ *
+ * } completionBlock:^{
+ *
+ *     // allow the connectionProxy to start reading from the db again
+ *     connectionProxy.fetchedCollectionsFilter = nil;
+ * }];
+**/
+- (void)abortAndReset:(nullable YapWhitelistBlacklist *)fetchedCollectionsFilter __attribute((deprecated));
 
 @end
 
