@@ -28,8 +28,6 @@ It has the following features:
  
 * **Performance**. Fetch thousands of objects on the main thread without dropping a frame.
 
-* **Objective-C**. A simple to use Objective-C API means you'll be up and running in no time.
-
 <br/>
 
 **[See what the API looks like in "hello world" for YapDatabase](https://github.com/yapstudios/YapDatabase/wiki/Hello-World)**<br/>
