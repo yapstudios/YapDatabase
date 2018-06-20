@@ -811,6 +811,27 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
 **/
 - (nullable NSArray<NSString *> *)previouslyRegisteredExtensionNames;
 
+/**
+ * It's sometimes useful to find out when all async registerExtension/unregisterExtension requests have completed.
+ *
+ * One way to accomplish this is simply to queue an asyncReadWriteTransaction on any databaseConnection.
+ * Since all async register/unregister extension requests are immediately dispatch_async'd through the
+ * internal serial writeQueue, you'll know that once your asyncReadWriteTransaction is running,
+ * all previously scheduled register/unregister requests have completed.
+ *
+ * Although the above technique works, the 'flushExtensionRequestsWithCompletionQueue::'
+ * is a more efficient way to accomplish this task. (And a more elegant & readable way too.)
+ *
+ * @param completionQueue
+ *   The dispatch_queue to invoke the completionBlock on.
+ *   If NULL, dispatch_get_main_queue() is automatically used.
+ *
+ * @param completionBlock
+ *   The block to invoke once all previously scheduled register/unregister extension requests have completed.
+ **/
+- (void)flushExtensionRequestsWithCompletionQueue:(nullable dispatch_queue_t)completionQueue
+									       completionBlock:(nullable dispatch_block_t)completionBlock;
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Connection Pooling
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
