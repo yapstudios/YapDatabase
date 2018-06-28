@@ -4897,7 +4897,7 @@
 			_object = [YapNull null];
 	}
 	
-	if (found) {
+	if (!found) {
 		[connection->insertedKeys addObject:cacheKey];
 	}
 	
