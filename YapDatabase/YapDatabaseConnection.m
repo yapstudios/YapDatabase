@@ -2953,6 +2953,9 @@ static int connectionBusyHandler(void *ptr, int count)
 	if (metadataChanges == nil)
 		metadataChanges = [[NSMutableDictionary alloc] init];
 	
+	if (insertedKeys == nil)
+		insertedKeys = [[NSMutableSet alloc] init];
+	
 	if (removedKeys == nil)
 		removedKeys = [[NSMutableSet alloc] init];
 	
@@ -3330,6 +3333,9 @@ static int connectionBusyHandler(void *ptr, int count)
 	
 	if ([metadataChanges count] > 0)
 		metadataChanges = nil;
+	
+	if ([insertedKeys count] > 0)
+		insertedKeys = nil;
 	
 	if ([removedKeys count] > 0)
 		removedKeys = nil;
@@ -4040,6 +4046,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	
 	if ([objectChanges count]      > 0 ||
 	    [metadataChanges count]    > 0 ||
+	    [insertedKeys count]       > 0 ||
 	    [removedKeys count]        > 0 ||
 	    [removedCollections count] > 0 ||
 	    [removedRowids count]      > 0 || allKeysRemoved)
@@ -4064,6 +4071,14 @@ static int connectionBusyHandler(void *ptr, int count)
 			
 			YapSet *immutableMetadataChanges = [[YapSet alloc] initWithDictionary:metadataChanges];
 			externalChangeset[YapDatabaseMetadataChangesKey] = immutableMetadataChanges;
+		}
+		
+		if ([insertedKeys count] > 0)
+		{
+			internalChangeset[YapDatabaseInsertedKeysKey] = insertedKeys;
+			
+			YapSet *immutableInsertedKeys = [[YapSet alloc] initWithSet:insertedKeys];
+			externalChangeset[YapDatabaseInsertedKeysKey] = immutableInsertedKeys;
 		}
 		
 		if ([removedKeys count] > 0)

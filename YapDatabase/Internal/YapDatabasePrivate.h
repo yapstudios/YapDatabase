@@ -227,6 +227,7 @@ static NSString *const ext_key_class = @"class";
 	
 	NSMutableDictionary *objectChanges;
 	NSMutableDictionary *metadataChanges;
+	NSMutableSet *insertedKeys;
 	NSMutableSet *removedKeys;
 	NSMutableSet *removedCollections;
 	NSMutableSet *removedRowids;

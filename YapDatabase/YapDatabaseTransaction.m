@@ -4897,6 +4897,10 @@
 			_object = [YapNull null];
 	}
 	
+	if (found) {
+		[connection->insertedKeys addObject:cacheKey];
+	}
+	
 	[connection->objectCache setObject:object forKey:cacheKey];
 	[connection->objectChanges setObject:_object forKey:cacheKey];
 	
@@ -5432,6 +5436,7 @@
 	
 	[connection->objectChanges removeObjectForKey:cacheKey];
 	[connection->metadataChanges removeObjectForKey:cacheKey];
+	[connection->insertedKeys removeObject:cacheKey];
 	[connection->removedKeys addObject:cacheKey];
 	[connection->removedRowids addObject:@(rowid)];
 	
@@ -5643,6 +5648,7 @@
 				
 				[connection->objectChanges removeObjectForKey:cacheKey];
 				[connection->metadataChanges removeObjectForKey:cacheKey];
+				[connection->insertedKeys removeObject:cacheKey];
 				[connection->removedKeys addObject:cacheKey];
 			}
 			
@@ -5749,6 +5755,24 @@
 		}
 		
 		[connection->metadataChanges removeObjectsForKeys:toRemove];
+		[toRemove removeAllObjects];
+	}
+	
+	{ // insertedKeys
+		
+		for (NSString *key in connection->insertedKeys)
+		{
+			__unsafe_unretained YapCollectionKey *cacheKey = (YapCollectionKey *)key;
+			if ([cacheKey.collection isEqualToString:collection])
+			{
+				[toRemove addObject:cacheKey];
+			}
+		}
+		
+		for (NSString *cacheKey in toRemove)
+		{
+			[connection->insertedKeys removeObject:cacheKey];
+		}
 	}
 	
 	[connection->removedCollections addObject:collection];
@@ -5970,6 +5994,7 @@
 	
 	[connection->objectChanges removeAllObjects];
 	[connection->metadataChanges removeAllObjects];
+	[connection->insertedKeys removeAllObjects];
 	[connection->removedKeys removeAllObjects];
 	[connection->removedCollections removeAllObjects];
 	[connection->removedRowids removeAllObjects];
