@@ -3077,7 +3077,9 @@
 					}
 				}
 				
-				block(rowid, collection, key, object, &stop);
+                if (object) {
+                    block(rowid, collection, key, object, &stop);
+                }
 				
 				if (stop || mutation.isMutated) break;
 			}
