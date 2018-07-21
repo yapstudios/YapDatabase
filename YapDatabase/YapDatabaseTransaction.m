@@ -2634,7 +2634,9 @@
 					[connection->metadataCache setObject:[YapNull null] forKey:cacheKey];
 			}
 			
-			block(keyIndex, object, metadata, &stop);
+            if (object) {
+                block(keyIndex, object, metadata, &stop);
+            }
 			
 			[keyIndexDict removeObjectForKey:key];
 			
@@ -2963,7 +2965,9 @@
 				}
 			}
 			
-			block(rowid, key, object, &stop);
+            if (object) {
+                block(rowid, key, object, &stop);
+            }
 			
 			if (stop || mutation.isMutated) break;
 		}
@@ -3195,7 +3199,9 @@
 				}
 			}
 			
-			block(rowid, collection, key, object, &stop);
+            if (object) {
+                block(rowid, collection, key, object, &stop);
+            }
 			
 			if (stop || mutation.isMutated) break;
 		}
@@ -3731,7 +3737,9 @@
 				}
 			}
 			
-			block(rowid, key, object, metadata, &stop);
+            if (object) {
+                block(rowid, key, object, metadata, &stop);
+            }
 			
 			if (stop || mutation.isMutated) break;
 		}
@@ -3884,7 +3892,9 @@
 					}
 				}
 				
-				block(rowid, collection, key, object, metadata, &stop);
+                if (object) {
+                    block(rowid, collection, key, object, metadata, &stop);
+                }
 				
 				if (stop || mutation.isMutated) break;
 			}
@@ -4029,7 +4039,9 @@
 				}
 			}
 			
-			block(rowid, collection, key, object, metadata, &stop);
+            if (object) {
+                block(rowid, collection, key, object, metadata, &stop);
+            }
 			
 			if (stop || mutation.isMutated) break;
 		}
