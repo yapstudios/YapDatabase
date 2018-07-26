@@ -2160,17 +2160,24 @@
 		if ([reverse containsObject:rowChange->originalGroup])
 		{
 			NSUInteger count = [originalMappings visibleCountForGroup:rowChange->originalGroup];
-			double mid = (count - 1) / 2.0;
-			
-			rowChange->originalIndex = (NSUInteger)(mid - (rowChange->originalIndex - mid));
+            // We treat "degenerate" indices (indices >= count) as count.
+            // These should never happen for "original" indices.
+            NSUInteger originalIndex = (rowChange->originalIndex >= count
+                                        ? count
+                                        : count - (rowChange->originalIndex + 1));
+            rowChange->originalIndex = originalIndex;
 		}
 		
 		if ([reverse containsObject:rowChange->finalGroup])
 		{
 			NSUInteger count = [finalMappings visibleCountForGroup:rowChange->finalGroup];
-			double mid = (count - 1) / 2.0;
-			
-			rowChange->finalIndex = (NSUInteger)(mid - (rowChange->finalIndex - mid));
+            // We treat "degenerate" indices (indices >= count) as count.
+            // This can happen "final" indices for "delete" operations where
+            // there is no actual final index.
+            NSUInteger finalIndex = (rowChange->finalIndex >= count
+                                     ? count
+                                     : count - (rowChange->finalIndex + 1));
+            rowChange->finalIndex = finalIndex;
 		}
 	}
 	
