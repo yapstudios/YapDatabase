@@ -2153,31 +2153,30 @@
 		// 1 -> 2
 		// 2 -> 1
 		// 3 -> 0
-		//
-		// Basically, we find the midpoint, and then move each index to the other side of the midpoint,
-		// but we keep its distance from the midpoint the same.
-			
 		if ([reverse containsObject:rowChange->originalGroup])
 		{
 			NSUInteger count = [originalMappings visibleCountForGroup:rowChange->originalGroup];
-            // We treat "degenerate" indices (indices >= count) as count.
-            // These should never happen for "original" indices.
-            NSUInteger originalIndex = (rowChange->originalIndex >= count
-                                        ? count
-                                        : count - (rowChange->originalIndex + 1));
-            rowChange->originalIndex = originalIndex;
+			NSUInteger forwardIndex = rowChange->originalIndex;
+			if (count < forwardIndex + 1) {
+				// Calculating the reverse index would overflow, so we skip it.
+				NSAssert(NO, @"original index is too large");
+			} else {
+				rowChange->originalIndex = count - (forwardIndex + 1);
+			}
 		}
 		
 		if ([reverse containsObject:rowChange->finalGroup])
 		{
 			NSUInteger count = [finalMappings visibleCountForGroup:rowChange->finalGroup];
-            // We treat "degenerate" indices (indices >= count) as count.
-            // This can happen "final" indices for "delete" operations where
-            // there is no actual final index.
-            NSUInteger finalIndex = (rowChange->finalIndex >= count
-                                     ? count
-                                     : count - (rowChange->finalIndex + 1));
-            rowChange->finalIndex = finalIndex;
+			NSUInteger forwardIndex = rowChange->finalIndex;
+			if (count < forwardIndex + 1) {
+				// This can happen when deleting an item.
+				// Calculating the reverse index would overflow, so we skip it.
+				// When deleting a row, the finalIndex is irrelevant anyway.
+				NSAssert(rowChange->type == YapDatabaseViewChangeDelete, @"final index is too large");
+			} else {
+				rowChange->finalIndex = count - (forwardIndex + 1);
+			}
 		}
 	}
 	
