@@ -31,6 +31,7 @@
 #endif
 @synthesize aggressiveWALTruncationSize = aggressiveWALTruncationSize;
 @synthesize enableMultiProcessSupport = enableMultiProcessSupport;
+@synthesize autoDropPreviouslyRegisteredPersistentViewsNoLongerInUse = autoDropPreviouslyRegisteredPersistentViewsNoLongerInUse;
 
 - (id)init
 {
@@ -43,6 +44,7 @@
 		pragmaMMapSize = 0;
 		aggressiveWALTruncationSize = (1024 * 1024 * 4); // 4 MB
         enableMultiProcessSupport = NO;
+        autoDropPreviouslyRegisteredPersistentViewsNoLongerInUse = YES;
 	}
 	return self;
 }

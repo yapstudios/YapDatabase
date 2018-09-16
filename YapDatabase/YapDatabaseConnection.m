@@ -3092,7 +3092,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		
 		BOOL clearPreviouslyRegisteredExtensionNames = NO;
 		
-		if (changeset && !registeredExtensionsChanged && database->previouslyRegisteredExtensionNames)
+		if ( database.options.autoDropPreviouslyRegisteredPersistentViewsNoLongerInUse && changeset && !registeredExtensionsChanged && database->previouslyRegisteredExtensionNames )
 		{
 			for (NSString *prevExtensionName in database->previouslyRegisteredExtensionNames)
 			{

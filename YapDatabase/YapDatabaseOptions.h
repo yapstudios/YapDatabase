@@ -340,6 +340,14 @@ typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
 **/
 @property (nonatomic, assign, readwrite) BOOL enableMultiProcessSupport;
 
+/**
+ * This option enables automatic clean up (dropping tables) of previously registered views when they
+ * are detected to no longer be in use. This option is defaulted to YES. Setting it to NO will disable
+ * the connection's view table clean up routine.
+**/
+@property (nonatomic, assign, readwrite) BOOL autoDropPreviouslyRegisteredPersistentViewsNoLongerInUse;
+
+
 @end
 
 NS_ASSUME_NONNULL_END
