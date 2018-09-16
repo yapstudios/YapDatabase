@@ -68,7 +68,8 @@
 #endif
 	copy->aggressiveWALTruncationSize = aggressiveWALTruncationSize;
     copy->enableMultiProcessSupport = enableMultiProcessSupport;
-	
+    copy->autoDropPreviouslyRegisteredPersistentViewsNoLongerInUse = autoDropPreviouslyRegisteredPersistentViewsNoLongerInUse;
+    
 	return copy;
 }
 
