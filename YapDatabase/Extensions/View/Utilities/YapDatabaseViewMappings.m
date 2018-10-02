@@ -68,6 +68,11 @@
 {
 	if ((self = [super init]))
 	{
+#ifdef DEBUG
+        NSUInteger inGroupsNoDuplicatesCount = [[[NSSet alloc] initWithArray: inGroups] count];
+        NSUInteger inGroupsCount = [inGroups count];
+        NSAssert(inGroupsCount == inGroupsNoDuplicatesCount, @"YapDatabaseViewMappings should be initialized without duplicated groups. Otherwise the app might crash during animated updates");
+#endif
         allGroups = [[NSArray alloc] initWithArray:inGroups copyItems:YES];
 		NSUInteger allGroupsCount = [allGroups count];
         viewGroupsAreDynamic = NO;
