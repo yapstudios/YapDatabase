@@ -33,7 +33,7 @@
          isOnHold:(BOOL *)isOnHoldPtr
  forOperationUUID:(NSUUID *)opUUID;
 
-- (void)restoreGraphs:(NSArray *)graphs;
+- (void)restoreGraphs:(NSArray<YapDatabaseCloudCoreGraph *> *)graphs previousAlgorithm:(NSNumber *)algorithm;
 
 - (void)processAddedGraph:(YapDatabaseCloudCoreGraph *)graph
 		 insertedOperations:(NSDictionary<NSNumber *, NSArray<YapDatabaseCloudCoreOperation *> *> *)insertedOperations
@@ -50,29 +50,5 @@
 
 - (void)_enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
                                                  NSUInteger graphIdx, BOOL *stop))enumBlock;
-
-@end
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark -
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-@interface YapDatabaseCloudCoreGraph ()
-
-- (instancetype)initWithPersistentOrder:(uint64_t)peristentOrder
-                             operations:(NSArray<YapDatabaseCloudCoreOperation *> *)operations;
-
-@property (nonatomic, assign, readonly) uint64_t persistentOrder;
-@property (nonatomic, copy, readonly) NSArray<YapDatabaseCloudCoreOperation *> *operations;
-
-@property (nonatomic, unsafe_unretained, readwrite) YapDatabaseCloudCorePipeline *pipeline;
-
-- (void)insertOperations:(NSArray<YapDatabaseCloudCoreOperation *> *)insertedOperations
-        modifyOperations:(NSDictionary<NSUUID *, YapDatabaseCloudCoreOperation *> *)modifiedOperations
-                modified:(NSMutableArray<YapDatabaseCloudCoreOperation *> *)matchedModifiedOperations;
-
-- (NSArray *)removeCompletedAndSkippedOperations;
-
-- (YapDatabaseCloudCoreOperation *)dequeueNextOperation;
 
 @end

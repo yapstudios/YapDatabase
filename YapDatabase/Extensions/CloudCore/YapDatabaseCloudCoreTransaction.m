@@ -113,7 +113,14 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		}
 		else
 		{
-			if (![self migrateTables]) return NO;
+			if (oldClassVersion <= 1)
+			{
+				if (![self migrateTables_fromv1_to_v2]) return NO;
+			}
+			if (oldClassVersion <= 2)
+			{
+				if (![self migrateTables_fromv2_to_v3]) return NO;
+			}
 		}
 		
 		[self setIntValue:classVersion forExtensionKey:ext_key_classVersion persistent:YES];
@@ -164,14 +171,15 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	// CREATE: Pipeline Table
 	//
-	// | rowid | name |
+	// | rowid | name | algorithm |
 	
 	YDBLogVerbose(@"Creating CloudCore table for registeredName(%@): %@", [self registeredName], pipelineTableName);
 	
 	NSString *createPipelineTable = [NSString stringWithFormat:
 	  @"CREATE TABLE IF NOT EXISTS \"%@\""
 	  @" (\"rowid\" INTEGER PRIMARY KEY,"
-	  @"  \"name\" TEXT NOT NULL"
+	  @"  \"name\" TEXT NOT NULL,"
+	  @"  \"algorithm\" INTEGER NOT NULL"
 	  @" );", pipelineTableName];
 	
 	YDBLogVerbose(@"%@", createPipelineTable);
@@ -287,14 +295,14 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	return YES;
 }
 
-- (BOOL)migrateTables
+- (BOOL)migrateTables_fromv1_to_v2
 {
 	YDBLogAutoTrace();
 	
 	sqlite3 *db = databaseTransaction->connection->db;
 	
 	NSString *old_queueTableName = [parentConnection->parent queueV1TableName];
-	NSString *new_queueTableName = [parentConnection->parent queueTableName];
+	NSString *new_queueTableName = [parentConnection->parent queueV2TableName];
 	
 	int status;
 	
@@ -567,6 +575,132 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	return YES;
 }
 
+- (BOOL)migrateTables_fromv2_to_v3
+{
+	YDBLogAutoTrace();
+	
+	sqlite3 *db = databaseTransaction->connection->db;
+	
+	NSString *old_pipelineTableName = [parentConnection->parent pipelineV2TableName];
+	NSString *new_pipelineTableName = [parentConnection->parent pipelineV3TableName];
+	
+	int status;
+	
+	// STEP 1 of 4
+	//
+	// CREATE: (New) Pipeline Table
+	//
+	// | rowid | name | algorithm |
+	{
+		YDBLogVerbose(@"Creating CloudCore table for registeredName(%@): %@",
+		  [self registeredName], new_pipelineTableName);
+		
+		NSString *createPipelineTable = [NSString stringWithFormat:
+			@"CREATE TABLE IF NOT EXISTS \"%@\""
+			@" (\"rowid\" INTEGER PRIMARY KEY,"
+			@"  \"name\" TEXT NOT NULL,"
+			@"  \"algorithm\" INTEGER NOT NULL"
+			@" );", new_pipelineTableName];
+		
+		YDBLogVerbose(@"%@", createPipelineTable);
+		status = sqlite3_exec(db, [createPipelineTable UTF8String], NULL, NULL, NULL);
+		if (status != SQLITE_OK)
+		{
+			YDBLogError(@"%@ - Failed creating table (%@): %d %s",
+							THIS_METHOD, new_pipelineTableName, status, sqlite3_errmsg(db));
+			return NO;
+		}
+	}
+	
+	// STEP 2 of 4
+	//
+	// - Enumerate the OLD pipeline table
+	// - Read all the existing names
+	
+	NSMutableArray<NSString *> *old_table = [NSMutableArray array];
+	
+	{
+		sqlite3_stmt *statement;
+		
+		NSString *enumerate = [NSString stringWithFormat:
+			@"SELECT * FROM \"%@\";", old_pipelineTableName];
+		
+	//	int const column_idx_rowid = SQLITE_COLUMN_START + 0;
+		int const column_idx_name  = SQLITE_COLUMN_START + 1; // TEXT NOT NULL
+		
+		status = sqlite3_prepare_v2(db, [enumerate UTF8String], -1, &statement, NULL);
+		if (status != SQLITE_OK)
+		{
+			YDBLogError(@"%@: Error creating prepared statement (B): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			return NO;
+		}
+		
+		while ((status = sqlite3_step(statement)) == SQLITE_ROW)
+		{
+			// - Extract name
+			
+			const unsigned char *text = sqlite3_column_text(statement, column_idx_name);
+			int textSize = sqlite3_column_bytes(statement, column_idx_name);
+			
+			NSString *name = [[NSString alloc] initWithBytes:text length:textSize encoding:NSUTF8StringEncoding];
+			
+			if (name) {
+				[old_table addObject:name];
+			}
+		}
+		
+		if (status != SQLITE_DONE)
+		{
+			YDBLogError(@"%@: Error executing statement (A): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+		}
+		
+		sqlite3_finalize(statement);
+		statement = NULL;
+	}
+	
+	// STEP 3 of 4
+	//
+	// Populate the NEW pipeline table
+	
+	{
+		sqlite3_stmt *statement = [parentConnection pipelineTable_insertStatement];
+		
+		int const bind_idx_name      = SQLITE_BIND_START + 0;  // TEXT NOT NULL
+		int const bind_idx_algorithm = SQLITE_BIND_START + 1;  // INTEGER NOT NULL
+		
+		for (NSString *name in old_table)
+		{
+			sqlite3_bind_text(statement, bind_idx_name, [name UTF8String], -1, SQLITE_TRANSIENT);
+			sqlite3_bind_int(statement, bind_idx_algorithm, YDBCloudCorePipelineAlgorithm_CommitGraph);
+			
+			status = sqlite3_step(statement);
+			if (status != SQLITE_DONE)
+			{
+				YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+								status, sqlite3_errmsg(databaseTransaction->connection->db));
+			}
+			
+			sqlite3_clear_bindings(statement);
+			sqlite3_reset(statement);
+		}
+	}
+	
+	// STEP 4 of 4
+	//
+	// Delete the old_queueTable
+	
+	NSString *dropTable = [NSString stringWithFormat:@"DROP TABLE IF EXISTS \"%@\";", old_pipelineTableName];
+	
+	status = sqlite3_exec(db, [dropTable UTF8String], NULL, NULL, NULL);
+	if (status != SQLITE_OK)
+	{
+		YDBLogError(@"%@ - Failed dropping table (%@): %d %s",
+						THIS_METHOD, old_pipelineTableName, status, sqlite3_errmsg(db));
+	}
+	
+	return YES;
+}
+
 /**
  * Restores all operations by loading them into memory, and sending to the associated pipeline(s).
 **/
@@ -575,9 +709,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	sqlite3 *db = databaseTransaction->connection->db;
 	
 	NSMutableDictionary *rowidToPipelineName = [NSMutableDictionary dictionary];
-	NSMutableDictionary *sortedGraphsPerPipeline = [NSMutableDictionary dictionary];
+	NSMutableDictionary *prvPipelineInfo = [NSMutableDictionary dictionary];
 	
-	// Step 1 of 6:
+	// Step 1 of 4:
 	//
 	// Read pipeline table
 	{
@@ -585,10 +719,11 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		int status;
 		
 		NSString *enumerate = [NSString stringWithFormat:
-		  @"SELECT \"rowid\", \"name\" FROM \"%@\";", [self pipelineTableName]];
+		  @"SELECT * FROM \"%@\";", [self pipelineTableName]];
 		
-		int const column_idx_rowid = SQLITE_COLUMN_START + 0;
-		int const column_idx_name  = SQLITE_COLUMN_START + 1;
+		int const column_idx_rowid     = SQLITE_COLUMN_START + 0;
+		int const column_idx_name      = SQLITE_COLUMN_START + 1;
+		int const column_idx_algorithm = SQLITE_COLUMN_START + 2;
 		
 		status = sqlite3_prepare_v2(db, [enumerate UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
@@ -606,8 +741,11 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			
 			NSString *name = [[NSString alloc] initWithBytes:text length:textSize encoding:NSUTF8StringEncoding];
 			
-			if (name) {
-				rowidToPipelineName[@(rowid)] = name;
+			int algorithm = sqlite3_column_int(statement, column_idx_algorithm);
+			
+			if (name)
+			{
+				prvPipelineInfo[name] = @[@(rowid), @(algorithm)];
 			}
 		}
 		
@@ -620,36 +758,135 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		statement = NULL;
 	}
 	
-	// Step 2 of 6:
+	// In version 2, we didn't store the default pipeline in the database.
+	// Because it was always required, and because this was before we supported the FlatGraph algorithm.
+	// So we need to fake it if it's not there.
+	//
+	if (prvPipelineInfo[YapDatabaseCloudCoreDefaultPipelineName] == nil)
+	{
+		prvPipelineInfo[YapDatabaseCloudCoreDefaultPipelineName] = @[ @(-1), @(-1) ];
+	}
+	
+	// Step 2 of 4:
 	//
 	// Update pipeline table
 	{
-		NSSet *existing = [NSSet setWithArray:[rowidToPipelineName allValues]];
-		NSSet *needed   = [NSSet setWithArray:[parentConnection->parent registeredPipelineNamesExcludingDefault]];
+		NSMutableSet<NSNumber *> *pipelineRowidsToDelete = [NSMutableSet set];
 		
-		// pipelineNamesToRemove == existing - needed
-		// pipelineNamesToInsert == needed - existing
+		NSMutableArray<YapDatabaseCloudCorePipeline *> *pipelinesToUpdate = [NSMutableArray array];
+		NSMutableArray<YapDatabaseCloudCorePipeline *> *pipelinesToInsert =
+		  [[parentConnection->parent registeredPipelines] mutableCopy];
 		
-		NSMutableSet *pipelineNamesToRemove = [existing mutableCopy];
-		[pipelineNamesToRemove minusSet:needed];
-		
-		NSMutableSet *pipelineNamesToInsert = [needed mutableCopy];
-		[pipelineNamesToInsert minusSet:existing];
-		
-		if (pipelineNamesToRemove.count > 0)
+		for (NSString *prvName in prvPipelineInfo)
 		{
-			NSMutableArray *pipelineRowidsToRemove = [NSMutableArray arrayWithCapacity:pipelineNamesToRemove.count];
+			NSArray *info = prvPipelineInfo[prvName];
+			NSNumber *prvRowid = info[0];
+			NSNumber *prvAlgo  = info[1];
 			
-			[rowidToPipelineName enumerateKeysAndObjectsUsingBlock:^(NSNumber *rowid, NSString *name, BOOL *stop) {
+			// Remember: YDBCloudCorePipeline has a `previousNames` attribute.
+			// So the previous name may not match the current name.
+			// However, the [YDBCloudCore pipelineWithName:] method will handle this for us.
+			
+			YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:prvName];
+			if (pipeline)
+			{
+				pipeline.rowid = [prvRowid longLongValue];
+				rowidToPipelineName[prvRowid] = pipeline.name;
 				
-				if ([pipelineNamesToRemove containsObject:name])
+				[pipelinesToInsert removeObjectIdenticalTo:pipeline];
+				
+				if (![prvName isEqualToString:pipeline.name] ||           // name change
+					 [prvAlgo unsignedIntegerValue] != pipeline.algorithm) // algorithm change
 				{
-					[pipelineRowidsToRemove addObject:rowid];
+					[pipelinesToUpdate addObject:pipeline];
 				}
-			}];
+			}
+			else
+			{
+				// This pipeline no longer exists.
+				// So we'll need to delete it from the table.
+				
+				[pipelineRowidsToDelete addObject:prvRowid];
+			}
+		}
+		
+		if (pipelinesToUpdate.count > 0)
+		{
+			sqlite3_stmt *statement = [parentConnection pipelineTable_updateStatement];
+			if (statement == NULL){
+				return NO;
+			}
 			
-			[rowidToPipelineName removeObjectsForKeys:pipelineRowidsToRemove];
+			// UPDATE <tableName> SET "name" = ?, "algorithm" = ? WHERE "rowid" = ?;
 			
+			int const bind_idx_name      = SQLITE_BIND_START + 0;
+			int const bind_idx_algorithm = SQLITE_BIND_START + 1;
+			
+			BOOL foundError = NO;
+			
+			for (YapDatabaseCloudCorePipeline *pipeline in pipelinesToUpdate)
+			{
+				sqlite3_bind_text(statement, bind_idx_name, [pipeline.name UTF8String], -1, SQLITE_TRANSIENT);
+				sqlite3_bind_int(statement, bind_idx_algorithm, pipeline.algorithm);
+				
+				int status = sqlite3_step(statement);
+				if (status != SQLITE_DONE)
+				{
+					YDBLogError(@"%@: Error executing statement (B1): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+					foundError = YES;
+				}
+				
+				sqlite3_reset(statement);
+				sqlite3_clear_bindings(statement);
+				
+				if (foundError) {
+					return NO;
+				}
+			}
+		}
+		
+		if (pipelinesToInsert.count > 0)
+		{
+			sqlite3_stmt *statement = [parentConnection pipelineTable_insertStatement];
+			if (statement == NULL) {
+				return NO;
+			}
+			
+			// INSERT INTO "pipelineTableName" ("name", "algorithm") VALUES (?, ?);
+			
+			int const bind_idx_name      = SQLITE_BIND_START + 0;
+			int const bind_idx_algorithm = SQLITE_BIND_START + 1;
+			
+			BOOL foundError = NO;
+			
+			for (YapDatabaseCloudCorePipeline *pipeline in pipelinesToInsert)
+			{
+				sqlite3_bind_text(statement, bind_idx_name, [pipeline.name UTF8String], -1, SQLITE_TRANSIENT);
+				sqlite3_bind_int(statement, bind_idx_algorithm, pipeline.algorithm);
+				
+				int status = sqlite3_step(statement);
+				if (status == SQLITE_DONE)
+				{
+					int64_t newRowid = sqlite3_last_insert_rowid(db);
+					rowidToPipelineName[@(newRowid)] = pipeline.name;
+				}
+				else
+				{
+					YDBLogError(@"%@: Error executing statement (B2): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+					foundError = YES;
+				}
+				
+				sqlite3_reset(statement);
+				sqlite3_clear_bindings(statement);
+				
+				if (foundError) {
+					return NO;
+				}
+			}
+		}
+		
+		if (pipelineRowidsToDelete.count > 0)
+		{
 			sqlite3_stmt *statement = [parentConnection pipelineTable_removeStatement];
 			if (statement == NULL){
 				return NO;
@@ -657,58 +894,30 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			
 			// DELETE FROM "pipelineTableName" WHERE "rowid" = ?;
 			
-			for (NSNumber *rowid in pipelineRowidsToRemove)
+			BOOL foundError = NO;
+			
+			for (NSNumber *rowid in pipelineRowidsToDelete)
 			{
 				sqlite3_bind_int64(statement, SQLITE_BIND_START, [rowid longLongValue]);
 				
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-					YDBLogError(@"%@: Error executing statement (B1): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+					YDBLogError(@"%@: Error executing statement (B3): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+					foundError = YES;
 				}
 				
 				sqlite3_reset(statement);
 				sqlite3_clear_bindings(statement);
-			}
-		}
-		
-		if (pipelineNamesToInsert.count > 0)
-		{
-			sqlite3_stmt *statement = [parentConnection pipelineTable_insertStatement];
-			if (statement == NULL) {
-				return NO;
-			}
-			
-			// INSERT INTO "pipelineTableName" ("name") VALUES (?);
-			
-			for (NSString *name in pipelineNamesToInsert)
-			{
-				sqlite3_bind_text(statement, SQLITE_BIND_START, [name UTF8String], -1, SQLITE_TRANSIENT);
 				
-				int status = sqlite3_step(statement);
-				if (status == SQLITE_DONE)
-				{
-					int64_t rowid = sqlite3_last_insert_rowid(db);
-					rowidToPipelineName[@(rowid)] = name;
+				if (foundError) {
+					return NO;
 				}
-				else
-				{
-					YDBLogError(@"%@: Error executing statement (B2): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
-				}
-				
-				sqlite3_reset(statement);
-				sqlite3_clear_bindings(statement);
 			}
 		}
 	}
 	
-	// Step 3 of 6:
-	//
-	// Set pipeline.rowid properties
-	
-	[parentConnection->parent restorePipelineRowids:rowidToPipelineName];
-	
-	// Step 4 of 6:
+	// Step 3 of 4:
 	//
 	// Read queue table
 	
@@ -747,7 +956,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			}
 			
 			// ensure pipelineName is valid (and convert from alias if needed)
-			if (pipelineName) {
+			if (pipelineName == nil) {
 				pipelineName = [[parentConnection->parent pipelineWithName:pipelineName] name];
 			}
 			
@@ -798,7 +1007,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		statement = NULL;
 	}
 	
-	// Step 5 of 6:
+	// Step 4 of 4:
 	//
 	// Create the graphs (per pipeline)
 	
@@ -809,9 +1018,11 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		// key   : @(graphID) (uint64_t)
 		// value : @[operation, ...]
 		
-		NSArray *sortedGraphIDs = [[operationsPerPipeline allKeys] sortedArrayUsingSelector:@selector(compare:)];
+		NSArray<NSNumber *> *unsortedGraphIDs = [operationsPerPipeline allKeys];
+		NSArray<NSNumber *> *sortedGraphIDs = [unsortedGraphIDs sortedArrayUsingSelector:@selector(compare:)];
 		
-		NSMutableArray *sortedGraphs = [NSMutableArray arrayWithCapacity:[sortedGraphIDs count]];
+		NSMutableArray<YapDatabaseCloudCoreGraph *> *sortedGraphs =
+		  [NSMutableArray arrayWithCapacity:[sortedGraphIDs count]];
 		
 		for (NSNumber *graphID in sortedGraphIDs)
 		{
@@ -824,15 +1035,13 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			[sortedGraphs addObject:graph];
 		}
 		
-		sortedGraphsPerPipeline[pipelineName] = sortedGraphs;
+		YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
+		
+		NSArray *prvInfo = prvPipelineInfo[pipelineName];
+		NSNumber *prvAlgorithm = prvInfo ? prvInfo[1] : nil;
+		
+		[pipeline restoreGraphs:sortedGraphs previousAlgorithm:prvAlgorithm];
 	}
-	
-	
-	// Step 6 of 6:
-	//
-	// Send operations off to pipeline(s)
-	
-	[parentConnection->parent restorePipelineGraphs:sortedGraphsPerPipeline];
 	
 	return YES;
 }

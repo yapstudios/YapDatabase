@@ -9,6 +9,13 @@
 #import "YapDatabaseCloudCoreOperation.h"
 #import "YapDatabaseCloudCore.h"
 
+typedef NS_ENUM(NSInteger, YDBCloudCorePipelineAlgorithm) {
+	
+	YDBCloudCorePipelineAlgorithm_CommitGraph = 0,
+	
+	YDBCloudCorePipelineAlgorithm_FlatGraph = 1
+};
+
 typedef NS_ENUM(NSInteger, YDBCloudCoreOperationStatus) {
 	
 	/**
@@ -87,9 +94,12 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * Initializes a pipeline instance with the given name and delegate.
  * After creating a pipeline instance, you need to register it via [YapDatabaseCloudCore registerPipeline:].
 **/
-- (instancetype)initWithName:(NSString *)name delegate:(id <YapDatabaseCloudCorePipelineDelegate>)delegate;
+- (instancetype)initWithName:(NSString *)name
+                   algorithm:(YDBCloudCorePipelineAlgorithm)algorithm
+                    delegate:(id <YapDatabaseCloudCorePipelineDelegate>)delegate;
 
 @property (nonatomic, copy, readonly) NSString *name;
+@property (nonatomic, assign, readonly) YDBCloudCorePipelineAlgorithm algorithm;
 @property (nonatomic, weak, readonly) id <YapDatabaseCloudCorePipelineDelegate> delegate;
 
 @property (atomic, weak, readonly) YapDatabaseCloudCore *owner;

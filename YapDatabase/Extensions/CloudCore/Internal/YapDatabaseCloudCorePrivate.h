@@ -13,12 +13,9 @@
 #import "YapDatabaseCloudCoreConnection.h"
 #import "YapDatabaseCloudCoreTransaction.h"
 
-#import "YapDatabaseCloudCoreOperation.h"
 #import "YapDatabaseCloudCoreOperationPrivate.h"
-
-#import "YapDatabaseCloudCoreGraph.h"
-#import "YapDatabaseCloudCorePipeline.h"
 #import "YapDatabaseCloudCorePipelinePrivate.h"
+#import "YapDatabaseCloudCoreGraphPrivate.h"
 
 #import "YapCache.h"
 #import "YapManyToManyCache.h"
@@ -30,7 +27,7 @@
  * If there is a major re-write to this class, then the version number will be incremented,
  * and the class can automatically rebuild the tables as needed.
 **/
-#define YAPDATABASE_CLOUDCORE_CLASS_VERSION 2
+#define YAPDATABASE_CLOUDCORE_CLASS_VERSION 3
 
 static NSString * const YDBCloudCore_DiryMappingMetadata_NeedsRemove = @"NeedsRemove";
 static NSString * const YDBCloudCore_DiryMappingMetadata_NeedsInsert = @"NeedsInsert";
@@ -53,16 +50,16 @@ static NSString *const changeset_key_reset            = @"reset";
 	YapDatabaseCloudCoreOptions *options;
 }
 
-- (NSString *)pipelineTableName;
-- (NSString *)queueV1TableName;
-- (NSString *)queueTableName;
+- (NSString *)pipelineV2TableName; // For migration from OLD verion of table
+- (NSString *)pipelineV3TableName; // Latest version of table
+
+- (NSString *)queueV1TableName;  // For migration from OLD verion of table
+- (NSString *)queueV2TableName;  // Latest version of table
+
+- (NSString *)pipelineTableName; // Always returns latest version
+- (NSString *)queueTableName;    // Always returns latest version
 - (NSString *)tagTableName;
 - (NSString *)mappingTableName;
-
-- (NSArray *)registeredPipelineNamesExcludingDefault;
-
-- (void)restorePipelineRowids:(NSDictionary *)rowidsToPipelineName;
-- (void)restorePipelineGraphs:(NSDictionary *)sortedGraphsPerPipeline;
 
 - (void)commitAddedGraphs:(NSDictionary<NSString *, YapDatabaseCloudCoreGraph *> *)addedGraphs
        insertedOperations:(NSDictionary<NSString *, NSDictionary *> *)insertedOperations
@@ -110,6 +107,7 @@ static NSString *const changeset_key_reset            = @"reset";
 - (void)prepareForReadWriteTransaction;
 
 - (sqlite3_stmt *)pipelineTable_insertStatement;
+- (sqlite3_stmt *)pipelineTable_updateStatement;
 - (sqlite3_stmt *)pipelineTable_removeStatement;
 - (sqlite3_stmt *)pipelineTable_removeAllStatement;
 

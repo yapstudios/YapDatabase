@@ -25,6 +25,7 @@
 @implementation YapDatabaseCloudCoreConnection
 {
 	sqlite3_stmt *pipelineTable_insertStatement;
+	sqlite3_stmt *pipelineTable_updateStatement;
 	sqlite3_stmt *pipelineTable_removeStatement;
 	sqlite3_stmt *pipelineTable_removeAllStatement;
 	
@@ -80,6 +81,7 @@
 - (void)_flushStatements
 {
 	sqlite_finalize_null(&pipelineTable_insertStatement);
+	sqlite_finalize_null(&pipelineTable_updateStatement);
 	sqlite_finalize_null(&pipelineTable_removeStatement);
 	sqlite_finalize_null(&pipelineTable_removeAllStatement);
 	
@@ -425,7 +427,22 @@
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
-		  @"INSERT INTO \"%@\" (\"name\") VALUES (?);", [parent pipelineTableName]];
+		  @"INSERT INTO \"%@\" (\"name\", \"algorithm\") VALUES (?, ?);", [parent pipelineTableName]];
+		
+		[self prepareStatement:statement withString:string caller:_cmd];
+	}
+	
+	return *statement;
+}
+
+- (sqlite3_stmt *)pipelineTable_updateStatement
+{
+	sqlite3_stmt **statement = &pipelineTable_updateStatement;
+	if (*statement == NULL)
+	{
+		NSString *string = [NSString stringWithFormat:
+		  @"UPDATE \"%@\" SET \"name\" = ?, \"algorithm\" = ? WHERE \"rowid\" = ?;",
+		  [parent pipelineTableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}

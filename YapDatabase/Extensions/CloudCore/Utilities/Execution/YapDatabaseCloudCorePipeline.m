@@ -59,6 +59,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 }
 
 @synthesize name = name;
+@synthesize algorithm = algorithm;
 @synthesize delegate = delegate;
 @dynamic owner;
 
@@ -69,14 +70,32 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 
 - (instancetype)init
 {
-	return [self initWithName:nil delegate:nil];
+	// Empty init not allowed
+	return [self initWithName: nil
+	                algorithm: YDBCloudCorePipelineAlgorithm_CommitGraph
+	                 delegate: nil];
 }
 
-- (instancetype)initWithName:(NSString *)inName delegate:(id <YapDatabaseCloudCorePipelineDelegate>)inDelegate
+- (instancetype)initWithName:(NSString *)inName
+                   algorithm:(YDBCloudCorePipelineAlgorithm)inAlgorithm
+                    delegate:(id<YapDatabaseCloudCorePipelineDelegate>)inDelegate
 {
-	if (!inName || !inDelegate)
+	if (!inName)
 	{
-		YDBLogWarn(@"Init method requires valid name & delegate !");
+		YDBLogWarn(@"Init method requires non-nil name !");
+		return nil;
+	}
+	
+	if (inAlgorithm != YDBCloudCorePipelineAlgorithm_CommitGraph &&
+	    inAlgorithm != YDBCloudCorePipelineAlgorithm_FlatGraph)
+	{
+		YDBLogWarn(@"Init method requires valid algorithm !");
+		return nil;
+	}
+	
+	if (!inDelegate)
+	{
+		YDBLogWarn(@"Init method requires non-nil delegate !");
 		return nil;
 	}
 	
@@ -1046,7 +1065,8 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 #pragma mark Graph Management
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)restoreGraphs:(NSArray *)inGraphs
+- (void)restoreGraphs:(NSArray<YapDatabaseCloudCoreGraph *> *)inGraphs
+    previousAlgorithm:(NSNumber *)prvAlgorithm
 {
 	YDBLogAutoTrace();
 	
@@ -1060,6 +1080,39 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		for (YapDatabaseCloudCoreGraph *graph in inGraphs)
 		{
 			graph.pipeline = self;
+		}
+		
+		BOOL migratingFromCommitGraphToFlatGraph =
+		    (prvAlgorithm != nil)
+		 && (prvAlgorithm.integerValue == YDBCloudCorePipelineAlgorithm_CommitGraph)
+		 && (strongSelf->algorithm == YDBCloudCorePipelineAlgorithm_FlatGraph);
+		
+		if (migratingFromCommitGraphToFlatGraph)
+		{
+			// We have to assume that all previously stored operations
+			// only have the proper dependencies set within their respective graph.
+			//
+			// So we need to implicitly maintain the CommitGraph
+			// for these restored operations (but not for future operations).
+			
+			YapDatabaseCloudCoreGraph *lastNonEmptyGraph = nil;
+			for (YapDatabaseCloudCoreGraph *graph in inGraphs)
+			{
+				if (lastNonEmptyGraph)
+				{
+					for (YapDatabaseCloudCoreOperation *laterOp in graph.operations)
+					{
+						for (YapDatabaseCloudCoreOperation *earlierOp in lastNonEmptyGraph.operations)
+						{
+							[laterOp addDependency:earlierOp];
+						}
+					}
+				}
+				
+				if (graph.operations.count > 0) {
+					lastNonEmptyGraph = graph;
+				}
+			}
 		}
 		
 		[strongSelf->graphs addObjectsFromArray:inGraphs];
@@ -1088,6 +1141,10 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		if (graph)
 		{
 			graph.pipeline = self;
+			if (algorithm == YDBCloudCorePipelineAlgorithm_FlatGraph) {
+				graph.previousGraph = [graphs lastObject];
+			}
+			
 			[graphs addObject:graph];
 			
 			for (YapDatabaseCloudCoreOperation *operation in graph.operations)
@@ -1199,16 +1256,21 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	YDBLogAutoTrace();
 	NSAssert(dispatch_get_specific(IsOnQueueKey), @"Must be executed within queue");
 	
-	if ([self isSuspended]) {
-		// Waiting to be resumed
-		return;
-	}
+	if (algorithm == YDBCloudCorePipelineAlgorithm_CommitGraph)
+		[self startNextOperationIfPossible_CommitGraph];
+	else
+		[self startNextOperationIfPossible_FlatGraph];
+}
+
+- (void)startNextOperationIfPossible_CommitGraph
+{
+	YDBLogAutoTrace();
 	
-	YapDatabaseCloudCoreGraph *currentGraph = [graphs firstObject];
-	
+	// Step 1 of 3:
 	// Purge any completed/skipped operations
 	
 	BOOL queueChanged = NO;
+	YapDatabaseCloudCoreGraph *currentGraph = [graphs firstObject];
 	while (currentGraph)
 	{
 		NSArray *removedOperations = [currentGraph removeCompletedAndSkippedOperations];
@@ -1242,7 +1304,16 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	{
 		// Waiting for another graph to be added
 		
-		[self checkActiveStatus];
+		[self checkActiveStatus]; // may have transitioned from active to not-active
+		return;
+	}
+	
+	// Step 2 of 3:
+	// Are we allowed to start any more operations ?
+	
+	if ([self isSuspended])
+	{
+		// Waiting to be resumed
 		return;
 	}
 	
@@ -1255,6 +1326,9 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		// Waiting for one or more operations to complete
 		return;
 	}
+	
+	// Step 3 of 3:
+	// Start as many operations as we can.
 	
 	YapDatabaseCloudCoreOperation *nextOp = [currentGraph dequeueNextOperation];
 	if (nextOp)
@@ -1281,6 +1355,136 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			}
 			
 			nextOp = [currentGraph dequeueNextOperation];
+			
+		} while (nextOp);
+		
+		[self checkActiveStatus];
+	}
+}
+
+- (void)startNextOperationIfPossible_FlatGraph
+{
+	YDBLogAutoTrace();
+	
+	// Step 1 of 3:
+	// Purge any completed/skipped operations
+	
+	BOOL queueChanged = NO;
+	NSUInteger i = 0;
+	while (i < graphs.count)
+	{
+		YapDatabaseCloudCoreGraph *graph = graphs[i];
+		
+		NSArray *removedOperations = [graph removeCompletedAndSkippedOperations];
+		if (removedOperations.count > 0)
+		{
+			queueChanged = YES;
+			
+			for (YapDatabaseCloudCoreOperation *operation in removedOperations)
+			{
+				[startedOpUUIDs removeObject:operation.uuid];
+				[ephemeralInfo removeObjectForKey:operation.uuid];
+			}
+		}
+		
+		// Careful: Graphs are setup in a linked-list,
+		// where each graph has a (weak) pointer to the previous graph.
+		// So we don't remove a graph from the list, unless it's at the front.
+		if (i == 0 && graph.operations.count == 0)
+		{
+			[graphs removeObjectAtIndex:i];
+		}
+		else
+		{
+			i++;
+		}
+	}
+	
+	if (graphs.count == 0)
+	{
+		// Waiting for another graph to be added
+		
+		[self checkActiveStatus]; // may have transitioned from active to not-active
+		return;
+	}
+	
+	// Step 2 of 3:
+	// Are we allowed to start any more operations ?
+	
+	if ([self isSuspended])
+	{
+		// Waiting to be resumed
+		return;
+	}
+	
+	NSUInteger maxConcurrentOperationCount = self.maxConcurrentOperationCount;
+	if (maxConcurrentOperationCount == 0)
+		maxConcurrentOperationCount = NSUIntegerMax;
+	
+	if (startedOpUUIDs.count >= maxConcurrentOperationCount)
+	{
+		// Waiting for one or more operations to complete
+		return;
+	}
+	
+	// Step 3 of 3:
+	// Start as many operations as we can.
+	//
+	// Notes:
+	//
+	// In a FlatGraph configuration:
+	// - Operations in commit C may have dependencies on other operations from commit C, or
+	//   from earlier commits (such as B or A).
+	// - We are allowed to start operations from any commit (so long as dependecies are fullfilled).
+	// - If priorities are equal, we implicitly prefer operations that were queued earlier.
+	
+	YapDatabaseCloudCoreOperation* (^dequeueNextOperation)(void) = ^ YapDatabaseCloudCoreOperation*(){
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
+		YapDatabaseCloudCoreOperation *result = nil;
+		for (YapDatabaseCloudCoreGraph *graph in graphs)
+		{
+			YapDatabaseCloudCoreOperation *next = [graph dequeueNextOperation];
+			if (next)
+			{
+				if ((result == nil) || (result.priority < next.priority))
+				{
+					result = next;
+				}
+			}
+		}
+		
+		return result;
+		
+	#pragma clang diagnostic pop
+	};
+	
+	YapDatabaseCloudCoreOperation *nextOp = dequeueNextOperation();
+	if (nextOp)
+	{
+		__weak YapDatabaseCloudCorePipeline *weakSelf = self;
+		dispatch_queue_t globalQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+		
+		do {
+			
+			[self _setStatus:YDBCloudOperationStatus_Started forOperationUUID:nextOp.uuid];
+			
+			YapDatabaseCloudCoreOperation *opToStart = nextOp;
+			dispatch_async(globalQueue, ^{ @autoreleasepool {
+				
+				__strong YapDatabaseCloudCorePipeline *strongSelf = weakSelf;
+				if (strongSelf) {
+					[strongSelf.delegate startOperation:opToStart forPipeline:strongSelf];
+				}
+			}});
+			
+			[startedOpUUIDs addObject:nextOp.uuid];
+			if (startedOpUUIDs.count >= maxConcurrentOperationCount) {
+				break;
+			}
+			
+			nextOp = dequeueNextOperation();
 			
 		} while (nextOp);
 		

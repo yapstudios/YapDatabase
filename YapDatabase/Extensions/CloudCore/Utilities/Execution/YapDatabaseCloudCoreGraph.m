@@ -12,6 +12,7 @@
 @synthesize persistentOrder = persistentOrder;
 @synthesize operations = operations;
 @synthesize pipeline = pipeline;
+@synthesize previousGraph = previousGraph;
 
 - (instancetype)initWithPersistentOrder:(uint64_t)inPersistentOrder
                              operations:(NSArray<YapDatabaseCloudCoreOperation *> *)inOperations
@@ -70,7 +71,13 @@
 		}
 	}
 	
-	return nil;
+	__strong YapDatabaseCloudCoreGraph *previousGraph = self.previousGraph;
+	if (previousGraph) {
+		return [previousGraph operationWithUUID:opUUID];
+	}
+	else {
+		return nil;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

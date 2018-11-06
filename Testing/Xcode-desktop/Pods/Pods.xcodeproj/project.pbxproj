@@ -633,6 +633,7 @@
 		DAD9926F797175E6D600DEEC13803CD4 /* YapDatabaseSearchResultsViewOptions.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseSearchResultsViewOptions.h; path = YapDatabase/Extensions/SearchResultsView/YapDatabaseSearchResultsViewOptions.h; sourceTree = "<group>"; };
 		DC966AE170490A1950F64E476D76DA22 /* YapWhitelistBlacklist.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = YapWhitelistBlacklist.h; sourceTree = "<group>"; };
 		DCD982FEAD56ABEB0F3470F4D26D2016 /* YapDatabaseCloudCoreOptions.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = YapDatabaseCloudCoreOptions.m; path = YapDatabase/Extensions/CloudCore/YapDatabaseCloudCoreOptions.m; sourceTree = "<group>"; };
+		DCF6EB032190C2CC009EA35C /* YapDatabaseCloudCoreGraphPrivate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YapDatabaseCloudCoreGraphPrivate.h; sourceTree = "<group>"; };
 		DE1167AD7F338AFA13BCC69C77BD3F2A /* YapDatabaseSearchResultsViewConnection.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = YapDatabaseSearchResultsViewConnection.h; path = YapDatabase/Extensions/SearchResultsView/YapDatabaseSearchResultsViewConnection.h; sourceTree = "<group>"; };
 		DF5B5E50A3BFE2C9BBDC1EAE00BD11EF /* YapDatabaseExtensionTransaction.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = YapDatabaseExtensionTransaction.h; sourceTree = "<group>"; };
 		DF68B2BC05DD2470925DBB4A96277F70 /* YapDatabaseViewChangePrivate.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = YapDatabaseViewChangePrivate.h; sourceTree = "<group>"; };
@@ -749,9 +750,10 @@
 		0AA2DA0809210299CCC77A39F995F0DE /* Internal */ = {
 			isa = PBXGroup;
 			children = (
+				9D9B9D22F5259D715CC10DF73D90CF15 /* YapDatabaseCloudCorePrivate.h */,
 				8073A9626C4DB1A4C332963F5050886E /* YapDatabaseCloudCoreOperationPrivate.h */,
 				1D664D8DBD01D07449BC8AF634881BE8 /* YapDatabaseCloudCorePipelinePrivate.h */,
-				9D9B9D22F5259D715CC10DF73D90CF15 /* YapDatabaseCloudCorePrivate.h */,
+				DCF6EB032190C2CC009EA35C /* YapDatabaseCloudCoreGraphPrivate.h */,
 			);
 			name = Internal;
 			path = YapDatabase/Extensions/CloudCore/Internal;
