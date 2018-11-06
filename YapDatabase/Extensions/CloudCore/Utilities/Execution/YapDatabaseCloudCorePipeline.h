@@ -95,6 +95,15 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * After creating a pipeline instance, you need to register it via [YapDatabaseCloudCore registerPipeline:].
 **/
 - (instancetype)initWithName:(NSString *)name
+                    delegate:(id <YapDatabaseCloudCorePipelineDelegate>)delegate;
+
+/**
+ * Initializes a pipeline instance with the given name and delegate.
+ * Additionally, you may choose to use an advanced algorithm such as FlatGraph.
+ *
+ * After creating a pipeline instance, you need to register it via [YapDatabaseCloudCore registerPipeline:].
+**/
+- (instancetype)initWithName:(NSString *)name
                    algorithm:(YDBCloudCorePipelineAlgorithm)algorithm
                     delegate:(id <YapDatabaseCloudCorePipelineDelegate>)delegate;
 

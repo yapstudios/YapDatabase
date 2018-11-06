@@ -764,7 +764,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	//
 	if (prvPipelineInfo[YapDatabaseCloudCoreDefaultPipelineName] == nil)
 	{
-		prvPipelineInfo[YapDatabaseCloudCoreDefaultPipelineName] = @[ @(-1), @(-1) ];
+		prvPipelineInfo[YapDatabaseCloudCoreDefaultPipelineName] = [NSNull null];
 	}
 	
 	// Step 2 of 4:
@@ -780,8 +780,6 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		for (NSString *prvName in prvPipelineInfo)
 		{
 			NSArray *info = prvPipelineInfo[prvName];
-			NSNumber *prvRowid = info[0];
-			NSNumber *prvAlgo  = info[1];
 			
 			// Remember: YDBCloudCorePipeline has a `previousNames` attribute.
 			// So the previous name may not match the current name.
@@ -790,15 +788,25 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:prvName];
 			if (pipeline)
 			{
-				pipeline.rowid = [prvRowid longLongValue];
-				rowidToPipelineName[prvRowid] = pipeline.name;
-				
-				[pipelinesToInsert removeObjectIdenticalTo:pipeline];
-				
-				if (![prvName isEqualToString:pipeline.name] ||           // name change
-					 [prvAlgo unsignedIntegerValue] != pipeline.algorithm) // algorithm change
+				if ([info isKindOfClass:[NSArray class]])
 				{
-					[pipelinesToUpdate addObject:pipeline];
+					NSNumber *prvRowid = info[0];
+					NSNumber *prvAlgo  = info[1];
+					
+					[pipelinesToInsert removeObjectIdenticalTo:pipeline];
+					
+					pipeline.rowid = [prvRowid longLongValue];
+					rowidToPipelineName[prvRowid] = pipeline.name;
+				
+					if (![prvName isEqualToString:pipeline.name] ||           // name change
+						 [prvAlgo unsignedIntegerValue] != pipeline.algorithm) // algorithm change
+					{
+						[pipelinesToUpdate addObject:pipeline];
+					}
+				}
+				else // info == NSNull (this is for YapDatabaseCloudCoreDefaultPipelineName)
+				{
+					// Pipeline remains in `pipelinesToInsert` array
 				}
 			}
 			else
@@ -806,7 +814,12 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 				// This pipeline no longer exists.
 				// So we'll need to delete it from the table.
 				
-				[pipelineRowidsToDelete addObject:prvRowid];
+				if ([info isKindOfClass:[NSArray class]])
+				{
+					NSNumber *prvRowid = info[0];
+					
+					[pipelineRowidsToDelete addObject:prvRowid];
+				}
 			}
 		}
 		
@@ -868,6 +881,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 				if (status == SQLITE_DONE)
 				{
 					int64_t newRowid = sqlite3_last_insert_rowid(db);
+					
+					pipeline.rowid = newRowid;
 					rowidToPipelineName[@(newRowid)] = pipeline.name;
 				}
 				else
@@ -1038,7 +1053,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
 		
 		NSArray *prvInfo = prvPipelineInfo[pipelineName];
-		NSNumber *prvAlgorithm = prvInfo ? prvInfo[1] : nil;
+		NSNumber *prvAlgorithm = [prvInfo isKindOfClass:[NSArray class]] ? prvInfo[1] : nil;
 		
 		[pipeline restoreGraphs:sortedGraphs previousAlgorithm:prvAlgorithm];
 	}

@@ -77,6 +77,14 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 }
 
 - (instancetype)initWithName:(NSString *)inName
+                    delegate:(id<YapDatabaseCloudCorePipelineDelegate>)inDelegate
+{
+	return [self initWithName: inName
+	                algorithm: YDBCloudCorePipelineAlgorithm_CommitGraph
+	                 delegate: inDelegate];
+}
+
+- (instancetype)initWithName:(NSString *)inName
                    algorithm:(YDBCloudCorePipelineAlgorithm)inAlgorithm
                     delegate:(id<YapDatabaseCloudCorePipelineDelegate>)inDelegate
 {
@@ -102,6 +110,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	if ((self = [super init]))
 	{
 		name = [inName copy];
+		algorithm = inAlgorithm;
 		delegate = inDelegate;
 		
 		suspendCountLock = OS_SPINLOCK_INIT;
