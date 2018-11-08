@@ -142,14 +142,22 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 #pragma mark Public API
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)setDependencies:(NSSet<NSUUID *> *)newDependencies
+- (void)setDependencies:(NSSet<NSUUID *> *)inDependencies
 {
-#if !defined(NS_BLOCK_ASSERTIONS)
-	for (id obj in newDependencies)
+	NSMutableSet<NSUUID *> *newDependencies = [NSMutableSet setWithCapacity:inDependencies.count];
+	for (id obj in inDependencies)
 	{
-		NSAssert([obj isKindOfClass:[NSUUID class]], @"Bad dependecy object !");
+		if ([obj isKindOfClass:[NSUUID class]])
+		{
+			[newDependencies addObject:(NSUUID *)obj];
+		}
+		else
+		{
+		#ifndef NS_BLOCK_ASSERTIONS
+			NSAssert(NO, @"Bad dependecy object !");
+		#endif
+		}
 	}
-#endif
 	
 	NSString *const propKey = NSStringFromSelector(@selector(dependencies));
 	
@@ -175,8 +183,15 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 		dependencyUUID = [(YapDatabaseCloudCoreOperation *)dependency uuid];
 	}
 	
+#ifndef NS_BLOCK_ASSERTIONS
 	NSAssert(dependencyUUID != nil, @"Bad dependecy object !");
-	
+#else
+	if (dependencyUUID == nil) {
+		// Ignore - non-supported dependency type
+		return;
+	}
+#endif
+    
 	NSString *const propKey = NSStringFromSelector(@selector(dependencies));
 	
 	[self willChangeValueForKey:propKey];
