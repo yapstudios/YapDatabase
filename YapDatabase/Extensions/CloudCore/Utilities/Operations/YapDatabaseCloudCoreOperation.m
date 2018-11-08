@@ -191,7 +191,12 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 		return;
 	}
 #endif
-    
+	
+	if ([dependencyUUID isEqual:uuid]) {
+		// Ignore - op cannot depend on itself
+		return;
+	}
+	
 	NSString *const propKey = NSStringFromSelector(@selector(dependencies));
 	
 	[self willChangeValueForKey:propKey];
