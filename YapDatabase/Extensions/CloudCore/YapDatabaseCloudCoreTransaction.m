@@ -2885,6 +2885,46 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 /**
  * Internal enumerate method (for readWriteTransactions only).
  *
+ * Allows for enumeration of all existing, inserted & added operations (filtering as needed via parameter).
+**/
+- (void)_enumerateOperations:(YDBCloudCore_EnumOps)flags
+                  usingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
+                                       YapDatabaseCloudCoreOperation *operation,
+                                       NSUInteger graphIdx, BOOL *stop))enumBlock
+{
+	[self _enumerateAndModifyOperations:flags
+	                         usingBlock:
+	^YapDatabaseCloudCoreOperation *(YapDatabaseCloudCorePipeline *pipeline,
+	                                 YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
+	{
+		enumBlock(pipeline, operation, graphIdx, stop);
+		return nil;
+	}];
+}
+
+/**
+ * Internal enumerate method (for readWriteTransactions only).
+ *
+ * Allows for enumeration of all existing, inserted & added operations (filtering as needed via parameter).
+**/
+- (void)_enumerateOperations:(YDBCloudCore_EnumOps)flags
+                  inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+                  usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
+                                       NSUInteger graphIdx, BOOL *stop))enumBlock
+{
+	[self _enumerateAndModifyOperations:flags
+	                         inPipeline:pipeline
+	                         usingBlock:
+	^YapDatabaseCloudCoreOperation *(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
+	{
+		enumBlock(operation, graphIdx, stop);
+		return nil;
+	}];
+}
+
+/**
+ * Internal enumerate method (for readWriteTransactions only).
+ *
  * Allows for enumeration of all existing, inserted & added operations (filtering as needed via parameter),
  * and allows for the modification of any item during enumeration.
 **/

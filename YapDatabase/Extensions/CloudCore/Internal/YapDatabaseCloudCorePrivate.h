@@ -175,6 +175,16 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
                             usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
                                                  NSUInteger graphIdx, BOOL *stop))enumBlock;
 
+- (void)_enumerateOperations:(YDBCloudCore_EnumOps)flags
+                  usingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
+                                       YapDatabaseCloudCoreOperation *operation,
+                                       NSUInteger graphIdx, BOOL *stop))enumBlock;
+
+- (void)_enumerateOperations:(YDBCloudCore_EnumOps)flags
+                  inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+                  usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
+                                       NSUInteger graphIdx, BOOL *stop))enumBlock;
+
 - (void)_enumerateAndModifyOperations:(YDBCloudCore_EnumOps)flags
                            usingBlock:(YapDatabaseCloudCoreOperation *
                                       (^)(YapDatabaseCloudCorePipeline *pipeline,
