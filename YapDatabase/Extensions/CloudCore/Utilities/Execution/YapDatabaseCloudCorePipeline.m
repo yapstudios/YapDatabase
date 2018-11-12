@@ -1409,6 +1409,10 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		}
 	}
 	
+	if (queueChanged) {
+		[self postQueueChangedNotification];
+	}
+	
 	if (graphs.count == 0)
 	{
 		// Waiting for another graph to be added
