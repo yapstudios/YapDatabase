@@ -5606,15 +5606,17 @@
 			{
 				YDBLogError(@"Error creating 'removeKeys:inCollection:' statement (B): %d %s",
 							status, sqlite3_errmsg(connection->db));
+				
+				FreeYapDatabaseString(&_collection);
 				return;
 			}
 			
-            for (YapDatabaseExtensionTransaction *extTransaction in [self orderedExtensions])
-            {
-                [extTransaction willRemoveObjectsForKeys:foundKeys
-                                            inCollection:collection
-                                              withRowids:foundRowids];
-            }
+			for (YapDatabaseExtensionTransaction *extTransaction in [self orderedExtensions])
+			{
+				[extTransaction willRemoveObjectsForKeys:foundKeys
+				                            inCollection:collection
+				                              withRowids:foundRowids];
+			}
 			
 			for (i = 0; i < foundCount; i++)
 			{
