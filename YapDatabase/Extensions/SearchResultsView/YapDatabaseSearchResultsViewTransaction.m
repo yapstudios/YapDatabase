@@ -1943,7 +1943,7 @@ static NSString *const ext_key_query           = @"query";
 		BOOL abort = [searchQueue shouldAbortSearchInProgressAndRollback:&rollback];
 		if (abort && rollback)
 		{
-			[databaseTransaction rollbackTransaction];
+			[(YapDatabaseReadWriteTransaction *)databaseTransaction rollback];
 		}
 	}
 	
