@@ -691,7 +691,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			NSNumber *srcRowidNumber = [self rowidNumberForDeletedKey:edge->sourceKey
 			                                             inCollection:edge->sourceCollection];
 			
-			if (srcRowidNumber)
+			if (srcRowidNumber != nil)
 			{
 				edge->sourceRowid = srcRowidNumber.longLongValue;
 				edge->state |= YDB_EdgeState_HasSourceRowid;
@@ -737,7 +737,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				NSNumber *dstRowidNumber = [self rowidNumberForDeletedKey:edge->destinationKey
 				                                             inCollection:edge->destinationCollection];
 				
-				if (dstRowidNumber)
+				if (dstRowidNumber != nil)
 				{
 					edge->destinationRowid = dstRowidNumber.longLongValue;
 					edge->state |= YDB_EdgeState_HasDestinationRowid;
@@ -1223,7 +1223,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasSourceRowid))
 		{
-			if (srcRowid)
+			if (srcRowid != nil)
 			{
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
@@ -1371,7 +1371,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasDestinationRowid))
 		{
-			if (dstRowid)
+			if (dstRowid != nil)
 			{
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
@@ -1629,7 +1629,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasSourceRowid))
 		{
-			if (srcRowid)
+			if (srcRowid != nil)
 			{
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
@@ -1645,7 +1645,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasDestinationRowid))
 		{
-			if (dstRowid)
+			if (dstRowid != nil)
 			{
 				// Shortcut:
 				// We already know the destinationRowid. It was given to us as a parameter.
@@ -1774,7 +1774,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasSourceRowid))
 		{
-			if (srcRowid)
+			if (srcRowid != nil)
 			{
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.

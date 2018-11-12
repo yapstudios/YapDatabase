@@ -475,7 +475,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		}
 		
 		NSNumber *existing = opInfo[YDBCloudCore_EphemeralKey_Status];
-		if (existing)
+		if (existing != nil)
 		{
 			YDBCloudCoreOperationStatus existingStatus = (YDBCloudCoreOperationStatus)[existing integerValue];
 			
@@ -536,7 +536,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	
 	if (statusPtr)
 	{
-		if (status)
+		if (status != nil)
 			*statusPtr = (YDBCloudCoreOperationStatus)[status integerValue];
 		else
 			*statusPtr = YDBCloudOperationStatus_Pending;
@@ -562,7 +562,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 - (YDBCloudCoreOperationStatus)statusForOperationWithUUID:(NSUUID *)opUUID
 {
 	NSNumber *status = [self _ephemeralInfoForKey:YDBCloudCore_EphemeralKey_Status operationUUID:opUUID];
-	if (status)
+	if (status != nil)
 		return (YDBCloudCoreOperationStatus)[status integerValue];
 	else
 		return YDBCloudOperationStatus_Pending;
@@ -1192,7 +1192,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			for (YapDatabaseCloudCoreOperation *operation in modifiedOperationsInPipeline)
 			{
 				NSNumber *pendingStatus = operation.pendingStatus;
-				if (pendingStatus)
+				if (pendingStatus != nil)
 				{
 					YDBCloudCoreOperationStatus status = (YDBCloudCoreOperationStatus)[pendingStatus integerValue];
 					
