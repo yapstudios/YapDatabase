@@ -27,9 +27,13 @@
 	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
 		
 		[BenchmarkYapDatabase runTestsWithCompletion:^{
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 			
 			databaseBenchmarksButton.enabled = YES;
 			cacheBenchmarksButton.enabled = YES;
+			
+		#pragma clang diagnostic pop
 		}];
 	});
 }
@@ -44,9 +48,13 @@
 	dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
 		
 		[BenchmarkYapCache runTestsWithCompletion:^{
+		#pragma clang diagnostic push
+		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 			
 			databaseBenchmarksButton.enabled = YES;
 			cacheBenchmarksButton.enabled = YES;
+			
+		#pragma clang diagnostic pop
 		}];
 	});
 }
