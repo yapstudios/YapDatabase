@@ -1703,7 +1703,7 @@
 	
 	for (NSString *group in allGroups)
 	{
-		BOOL isVisible = [group isEqualToString:visibleGroup];
+		BOOL isVisible = visibleGroup && [group isEqualToString:visibleGroup];
 		
 		NSUInteger visibleCount = [self visibleCountForGroup:group];
 		BOOL hasRangeOptions = ([rangeOptions objectForKey:group] != nil);

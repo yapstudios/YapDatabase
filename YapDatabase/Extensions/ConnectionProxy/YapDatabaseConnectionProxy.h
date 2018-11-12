@@ -121,8 +121,8 @@ NS_ASSUME_NONNULL_BEGIN
  * If this proxy instance has recently had a value set for the given collection/key,
  * then that value is returned, even if the value has not been written to the database yet.
 **/
-- (id)objectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
-- (id)metadataForKey:(NSString *)key inCollection:(nullable NSString *)collection;
+- (nullable id)objectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
+- (nullable id)metadataForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 - (BOOL)getObject:(__nullable id * __nullable)objectPtr
          metadata:(__nullable id * __nullable)metadataPtr

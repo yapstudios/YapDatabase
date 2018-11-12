@@ -346,7 +346,7 @@
 	{
 		aggregateFunction = [inAggregateFunction copy];
 		queryString = [inQueryString copy];
-		queryParameters = [inQueryParameters copy];
+		queryParameters = inQueryParameters ? [inQueryParameters copy] : [NSArray array];
 	}
 	return self;
 }

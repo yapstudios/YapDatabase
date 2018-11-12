@@ -1153,7 +1153,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	// Find matching protocol edges
 	
-	NSMutableArray *changedProtocolEdges = [parentConnection->protocolChanges objectForKey:srcRowid];
+	NSMutableArray *changedProtocolEdges = (srcRowid != nil) ? parentConnection->protocolChanges[srcRowid] : nil;
 	for (YapDatabaseRelationshipEdge *edge in changedProtocolEdges)
 	{
 		if (name && ![name isEqualToString:edge->name])
@@ -1520,7 +1520,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	// Find matching protocol edges
 	
-	NSMutableArray *changedProtocolEdges = [parentConnection->protocolChanges objectForKey:srcRowid];
+	NSMutableArray *changedProtocolEdges = (srcRowid != nil) ? parentConnection->protocolChanges[srcRowid] : nil;
 	for (YapDatabaseRelationshipEdge *edge in changedProtocolEdges)
 	{
 		if (name && ![name isEqualToString:edge->name])
@@ -1695,7 +1695,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	// Find matching protocol edges
 	
-	NSMutableArray *changedProtocolEdges = [parentConnection->protocolChanges objectForKey:srcRowid];
+	NSMutableArray *changedProtocolEdges = parentConnection->protocolChanges[srcRowid];
 	for (YapDatabaseRelationshipEdge *edge in changedProtocolEdges)
 	{
 		if (name && ![name isEqualToString:edge->name])
@@ -6040,10 +6040,10 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * @param name (optional)
  *   The name of the edge (case sensitive).
  *
- * @param sourceKey (optional)
+ * @param srcKey (optional)
  *   The edge.sourceKey to match.
  *
- * @param sourceCollection (optional)
+ * @param srcCollection (optional)
  *   The edge.sourceCollection to match.
  *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
@@ -6072,17 +6072,9 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - destinationKey & destinationCollection only
  * - name + destinationKey & destinationCollection
  *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param destinationKey (optional)
- *   The edge.destinationKey to match.
- *
- * @param destinationCollection (optional)
- *   The edge.destinationCollection to match.
- *
  * If you pass a non-nil destinationKey, and destinationCollection is nil,
- * then the destinationCollection is treated as the empty string, just like the rest of the YapDatabase framework.
+ * then the destinationCollection is treated as the empty string,
+ * just like the rest of the YapDatabase framework.
 **/
 - (void)enumerateEdgesWithName:(NSString *)name
                 destinationKey:(NSString *)dstKey
@@ -6106,12 +6098,6 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name only
  * - destinationFileURL
  * - name + destinationFileURL
- *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param destinationFileURL (optional)
- *   The edge.destinationFileURL to match.
 **/
 - (void)enumerateEdgesWithName:(NSString *)name
             destinationFileURL:(NSURL *)dstFileURL
@@ -6137,21 +6123,6 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name + destinationKey & destinationCollection
  * - name + sourceKey & sourceCollection + destinationKey & destinationCollection
  *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param sourceKey (optional)
- *   The edge.sourceKey to match.
- *
- * @param sourceCollection (optional)
- *   The edge.sourceCollection to match.
- *
- * @param destinationKey (optional)
- *   The edge.destinationKey to match.
- *
- * @param destinationCollection (optional)
- *   The edge.destinationCollection to match.
- *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
  * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
  *
@@ -6187,18 +6158,6 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name + sourceKey & sourceCollection
  * - name + destinationKey & destinationCollection
  * - name + sourceKey & sourceCollection + destinationKey & destinationCollection
- *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param sourceKey (optional)
- *   The edge.sourceKey to match.
- *
- * @param sourceCollection (optional)
- *   The edge.sourceCollection to match.
- * 
- * @param destinationFileURL (optional)
- *   The edge.destinationFileURL to match.
  *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
  * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
@@ -6390,15 +6349,6 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name only
  * - destinationKey & destinationCollection only
  * - name + destinationKey & destinationCollection
- *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param destinationKey (optional)
- *   The edge.destinationKey to match.
- *
- * @param destinationCollection (optional)
- *   The edge.destinationCollection to match.
  *
  * If you pass a non-nil destinationKey, and destinationCollection is nil,
  * then the destinationCollection is treated as the empty string, just like the rest of the YapDatabase framework.
@@ -6678,20 +6628,9 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name + destinationFileURL
  * - name + sourceKey & sourceCollection + destinationFileURL
  *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param sourceKey (optional)
- *   The edge.sourceKey to match.
- *
- * @param sourceCollection (optional)
- *   The edge.sourceCollection to match.
- * 
- * @param destinationFileURL (optional)
- *   The edge.destinationFileURL to match.
- *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
- * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
+ * then the sourceCollection is treated as the empty string,
+ * just like the rest of the YapDatabase framework.
 **/
 - (NSUInteger)edgeCountWithName:(NSString *)name
                       sourceKey:(NSString *)srcKey

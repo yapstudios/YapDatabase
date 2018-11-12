@@ -1178,7 +1178,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	operation.pipeline = pipelineName; // enforce standardized name (not nil, not alias)
 	
 	BOOL shouldInsert = NO;
-	if (graphIdx)
+	if (graphIdx != nil)
 	{
 		if (graphIdx.unsignedIntegerValue < pipeline.graphCount)
 		{

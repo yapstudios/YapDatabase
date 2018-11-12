@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) BOOL isRealObjectLoaded;
 
-@property (nonatomic, readonly) id realObject;
+@property (nonatomic, readonly, nullable) id realObject;
 
 @end
 

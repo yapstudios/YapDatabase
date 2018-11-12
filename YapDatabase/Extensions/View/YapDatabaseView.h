@@ -71,8 +71,8 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * So you can use this method to fetch the previous versionTag.
 **/
-+ (NSString *)previousVersionTagForRegisteredViewName:(NSString *)name
-                                      withTransaction:(YapDatabaseReadTransaction *)transaction;
++ (nullable NSString *)previousVersionTagForRegisteredViewName:(NSString *)name
+                                               withTransaction:(YapDatabaseReadTransaction *)transaction;
 
 @end
 

@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
  * For more inforation, see the sqlite docs on "Aggregate Functions":
  * https://www.sqlite.org/lang_aggfunc.html
 **/
-- (id)performAggregateQuery:(YapDatabaseQuery *)query;
+- (nullable id)performAggregateQuery:(YapDatabaseQuery *)query;
 
 /**
  * This method assists in performing a query over a subset of rows,
