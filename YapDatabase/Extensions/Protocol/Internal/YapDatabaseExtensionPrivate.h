@@ -9,7 +9,6 @@
 #import "YapDatabaseTransaction.h"
 
 #import "YapCollectionKey.h"
-#import "YapMemoryTable.h"
 
 #import "sqlite3.h"
 
