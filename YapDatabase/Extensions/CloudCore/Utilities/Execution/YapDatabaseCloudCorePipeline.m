@@ -336,19 +336,19 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	return graphOperations;
 }
 
-- (BOOL)getGraphID:(uint64_t *)graphIdPtr forIndex:(NSUInteger)idx
+- (BOOL)getSnapshot:(uint64_t *)snapshotPtr forGraphIndex:(NSUInteger)graphIdx
 {
 	__block BOOL found = NO;
-	__block uint64_t graphID = 0;
+	__block uint64_t snapshot = 0;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
 	#pragma clang diagnostic push
 	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
-		if (idx <= graphs.count)
+		if (graphIdx <= graphs.count)
 		{
 			found = YES;
-			graphID = graphs[idx].persistentOrder;
+			snapshot = graphs[graphIdx].snapshot;
 		}
 		
 	#pragma clang diagnostic pop
@@ -359,22 +359,33 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	else
 		dispatch_sync(queue, block);
 	
-	if (graphIdPtr) *graphIdPtr = graphID;
+	if (snapshotPtr) *snapshotPtr = snapshot;
 	return found;
 }
 
-- (uint64_t)nextGraphID
+- (BOOL)getGraphIndex:(NSUInteger *)graphIdxPtr forSnapshot:(uint64_t)snapshot
 {
-	__block uint64_t nextGraphID = 0;
+	__block BOOL found = NO;
+	__block uint64_t graphIdx = 0;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
 	#pragma clang diagnostic push
 	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
-		YapDatabaseCloudCoreGraph *lastGraph = [graphs lastObject];
-		if (lastGraph)
+		NSUInteger idx = 0;
+		for (YapDatabaseCloudCoreGraph *graph in graphs)
 		{
-			nextGraphID = lastGraph.persistentOrder + 1;
+			if (graph.snapshot == snapshot)
+			{
+				found = YES;
+				graphIdx = idx;
+				
+				break;
+			}
+			else
+			{
+				idx++;
+			}
 		}
 		
 	#pragma clang diagnostic pop
@@ -385,7 +396,8 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	else
 		dispatch_sync(queue, block);
 	
-	return nextGraphID;
+	if (graphIdxPtr) *graphIdxPtr = graphIdx;
+	return found;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

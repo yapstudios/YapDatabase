@@ -26,9 +26,6 @@
 
 - (NSArray<NSArray<YapDatabaseCloudCoreOperation *> *> *)graphOperations;
 
-- (BOOL)getGraphID:(uint64_t *)graphIdPtr forIndex:(NSUInteger)idx;
-- (uint64_t)nextGraphID;
-
 - (BOOL)getStatus:(YDBCloudCoreOperationStatus *)statusPtr
          isOnHold:(BOOL *)isOnHoldPtr
  forOperationUUID:(NSUUID *)opUUID;

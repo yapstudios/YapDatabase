@@ -9,18 +9,17 @@
 
 @implementation YapDatabaseCloudCoreGraph
 
-@synthesize persistentOrder = persistentOrder;
+@synthesize snapshot = snapshot;
 @synthesize operations = operations;
 @synthesize pipeline = pipeline;
 @synthesize previousGraph = previousGraph;
 
-- (instancetype)initWithPersistentOrder:(uint64_t)inPersistentOrder
-                             operations:(NSArray<YapDatabaseCloudCoreOperation *> *)inOperations
+- (instancetype)initWithSnapshot:(uint64_t)inSnapshot
+                      operations:(NSArray<YapDatabaseCloudCoreOperation *> *)inOperations
 {
 	if ((self = [super init]))
 	{
-		persistentOrder = inPersistentOrder;
-		
+		snapshot = inSnapshot;
 		operations = [[self class] sortOperationsByPriority:inOperations];
 	
 		if ([self hasCircularDependency])

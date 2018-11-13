@@ -11,10 +11,10 @@
 
 @interface YapDatabaseCloudCoreGraph ()
 
-- (instancetype)initWithPersistentOrder:(uint64_t)peristentOrder
-                             operations:(NSArray<YapDatabaseCloudCoreOperation *> *)operations;
+- (instancetype)initWithSnapshot:(uint64_t)snapshot
+                      operations:(NSArray<YapDatabaseCloudCoreOperation *> *)operations;
 
-@property (nonatomic, assign, readonly) uint64_t persistentOrder;
+@property (nonatomic, assign, readonly) uint64_t snapshot;
 @property (nonatomic, copy, readonly) NSArray<YapDatabaseCloudCoreOperation *> *operations;
 
 /**

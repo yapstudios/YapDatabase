@@ -981,7 +981,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			
 			// - Extract graph order information
 			
-			uint64_t graphID = (uint64_t)sqlite3_column_int64(statement, column_idx_graphID);
+			uint64_t snapshot = (uint64_t)sqlite3_column_int64(statement, column_idx_graphID);
 			
 			// - Extract operation information
 			// - Create operation instance
@@ -1004,10 +1004,10 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 				operationsPerPipeline = operations[pipelineName] = [NSMutableDictionary dictionary];
 			}
 			
-			NSMutableArray *operationsPerGraph = operationsPerPipeline[@(graphID)];
+			NSMutableArray *operationsPerGraph = operationsPerPipeline[@(snapshot)];
 			if (operationsPerGraph == nil)
 			{
-				operationsPerGraph = operationsPerPipeline[@(graphID)] = [NSMutableArray array];
+				operationsPerGraph = operationsPerPipeline[@(snapshot)] = [NSMutableArray array];
 			}
 			
 			[operationsPerGraph addObject:operation];
@@ -1030,7 +1030,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	{
 		NSDictionary *operationsPerPipeline = operations[pipelineName];
 		
-		// key   : @(graphID) (uint64_t)
+		// key   : @(snapshot) (uint64_t)
 		// value : @[operation, ...]
 		
 		NSArray<NSNumber *> *unsortedGraphIDs = [operationsPerPipeline allKeys];
@@ -1039,13 +1039,13 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		NSMutableArray<YapDatabaseCloudCoreGraph *> *sortedGraphs =
 		  [NSMutableArray arrayWithCapacity:[sortedGraphIDs count]];
 		
-		for (NSNumber *graphID in sortedGraphIDs)
+		for (NSNumber *snapshot in sortedGraphIDs)
 		{
-			NSArray<YapDatabaseCloudCoreOperation *> *operationsPerGraph = operationsPerPipeline[graphID];
+			NSArray<YapDatabaseCloudCoreOperation *> *operationsPerGraph = operationsPerPipeline[snapshot];
 			
 			YapDatabaseCloudCoreGraph *graph =
-			  [[YapDatabaseCloudCoreGraph alloc] initWithPersistentOrder:[graphID unsignedLongLongValue]
-			                                                  operations:operationsPerGraph];
+			  [[YapDatabaseCloudCoreGraph alloc] initWithSnapshot:[snapshot unsignedLongLongValue]
+			                                           operations:operationsPerGraph];
 			
 			[sortedGraphs addObject:graph];
 		}
@@ -1305,7 +1305,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)queueTable_insertOperations:(NSArray *)operations
-                        withGraphID:(uint64_t)graphID
+                       withSnapshot:(uint64_t)snapshot
                            pipeline:(YapDatabaseCloudCorePipeline *)pipeline
 {
 	YDBLogAutoTrace();
@@ -1319,7 +1319,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	// INSERT INTO "queueTableName"
 	//   ("pipelineID",
-	//    "graphID",
+	//    "graphID",    <-- Historical name
 	//    "operation")
 	//   VALUES (?, ?, ?, ?);
 	
@@ -1339,9 +1339,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			sqlite3_bind_int64(statement, bind_idx_pipelineID, pipeline.rowid);
 		}
 		
-		// graphID
+		// graphID / snapshot
 		
-		sqlite3_bind_int64(statement, bind_idx_graphID, graphID);
+		sqlite3_bind_int64(statement, bind_idx_graphID, snapshot);
 		
 		// operation
 		
@@ -3683,14 +3683,14 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
-		uint64_t nextGraphID = [pipeline nextGraphID];
+		uint64_t nextSnapshot = [databaseTransaction->connection snapshot] + 1;
 		
-		[self queueTable_insertOperations:operations
-		                      withGraphID:nextGraphID
-		                         pipeline:pipeline];
+		[self queueTable_insertOperations: operations
+		                     withSnapshot: nextSnapshot
+		                         pipeline: pipeline];
 		
 		YapDatabaseCloudCoreGraph *graph =
-		  [[YapDatabaseCloudCoreGraph alloc] initWithPersistentOrder:nextGraphID operations:operations];
+		  [[YapDatabaseCloudCoreGraph alloc] initWithSnapshot:nextSnapshot operations:operations];
 		
 		[parentConnection->graphs_added setObject:graph forKey:pipelineName];
 		
@@ -3702,14 +3702,14 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		NSDictionary *graphs = parentConnection->operations_inserted[pipeline.name];
 		
 		[graphs enumerateKeysAndObjectsUsingBlock:
-		  ^(NSNumber *number, NSArray<YapDatabaseCloudCoreOperation *> *insertedOps, BOOL *stop)
+		  ^(NSNumber *graphIdxNum, NSArray<YapDatabaseCloudCoreOperation *> *insertedOps, BOOL *stop)
 		{
-			uint64_t graphID = 0;
-			[pipeline getGraphID:&graphID forIndex:[number unsignedIntegerValue]];
+			uint64_t snapshot = 0;
+			[pipeline getSnapshot:&snapshot forGraphIndex:[graphIdxNum unsignedIntegerValue]];
 			
-			[self queueTable_insertOperations:insertedOps
-			                      withGraphID:graphID
-			                         pipeline:pipeline];
+			[self queueTable_insertOperations: insertedOps
+			                     withSnapshot: snapshot
+			                         pipeline: pipeline];
 		}];
 	}
 	

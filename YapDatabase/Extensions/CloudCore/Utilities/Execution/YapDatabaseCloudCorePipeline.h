@@ -165,6 +165,38 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 **/
 - (NSUInteger)graphCount;
 
+/**
+ * Each graph corresponds to a particular commit.
+ * And YapDatabase keeps track of commit numbers via its `snapshot` property.
+ *
+ * The `snapshot` can be understood as a commit number that gets incremented during
+ * every read-write transaction (for which actual changes were made to the database).
+ * Note also that the `snapshot` is stored in the database.
+ * So it's a persistent number that continually increments across app launches.
+ * (i.e. does NOT reset to zero on app re-launch, but rather continues incrementing where it left off)
+ *
+ * The snapshot number is known for each graph.
+ * However, most API's deal instead with "graph indexes" (graphIdx).
+ * This is because the graph index is generally seen as more useful and intuitive.
+ *
+ * For example, imagine the following scenario:
+ * - commit 44 creates 2 operations
+ * - commit 45 & 46 create 0 operations
+ * - commit 47 creates 2 operations
+ *
+ * Intuitively, we see that we have 2 graphs, each with 2 operations.
+ * And we think of the graphs as being in an array.
+ * If we enumerate the operations, it becomes more intuitive to be given graph indexes.
+ * So index 0 is the first graph in the array, index 1 comes next, etc...
+ * Further, in terms of the graphs, the corresponding snapshot numbers are non-sequential.
+ * The first graph is 44... and then jumps to 47 !
+ * 
+ * Hence, most API's deal with graphs as arrays, and expose their index within the array.
+ * However, sometimes it's useful to get the persistent snapshot number that corresponds to a graph.
+**/
+- (BOOL)getSnapshot:(uint64_t *)snapshotPtr forGraphIndex:(NSUInteger)graphIdx;
+- (BOOL)getGraphIndex:(NSUInteger *)graphIdxPtr forSnapshot:(uint64_t)snapshot;
+
 #pragma mark Operation Status
 
 /**
