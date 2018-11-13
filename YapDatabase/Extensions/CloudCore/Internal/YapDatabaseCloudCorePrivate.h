@@ -158,6 +158,25 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
            databaseTransaction:(YapDatabaseReadTransaction *)databaseTransaction;
 
 /**
+ * Subclass hooks
+**/
+
+// Allows subclasses to perform post-processing on operations before they are written to disk.
+// Examples of tasks a subclass may want to perform:
+//
+// - sanitization of various property values
+// - automatically merging duplicate operations within same commit
+// - automatically adding dependencies for operations in earlier commits (if using FlatGraph optimization)
+//
+- (NSArray *)processOperations:(NSArray *)operations
+						  inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+						withGraphIdx:(NSUInteger)operationsGraphIdx;
+
+// Subclasses may override these methods to perform custom tasks as needed.
+- (void)didCompleteOperation:(YapDatabaseCloudCoreOperation *)operation;
+- (void)didSkipOperation:(YapDatabaseCloudCoreOperation *)operation;
+
+/**
  * All of the public methods that return an operation (directly, or via enumeration block),
  * always return a copy of the internally held operation.
  * 
@@ -197,6 +216,9 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
                                       (^)(YapDatabaseCloudCoreOperation *operation,
                                           NSUInteger graphIdx, BOOL *stop))enumBlock;
 
+/**
+ * Throw this if an attempt is made to invoke a read-write action within a read-only transaction.
+**/
 - (NSException *)requiresReadWriteTransactionException:(NSString *)methodName;
 
 @end

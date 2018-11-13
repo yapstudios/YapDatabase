@@ -58,6 +58,9 @@
  * Replaces the existing operation with the new version.
  * 
  * The dependency graph will automatically be recalculated using the new operation version.
+ *
+ * @return
+ *   NO if the operation isn't properly configured for use.
 **/
 - (BOOL)modifyOperation:(YapDatabaseCloudCoreOperation *)operation;
 
