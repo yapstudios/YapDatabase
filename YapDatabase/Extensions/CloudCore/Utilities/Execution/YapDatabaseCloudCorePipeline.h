@@ -151,6 +151,11 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 - (YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
 
 /**
+ * Returns a list of operations in state 'YDBCloudOperationStatus_Active'.
+**/
+- (NSArray<YapDatabaseCloudCoreOperation *> *)activeOperations;
+
+/**
  * Enumerates the queued operations.
  *
  * This is useful for finding operation.

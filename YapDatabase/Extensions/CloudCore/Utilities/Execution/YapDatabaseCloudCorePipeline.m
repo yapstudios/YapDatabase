@@ -238,6 +238,60 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	return match;
 }
 
+/**
+ * Returns a list of operations in state 'YDBCloudOperationStatus_Active'.
+**/
+- (NSArray<YapDatabaseCloudCoreOperation *> *)activeOperations
+{
+	NSUInteger capacity = self.maxConcurrentOperationCount;
+	if (capacity == 0) {
+		capacity = 8;
+	}
+	
+	NSMutableArray<YapDatabaseCloudCoreOperation *> *results = [NSMutableArray arrayWithCapacity:capacity];
+	
+	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
+		NSMutableSet<NSUUID *> *activeOpUUIDs = [NSMutableSet setWithCapacity:capacity];
+		
+		[ephemeralInfo enumerateKeysAndObjectsUsingBlock:
+			^(NSUUID *opUUID, NSMutableDictionary *opInfo, BOOL *stop)
+		{
+			NSNumber *statusNum = opInfo[YDBCloudCore_EphemeralKey_Status];
+			if (statusNum)
+			{
+				YDBCloudCoreOperationStatus status = (YDBCloudCoreOperationStatus)[statusNum integerValue];
+				if (status == YDBCloudOperationStatus_Active)
+				{
+					[activeOpUUIDs addObject:opUUID];
+				}
+			}
+		}];
+		
+		for (YapDatabaseCloudCoreGraph *graph in graphs)
+		{
+			for (YapDatabaseCloudCoreOperation *op in graph.operations)
+			{
+				if ([activeOpUUIDs containsObject:op.uuid])
+				{
+					[results addObject:[op copy]];
+				}
+			}
+		}
+		
+	#pragma clang diagnostic pop
+	}};
+	
+	if (dispatch_get_specific(IsOnQueueKey))
+		block();
+	else
+		dispatch_sync(queue, block);
+	
+	return results;
+}
+
 - (void)enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
                                                 NSUInteger graphIdx, BOOL *stop))enumBlock
 {
