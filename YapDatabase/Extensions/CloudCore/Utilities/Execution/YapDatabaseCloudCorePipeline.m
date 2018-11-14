@@ -585,11 +585,11 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
  * You should allow the pipeline to mange the queue, and only start operations when told to.
  *
  * However, there is one particular edge case in which is is unavoidable: background network tasks.
- * If the app is relaunched, and you discover there are network task from a previously app session,
+ * If the app is relaunched, and you discover there are network tasks from a previously app session,
  * you'll obviously want to avoid starting the corresponding operation again.
  * In this case, you should use this method to inform the pipeline that the operation is already started.
 **/
-- (void)setStatusAsStartedForOperationWithUUID:(NSUUID *)opUUID
+- (void)setStatusAsActiveForOperationWithUUID:(NSUUID *)opUUID
 {
 	if (opUUID == nil) return;
 	
@@ -600,7 +600,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		__strong YapDatabaseCloudCorePipeline *strongSelf = weakSelf;
 		if (strongSelf == nil) return;
 		
-		if ([strongSelf _setStatus:YDBCloudOperationStatus_Started forOperationUUID:opUUID])
+		if ([strongSelf _setStatus:YDBCloudOperationStatus_Active forOperationUUID:opUUID])
 		{
 			[strongSelf->startedOpUUIDs addObject:opUUID];
 		}
@@ -1014,7 +1014,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	NSAssert(dispatch_get_specific(IsOnQueueKey), @"Must be executed within queue");
 	
 	__block BOOL hasOps = NO;
-	__block BOOL hasStartedOps = NO;
+	__block BOOL hasActiveOps = NO;
 	
 	[self _enumerateOperationsUsingBlock:
 		^(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
@@ -1025,9 +1025,9 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		
 		if (graphIdx == 0)
 		{
-			if ([self statusForOperationWithUUID:operation.uuid] == YDBCloudOperationStatus_Started)
+			if ([self statusForOperationWithUUID:operation.uuid] == YDBCloudOperationStatus_Active)
 			{
-				hasStartedOps = YES;
+				hasActiveOps = YES;
 				*stop = YES;
 			}
 		}
@@ -1040,10 +1040,10 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	if (isActive)
 	{
 		// Transition to inactive when:
-		// - There are 0 operations in 'YDBCloudOperationStatus_Started' mode
+		// - There are 0 operations in 'YDBCloudOperationStatus_Active' mode
 		// - AND (the pipeline is suspended OR there are no more operations)
 		
-		if (!hasStartedOps)
+		if (!hasActiveOps)
 		{
 			if (!hasOps || self.isSuspended)
 			{
@@ -1055,9 +1055,9 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	else
 	{
 		// Transition to active when:
-		// - There are 1 or more operations in 'YDBCloudOperationStatus_Started' mode.
+		// - There are 1 or more operations in 'YDBCloudOperationStatus_Active' mode.
 		
-		if (hasStartedOps)
+		if (hasActiveOps)
 		{
 			isActive = YES;
 			[self postActiveStatusChanged:isActive];
@@ -1071,9 +1071,9 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		
 		NSDictionary *userInfo = @{ @"isActive" : @(_isActive) };
 		
-		[[NSNotificationCenter defaultCenter] postNotificationName:YDBCloudCorePipelineActiveStatusChangedNotification
-		                                                    object:self
-		                                                  userInfo:userInfo];
+		[[NSNotificationCenter defaultCenter] postNotificationName: YDBCloudCorePipelineActiveStatusChangedNotification
+		                                                    object: self
+		                                                  userInfo: userInfo];
 	};
 	
 	if ([NSThread isMainThread])
@@ -1359,7 +1359,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		
 		do {
 			
-			[self _setStatus:YDBCloudOperationStatus_Started forOperationUUID:nextOp.uuid];
+			[self _setStatus:YDBCloudOperationStatus_Active forOperationUUID:nextOp.uuid];
 			
 			YapDatabaseCloudCoreOperation *opToStart = nextOp;
 			dispatch_async(globalQueue, ^{ @autoreleasepool {
@@ -1493,7 +1493,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		
 		do {
 			
-			[self _setStatus:YDBCloudOperationStatus_Started forOperationUUID:nextOp.uuid];
+			[self _setStatus:YDBCloudOperationStatus_Active forOperationUUID:nextOp.uuid];
 			
 			YapDatabaseCloudCoreOperation *opToStart = nextOp;
 			dispatch_async(globalQueue, ^{ @autoreleasepool {

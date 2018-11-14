@@ -32,7 +32,7 @@ typedef NS_ENUM(NSInteger, YDBCloudCoreOperationStatus) {
 	 * The operation has been started.
 	 * I.e. has been handed to the PipelineDelegate via 'startOperation::'.
 	**/
-	YDBCloudOperationStatus_Started,
+	YDBCloudOperationStatus_Active,
 	
 	/**
 	 * Until an operation is marked as either completed or skipped,
@@ -209,11 +209,11 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * You should allow the pipeline to mange the queue, and only start operations when told to.
  *
  * However, there is one particular edge case in which is is unavoidable: background network tasks.
- * If the app is relaunched, and you discover there are network task from a previous app session,
+ * If the app is relaunched, and you discover there are network tasks from a previous app session,
  * you'll obviously want to avoid starting the corresponding operation again.
  * In this case, you should use this method to inform the pipeline that the operation is already started.
 **/
-- (void)setStatusAsStartedForOperationWithUUID:(NSUUID *)opUUID;
+- (void)setStatusAsActiveForOperationWithUUID:(NSUUID *)opUUID;
 
 /**
  * The PipelineDelegate may invoke this method to reset a failed operation.
@@ -317,11 +317,15 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 
 /**
  * A pipeline transitions to the 'active' state when:
- * - There are 1 or more operations in 'YDBCloudOperationStatus_Started' mode.
+ * - There are 1 or more operations in 'YDBCloudOperationStatus_Active' mode.
  *
  * A pipeline transitions to the 'inactive' state when:
- * - There are 0 operations in 'YDBCloudOperationStatus_Started' mode
+ * - There are 0 operations in 'YDBCloudOperationStatus_Active' mode
  * - AND (the pipeline is suspended OR there are no more operations)
+ *
+ * ^In other words, there may be situations in which there are zero active operations,
+ *  due to something like a conflict resolution, however the pipeline is still considered
+ *  active because it still has pending operations, and it hasn't been suspended.
 **/
 @property (atomic, readonly) BOOL isActive;
 
