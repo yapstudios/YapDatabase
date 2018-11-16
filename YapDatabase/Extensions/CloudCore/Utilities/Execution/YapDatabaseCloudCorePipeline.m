@@ -1462,12 +1462,23 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			}
 		}
 		
-		// Careful: Graphs are setup in a linked-list,
-		// where each graph has a (weak) pointer to the previous graph.
-		// So we don't remove a graph from the list, unless it's at the front.
-		if (i == 0 && graph.operations.count == 0)
+		if (graph.operations.count == 0)
 		{
 			[graphs removeObjectAtIndex:i];
+			
+			// Careful: Graphs (in FlatCommit mode) are setup in a linked-list,
+			// where each graph has a (weak) pointer to the previous graph.
+			// So we need to fixup the link.
+			if (i < graphs.count)
+			{
+				YapDatabaseCloudCoreGraph *nextGraph = graphs[i];
+				if (i == 0) {
+					nextGraph.previousGraph = nil;
+				}
+				else {
+					nextGraph.previousGraph = graphs[i - 1];
+				}
+			}
 		}
 		else
 		{
