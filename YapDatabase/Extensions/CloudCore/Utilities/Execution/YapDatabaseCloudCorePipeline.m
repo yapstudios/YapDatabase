@@ -946,10 +946,13 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 - (NSUInteger)suspendWithCount:(NSUInteger)suspendCountIncrement
 {
 	BOOL overflow = NO;
+	NSUInteger oldSuspendCount = 0;
 	NSUInteger newSuspendCount = 0;
 	
 	OSSpinLockLock(&suspendCountLock);
 	{
+		oldSuspendCount = suspendCount;
+		
 		if (suspendCount <= (NSUIntegerMax - suspendCountIncrement))
 			suspendCount += suspendCountIncrement;
 		else {
@@ -961,16 +964,18 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	}
 	OSSpinLockUnlock(&suspendCountLock);
 	
-	if (overflow)
-	{
+	if (overflow) {
 		YDBLogWarn(@"%@ - The suspendCount has reached NSUIntegerMax!", THIS_METHOD);
 	}
-	else if (suspendCountIncrement > 0)
-	{
+	else if (suspendCountIncrement > 0) {
 		YDBLogInfo(@"=> SUSPENDED : incremented suspendCount == %lu", (unsigned long)newSuspendCount);
 	}
 	
 	[self postSuspendCountChangedNotification];
+	if ((oldSuspendCount == 0) && (newSuspendCount > 0))
+	{
+		[self checkForActiveStatusChange]; // may have transitioned from active to inactive
+	}
 	
 	return newSuspendCount;
 }
@@ -1009,16 +1014,19 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	}
 	else
 	{
-		if (newSuspendCount == 0)
-		{
+		if (newSuspendCount == 0) {
 			YDBLogInfo(@"=> RESUMED");
-			[self queueStartNextOperationIfPossible];
 		}
 		else {
 			YDBLogInfo(@"=> SUSPENDED : decremented suspendCount == %lu", (unsigned long)newSuspendCount);
 		}
 		
 		[self postSuspendCountChangedNotification];
+		if (newSuspendCount == 0)
+		{
+			[self checkForActiveStatusChange]; // may have transitioned from inactive to active
+			[self queueStartNextOperationIfPossible];
+		}
 	}
 	
 	return newSuspendCount;
@@ -1063,7 +1071,19 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	return status;
 }
 
-- (void)checkActiveStatus
+- (void)checkForActiveStatusChange
+{
+	dispatch_block_t block = ^{ @autoreleasepool {
+		[self _checkForActiveStatusChange];
+	}};
+	
+	if (dispatch_get_specific(IsOnQueueKey))
+		block();
+	else
+		dispatch_sync(queue, block);
+}
+
+- (void)_checkForActiveStatusChange
 {
 	NSAssert(dispatch_get_specific(IsOnQueueKey), @"Must be executed within queue");
 	
@@ -1091,7 +1111,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		}
 	}];
 	
-	if (isActive)
+	if (isActive) // current reported state is active
 	{
 		// Transition to inactive when:
 		// - There are 0 operations in 'YDBCloudOperationStatus_Active' mode
@@ -1106,7 +1126,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			}
 		}
 	}
-	else
+	else // current reported state is inactive
 	{
 		// Transition to active when:
 		// - There are 1 or more operations in 'YDBCloudOperationStatus_Active' mode.
@@ -1332,12 +1352,12 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	NSAssert(dispatch_get_specific(IsOnQueueKey), @"Must be executed within queue");
 	
 	if (algorithm == YDBCloudCorePipelineAlgorithm_CommitGraph)
-		[self startNextOperationIfPossible_CommitGraph];
+		[self _startNextOperationIfPossible_CommitGraph];
 	else
-		[self startNextOperationIfPossible_FlatGraph];
+		[self _startNextOperationIfPossible_FlatGraph];
 }
 
-- (void)startNextOperationIfPossible_CommitGraph
+- (void)_startNextOperationIfPossible_CommitGraph
 {
 	YDBLogAutoTrace();
 	
@@ -1379,7 +1399,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	{
 		// Waiting for another graph to be added
 		
-		[self checkActiveStatus]; // may have transitioned from active to not-active
+		[self _checkForActiveStatusChange]; // may have transitioned from active to inactive
 		return;
 	}
 	
@@ -1433,11 +1453,11 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			
 		} while (nextOp);
 		
-		[self checkActiveStatus];
+		[self _checkForActiveStatusChange]; // may have transitioned from inactive to active
 	}
 }
 
-- (void)startNextOperationIfPossible_FlatGraph
+- (void)_startNextOperationIfPossible_FlatGraph
 {
 	YDBLogAutoTrace();
 	
@@ -1494,7 +1514,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	{
 		// Waiting for another graph to be added
 		
-		[self checkActiveStatus]; // may have transitioned from active to not-active
+		[self _checkForActiveStatusChange]; // may have transitioned from active to inactive
 		return;
 	}
 	
@@ -1578,7 +1598,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			
 		} while (nextOp);
 		
-		[self checkActiveStatus];
+		[self _checkForActiveStatusChange]; // may have transitioned from inactive to active
 	}
 }
 
