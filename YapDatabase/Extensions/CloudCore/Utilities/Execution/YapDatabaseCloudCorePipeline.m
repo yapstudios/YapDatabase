@@ -525,6 +525,12 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		dispatch_sync(queue, block);
 }
 
+/**
+ * Returns whether or not the change was allowed (not necesarily whether it changed status).
+ *
+ * Once an operation transitions to completed or skipped,
+ *  it's not allowed to transition to pending or active.
+**/
 - (BOOL)_setStatus:(YDBCloudCoreOperationStatus)status forOperationUUID:(NSUUID *)uuid
 {
 	__block BOOL allowed = YES;
@@ -540,10 +546,10 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			ephemeralInfo[uuid] = opInfo;
 		}
 		
-		NSNumber *existing = opInfo[YDBCloudCore_EphemeralKey_Status];
-		if (existing != nil)
+		NSNumber *existingStatusNum = opInfo[YDBCloudCore_EphemeralKey_Status];
+		if (existingStatusNum != nil)
 		{
-			YDBCloudCoreOperationStatus existingStatus = (YDBCloudCoreOperationStatus)[existing integerValue];
+			YDBCloudCoreOperationStatus existingStatus = (YDBCloudCoreOperationStatus)[existingStatusNum integerValue];
 			
 			if (existingStatus == YDBCloudOperationStatus_Completed ||
 			    existingStatus == YDBCloudOperationStatus_Skipped)
@@ -654,9 +660,12 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		__strong YapDatabaseCloudCorePipeline *strongSelf = weakSelf;
 		if (strongSelf == nil) return;
 		
-		if ([strongSelf _setStatus:YDBCloudOperationStatus_Active forOperationUUID:opUUID])
+		BOOL allowed = [strongSelf _setStatus:YDBCloudOperationStatus_Active forOperationUUID:opUUID];
+		if (allowed)
 		{
 			[strongSelf->startedOpUUIDs addObject:opUUID];
+			
+			[strongSelf _checkForActiveStatusChange]; // may have transitioned from inactive to active
 		}
 	}};
 	
@@ -682,10 +691,12 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		__strong YapDatabaseCloudCorePipeline *strongSelf = weakSelf;
 		if (strongSelf == nil) return;
 		
-		BOOL changed = [strongSelf _setStatus:YDBCloudOperationStatus_Pending forOperationUUID:opUUID];
-		if (changed)
+		BOOL allowed = [strongSelf _setStatus:YDBCloudOperationStatus_Pending forOperationUUID:opUUID];
+		if (allowed)
 		{
 			[strongSelf->startedOpUUIDs removeObject:opUUID];
+			
+			[strongSelf _checkForActiveStatusChange]; // may have transitioned from active to inactive
 			[strongSelf startNextOperationIfPossible];
 		}
 	}};
@@ -718,8 +729,8 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		__strong YapDatabaseCloudCorePipeline *strongSelf = weakSelf;
 		if (strongSelf == nil) return;
 		
-		BOOL changed = [strongSelf _setStatus:YDBCloudOperationStatus_Pending forOperationUUID:opUUID];
-		if (changed)
+		BOOL allowed = [strongSelf _setStatus:YDBCloudOperationStatus_Pending forOperationUUID:opUUID];
+		if (allowed)
 		{
 			[strongSelf _setEphemeralInfo:hold
 			                       forKey:YDBCloudCore_EphemeralKey_Hold
@@ -727,6 +738,8 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			
 			[strongSelf->startedOpUUIDs removeObject:opUUID];
 			[strongSelf updateHoldTimer];
+			
+			[strongSelf _checkForActiveStatusChange]; // may have transitioned from active to inactive
 			[strongSelf startNextOperationIfPossible];
 		}
 	}};
