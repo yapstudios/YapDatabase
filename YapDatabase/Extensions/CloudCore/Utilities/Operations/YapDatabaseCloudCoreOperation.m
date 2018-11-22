@@ -46,6 +46,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 // Public properties
 
 @synthesize uuid = uuid;
+@synthesize snapshot = snapshot;
 @synthesize pipeline = pipeline;
 @synthesize priority = priority;
 @synthesize dependencies = dependencies;
@@ -105,8 +106,14 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 		[coder encodeInt:kYapDatabaseCloudCoreOperation_CurrentVersion forKey:k_version];
 	}
 	
+	// Notes about persistence:
+	//
 	// The pipeline property is NOT encoded.
-	// It's stored via the pipelineID column automatically,
+	// It's stored via the `pipelineID` column automatically,
+	// and is explicitly set when the operations are restored.
+	//
+	// The `snapshot` property is NOT encoded.
+	// It's stored via the `graphID` column automatically,
 	// and is explicitly set when the operations are restored.
 	
 	[coder encodeObject:uuid forKey:k_uuid];
@@ -125,6 +132,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 	YapDatabaseCloudCoreOperation *copy = [[[self class] alloc] init];
 	
 	copy->uuid = uuid;
+	copy->snapshot = snapshot;
 	copy->pipeline = pipeline;
 	copy->dependencies = dependencies;
 	copy->priority = priority;
@@ -324,6 +332,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 	if (!YDB_IsEqualOrBothNil(pendingStatus, op->pendingStatus)) return NO;
 	
 	if (!YDB_IsEqualOrBothNil(uuid, op->uuid)) return NO;
+	if (snapshot != op->snapshot) return NO;
 	if (!YDB_IsEqualOrBothNil(pipeline, op->pipeline)) return NO;
 	
 	if (priority != op->priority) return NO;
@@ -342,13 +351,15 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 {
 	if (!pipeline || [pipeline isEqualToString:YapDatabaseCloudCoreDefaultPipelineName])
 	{
-		return [NSString stringWithFormat:@"<YapDatabaseCloudCoreOperation[%p]: uuid=\"%@\", priority=%d>",
-		                                     self, uuid, priority];
+		return [NSString stringWithFormat:
+			@"<YapDatabaseCloudCoreOperation[%p]: uuid=\"%@\", priority=%d>",
+			self, uuid, priority];
 	}
 	else
 	{
-		return [NSString stringWithFormat:@"<YapDatabaseCloudCoreOperation[%p]: pipeline=\"%@\" uuid=\"%@\", priority=%d>",
-		                                     self, pipeline, uuid, priority];
+		return [NSString stringWithFormat:
+			@"<YapDatabaseCloudCoreOperation[%p]: pipeline=\"%@\" uuid=\"%@\", priority=%d>",
+			self, pipeline, uuid, priority];
 	}
 }
 

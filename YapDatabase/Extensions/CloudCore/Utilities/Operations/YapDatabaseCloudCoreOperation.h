@@ -19,6 +19,20 @@
 **/
 @property (nonatomic, readonly) NSUUID *uuid;
 
+/**
+ * YapDatabase keeps track of commit numbers via its `snapshot` property.
+ *
+ * The `snapshot` can be understood as a commit number that gets incremented during
+ * every read-write transaction (for which actual changes were made to the database).
+ * Note also that the `snapshot` is stored in the database.
+ * So it's a persistent number that continually increments across app launches.
+ * (i.e. does NOT reset to zero on app re-launch, but rather continues incrementing where it left off)
+ *
+ * The snapshot number is known for each graph.
+ * And an operation's snapshot number is set when being added to the graph.
+**/
+@property (nonatomic, readonly) uint64_t snapshot;
+
 #pragma mark Configuration
 
 /**

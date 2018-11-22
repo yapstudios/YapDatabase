@@ -148,7 +148,7 @@
 - (NSArray *)removeCompletedAndSkippedOperations
 {
 	NSMutableIndexSet *indexesToRemove = [NSMutableIndexSet indexSet];
-	NSMutableArray *operationsToRemove = [NSMutableArray arrayWithCapacity:1];
+	NSMutableArray *removedOperations = [NSMutableArray arrayWithCapacity:1];
 	
 	NSUInteger index = 0;
 	for (YapDatabaseCloudCoreOperation *operation in operations)
@@ -159,7 +159,7 @@
 		    status == YDBCloudOperationStatus_Skipped)
 		{
 			[indexesToRemove addIndex:index];
-			[operationsToRemove addObject:operation];
+			[removedOperations addObject:operation];
 		}
 		
 		index++;
@@ -173,7 +173,7 @@
 		operations = [newOperations copy];
 	}
 	
-	return operationsToRemove;
+	return removedOperations;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

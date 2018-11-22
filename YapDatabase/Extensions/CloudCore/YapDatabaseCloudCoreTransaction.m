@@ -995,6 +995,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			
 			operation.operationRowid = sqlite3_column_int64(statement, column_idx_rowid);
 			operation.pipeline = pipelineName;
+			operation.snapshot = snapshot;
 			
 			// - Add to operationsPerPipeline
 			
@@ -1190,6 +1191,10 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	{
 		// Insert operation into existing graph
 		
+		uint64_t snapshot = 0;
+		[pipeline getSnapshot:&snapshot forGraphIndex:graphIdx.unsignedIntegerValue];
+		operation.snapshot = snapshot;
+		
 		NSMutableDictionary *graphs = parentConnection->operations_inserted[pipelineName];
 		
 		if (graphs == nil)
@@ -1211,6 +1216,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	else
 	{
 		// Add operation to new graph
+		
+		uint64_t nextSnapshot = [databaseTransaction->connection snapshot] + 1;
+		operation.snapshot = nextSnapshot;
 		
 		NSMutableArray<YapDatabaseCloudCoreOperation *> *addedOps = parentConnection->operations_added[pipelineName];
 		
@@ -1341,6 +1349,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		
 		// graphID / snapshot
 		
+		NSAssert(operation.snapshot == snapshot, @"Maybe forgot to set operation.snapshot somewhere ?");
 		sqlite3_bind_int64(statement, bind_idx_graphID, snapshot);
 		
 		// operation
@@ -1348,7 +1357,6 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		__attribute__((objc_precise_lifetime)) NSData *operationBlob = [self serializeOperation:operation];
 		
 		sqlite3_bind_blob(statement, bind_idx_operation, operationBlob.bytes, (int)operationBlob.length, SQLITE_STATIC);
-		
 	
 		int status = sqlite3_step(statement);
 		if (status == SQLITE_DONE)
@@ -2260,7 +2268,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	if (operation == nil) return NO;
 	
-	if ([self _operationWithUUID:operation.uuid inPipeline:operation.pipeline] == nil)
+	YapDatabaseCloudCoreOperation *previous =
+		[self _operationWithUUID:operation.uuid inPipeline:operation.pipeline];
+	if (previous == nil)
 	{
 		// The operation doesn't appear to exist.
 		// It either never existed, or it's already been completed or skipped.
@@ -2271,6 +2281,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	// Prevent the user from modifying the operation after import.
 	
 	operation = [operation copy];
+	operation.pipeline = previous.pipeline; // changing this not supported; delete old & create new.
+	operation.snapshot = previous.snapshot; // changing this not supported; delete old & create new.
 	
 	// Modify logic
 	
