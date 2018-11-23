@@ -174,6 +174,9 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * This value may be changed at anytime.
  *
  * The default value is 8.
+ *
+ * Setting the value to zero is the equivalent of setting the value to NSUIntegerMax.
+ * If your intention is to pause/suspend the queue, use the suspend/resume methods.
 **/
 @property (atomic, assign, readwrite) NSUInteger maxConcurrentOperationCount;
 
