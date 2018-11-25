@@ -510,71 +510,38 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 #pragma mark Utility Methods
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/**
- * Internal method to fetch root key/value pairs from the ephemeralInfo dictionay.
-**/
-- (id)_ephemeralInfoForKey:(NSString *)key operationUUID:(NSUUID *)opUUID
+- (NSDate *)earliestDate:(NSDictionary<NSString*, NSDate*> *)dates
 {
-	if (key == nil) return nil;
-	if (opUUID == nil) return nil;
+	NSDate *earliestDate = nil;
 	
-	__block id result = nil;
+	for (NSDate *date in [dates objectEnumerator])
+	{
+		if (earliestDate == nil) {
+			earliestDate = date;
+		}
+		else {
+			earliestDate = [earliestDate earlierDate:date];
+		}
+	}
 	
-	dispatch_block_t block = ^{ @autoreleasepool {
-	#pragma clang diagnostic push
-	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
-		
-		NSMutableDictionary *opInfo = ephemeralInfo[opUUID];
-		result = opInfo[key];
-		
-	#pragma clang diagnostic pop
-	}};
-	
-	if (dispatch_get_specific(IsOnQueueKey))
-		block();
-	else
-		dispatch_sync(queue, block);
-	
-	return result;
+	return earliestDate;
 }
 
-/**
- * Internal method to modify root key/value pairs in the ephemeralInfo dictionay.
-**/
-- (void)_setEphemeralInfo:(id)object forKey:(NSString *)key operationUUID:(NSUUID *)uuid
+- (NSDate *)latestDate:(NSDictionary<NSString*, NSDate*> *)dates
 {
-	if (key == nil) return;
-	if (uuid == nil) return;
+	NSDate *latestDate = nil;
 	
-	dispatch_block_t block = ^{ @autoreleasepool {
-	#pragma clang diagnostic push
-	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
-		
-		NSMutableDictionary *opInfo = ephemeralInfo[uuid];
-		if (opInfo)
-		{
-			opInfo[key] = object;
-			
-			if (!object && (opInfo.count == 0))
-			{
-				ephemeralInfo[uuid] = nil;
-			}
+	for (NSDate *date in [dates objectEnumerator])
+	{
+		if (latestDate == nil) {
+			latestDate = date;
 		}
-		else if (object)
-		{
-			opInfo = [NSMutableDictionary dictionaryWithSharedKeySet:ephemeralInfoSharedKeySet];
-			ephemeralInfo[uuid] = opInfo;
-			
-			opInfo[key] = object;
+		else {
+			latestDate = [latestDate laterDate:date];
 		}
-		
-	#pragma clang diagnostic pop
-	}};
+	}
 	
-	if (dispatch_get_specific(IsOnQueueKey))
-		block();
-	else
-		dispatch_sync(queue, block);
+	return latestDate;
 }
 
 /**
@@ -635,8 +602,8 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
  forOperationUUID:(NSUUID *)opUUID
 {
 	__block BOOL found = NO;
-	__block NSNumber *status = nil;
-	__block NSDate *hold = nil;
+	__block NSNumber *statusNum = nil;
+	__block NSDate *latestHold = nil;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
 	#pragma clang diagnostic push
@@ -645,9 +612,13 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		NSMutableDictionary *opInfo = ephemeralInfo[opUUID];
 		if (opInfo)
 		{
-			found  = YES;
-			status = opInfo[YDBCloudCore_EphemeralKey_Status];
-			hold   = opInfo[YDBCloudCore_EphemeralKey_Hold];
+			found = YES;
+			statusNum = opInfo[YDBCloudCore_EphemeralKey_Status];
+			
+			NSDictionary<NSString*, NSDate*> *holdDict = opInfo[YDBCloudCore_EphemeralKey_Hold];
+			if (holdDict) {
+				latestHold = [self latestDate:holdDict];
+			}
 		}
 		
 	#pragma clang diagnostic pop
@@ -660,15 +631,15 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	
 	if (statusPtr)
 	{
-		if (status != nil)
-			*statusPtr = (YDBCloudCoreOperationStatus)[status integerValue];
+		if (statusNum)
+			*statusPtr = (YDBCloudCoreOperationStatus)[statusNum integerValue];
 		else
 			*statusPtr = YDBCloudOperationStatus_Pending;
 	}
 	if (isOnHoldPtr)
 	{
-		if (hold)
-			*isOnHoldPtr = ([hold timeIntervalSinceNow] > 0.0);
+		if (latestHold)
+			*isOnHoldPtr = ([latestHold timeIntervalSinceNow] > 0.0);
 		else
 			*isOnHoldPtr = NO;
 	}
@@ -685,7 +656,23 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 **/
 - (YDBCloudCoreOperationStatus)statusForOperationWithUUID:(NSUUID *)opUUID
 {
-	NSNumber *status = [self _ephemeralInfoForKey:YDBCloudCore_EphemeralKey_Status operationUUID:opUUID];
+	__block NSNumber *status = nil;
+	
+	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
+		NSMutableDictionary *opInfo = ephemeralInfo[opUUID];
+		status = opInfo[YDBCloudCore_EphemeralKey_Status];
+		
+	#pragma clang diagnostic pop
+	}};
+	
+	if (dispatch_get_specific(IsOnQueueKey))
+		block();
+	else
+		dispatch_sync(queue, block);
+	
 	if (status != nil)
 		return (YDBCloudCoreOperationStatus)[status integerValue];
 	else
@@ -759,20 +746,58 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		dispatch_async(queue, block); // ASYNC
 }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark Operation Hold
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 /**
- * The PipelineDelegate may invoke this method to reset a failed operation,
- * and simultaneously tell the pipeline to delay retrying it again for a period of time.
+ * Returns the current hold for the operation (with the given context), or nil if there is no hold.
  *
- * This is typically used when implementing retry logic such as exponential backoff.
- * It works by setting a hold on the operation to [now dateByAddingTimeInterval:delay].
+ * Different context's allow different parts of the system to operate in parallel.
+ * For example, if an operation requires several different subsystems to each complete an action,
+ * then each susbsystem can independently place a hold on the operation.
+ * Once all holds are lifted, the pipeline can dispatch the operation again.
 **/
-- (void)setStatusAsPendingForOperationWithUUID:(NSUUID *)opUUID
-                                    retryDelay:(NSTimeInterval)delay
+- (NSDate *)holdDateForOperationWithUUID:(NSUUID *)opUUID context:(NSString *)inContext
 {
-	NSDate *hold = nil;
-	if (delay > 0.0) {
-		hold = [NSDate dateWithTimeIntervalSinceNow:delay];
-	}
+	NSString *context = inContext ? [inContext copy] : @"";
+	
+	__block NSDate *date = nil;
+	
+	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
+		NSMutableDictionary *opInfo = ephemeralInfo[opUUID];
+		NSDictionary<NSString*, NSDate*> *holdDict = opInfo[YDBCloudCore_EphemeralKey_Hold];
+		
+		date = holdDict[context];
+		
+	#pragma clang diagnostic pop
+	}};
+	
+	if (dispatch_get_specific(IsOnQueueKey))
+		block();
+	else
+		dispatch_sync(queue, block);
+	
+	return date;
+}
+
+/**
+ * And operation can be put on "hold" until a specified date.
+ *
+ * There are multiple uses for this. For example:
+ * - An operation may require various preparation tasks to complete before it can be started.
+ * - A failed operation may use a holdDate in conjunction with retry logic, such as exponential backoff.
+ *
+ * The operation won't be started again until all associated holdDate's have expired.
+ * You can pass a nil date to remove a hold on an operation (for a given context).
+**/
+- (void)setHoldDate:(NSDate *)date forOperationWithUUID:(NSUUID *)opUUID context:(NSString *)inContext
+{
+	if (opUUID == nil) return;
+	NSString *context = inContext ? [inContext copy] : @"";
 	
 	__weak YapDatabaseCloudCorePipeline *weakSelf = self;
 	
@@ -781,19 +806,24 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		__strong YapDatabaseCloudCorePipeline *strongSelf = weakSelf;
 		if (strongSelf == nil) return;
 		
-		BOOL allowed = [strongSelf _setStatus:YDBCloudOperationStatus_Pending forOperationUUID:opUUID];
-		if (allowed)
+		NSMutableDictionary *opInfo = strongSelf->ephemeralInfo[opUUID];
+		if (!opInfo && date)
 		{
-			[strongSelf _setEphemeralInfo:hold
-			                       forKey:YDBCloudCore_EphemeralKey_Hold
-			                operationUUID:opUUID];
-			
-			[strongSelf->startedOpUUIDs removeObject:opUUID];
-			[strongSelf updateHoldTimer];
-			
-			[strongSelf _checkForActiveStatusChange]; // may have transitioned from active to inactive
-			[strongSelf startNextOperationIfPossible];
+			opInfo = [NSMutableDictionary dictionaryWithSharedKeySet:strongSelf->ephemeralInfoSharedKeySet];
+			strongSelf->ephemeralInfo[opUUID] = opInfo;
 		}
+		
+		NSMutableDictionary<NSString*, NSDate*> *holds = opInfo[YDBCloudCore_EphemeralKey_Hold];
+		if (!holds && date)
+		{
+			holds = [NSMutableDictionary dictionaryWithCapacity:1];
+			opInfo[YDBCloudCore_EphemeralKey_Hold] = holds;
+		}
+		
+		holds[context] = date;
+		
+		[strongSelf updateHoldTimer];
+		[strongSelf startNextOperationIfPossible];
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
@@ -802,45 +832,61 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		dispatch_async(queue, block); // ASYNC
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark Operation Hold
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 /**
- * Returns the current hold for the operation, or nil if there is no hold.
-**/
-- (NSDate *)holdDateForOperationWithUUID:(NSUUID *)opUUID
-{
-	return [self _ephemeralInfoForKey:YDBCloudCore_EphemeralKey_Hold operationUUID:opUUID];
-}
-
-/**
- * And operation can be put on "hold" until a specified date.
- * This is typically used in conjunction with retry logic such as exponential backoff.
+ * Returns the latest hold date for the given operation.
  *
- * The operation won't be delegated again until the given date.
- * You can pass a nil date to remove a hold on an operation.
- *
- * @see setStatusAsPendingForOperation:withRetryDelay:
+ * If there are no holdDates for the operation, returns nil.
+ * If there are 1 or more holdDates, returns the latest date.
 **/
-- (void)setHoldDate:(NSDate *)date forOperationWithUUID:(NSUUID *)opUUID
+- (NSDate *)latestHoldDateForOperationWithUUID:(NSUUID *)opUUID
 {
-	if (opUUID == nil) return;
+	__block NSDate *latestDate = nil;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
-		[self _setEphemeralInfo:date
-		                 forKey:YDBCloudCore_EphemeralKey_Hold
-		          operationUUID:opUUID];
+		NSMutableDictionary *opInfo = ephemeralInfo[opUUID];
+		NSDictionary<NSString*, NSDate*> *holdDict = opInfo[YDBCloudCore_EphemeralKey_Hold];
 		
-		[self updateHoldTimer];
-		[self startNextOperationIfPossible];
+		if (holdDict) {
+			latestDate = [self latestDate:holdDict];
+		}
+		
+	#pragma clang diagnostic pop
 	}};
 	
 	if (dispatch_get_specific(IsOnQueueKey))
 		block();
 	else
-		dispatch_async(queue, block); // ASYNC
+		dispatch_sync(queue, block);
+	
+	return latestDate;
+}
+
+/**
+ * Returns a dictionary of all the hold dates associated with an operation.
+**/
+- (NSDictionary<NSString*, NSDate*> *)holdDatesForOperationWithUUID:(NSUUID *)opUUID
+{
+	__block NSDictionary<NSString*, NSDate*> *holdDict = nil;
+	
+	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
+		NSMutableDictionary *opInfo = ephemeralInfo[opUUID];
+		holdDict = [opInfo[YDBCloudCore_EphemeralKey_Hold] copy];
+		
+	#pragma clang diagnostic pop
+	}};
+	
+	if (dispatch_get_specific(IsOnQueueKey))
+		block();
+	else
+		dispatch_sync(queue, block);
+	
+	return holdDict;
 }
 
 /**
@@ -876,13 +922,15 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	
 	[ephemeralInfo enumerateKeysAndObjectsUsingBlock:^(NSUUID *uuid, NSMutableDictionary *opInfo, BOOL *stop) {
 		
-		NSDate *hold = opInfo[YDBCloudCore_EphemeralKey_Hold];
-		if (hold)
+		NSDictionary<NSString*, NSDate*> *holdDict = opInfo[YDBCloudCore_EphemeralKey_Hold];
+		if (holdDict)
 		{
+			NSDate *earliestHold = [self earliestDate:holdDict];
+			
 			if (nextFireDate == nil)
-				nextFireDate = hold;
+				nextFireDate = earliestHold;
 			else
-				nextFireDate = [nextFireDate earlierDate:hold];
+				nextFireDate = [nextFireDate earlierDate:earliestHold];
 		}
 	}];
 	
@@ -923,27 +971,47 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 {
 	NSAssert(dispatch_get_specific(IsOnQueueKey), @"Must be executed within queue");
 	
-	// Remove the stored hold date for any items in which: hold < now
+	// Remove the stored hold date for any items in which: hold <= now
 	
 	NSDate *now = [NSDate date];
-	__block NSMutableArray *uuidsToRemove = nil;
+	__block NSMutableArray<NSUUID *> *uuidsToRemove = nil;
 	
 	[ephemeralInfo enumerateKeysAndObjectsUsingBlock:^(NSUUID *uuid, NSMutableDictionary *opInfo, BOOL *stop) {
 		
-		NSDate *hold = opInfo[YDBCloudCore_EphemeralKey_Hold];
-		if (hold)
+		NSMutableDictionary<NSString*, NSDate*> *holdDict = opInfo[YDBCloudCore_EphemeralKey_Hold];
+		if (holdDict)
 		{
-			NSTimeInterval interval = [hold timeIntervalSinceDate:now];
-			if (interval <= 0)
-			{
-				opInfo[YDBCloudCore_EphemeralKey_Hold] = nil;
+			__block NSMutableArray<NSString *> *contextsToRemove = nil;
+			
+			[holdDict enumerateKeysAndObjectsUsingBlock:^(NSString *context, NSDate *holdDate, BOOL *stop) {
 				
-				if (opInfo.count == 0)
+				NSTimeInterval interval = [holdDate timeIntervalSinceDate:now];
+				if (interval <= 0)
 				{
-					if (uuidsToRemove == nil)
-						uuidsToRemove = [[NSMutableArray alloc] initWithCapacity:4];
+					if (contextsToRemove == nil) {
+						contextsToRemove = [[NSMutableArray alloc] initWithCapacity:4];
+					}
 					
-					[uuidsToRemove addObject:uuid];
+					[contextsToRemove addObject:context];
+				}
+			}];
+			
+			if (contextsToRemove.count > 0)
+			{
+				[holdDict removeObjectsForKeys:contextsToRemove];
+				
+				if (holdDict.count == 0)
+				{
+					opInfo[YDBCloudCore_EphemeralKey_Hold] = nil;
+					
+					if (opInfo.count == 0)
+					{
+						if (uuidsToRemove == nil)
+							uuidsToRemove = [[NSMutableArray alloc] initWithCapacity:4];
+						
+						[uuidsToRemove addObject:uuid];
+					}
+
 				}
 			}
 		}
