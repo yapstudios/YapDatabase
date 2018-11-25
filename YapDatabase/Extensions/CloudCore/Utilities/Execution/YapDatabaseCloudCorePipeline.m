@@ -89,9 +89,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 - (instancetype)init
 {
 	// Empty init not allowed
-	return [self initWithName: nil
-	                algorithm: YDBCloudCorePipelineAlgorithm_CommitGraph
-	                 delegate: nil];
+	return nil;
 }
 
 - (instancetype)initWithName:(NSString *)inName
@@ -314,7 +312,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			^(NSUUID *opUUID, NSMutableDictionary *opInfo, BOOL *stop)
 		{
 			NSNumber *statusNum = opInfo[YDBCloudCore_EphemeralKey_Status];
-			if (statusNum)
+			if (statusNum != nil)
 			{
 				YDBCloudCoreOperationStatus status = (YDBCloudCoreOperationStatus)[statusNum integerValue];
 				if (status == YDBCloudOperationStatus_Active)

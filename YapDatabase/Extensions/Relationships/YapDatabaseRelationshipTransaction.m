@@ -1695,7 +1695,10 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	// Find matching protocol edges
 	
-	NSMutableArray *changedProtocolEdges = parentConnection->protocolChanges[srcRowid];
+	NSMutableArray *changedProtocolEdges = nil;
+	if (srcRowid != nil) {
+		changedProtocolEdges = parentConnection->protocolChanges[srcRowid];
+	}
 	for (YapDatabaseRelationshipEdge *edge in changedProtocolEdges)
 	{
 		if (name && ![name isEqualToString:edge->name])

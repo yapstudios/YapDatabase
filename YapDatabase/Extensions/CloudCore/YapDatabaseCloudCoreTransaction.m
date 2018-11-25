@@ -971,12 +971,16 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			}
 			
 			// ensure pipelineName is valid (and convert from alias if needed)
-			if (pipelineName == nil) {
-				pipelineName = [[parentConnection->parent pipelineWithName:pipelineName] name];
-			}
 			
 			if (pipelineName == nil) {
 				pipelineName = YapDatabaseCloudCoreDefaultPipelineName;
+			}
+			else {
+				NSString *standardizedPipelineName =
+					[[parentConnection->parent pipelineWithName:pipelineName] name];
+				if (standardizedPipelineName) {
+					pipelineName = standardizedPipelineName;
+				}
 			}
 			
 			// - Extract graph order information
@@ -2669,30 +2673,31 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 **/
 - (NSUInteger)graphForOperation:(YapDatabaseCloudCoreOperation *)operation
 {
+	YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:operation.pipeline];
+	if (pipeline == nil) {
+		return NSNotFound;
+	}
+	
 	NSUUID *uuid = operation.uuid;
 	
 	// Search operations from previous commits.
 	
-	YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:operation.pipeline];
-	if (pipeline)
+	__block BOOL found = NO;
+	__block NSUInteger foundGraphIdx = NSNotFound;
+	
+	[pipeline _enumerateOperationsUsingBlock:
+	  ^(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
 	{
-		__block BOOL found = NO;
-		__block NSUInteger foundGraphIdx = 0;
-		
-		[pipeline _enumerateOperationsUsingBlock:
-		  ^(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
+		if ([operation.uuid isEqual:uuid])
 		{
-			if ([operation.uuid isEqual:uuid])
-			{
-				found = YES;
-				foundGraphIdx = graphIdx;
-				*stop = YES;
-			}
-		}];
-		
-		if (found) {
-			return foundGraphIdx;
+			found = YES;
+			foundGraphIdx = graphIdx;
+			*stop = YES;
 		}
+	}];
+	
+	if (found) {
+		return foundGraphIdx;
 	}
 	
 	// Search operations that have been added (to a new graph) during this transaction.
@@ -2710,8 +2715,6 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	}
 	
 	// Search operations that have been inserted (into a previous graph) during this transaction.
-	
-	__block NSUInteger foundGraphIdx = NSNotFound;
 	
 	NSDictionary *graphs = parentConnection->operations_inserted[pipeline.name];
 	
