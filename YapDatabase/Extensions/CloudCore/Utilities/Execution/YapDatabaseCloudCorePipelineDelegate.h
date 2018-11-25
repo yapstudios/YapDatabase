@@ -5,6 +5,7 @@
 @class YapDatabaseCloudCorePipeline;
 @class YapDatabaseCloudCoreOperation;
 
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol YapDatabaseCloudCorePipelineDelegate
 @required
@@ -57,3 +58,5 @@
 - (void)startOperation:(YapDatabaseCloudCoreOperation *)operation forPipeline:(YapDatabaseCloudCorePipeline *)pipeline;
 
 @end
+
+NS_ASSUME_NONNULL_END

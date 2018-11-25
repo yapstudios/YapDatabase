@@ -4,6 +4,7 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * This is the base class for concrete subclasses such as FileOperations & RecordOperations.
@@ -49,7 +50,7 @@
  * @see YapDatabaseOnwCloudPipeline
  * @see [YapDatabase registerPipeline]
 **/
-@property (nonatomic, copy, readwrite) NSString *pipeline;
+@property (nonatomic, copy, readwrite, nullable) NSString *pipeline;
 
 /**
  * At the local level, when dealing with YapDatabase, you have the benefit of atomic transactions.
@@ -102,7 +103,7 @@
  * 
  * @see addDependency
 **/
-@property (nonatomic, copy, readwrite) NSSet<NSUUID *> *dependencies;
+@property (nonatomic, copy, readwrite, nullable) NSSet<NSUUID *> *dependencies;
 
 /**
  * Convenience method for adding a dependency to the list.
@@ -121,19 +122,24 @@
  *    For example, if you need to upload 2 files (A & B), and B.dependencies=[A],
  *    then A will always start & complete before B is started, regardless of their priority values.
  * 
- * 2. Commit order is still enforced.
- *    Let's say you make commit #32 with operations A & B.
- *    Then you make commit #33 with operation C.
- *    Regardless of the priority of A, B & C, operations A & B will always complete before C is started.
- *    This is important to understand because it means you only have to concern yourself with the operations
- *    within a single commit. (Worrying about cross-commit dependencies & priorities quickly becomes overwhelming.)
- * 
- * 3. Operations may be executed in parallel.
+ * 2. Operations may be executed in parallel.
  *    If commit #34 contains operations A & B, with no dependencies, and A.priority=2 & B.priority.1,
  *    then the pipeline will start operation A before starting operation B. However, since there are no
  *    dependencies, then the pipeline may start operation B before op A has completed.
  *    And thus, operation B may actually complete before operation A.
  *    For example, if A is a large record, but B is small record.
+ *
+ * 3. Commit order may still be enforced.
+ *    (Note: The following applies IF pipeline.algorithm == CommitGraph,
+ *     but does NOT apply if pipeline.algorithm == FlatGraph):
+ *    > ^^ see note ^^
+ *    > Let's say you make commit #32 with operations A & B.
+ *    > Then you make commit #33 with operation C.
+ *    > Regardless of the priority of A, B & C, operations A & B will always complete before C is started.
+ *    > This is important to understand because it means you only have to concern yourself with the operations
+ *    > within a single commit.
+ *    (Handling cross-commit dependencies requires a formal dependency graph,
+ *     and is opt-in via the FlatGraph optimization.)
  * 
  * Thus it is best to think of dependencies as hard requirements, and priorities as soft hints.
 **/
@@ -153,7 +159,7 @@
  * 
  * @see setPersistentUserInfoObject:forKey:
 **/
-@property (nonatomic, copy, readwrite) NSDictionary *persistentUserInfo;
+@property (nonatomic, copy, readwrite, nullable) NSDictionary *persistentUserInfo;
 
 /**
  * Convenience method for modifying the persistentUserInfo dictionary.
@@ -171,3 +177,5 @@
 - (BOOL)isEqualToOperation:(YapDatabaseCloudCoreOperation *)operation;
 
 @end
+
+NS_ASSUME_NONNULL_END

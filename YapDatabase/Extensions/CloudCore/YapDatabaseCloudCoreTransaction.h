@@ -8,6 +8,7 @@
 @class YapDatabaseCloudCoreOperation;
 @class YapDatabaseCloudCorePipeline;
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface YapDatabaseCloudCoreTransaction : YapDatabaseExtensionTransaction
 
@@ -74,7 +75,7 @@
  * These methods allow the system to remove the operation from its internal sqlite table.
 **/
 - (void)completeOperationWithUUID:(NSUUID *)operationUUID;
-- (void)completeOperationWithUUID:(NSUUID *)operationUUID inPipeline:(NSString *)pipelineName;
+- (void)completeOperationWithUUID:(NSUUID *)operationUUID inPipeline:(nullable NSString *)pipelineName;
 
 /**
  * Use these methods to skip/abort operations.
@@ -86,7 +87,7 @@
  * These methods allow the system to remove the operation from its internal sqlite table.
 **/
 - (void)skipOperationWithUUID:(NSUUID *)operationUUID;
-- (void)skipOperationWithUUID:(NSUUID *)operationUUID inPipeline:(NSString *)pipelineName;
+- (void)skipOperationWithUUID:(NSUUID *)operationUUID inPipeline:(nullable NSString *)pipelineName;
 
 - (void)skipOperationsPassingTest:(BOOL (^)(YapDatabaseCloudCorePipeline *pipeline,
                                             YapDatabaseCloudCoreOperation *operation,
@@ -103,7 +104,7 @@
  * 
  * @return The corresponding operation, if found. Otherwise nil.
 **/
-- (YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
+- (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
 
 /**
  * Searches for an operation with the given UUID and pipeline.
@@ -111,7 +112,8 @@
  * 
  * @return The corresponding operation, if found. Otherwise nil.
 **/
-- (YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid inPipeline:(NSString *)pipelineName;
+- (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid
+                                                   inPipeline:(nullable NSString *)pipelineName;
 
 /**
  * Fetches the graph index that corresponds to newly added operations.
@@ -209,7 +211,7 @@
  * @return
  *   The most recently assigned tag.
 **/
-- (id)tagForKey:(NSString *)key withIdentifier:(NSString *)identifier;
+- (nullable id)tagForKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
 
 /**
  * Allows you to update the current tag value for the given key/identifier tuple.
@@ -234,7 +236,7 @@
  * If the given tag is nil, the effect is the same as invoking removeTagForKey:withIdentifier:.
  * If the given tag is an unsupported class, throws an exception.
 **/
-- (void)setTag:(id)tag forKey:(NSString *)key withIdentifier:(NSString *)identifier;
+- (void)setTag:(nullable id)tag forKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
 
 /**
  * Removes the tag for the given key/identifier tuple.
@@ -254,7 +256,7 @@
  * 
  * @see removeAllTagsForCloudURI
 **/
-- (void)removeTagForKey:(NSString *)key withIdentifier:(NSString *)identifier;
+- (void)removeTagForKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
 
 /**
  * Removes all tags with the given key (matching any identifier).
@@ -337,3 +339,5 @@
           inCollection:(NSString *)collection;
 
 @end
+
+NS_ASSUME_NONNULL_END

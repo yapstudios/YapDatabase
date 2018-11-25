@@ -7,6 +7,7 @@
 
 @class YapDatabaseCloudCore;
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface YapDatabaseCloudCoreConnection : YapDatabaseExtensionConnection
 
@@ -16,3 +17,5 @@
 @property (nonatomic, strong, readonly) YapDatabaseCloudCore *cloudCore;
 
 @end
+
+NS_ASSUME_NONNULL_END

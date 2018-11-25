@@ -9,6 +9,8 @@
 #import "YapDatabaseCloudCoreOperation.h"
 #import "YapDatabaseCloudCore.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSInteger, YDBCloudCorePipelineAlgorithm) {
 	
 	/**
@@ -147,7 +149,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 @property (nonatomic, assign, readonly) YDBCloudCorePipelineAlgorithm algorithm;
 @property (nonatomic, weak, readonly) id <YapDatabaseCloudCorePipelineDelegate> delegate;
 
-@property (atomic, weak, readonly) YapDatabaseCloudCore *owner;
+@property (atomic, weak, readonly, nullable) YapDatabaseCloudCore *owner;
 
 #pragma mark Configuration
 
@@ -158,7 +160,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * 
  * This property must be set before the pipeline is registered.
 **/
-@property (nonatomic, copy, readwrite) NSSet *previousNames;
+@property (nonatomic, copy, readwrite, nullable) NSSet *previousNames;
 
 /**
  * This value is the maximum number of operations that will be assigned to the delegate at any one time.
@@ -187,7 +189,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * @return The corresponding operation, if found. Otherwise nil.
 **/
-- (YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
+- (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
 
 /**
  * Returns a list of operations in state 'YDBCloudOperationStatus_Active'.
@@ -249,7 +251,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 /**
  * Returns the current hold for the operation, or nil if there is no hold.
 **/
-- (NSDate *)holdDateForOperationWithUUID:(NSUUID *)opUUID;
+- (nullable NSDate *)holdDateForOperationWithUUID:(NSUUID *)opUUID;
 
 /**
  * And operation can be put on "hold" until a specified date.
@@ -260,7 +262,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * 
  * @see setStatusAsPendingForOperation:withRetryDelay:
 **/
-- (void)setHoldDate:(NSDate *)date forOperationWithUUID:(NSUUID *)opUUID;
+- (void)setHoldDate:(nullable NSDate *)date forOperationWithUUID:(NSUUID *)opUUID;
 
 
 #pragma mark Suspend & Resume
@@ -342,3 +344,5 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 @property (atomic, readonly) BOOL isActive;
 
 @end
+
+NS_ASSUME_NONNULL_END
