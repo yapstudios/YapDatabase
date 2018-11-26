@@ -950,8 +950,8 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			
 			if (holdDate)
 			{
-				if (holdDict == nil) {
-					holdDict = [NSMutableDictionary dictionary];
+				if (results == nil) {
+					results = [NSMutableDictionary dictionary];
 				}
 				
 				results[opUUID] = holdDate;
