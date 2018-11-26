@@ -192,6 +192,14 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 - (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
 
 /**
+ * Searches for a list of operations.
+ *
+ * @return A dictionary with all the found operations.
+ *         Operations which were not found won't be present in the returned dictionary.
+**/
+- (NSDictionary<NSUUID*, YapDatabaseCloudCoreOperation*> *)operationsWithUUIDs:(NSArray<NSUUID*> *)uuids;
+
+/**
  * Returns a list of operations in state 'YDBCloudOperationStatus_Active'.
 **/
 - (NSArray<YapDatabaseCloudCoreOperation *> *)activeOperations;
@@ -272,6 +280,11 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * Returns a dictionary of all the hold dates associated with an operation.
 **/
 - (nullable NSDictionary<NSString*, NSDate*> *)holdDatesForOperationWithUUID:(NSUUID *)opUUID;
+
+/**
+ * Returns a dictionary of all the hold dates associated with a particular context.
+**/
+- (nullable NSDictionary<NSUUID*, NSDate*> *)holdDatesForContext:(NSString *)context;
 
 #pragma mark Suspend & Resume
 

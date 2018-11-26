@@ -291,6 +291,47 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 }
 
 /**
+ * Searches for a list of operations.
+ *
+ * @return A dictionary with all the found operations.
+ *         Operations which were not found won't be present in the returned dictionary.
+**/
+- (NSDictionary<NSUUID*, YapDatabaseCloudCoreOperation*> *)operationsWithUUIDs:(NSArray<NSUUID*> *)uuids
+{
+	if (uuids.count == 0) return [NSDictionary dictionary];
+	
+	NSSet<NSUUID*> *uuids_set = [NSSet setWithArray:uuids];
+	
+	NSMutableDictionary<NSUUID*, YapDatabaseCloudCoreOperation*> *results =
+		[NSMutableDictionary dictionaryWithCapacity:uuids.count];
+	
+	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+	
+		for (YapDatabaseCloudCoreGraph *graph in graphs)
+		{
+			for (YapDatabaseCloudCoreOperation *operation in graph.operations)
+			{
+				if ([uuids_set containsObject:operation.uuid])
+				{
+					results[operation.uuid] = [operation copy];
+				}
+			}
+		}
+		
+	#pragma clang diagnostic pop
+	}};
+		
+	if (dispatch_get_specific(IsOnQueueKey))
+		block();
+	else
+		dispatch_sync(queue, block);
+	
+	return results;
+}
+
+/**
  * Returns a list of operations in state 'YDBCloudOperationStatus_Active'.
 **/
 - (NSArray<YapDatabaseCloudCoreOperation *> *)activeOperations
@@ -887,6 +928,45 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		dispatch_sync(queue, block);
 	
 	return holdDict;
+}
+
+/**
+ * Returns a dictionary of all the hold dates associated with a particular context.
+**/
+- (NSDictionary<NSUUID*, NSDate*> *)holdDatesForContext:(NSString *)inContext
+{
+	NSString *context = inContext ? [inContext copy] : @"";
+	
+	__block NSMutableDictionary<NSUUID*, NSDate*> *results = nil;
+	
+	dispatch_block_t block = ^{ @autoreleasepool {
+	#pragma clang diagnostic push
+	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+		
+		[ephemeralInfo enumerateKeysAndObjectsUsingBlock:^(NSUUID *opUUID, NSDictionary *opInfo, BOOL *stop) {
+			
+			NSDictionary<NSString*, NSDate*> *holdDict = opInfo[YDBCloudCore_EphemeralKey_Hold];
+			NSDate *holdDate = holdDict[context];
+			
+			if (holdDate)
+			{
+				if (holdDict == nil) {
+					holdDict = [NSMutableDictionary dictionary];
+				}
+				
+				results[opUUID] = holdDate;
+			}
+		}];
+		
+	#pragma clang diagnostic pop
+	}};
+	
+	if (dispatch_get_specific(IsOnQueueKey))
+		block();
+	else
+		dispatch_sync(queue, block);
+	
+	return results;
 }
 
 /**
