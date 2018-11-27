@@ -1390,6 +1390,19 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			graph.pipeline = self;
 		}
 		
+		if (strongSelf->algorithm == YDBCloudCorePipelineAlgorithm_FlatGraph)
+		{
+			// Graphs in FlatCommit mode are setup in a linked-list,
+			// where each graph has a (weak) pointer to the previous graph.
+			
+			YapDatabaseCloudCoreGraph *prvGraph = nil;
+			for (YapDatabaseCloudCoreGraph *graph in inGraphs)
+			{
+				graph.previousGraph = prvGraph;
+				prvGraph = graph;
+			}
+		}
+		
 		BOOL migratingFromCommitGraphToFlatGraph =
 		    (prvAlgorithm != nil)
 		 && (prvAlgorithm.integerValue == YDBCloudCorePipelineAlgorithm_CommitGraph)
