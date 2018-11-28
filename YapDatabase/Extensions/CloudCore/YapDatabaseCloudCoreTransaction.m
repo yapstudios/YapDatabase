@@ -842,7 +842,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			{
 				sqlite3_bind_text(statement, bind_idx_name, [pipeline.name UTF8String], -1, SQLITE_TRANSIENT);
 				sqlite3_bind_int(statement, bind_idx_algorithm, pipeline.algorithm);
-				sqlite3_bind_int(statement, bind_idx_rowid, pipeline.rowid);
+				sqlite3_bind_int64(statement, bind_idx_rowid, pipeline.rowid);
 				
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
