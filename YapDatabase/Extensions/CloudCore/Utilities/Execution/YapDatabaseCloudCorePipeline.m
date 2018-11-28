@@ -642,47 +642,38 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
          isOnHold:(BOOL *)isOnHoldPtr
  forOperationUUID:(NSUUID *)opUUID
 {
-	__block BOOL found = NO;
-	__block NSNumber *statusNum = nil;
-	__block NSDate *latestHold = nil;
+	NSAssert(dispatch_get_specific(IsOnQueueKey), @"Must be executed within queue");
 	
-	dispatch_block_t block = ^{ @autoreleasepool {
-	#pragma clang diagnostic push
-	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
+	BOOL found = NO;
+	
+	NSMutableDictionary *opInfo = ephemeralInfo[opUUID];
+	if (opInfo)
+	{
+		found = YES;
 		
-		NSMutableDictionary *opInfo = ephemeralInfo[opUUID];
-		if (opInfo)
+		if (statusPtr)
 		{
-			found = YES;
-			statusNum = opInfo[YDBCloudCore_EphemeralKey_Status];
+			NSNumber *statusNum = opInfo[YDBCloudCore_EphemeralKey_Status];
+			if (statusNum)
+				*statusPtr = (YDBCloudCoreOperationStatus)[statusNum integerValue];
+			else
+				*statusPtr = YDBCloudOperationStatus_Pending;
+		}
+		if (isOnHoldPtr)
+		{
+			NSDate *latestHold = nil;
 			
 			NSDictionary<NSString*, NSDate*> *holdDict = opInfo[YDBCloudCore_EphemeralKey_Hold];
 			if (holdDict) {
 				latestHold = [self latestDate:holdDict];
 			}
+			
+			if (latestHold)
+				*isOnHoldPtr = ([latestHold timeIntervalSinceNow] > 0.0);
+			else
+				*isOnHoldPtr = NO;
 		}
 		
-	#pragma clang diagnostic pop
-	}};
-	
-	if (dispatch_get_specific(IsOnQueueKey))
-		block();
-	else
-		dispatch_sync(queue, block);
-	
-	if (statusPtr)
-	{
-		if (statusNum)
-			*statusPtr = (YDBCloudCoreOperationStatus)[statusNum integerValue];
-		else
-			*statusPtr = YDBCloudOperationStatus_Pending;
-	}
-	if (isOnHoldPtr)
-	{
-		if (latestHold)
-			*isOnHoldPtr = ([latestHold timeIntervalSinceNow] > 0.0);
-		else
-			*isOnHoldPtr = NO;
 	}
 	
 	return found;
@@ -1660,6 +1651,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 - (void)_dequeueOperations_CommitGraph:(NSUInteger)maxConcurrentOperationCount
 {
 	YDBLogAutoTrace();
+	NSAssert(dispatch_get_specific(IsOnQueueKey), @"Must be executed within queue");
 	
 	// Start as many operations as we can (from the current graph).
 	
@@ -1700,6 +1692,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 - (void)_dequeueOperations_FlatGraph:(NSUInteger)maxConcurrentOperationCount
 {
 	YDBLogAutoTrace();
+	NSAssert(dispatch_get_specific(IsOnQueueKey), @"Must be executed within queue");
 	
 	// Start as many operations as we can (across all graphs).
 	//
@@ -1712,21 +1705,34 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	// - If priorities are equal, we implicitly prefer operations that were queued earlier.
 	//   i.e. operations from earlier graphs.
 	
+	NSMutableIndexSet *spentGraphs = [NSMutableIndexSet indexSet];
+	
 	YapDatabaseCloudCoreOperation* (^dequeueNextOperation)(void) = ^ YapDatabaseCloudCoreOperation*(){
 	#pragma clang diagnostic push
 	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
 		YapDatabaseCloudCoreOperation *result = nil;
+		
+		NSUInteger graphIdx = 0;
 		for (YapDatabaseCloudCoreGraph *graph in graphs)
 		{
-			YapDatabaseCloudCoreOperation *next = [graph dequeueNextOperation];
-			if (next)
+			if (![spentGraphs containsIndex:graphIdx])
 			{
-				if ((result == nil) || (result.priority < next.priority))
+				YapDatabaseCloudCoreOperation *next = [graph dequeueNextOperation];
+				if (next)
 				{
-					result = next;
+					if ((result == nil) || (result.priority < next.priority))
+					{
+						result = next;
+					}
+				}
+				else
+				{
+					[spentGraphs addIndex:graphIdx];
 				}
 			}
+			
+			graphIdx++;
 		}
 		
 		return result;
