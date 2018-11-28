@@ -834,6 +834,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			
 			int const bind_idx_name      = SQLITE_BIND_START + 0;
 			int const bind_idx_algorithm = SQLITE_BIND_START + 1;
+			int const bind_idx_rowid     = SQLITE_BIND_START + 2;
 			
 			BOOL foundError = NO;
 			
@@ -841,6 +842,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			{
 				sqlite3_bind_text(statement, bind_idx_name, [pipeline.name UTF8String], -1, SQLITE_TRANSIENT);
 				sqlite3_bind_int(statement, bind_idx_algorithm, pipeline.algorithm);
+				sqlite3_bind_int(statement, bind_idx_rowid, pipeline.rowid);
 				
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
