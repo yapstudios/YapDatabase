@@ -21,8 +21,11 @@
 #endif
 #pragma unused(ydbLogLevel)
 
-NSString *const YDBCloudCorePipelineQueueChangedNotification =
-              @"YDBCloudCorePipelineQueueChangedNotification";
+NSString *const YDBCloudCorePipelineQueueChangedNotification = @"YDBCloudCorePipelineQueueChangedNotification";
+NSString *const YDBCloudCorePipelineQueueChangedKey_addedOperationUUIDs    = @"added";
+NSString *const YDBCloudCorePipelineQueueChangedKey_modifiedOperationUUIDs = @"modified";
+NSString *const YDBCloudCorePipelineQueueChangedKey_insertedOperationUUIDs = @"inserted";
+NSString *const YDBCloudCorePipelineQueueChangedKey_removedOperationUUIDs  = @"removed";
 
 NSString *const YDBCloudCorePipelineSuspendCountChangedNotification =
               @"YDBCloudCorePipelineSuspendCountChangedNotification";
@@ -1450,6 +1453,11 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	#pragma clang diagnostic push
 	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
 		
+		NSMutableSet<NSUUID*> *addedOpUUIDs    = nil;
+		NSMutableSet<NSUUID*> *modifiedOpUUIDs = nil;
+		NSMutableSet<NSUUID*> *insertedOpUUIDs = nil;
+		NSMutableSet<NSUUID*> *removedOpUUIDs  = nil;
+		
 		if (addedGraph)
 		{
 			addedGraph.pipeline = self;
@@ -1459,13 +1467,13 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			
 			[graphs addObject:addedGraph];
 			
+			addedOpUUIDs = [NSMutableSet setWithCapacity:addedGraph.operations.count];
 			for (YapDatabaseCloudCoreOperation *operation in addedGraph.operations)
 			{
 				[operation clearTransactionVariables];
+				[addedOpUUIDs addObject:operation.uuid];
 			}
 		}
-		
-		BOOL modifiedGraphs = NO;
 		
 		if ((insertedOperations.count > 0) || (modifiedOperations.count > 0))
 		{
@@ -1476,15 +1484,17 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			// Thus, each operation may or may not belong to this pipeline.
 			// So we need to identify the ones that do.
 			
-			NSMutableArray *modifiedOpsInThisPipeline = [NSMutableArray array];
+			NSMutableArray<YapDatabaseCloudCoreOperation *> *insertedOpsInThisPipeline = [NSMutableArray array];
+			NSMutableArray<YapDatabaseCloudCoreOperation *> *modifiedOpsInThisPipeline = [NSMutableArray array];
 			
 			NSUInteger graphIdx = 0;
 			for (YapDatabaseCloudCoreGraph *graph in graphs)
 			{
 				NSArray<YapDatabaseCloudCoreOperation *> *insertedInGraph = insertedOperations[@(graphIdx)];
 				
-				if (insertedInGraph) {
-					[modifiedOpsInThisPipeline addObjectsFromArray:insertedInGraph];
+				if (insertedInGraph)
+				{
+					[insertedOpsInThisPipeline addObjectsFromArray:insertedInGraph];
 				}
 				
 				[graph insertOperations:insertedInGraph
@@ -1494,20 +1504,41 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 				graphIdx++;
 			}
 			
-			for (YapDatabaseCloudCoreOperation *operation in modifiedOpsInThisPipeline)
+			if (insertedOpsInThisPipeline.count > 0)
 			{
-				NSNumber *pendingStatus = operation.pendingStatus;
-				if (pendingStatus != nil)
-				{
-					YDBCloudCoreOperationStatus status = (YDBCloudCoreOperationStatus)[pendingStatus integerValue];
-					
-					[self _setStatus:status forOperationUUID:operation.uuid];
-				}
+				insertedOpUUIDs = [NSMutableSet setWithCapacity:insertedOpsInThisPipeline.count];
 				
-				[operation clearTransactionVariables];
+				for (YapDatabaseCloudCoreOperation *operation in insertedOpsInThisPipeline)
+				{
+					NSNumber *pendingStatus = operation.pendingStatus;
+					if (pendingStatus != nil)
+					{
+						YDBCloudCoreOperationStatus status = (YDBCloudCoreOperationStatus)[pendingStatus integerValue];
+						[self _setStatus:status forOperationUUID:operation.uuid];
+					}
+				
+					[operation clearTransactionVariables];
+					[insertedOpUUIDs addObject:operation.uuid];
+				}
 			}
 			
-			modifiedGraphs = modifiedGraphs || (modifiedOpsInThisPipeline.count > 0);
+			if (modifiedOpsInThisPipeline.count > 0)
+			{
+				modifiedOpUUIDs = [NSMutableSet setWithCapacity:modifiedOpsInThisPipeline.count];
+				
+				for (YapDatabaseCloudCoreOperation *operation in modifiedOpsInThisPipeline)
+				{
+					NSNumber *pendingStatus = operation.pendingStatus;
+					if (pendingStatus != nil)
+					{
+						YDBCloudCoreOperationStatus status = (YDBCloudCoreOperationStatus)[pendingStatus integerValue];
+						[self _setStatus:status forOperationUUID:operation.uuid];
+					}
+			
+					[operation clearTransactionVariables];
+					[modifiedOpUUIDs addObject:operation.uuid];
+				}
+			}
 		}
 		
 		NSUInteger graphIdx = 0;
@@ -1518,12 +1549,17 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			NSArray *removedOperations = [graph removeCompletedAndSkippedOperations];
 			if (removedOperations.count > 0)
 			{
-				modifiedGraphs = YES;
+				if (removedOpUUIDs == nil) {
+					removedOpUUIDs = [NSMutableSet setWithCapacity:removedOperations.count];
+				}
 				
 				for (YapDatabaseCloudCoreOperation *operation in removedOperations)
 				{
 					[startedOpUUIDs removeObject:operation.uuid];
 					[ephemeralInfo removeObjectForKey:operation.uuid];
+					
+					[removedOpUUIDs addObject:operation.uuid];
+					[modifiedOpUUIDs removeObject:operation.uuid];
 				}
 			}
 			
@@ -1554,7 +1590,10 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			}
 		}
 		
-		if (addedGraph || modifiedGraphs)
+		if (addedOpUUIDs.count    > 0 ||
+		    insertedOpUUIDs.count > 0 ||
+		    modifiedOpUUIDs.count > 0 ||
+		    removedOpUUIDs.count  > 0  )
 		{
 			// We may have transitioned from active to inactive.
 			[self _checkForActiveStatusChange];
@@ -1566,7 +1605,10 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			[self queueStartNextOperationIfPossible];
 			
 			// Notify listeners that the operation list in the queue changed.
-			[self postQueueChangedNotification];
+			[self postQueueChangedNotificationWithAdded: addedOpUUIDs
+			                                   modified: modifiedOpUUIDs
+			                                   inserted: insertedOpUUIDs
+			                                    removed: removedOpUUIDs];
 		}
 		
 	#pragma clang diagnostic pop
@@ -1772,12 +1814,30 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	}
 }
 
-- (void)postQueueChangedNotification
+- (void)postQueueChangedNotificationWithAdded:(NSSet<NSUUID*> *)added
+                                     modified:(NSSet<NSUUID*> *)modified
+                                     inserted:(NSSet<NSUUID*> *)inserted
+                                      removed:(NSSet<NSUUID*> *)removed
 {
 	dispatch_block_t block = ^{
 		
-		[[NSNotificationCenter defaultCenter] postNotificationName:YDBCloudCorePipelineQueueChangedNotification
-		                                                    object:self];
+		NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:3];
+		if (added.count > 0) {
+			userInfo[YDBCloudCorePipelineQueueChangedKey_addedOperationUUIDs] = [added copy];
+		}
+		if (modified.count > 0) {
+			userInfo[YDBCloudCorePipelineQueueChangedKey_modifiedOperationUUIDs] = [modified copy];
+		}
+		if (inserted.count > 0) {
+			userInfo[YDBCloudCorePipelineQueueChangedKey_insertedOperationUUIDs] = [inserted copy];
+		}
+		if (removed.count > 0) {
+			userInfo[YDBCloudCorePipelineQueueChangedKey_removedOperationUUIDs] = [removed copy];
+		}
+		
+		[[NSNotificationCenter defaultCenter] postNotificationName: YDBCloudCorePipelineQueueChangedNotification
+		                                                    object: self
+		                                                  userInfo: userInfo];
 	};
 	
 	if ([NSThread isMainThread])

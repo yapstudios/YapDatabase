@@ -103,6 +103,10 @@ typedef NS_ENUM(NSInteger, YDBCloudCoreOperationStatus) {
  * This notification is posted to the main thread.
 **/
 extern NSString *const YDBCloudCorePipelineQueueChangedNotification;
+extern NSString *const YDBCloudCorePipelineQueueChangedKey_addedOperationUUIDs;
+extern NSString *const YDBCloudCorePipelineQueueChangedKey_modifiedOperationUUIDs;
+extern NSString *const YDBCloudCorePipelineQueueChangedKey_insertedOperationUUIDs;
+extern NSString *const YDBCloudCorePipelineQueueChangedKey_removedOperationUUIDs;
 
 /**
  * This notification is posted whenever the suspendCount changes.
