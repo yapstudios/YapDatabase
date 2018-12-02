@@ -197,15 +197,29 @@
  *
  * If found, sets the isStarted property to YES, and returns the next operation.
  * Otherwise returns nil.
+ *
+ * @param minPriority
+ *   If non-nil, the returned operation must have a priorty > minPriority
 **/
-- (YapDatabaseCloudCoreOperation *)dequeueNextOperation
+- (YapDatabaseCloudCoreOperation *)nextReadyOperation:(NSNumber *)minPriority
 {
-	YDBLogVerbose(@"[graph:%llu] - dequeueNextOperation", self.snapshot);
+	YDBLogVerbose(@"[graph:%llu] - nextReadyOperation", self.snapshot);
 	
 	YapDatabaseCloudCoreOperation *nextOpToStart = nil;
 	
 	for (YapDatabaseCloudCoreOperation *op in operations)
 	{
+		if (minPriority)
+		{
+			// Note:
+			//   The operations are already sorted by priority.
+			//   This sorting was done in the init method.
+			
+			if (op.priority <= minPriority.intValue) {
+				break;
+			}
+		}
+		
 		if ([self hasUnmetDependency:op])
 		{
 			YDBLogVerbose(@"[graph:%llu] - op(%@) - has unmet dependency",
@@ -228,7 +242,7 @@
 		}
 	}
 	
-	YDBLogVerbose(@"[graph:%llu] - dequeueNextOperation - nextOpToStart(%@)",
+	YDBLogVerbose(@"[graph:%llu] - nextReadyOperation - nextOpToStart(%@)",
 		self.snapshot, nextOpToStart.uuid);
 	return nextOpToStart;
 }

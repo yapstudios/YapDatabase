@@ -1699,7 +1699,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	
 	YapDatabaseCloudCoreGraph *currentGraph = [graphs firstObject];
 	
-	YapDatabaseCloudCoreOperation *nextOp = [currentGraph dequeueNextOperation];
+	YapDatabaseCloudCoreOperation *nextOp = [currentGraph nextReadyOperation:nil];
 	if (nextOp)
 	{
 		__weak YapDatabaseCloudCorePipeline *weakSelf = self;
@@ -1723,7 +1723,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 				break;
 			}
 			
-			nextOp = [currentGraph dequeueNextOperation];
+			nextOp = [currentGraph nextReadyOperation:nil];
 			
 		} while (nextOp);
 		
@@ -1760,7 +1760,13 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		{
 			if (![spentGraphs containsIndex:graphIdx])
 			{
-				YapDatabaseCloudCoreOperation *next = [graph dequeueNextOperation];
+				YapDatabaseCloudCoreOperation *next = nil;
+				if (result) {
+					next = [graph nextReadyOperation:@(result.priority)];
+				} else {
+					next = [graph nextReadyOperation:nil];
+				}
+				
 				if (next)
 				{
 					if ((result == nil) || (result.priority < next.priority))

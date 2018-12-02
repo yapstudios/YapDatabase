@@ -35,6 +35,6 @@
 
 - (NSArray *)removeCompletedAndSkippedOperations;
 
-- (YapDatabaseCloudCoreOperation *)dequeueNextOperation;
+- (YapDatabaseCloudCoreOperation *)nextReadyOperation:(NSNumber *)minPriority;
 
 @end
