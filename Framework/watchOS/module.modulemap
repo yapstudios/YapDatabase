@@ -188,5 +188,7 @@ framework module YapDatabase {
 		header "YapDatabaseCloudCoreOperationPrivate.h"
 		header "YapDatabaseCloudCorePipelinePrivate.h"
 		header "YapDatabaseCloudCoreGraphPrivate.h"
+		
+		export YapDatabaseExtensionPrivate
 	}
 }
