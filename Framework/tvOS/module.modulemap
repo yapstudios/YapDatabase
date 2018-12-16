@@ -21,7 +21,11 @@ framework module YapDatabase {
 		header "YapWhitelistBlacklist.h"
 		header "YapMutationStack.h"
 	}
-	
+
+	explicit module YapDatabaseExtensionPrivate {
+		header "YapDatabaseExtensionPrivate.h"
+	}
+
 	// Extension: View
 
 	explicit module YapDatabaseView {
@@ -177,5 +181,12 @@ framework module YapDatabase {
 		header "YapDatabaseCloudCorePipelineDelegate.h"
 		header "YapDatabaseCloudCorePipeline.h"
 		header "YapDatabaseCloudCoreGraph.h"
+	}
+
+	explicit module YapDatabaseCloudCorePrivate {
+		header "YapDatabaseCloudCorePrivate.h"
+		header "YapDatabaseCloudCoreOperationPrivate.h"
+		header "YapDatabaseCloudCorePipelinePrivate.h"
+		header "YapDatabaseCloudCoreGraphPrivate.h"
 	}
 }

@@ -21,6 +21,10 @@ Pod::Spec.new do |s|
   s.libraries = 'c++'
 
   s.default_subspecs = 'Standard'
+  s.osx.module_map = 'Framework/Mac/module.modulemap'
+  s.ios.module_map = 'Framework/iOS/module.modulemap'
+  s.tvos.module_map = 'Framework/tvOS/module.modulemap'
+  s.watchos.module_map = 'Framework/watchOS/module.modulemap'
 
   # There are 2 different versions you can choose from:
   # "Standard" uses the builtin version of sqlite3
@@ -35,7 +39,7 @@ Pod::Spec.new do |s|
       ssc.library = 'sqlite3'
       ssc.dependency 'CocoaLumberjack'
       ssc.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}', 'YapDatabase/Extensions/Protocol/**/*.{h,m,mm,c}'
-      ssc.private_header_files = 'YapDatabase/Internal/*.h', 'YapDatabase/Extensions/Protocol/Internal/*.h'
+      ssc.private_header_files = 'YapDatabase/Internal/*.h'
     end
 
     ss.subspec 'Extensions' do |sse|
@@ -125,7 +129,6 @@ Pod::Spec.new do |s|
       
       sse.subspec 'CloudCore' do |ssee|
         ssee.source_files = 'YapDatabase/Extensions/CloudCore/**/*.{h,m,mm,c}'
-        ssee.private_header_files = 'YapDatabase/Extensions/CloudCore/Internal/*.h'
       end
 
     end # Extensions
@@ -140,7 +143,7 @@ Pod::Spec.new do |s|
       ssc.dependency 'SQLCipher', '>= 3.4.0'
       ssc.dependency 'CocoaLumberjack'
       ssc.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}', 'YapDatabase/Extensions/Protocol/**/*.{h,m,mm,c}'
-      ssc.private_header_files = 'YapDatabase/Internal/*.h', 'YapDatabase/Extensions/Protocol/Internal/*.h'
+      ssc.private_header_files = 'YapDatabase/Internal/*.h'
     end
 
     ss.subspec 'Extensions' do |sse|
@@ -230,7 +233,6 @@ Pod::Spec.new do |s|
       
       sse.subspec 'CloudCore' do |ssee|
         ssee.source_files = 'YapDatabase/Extensions/CloudCore/**/*.{h,m,mm,c}'
-        ssee.private_header_files = 'YapDatabase/Extensions/CloudCore/Internal/*.h'
       end
 
     end # Extensions
