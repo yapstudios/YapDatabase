@@ -4,6 +4,8 @@
 
 #import "YapDatabaseCloudCorePipeline.h"
 #import "YapDatabaseCloudCorePrivate.h"
+
+#import "YapDatabaseAtomic.h"
 #import "YapDatabaseLogging.h"
 
 #import <libkern/OSAtomic.h>
@@ -44,7 +46,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	dispatch_queue_t queue;
 	void *IsOnQueueKey;
 	
-	OSSpinLock spinLock;
+	YAPUnfairLock spinLock;
 	
 	//
 	// These variables must only be accessed/modified within queue:
@@ -132,7 +134,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		algorithm = inAlgorithm;
 		delegate = inDelegate;
 		
-		spinLock = OS_SPINLOCK_INIT;
+		spinLock = YAP_UNFAIR_LOCK_INIT;
 		
 		queue = dispatch_queue_create("YapDatabaseCloudCorePipeline", DISPATCH_QUEUE_SERIAL);
 		
@@ -223,11 +225,11 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 {
 	NSUInteger result = 0;
 	
-	OSSpinLockLock(&spinLock);
+	YAPUnfairLockLock(&spinLock);
 	{
 		result = _atomic_maxConcurrentOperationCount;
 	}
-	OSSpinLockUnlock(&spinLock);
+	YAPUnfairLockUnlock(&spinLock);
 	
 	return result;
 }
@@ -236,14 +238,14 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 {
 	BOOL changed = NO;
 	
-	OSSpinLockLock(&spinLock);
+	YAPUnfairLockLock(&spinLock);
 	{
 		if (_atomic_maxConcurrentOperationCount != value) {
 			_atomic_maxConcurrentOperationCount = value;
 			changed = YES;
 		}
 	}
-	OSSpinLockUnlock(&spinLock);
+	YAPUnfairLockUnlock(&spinLock);
 	
 	if (changed)
 	{
@@ -1113,11 +1115,11 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 {
 	NSUInteger currentSuspendCount = 0;
 	
-	OSSpinLockLock(&spinLock);
+	YAPUnfairLockLock(&spinLock);
 	{
 		currentSuspendCount = suspendCount;
 	}
-	OSSpinLockUnlock(&spinLock);
+	YAPUnfairLockUnlock(&spinLock);
 	
 	return currentSuspendCount;
 }
@@ -1156,7 +1158,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	NSUInteger oldSuspendCount = 0;
 	NSUInteger newSuspendCount = 0;
 	
-	OSSpinLockLock(&spinLock);
+	YAPUnfairLockLock(&spinLock);
 	{
 		oldSuspendCount = suspendCount;
 		
@@ -1169,7 +1171,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		
 		newSuspendCount = suspendCount;
 	}
-	OSSpinLockUnlock(&spinLock);
+	YAPUnfairLockUnlock(&spinLock);
 	
 	if (overflow) {
 		YDBLogWarn(@"%@ - The suspendCount has reached NSUIntegerMax!", THIS_METHOD);
@@ -1205,7 +1207,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	BOOL underflow = 0;
 	NSUInteger newSuspendCount = 0;
 	
-	OSSpinLockLock(&spinLock);
+	YAPUnfairLockLock(&spinLock);
 	{
 		if (suspendCount > 0)
 			suspendCount--;
@@ -1214,7 +1216,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		
 		newSuspendCount = suspendCount;
 	}
-	OSSpinLockUnlock(&spinLock);
+	YAPUnfairLockUnlock(&spinLock);
 	
 	if (underflow) {
 		YDBLogWarn(@"%@ - Attempting to resume with suspendCount already at zero.", THIS_METHOD);
