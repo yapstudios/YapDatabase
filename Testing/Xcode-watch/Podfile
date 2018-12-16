@@ -3,6 +3,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 workspace 'YapDatabaseTesting'
 project 'YapDatabaseTesting.xcodeproj'
 
+use_modular_headers!
 
 target :'YapDatabaseTesting' do
 
@@ -16,10 +17,10 @@ abstract_target 'watchOS' do
 	pod "YapDatabase", path: '../../'
 
 	target :'YapDatabaseTesting WatchKit App' do
-		platform :watchos, '2.0'
+		platform :watchos, '3.0'
 	end
 	
 	target :'YapDatabaseTesting WatchKit Extension' do
-		platform :watchos, '2.0'
+		platform :watchos, '3.0'
 	end
 end

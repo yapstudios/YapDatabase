@@ -1,6 +1,6 @@
 {
   "name": "YapDatabase",
-  "version": "3.0.2",
+  "version": "3.1.1",
   "summary": "A key/value store built atop sqlite for iOS & Mac.",
   "homepage": "https://github.com/yapstudios/YapDatabase",
   "license": "MIT",
@@ -9,7 +9,7 @@
   },
   "source": {
     "git": "https://github.com/yapstudios/YapDatabase.git",
-    "tag": "3.0.2"
+    "tag": "3.1.1"
   },
   "platforms": {
     "osx": "10.10",
@@ -19,6 +19,18 @@
   },
   "libraries": "c++",
   "default_subspecs": "Standard",
+  "osx": {
+    "module_map": "Framework/Mac/module.modulemap"
+  },
+  "ios": {
+    "module_map": "Framework/iOS/module.modulemap"
+  },
+  "tvos": {
+    "module_map": "Framework/tvOS/module.modulemap"
+  },
+  "watchos": {
+    "module_map": "Framework/watchOS/module.modulemap"
+  },
   "subspecs": [
     {
       "name": "Standard",
@@ -39,10 +51,7 @@
             "YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}",
             "YapDatabase/Extensions/Protocol/**/*.{h,m,mm,c}"
           ],
-          "private_header_files": [
-            "YapDatabase/Internal/*.h",
-            "YapDatabase/Extensions/Protocol/Internal/*.h"
-          ]
+          "private_header_files": "YapDatabase/Internal/*.h"
         },
         {
           "name": "Extensions",
@@ -164,8 +173,7 @@
             },
             {
               "name": "CloudCore",
-              "source_files": "YapDatabase/Extensions/CloudCore/**/*.{h,m,mm,c}",
-              "private_header_files": "YapDatabase/Extensions/CloudCore/Internal/*.h"
+              "source_files": "YapDatabase/Extensions/CloudCore/**/*.{h,m,mm,c}"
             }
           ]
         }
@@ -192,10 +200,7 @@
             "YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}",
             "YapDatabase/Extensions/Protocol/**/*.{h,m,mm,c}"
           ],
-          "private_header_files": [
-            "YapDatabase/Internal/*.h",
-            "YapDatabase/Extensions/Protocol/Internal/*.h"
-          ]
+          "private_header_files": "YapDatabase/Internal/*.h"
         },
         {
           "name": "Extensions",
@@ -317,8 +322,7 @@
             },
             {
               "name": "CloudCore",
-              "source_files": "YapDatabase/Extensions/CloudCore/**/*.{h,m,mm,c}",
-              "private_header_files": "YapDatabase/Extensions/CloudCore/Internal/*.h"
+              "source_files": "YapDatabase/Extensions/CloudCore/**/*.{h,m,mm,c}"
             }
           ]
         }

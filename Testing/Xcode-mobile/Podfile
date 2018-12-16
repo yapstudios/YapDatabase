@@ -1,5 +1,6 @@
 project 'YapDatabaseTesting.xcodeproj'
-platform :ios, '8.1'
+platform :ios, '10.0'
+use_modular_headers!
 
 target 'YapDatabase' do
 	pod "YapDatabase", path: '../../'

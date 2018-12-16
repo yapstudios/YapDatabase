@@ -279,47 +279,18 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 - (BOOL)isLogFile:(NSString *)fileName {
     NSString *appName = [self applicationName];
 
-    BOOL hasProperPrefix = [fileName hasPrefix:appName];
+    // We need to add a space to the name as otherwise we could match applications that have the name prefix.
+    BOOL hasProperPrefix = [fileName hasPrefix:[appName stringByAppendingString:@" "]];
     BOOL hasProperSuffix = [fileName hasSuffix:@".log"];
-    BOOL hasProperDate = NO;
-
-    if (hasProperPrefix && hasProperSuffix) {
-        NSUInteger lengthOfMiddle = fileName.length - appName.length - @".log".length;
-
-        // Date string should have at least 16 characters - " 2013-12-03 17-14"
-        if (lengthOfMiddle >= 17) {
-            NSRange range = NSMakeRange(appName.length, lengthOfMiddle);
-
-            NSString *middle = [fileName substringWithRange:range];
-            NSArray *components = [middle componentsSeparatedByString:@" "];
-
-            // When creating logfile if there is existing file with the same name, we append attemp number at the end.
-            // Thats why here we can have three or four components. For details see createNewLogFile method.
-            //
-            // Components:
-            //     "", "2013-12-03", "17-14"
-            // or
-            //     "", "2013-12-03", "17-14", "1"
-            if (components.count == 3 || components.count == 4) {
-                NSString *dateString = [NSString stringWithFormat:@"%@ %@", components[1], components[2]];
-                NSDateFormatter *dateFormatter = [self logFileDateFormatter];
-
-                NSDate *date = [dateFormatter dateFromString:dateString];
-
-                if (date) {
-                    hasProperDate = YES;
-                }
-            }
-        }
-    }
-
-    return (hasProperPrefix && hasProperDate && hasProperSuffix);
+    
+    return (hasProperPrefix && hasProperSuffix);
 }
 
+// if you change formatter, then change sortedLogFileInfos method also accordingly
 - (NSDateFormatter *)logFileDateFormatter {
     NSMutableDictionary *dictionary = [[NSThread currentThread]
                                        threadDictionary];
-    NSString *dateFormat = @"yyyy'-'MM'-'dd' 'HH'-'mm'";
+    NSString *dateFormat = @"yyyy'-'MM'-'dd'--'HH'-'mm'-'ss'-'SSS'";
     NSString *key = [NSString stringWithFormat:@"logFileDateFormatter.%@", dateFormat];
     NSDateFormatter *dateFormatter = dictionary[key];
 
@@ -417,13 +388,35 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 }
 
 - (NSArray *)sortedLogFileInfos {
-    return [[self unsortedLogFileInfos] sortedArrayUsingSelector:@selector(reverseCompareByCreationDate:)];
+    return  [[self unsortedLogFileInfos] sortedArrayUsingComparator:^NSComparisonResult(DDLogFileInfo   * _Nonnull obj1, DDLogFileInfo   * _Nonnull obj2) {
+        NSDate *date1 = [NSDate new];
+        NSDate *date2 = [NSDate new];
+
+        NSArray<NSString *> *arrayComponent = [[obj1 fileName] componentsSeparatedByString:@" "];
+        if (arrayComponent.count > 0) {
+            NSString *stringDate = arrayComponent.lastObject;
+            stringDate = [stringDate stringByReplacingOccurrencesOfString:@".log" withString:@""];
+            stringDate = [stringDate stringByReplacingOccurrencesOfString:@".archived" withString:@""];
+            date1 = [[self logFileDateFormatter] dateFromString:stringDate] ?: [obj1 creationDate];
+        }
+        
+        arrayComponent = [[obj2 fileName] componentsSeparatedByString:@" "];
+        if (arrayComponent.count > 0) {
+            NSString *stringDate = arrayComponent.lastObject;
+            stringDate = [stringDate stringByReplacingOccurrencesOfString:@".log" withString:@""];
+            stringDate = [stringDate stringByReplacingOccurrencesOfString:@".archived" withString:@""];
+            date2 = [[self logFileDateFormatter] dateFromString:stringDate] ?: [obj2 creationDate];
+        }
+        
+        return [date2 compare:date1 ?: [NSDate new]];
+    }];
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Creation
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+//if you change newLogFileName , then  change isLogFile method also accordingly
 - (NSString *)newLogFileName {
     NSString *appName = [self applicationName];
 
@@ -619,7 +612,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     __block unsigned long long result;
 
     dispatch_block_t block = ^{
-        result = _maximumFileSize;
+        result = self->_maximumFileSize;
     };
 
     // The design of this method is taken from the DDAbstractLogger implementation.
@@ -647,7 +640,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 - (void)setMaximumFileSize:(unsigned long long)newMaximumFileSize {
     dispatch_block_t block = ^{
         @autoreleasepool {
-            _maximumFileSize = newMaximumFileSize;
+            self->_maximumFileSize = newMaximumFileSize;
             [self maybeRollLogFileDueToSize];
         }
     };
@@ -676,7 +669,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     __block NSTimeInterval result;
 
     dispatch_block_t block = ^{
-        result = _rollingFrequency;
+        result = self->_rollingFrequency;
     };
 
     // The design of this method is taken from the DDAbstractLogger implementation.
@@ -704,7 +697,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
 - (void)setRollingFrequency:(NSTimeInterval)newRollingFrequency {
     dispatch_block_t block = ^{
         @autoreleasepool {
-            _rollingFrequency = newRollingFrequency;
+            self->_rollingFrequency = newRollingFrequency;
             [self maybeRollLogFileDueToAge];
         }
     };
@@ -779,7 +772,7 @@ unsigned long long const kDDDefaultLogFilesDiskQuota   = 20 * 1024 * 1024; // 20
     [self rollLogFileWithCompletionBlock:nil];
 }
 
-- (void)rollLogFileWithCompletionBlock:(void (^)())completionBlock {
+- (void)rollLogFileWithCompletionBlock:(void (^)(void))completionBlock {
     // This method is public.
     // We need to execute the rolling on our logging thread/queue.
 
@@ -1045,6 +1038,10 @@ static int exception_count = 0;
 
 - (NSString *)loggerName {
     return @"cocoa.lumberjack.fileLogger";
+}
+
+- (void)flush {
+    [_currentLogFileHandle synchronizeFile];
 }
 
 @end

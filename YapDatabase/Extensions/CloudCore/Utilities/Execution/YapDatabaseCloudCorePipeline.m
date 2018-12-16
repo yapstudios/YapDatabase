@@ -516,7 +516,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 - (BOOL)getGraphIndex:(NSUInteger *)graphIdxPtr forSnapshot:(uint64_t)snapshot
 {
 	__block BOOL found = NO;
-	__block uint64_t graphIdx = 0;
+	__block NSUInteger graphIdx = 0;
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
 	#pragma clang diagnostic push

@@ -327,6 +327,11 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
 - (void)didLogMessage NS_REQUIRES_SUPER;
 
 /**
+ *  Writes all in-memory log data to the permanent storage. Call super before your implementation.
+ */
+- (void)flush NS_REQUIRES_SUPER;
+
+/**
  *  Called when the logger checks archive or not current log file. 
  *  Override this method to exdend standart behavior. By default returns NO.
  */
@@ -397,7 +402,7 @@ extern unsigned long long const kDDDefaultLogFilesDiskQuota;
  *  You can optionally force the current log file to be rolled with this method.
  *  CompletionBlock will be called on main queue.
  */
-- (void)rollLogFileWithCompletionBlock:(void (^)())completionBlock NS_SWIFT_NAME(rollLogFile(withCompletion:));
+- (void)rollLogFileWithCompletionBlock:(void (^)(void))completionBlock NS_SWIFT_NAME(rollLogFile(withCompletion:));
 
 /**
  *  Method is deprecated.

@@ -351,16 +351,15 @@ static NSUInteger _numProcessors;
     // Dispatch semaphores call down to the kernel only when the calling thread needs to be blocked.
     // If the calling semaphore does not need to block, no kernel call is made.
 
-    dispatch_semaphore_wait(_queueSemaphore, DISPATCH_TIME_FOREVER);
-
-    // We've now sure we won't overflow the queue.
-    // It is time to queue our log message.
-
     dispatch_block_t logBlock = ^{
+        dispatch_semaphore_wait(_queueSemaphore, DISPATCH_TIME_FOREVER);
         @autoreleasepool {
             [self lt_log:logMessage];
         }
     };
+
+    // We've now sure we won't overflow the queue.
+    // It is time to queue our log message.
 
     if (asyncFlag) {
         dispatch_async(_loggingQueue, logBlock);
@@ -630,6 +629,7 @@ static NSUInteger _numProcessors;
         if (numClasses > bufferSize || numClasses == 0) {
             //apparently more classes added between calls (or a problem); try again
             free(classes);
+            classes = NULL;
             numClasses = 0;
         }
     }
@@ -1313,8 +1313,8 @@ static __inline__ __attribute__((__always_inline__)) void _dispatch_queue_label_
     __block id <DDLogFormatter> result;
 
     dispatch_sync(globalLoggingQueue, ^{
-        dispatch_sync(_loggerQueue, ^{
-            result = _logFormatter;
+        dispatch_sync(self->_loggerQueue, ^{
+            result = self->_logFormatter;
         });
     });
 
@@ -1329,17 +1329,17 @@ static __inline__ __attribute__((__always_inline__)) void _dispatch_queue_label_
 
     dispatch_block_t block = ^{
         @autoreleasepool {
-            if (_logFormatter != logFormatter) {
-                if ([_logFormatter respondsToSelector:@selector(willRemoveFromLogger:)]) {
-                    [_logFormatter willRemoveFromLogger:self];
+            if (self->_logFormatter != logFormatter) {
+                if ([self->_logFormatter respondsToSelector:@selector(willRemoveFromLogger:)]) {
+                    [self->_logFormatter willRemoveFromLogger:self];
                 }
 
-                _logFormatter = logFormatter;
+                self->_logFormatter = logFormatter;
  
-                if ([_logFormatter respondsToSelector:@selector(didAddToLogger:inQueue:)]) {
-                    [_logFormatter didAddToLogger:self inQueue:_loggerQueue];
-                } else if ([_logFormatter respondsToSelector:@selector(didAddToLogger:)]) {
-                    [_logFormatter didAddToLogger:self];
+                if ([self->_logFormatter respondsToSelector:@selector(didAddToLogger:inQueue:)]) {
+                    [self->_logFormatter didAddToLogger:self inQueue:self->_loggerQueue];
+                } else if ([self->_logFormatter respondsToSelector:@selector(didAddToLogger:)]) {
+                    [self->_logFormatter didAddToLogger:self];
                 }
             }
         }
@@ -1348,7 +1348,7 @@ static __inline__ __attribute__((__always_inline__)) void _dispatch_queue_label_
     dispatch_queue_t globalLoggingQueue = [DDLog loggingQueue];
 
     dispatch_async(globalLoggingQueue, ^{
-        dispatch_async(_loggerQueue, block);
+        dispatch_async(self->_loggerQueue, block);
     });
 }
 

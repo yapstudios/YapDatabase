@@ -1,0 +1,7 @@
+module CocoaLumberjack {
+  umbrella header "CocoaLumberjack-iOS-umbrella.h"
+  exclude header "CocoaLumberjack-watchOS-umbrella.h"
+
+  export *
+  module * { export * }
+}
