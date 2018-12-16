@@ -8,7 +8,7 @@
 #import "YapDatabaseAtomic.h"
 #import "YapDatabaseLogging.h"
 
-#import <libkern/OSAtomic.h>
+#import <stdatomic.h>
 
 /**
  * Define log level for this file: OFF, ERROR, WARN, INFO, VERBOSE
@@ -71,10 +71,10 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	NSUInteger _atomic_maxConcurrentOperationCount;
 	
 	//
-	// These variable must only be accessed/modified via OSAtomic:
+	// These variable must only be accessed/modified via atomic_x():
 	//
 	
-	int needsStartNextOperationFlag;
+	atomic_flag needsStartNextOperationFlag;
 }
 
 @synthesize name = name;
@@ -1634,11 +1634,8 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 **/
 - (void)queueStartNextOperationIfPossible
 {
-	int const flagOff = 0;
-	int const flagOn  = 1;
-	
-	BOOL didSetFlagOn = OSAtomicCompareAndSwapInt(flagOff, flagOn, &needsStartNextOperationFlag);
-	if (didSetFlagOn)
+	BOOL flagWasAlreadySet = atomic_flag_test_and_set(&needsStartNextOperationFlag);
+	if (!flagWasAlreadySet)
 	{
 		__weak YapDatabaseCloudCorePipeline *weakSelf = self;
 		
@@ -1647,7 +1644,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 			__strong YapDatabaseCloudCorePipeline *strongSelf = weakSelf;
 			if (strongSelf)
 			{
-				OSAtomicCompareAndSwapInt(flagOn, flagOff, &strongSelf->needsStartNextOperationFlag);
+				atomic_flag_clear(&strongSelf->needsStartNextOperationFlag);
 				
 				[strongSelf startNextOperationIfPossible];
 			}
