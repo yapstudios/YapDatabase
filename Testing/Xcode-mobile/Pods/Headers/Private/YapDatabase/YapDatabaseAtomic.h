@@ -1,1 +1,1 @@
-../../../../../../YapDatabase/Internal/YapDatabaseAtomic.h
+../../../../../../YapDatabase/Utilities/YapDatabaseAtomic.h
