@@ -252,7 +252,7 @@
 
 - (NSArray *)externalChangesetKeys
 {
-	return @[ changeset_key_changes ];
+	return @[ YapDatabaseViewChangesKey ];
 }
 
 - (void)getInternalChangeset:(NSMutableDictionary **)internalChangesetPtr
@@ -304,7 +304,7 @@
 	{
 		externalChangeset = [NSMutableDictionary dictionaryWithSharedKeySet:sharedKeySetForExternalChangeset];
 		
-		externalChangeset[changeset_key_changes] = [changes copy]; // immutable copy
+		externalChangeset[YapDatabaseViewChangesKey] = [changes copy]; // immutable copy
 	}
 	
 	*internalChangesetPtr = internalChangeset;
@@ -472,7 +472,7 @@
 		NSDictionary *changeset =
 		    [[notification.userInfo objectForKey:YapDatabaseExtensionsKey] objectForKey:registeredName];
 		
-		NSArray *changeset_changes = [changeset objectForKey:changeset_key_changes];
+		NSArray *changeset_changes = [changeset objectForKey:YapDatabaseViewChangesKey];
 		
 		[all_changes addObjectsFromArray:changeset_changes];
 	}
@@ -584,7 +584,7 @@
 		NSDictionary *changeset =
 		    [[notification.userInfo objectForKey:YapDatabaseExtensionsKey] objectForKey:registeredName];
 		
-		NSArray *changeset_changes = [changeset objectForKey:changeset_key_changes];
+		NSArray *changeset_changes = [changeset objectForKey:YapDatabaseViewChangesKey];
 		
 		if ([changeset_changes count] > 0)
 		{
@@ -609,7 +609,7 @@
 		NSDictionary *changeset =
 		    [[notification.userInfo objectForKey:YapDatabaseExtensionsKey] objectForKey:registeredName];
 		
-		NSArray *changeset_changes = [changeset objectForKey:changeset_key_changes];
+		NSArray *changeset_changes = [changeset objectForKey:YapDatabaseViewChangesKey];
 		
 		for (id change in changeset_changes)
 		{
@@ -653,7 +653,7 @@
 		NSDictionary *changeset =
 		    [[notification.userInfo objectForKey:YapDatabaseExtensionsKey] objectForKey:registeredName];
 		
-		NSArray *changeset_changes = [changeset objectForKey:changeset_key_changes];
+		NSArray *changeset_changes = [changeset objectForKey:YapDatabaseViewChangesKey];
 		
 		for (id change in changeset_changes)
 		{
@@ -697,7 +697,7 @@
 		NSDictionary *changeset =
 		  [[notification.userInfo objectForKey:YapDatabaseExtensionsKey] objectForKey:registeredName];
 		
-		NSArray *changeset_changes = [changeset objectForKey:changeset_key_changes];
+		NSArray *changeset_changes = [changeset objectForKey:YapDatabaseViewChangesKey];
 		
 		count += [changeset_changes count];
 	}

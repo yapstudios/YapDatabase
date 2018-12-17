@@ -56,8 +56,6 @@ static NSString *const changeset_key_grouping   = @"grouping";
 static NSString *const changeset_key_sorting    = @"sorting";
 static NSString *const changeset_key_versionTag = @"versionTag";
 
-static NSString *const changeset_key_changes    = @"changes";
-
 
 @interface YapDatabaseView () {
 @protected
