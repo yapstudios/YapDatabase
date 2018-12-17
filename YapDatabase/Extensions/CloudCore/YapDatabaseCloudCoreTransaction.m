@@ -3659,8 +3659,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	//     new operations that are to be added to a new graph
 	//
 	// - consolidates duplicate operations into one (if possible)
-	// - sets dependencyUUIDs property per operation
-	// - updates older operations in the same pipeline
+	// - updates older operations in the same pipeline (if needed)
 	
 	NSMutableDictionary *processedAddedOps = nil;
 	

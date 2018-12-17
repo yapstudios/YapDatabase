@@ -64,19 +64,4 @@ NS_INLINE BOOL YDB_IsEqualOrBothNil(id obj1, id obj2)
 
 - (void)clearTransactionVariables;
 
-
-#pragma mark Subclass Properties
-
-/**
- * Subclasses may choose to calculate implicit dependencies.
- * 
- * This method is designed to assist in such a process,
- * as it allows for easier separation between:
- * - explict dependencies (specified by the user)
- * - implicit dependencies (calculated by the subclass)
- * 
- * The default implementation simply returns the `dependencies` property.
-**/
-- (NSSet<NSUUID *> *)dependencyUUIDs;
-
 @end

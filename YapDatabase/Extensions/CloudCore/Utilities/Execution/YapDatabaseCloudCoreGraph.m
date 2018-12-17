@@ -257,7 +257,7 @@
 **/
 - (BOOL)hasUnmetDependency:(YapDatabaseCloudCoreOperation *)baseOp
 {
-	for (NSUUID *depUUID in [baseOp dependencyUUIDs])
+	for (NSUUID *depUUID in baseOp.dependencies)
 	{
 		YapDatabaseCloudCoreOperation *dependentOp = [self operationWithUUID:depUUID];
 		if (dependentOp)
@@ -325,7 +325,7 @@
 		
 		[visitedOps addObject:op.uuid];
 		
-		for (NSUUID *depUUID in [op dependencyUUIDs])
+		for (NSUUID *depUUID in op.dependencies)
 		{
 			YapDatabaseCloudCoreOperation *depOp = [self operationWithUUID:depUUID];
 			if (depOp)
