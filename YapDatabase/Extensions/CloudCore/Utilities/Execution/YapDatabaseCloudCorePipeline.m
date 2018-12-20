@@ -659,7 +659,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 		if (statusPtr)
 		{
 			NSNumber *statusNum = opInfo[YDBCloudCore_EphemeralKey_Status];
-			if (statusNum)
+			if (statusNum != nil)
 				*statusPtr = (YDBCloudCoreOperationStatus)[statusNum integerValue];
 			else
 				*statusPtr = YDBCloudOperationStatus_Pending;

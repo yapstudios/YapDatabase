@@ -209,7 +209,7 @@
 	
 	for (YapDatabaseCloudCoreOperation *op in operations)
 	{
-		if (minPriority)
+		if (minPriority != nil)
 		{
 			// Note:
 			//   The operations are already sorted by priority.
