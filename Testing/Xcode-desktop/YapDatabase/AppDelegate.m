@@ -9,13 +9,15 @@
 
 @implementation AppDelegate
 
+@synthesize window;
+
+@synthesize databaseBenchmarksButton = databaseBenchmarksButton;
+@synthesize cacheBenchmarksButton = cacheBenchmarksButton;
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
 	
 }
-
-@synthesize databaseBenchmarksButton = databaseBenchmarksButton;
-@synthesize cacheBenchmarksButton = cacheBenchmarksButton;
 
 - (IBAction)runDatabaseBenchmarks:(id)sender
 {
