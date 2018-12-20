@@ -43,6 +43,10 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 
 @synthesize pendingStatus = pendingStatus;
 
+@dynamic pendingStatusIsCompletedOrSkipped;
+@dynamic pendingStatusIsCompleted;
+@dynamic pendingStatusIsSkipped;
+
 // Public properties
 
 @synthesize uuid = uuid;
@@ -268,13 +272,13 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 #pragma mark Protected API
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (BOOL)pendingStatusIsSkippedOrCompleted
+- (BOOL)pendingStatusIsCompletedOrSkipped
 {
 	if (pendingStatus != nil)
 	{
 		YDBCloudCoreOperationStatus status = (YDBCloudCoreOperationStatus)[pendingStatus integerValue];
 		
-		return (status == YDBCloudOperationStatus_Skipped || status == YDBCloudOperationStatus_Completed);
+		return (status == YDBCloudOperationStatus_Completed || status == YDBCloudOperationStatus_Skipped);
 	}
 	else
 	{
