@@ -26,9 +26,10 @@ Pod::Spec.new do |s|
   s.tvos.module_map = 'Framework/tvOS/module.modulemap'
   s.watchos.module_map = 'Framework/watchOS/module.modulemap'
 
-  # There are 2 different versions you can choose from:
+  # There are 3 different versions you can choose from:
   # "Standard" uses the builtin version of sqlite3
   # "SQLCipher" uses a version of sqlite3 compiled with SQLCipher included
+  # "Compact" uses "Standard" extensions set, but without CloudKit one
   #
   # If you want to encrypt your database, you should choose "SQLCipher"
 
@@ -238,5 +239,30 @@ Pod::Spec.new do |s|
     end # Extensions
 
   end # SQLCipher
+
+  s.subspec 'Compact' do |ss|
+    sse.dependency 'YapDatabase/Standard/Core'
+
+    ss.subspec 'Extensions' do |sse|
+      sse.dependency 'YapDatabase/Standard/Core'
+      sse.dependency 'YapDatabase/Standard/Extensions/View'
+      sse.dependency 'YapDatabase/Standard/Extensions/AutoView'
+      sse.dependency 'YapDatabase/Standard/Extensions/ManualView'
+      sse.dependency 'YapDatabase/Standard/Extensions/SecondaryIndex'
+      sse.dependency 'YapDatabase/Standard/Extensions/CrossProcessNotification'
+      sse.dependency 'YapDatabase/Standard/Extensions/Relationships'
+      sse.dependency 'YapDatabase/Standard/Extensions/FullTextSearch'
+      sse.dependency 'YapDatabase/Standard/Extensions/Hooks'
+      sse.dependency 'YapDatabase/Standard/Extensions/FilteredView'
+      sse.dependency 'YapDatabase/Standard/Extensions/SearchResultsView'
+      sse.dependency 'YapDatabase/Standard/Extensions/RTreeIndex'
+      sse.dependency 'YapDatabase/Standard/Extensions/ConnectionProxy'
+      sse.dependency 'YapDatabase/Standard/Extensions/ConnectionPool'
+      sse.dependency 'YapDatabase/Standard/Extensions/ActionManager'
+      sse.dependency 'YapDatabase/Standard/Extensions/CloudCore'
+
+    end # Extensions
+
+  end #Compact
 
 end
