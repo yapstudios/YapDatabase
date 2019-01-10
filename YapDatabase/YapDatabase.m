@@ -850,37 +850,42 @@ static int connectionBusyHandler(void *ptr, int count) {
                 return NO;
             }
         }
-        
-        //Setting the PBKDF2 default iteration number (this will have effect next time database is opened)
-        if (options.cipherDefaultkdfIterNumber > 0) {
-            char *errorMsg;
-            NSString *pragmaCommand = [NSString stringWithFormat:@"PRAGMA cipher_default_kdf_iter = %lu", (unsigned long)options.cipherDefaultkdfIterNumber];
-            if (sqlite3_exec(sqlite, [pragmaCommand UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
-            {
-                YDBLogError(@"failed to set database cipher_default_kdf_iter: %s", errorMsg);
-                return NO;
+
+        BOOL hasCustomCipherConfiguration = NO;
+        if (options.cipherDefaultkdfIterNumber > 0 || options.kdfIterNumber > 0 || options.cipherPageSize) {
+            hasCustomCipherConfiguration = YES;
+
+            //Setting the PBKDF2 default iteration number (this will have effect next time database is opened)
+            if (options.cipherDefaultkdfIterNumber > 0) {
+                char *errorMsg;
+                NSString *pragmaCommand = [NSString stringWithFormat:@"PRAGMA cipher_default_kdf_iter = %lu", (unsigned long)options.cipherDefaultkdfIterNumber];
+                if (sqlite3_exec(sqlite, [pragmaCommand UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
+                {
+                    YDBLogError(@"failed to set database cipher_default_kdf_iter: %s", errorMsg);
+                    return NO;
+                }
             }
-        }
-        
-        //Setting the PBKDF2 iteration number
-        if (options.kdfIterNumber > 0) {
-            char *errorMsg;
-            NSString *pragmaCommand = [NSString stringWithFormat:@"PRAGMA kdf_iter = %lu", (unsigned long)options.kdfIterNumber];
-            if (sqlite3_exec(sqlite, [pragmaCommand UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
-            {
-                YDBLogError(@"failed to set database kdf_iter: %s", errorMsg);
-                return NO;
+
+            //Setting the PBKDF2 iteration number
+            if (options.kdfIterNumber > 0) {
+                char *errorMsg;
+                NSString *pragmaCommand = [NSString stringWithFormat:@"PRAGMA kdf_iter = %lu", (unsigned long)options.kdfIterNumber];
+                if (sqlite3_exec(sqlite, [pragmaCommand UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
+                {
+                    YDBLogError(@"failed to set database kdf_iter: %s", errorMsg);
+                    return NO;
+                }
             }
-        }
-        
-        //Setting the encrypted database page size
-        if (options.cipherPageSize > 0) {
-            char *errorMsg;
-            NSString *pragmaCommand = [NSString stringWithFormat:@"PRAGMA cipher_page_size = %lu", (unsigned long)options.cipherPageSize];
-            if (sqlite3_exec(sqlite, [pragmaCommand UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
-            {
-                YDBLogError(@"failed to set database cipher_page_size: %s", errorMsg);
-                return NO;
+
+            //Setting the encrypted database page size
+            if (options.cipherPageSize > 0) {
+                char *errorMsg;
+                NSString *pragmaCommand = [NSString stringWithFormat:@"PRAGMA cipher_page_size = %lu", (unsigned long)options.cipherPageSize];
+                if (sqlite3_exec(sqlite, [pragmaCommand UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
+                {
+                    YDBLogError(@"failed to set database cipher_page_size: %s", errorMsg);
+                    return NO;
+                }
             }
         }
         
@@ -906,7 +911,7 @@ static int connectionBusyHandler(void *ptr, int count) {
                 return NO;
             }
         }
-        
+
         if (options.cipherUnencryptedHeaderLength > 0 &&
             (options.cipherKeySpecBlock ||
              options.cipherSaltBlock)) {
@@ -964,7 +969,30 @@ static int connectionBusyHandler(void *ptr, int count) {
                 return NO;
             }
         }
-	}
+
+
+        if (options.legacyCipherCompatibilityVersion > 0) {
+            // `PRAGMA cipher_compatibility` is not available until SQLCipher 4.0.1 which corresponds
+            // to this version of sqlite.
+            // https://www.zetetic.net/blog/2018/12/18/sqlcipher-401-release/
+            const NSUInteger sqlCipherVersionSupportingCipherCompatibility = 3026000;
+            if (SQLITE_VERSION_NUMBER < sqlCipherVersionSupportingCipherCompatibility) {
+                YDBLogWarn(@"setting legacyCipherCompatibilityVersion on unsupported SQLCipher version has no effect.");
+            } else {
+                NSAssert(!hasCustomCipherConfiguration, @"If you are specifying custom cipher parameters, you cannot use legacyCipherCompatibility. Instead you must specify *all* relevant cipher params. Details: https://discuss.zetetic.net/t/upgrading-to-sqlcipher-4/3283");
+                char *errorMsg;
+                NSString *pragmaCommand = [NSString stringWithFormat:@"PRAGMA cipher_compatibility = %lu", (unsigned long)options.legacyCipherCompatibilityVersion];
+
+                if (sqlite3_exec(sqlite, [pragmaCommand UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK) {
+                    YDBLogError(@"failed to set database legacy cipher compatibility version: %s", errorMsg);
+                    return NO;
+                }
+
+                YDBLogVerbose(@"set database legacy cipher compatibility version: %lu", (unsigned long)options.legacyCipherCompatibilityVersion);
+            }
+        }
+    }
+
 	
 	return YES;
 }
@@ -985,7 +1013,7 @@ static int connectionBusyHandler(void *ptr, int count) {
     return [hexString copy];
 }
 
-#endif
+#endif // SQLITE_HAS_CODEC
 
 /**
  * Creates the database tables we need:

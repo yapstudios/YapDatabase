@@ -27,8 +27,8 @@
 @synthesize cipherSaltBlock = cipherSaltBlock;
 @synthesize cipherKeySpecBlock = cipherKeySpecBlock;
 @synthesize cipherUnencryptedHeaderLength = cipherUnencryptedHeaderLength;
-
-#endif
+@synthesize legacyCipherCompatibilityVersion = legacyCipherCompatibilityVersion;
+#endif // SQLITE_HAS_CODEC
 @synthesize aggressiveWALTruncationSize = aggressiveWALTruncationSize;
 @synthesize enableMultiProcessSupport = enableMultiProcessSupport;
 
@@ -63,7 +63,8 @@
     copy->cipherSaltBlock = cipherSaltBlock;
     copy->cipherKeySpecBlock = cipherKeySpecBlock;
     copy->cipherUnencryptedHeaderLength = cipherUnencryptedHeaderLength;
-#endif
+    copy->legacyCipherCompatibilityVersion = legacyCipherCompatibilityVersion;
+#endif // SQLITE_HAS_CODEC
 	copy->aggressiveWALTruncationSize = aggressiveWALTruncationSize;
     copy->enableMultiProcessSupport = enableMultiProcessSupport;
 	

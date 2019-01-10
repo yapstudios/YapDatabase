@@ -274,7 +274,26 @@ typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
  **/
 @property (nonatomic, assign, readwrite) NSUInteger cipherUnencryptedHeaderLength;
 
-#endif
+/**
+ * If greater than zero, pegs the SQLCipher cipher parameters to the corresponding legacy version
+ * via `PRAGMA cipher_compatibility = 3;`
+ * https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_compatibility
+ *
+ * Probably you should leave this as `0`, in which case, YapDB will automatically use
+ * `PRAGMA cipher_migrate` to migrate to the new, more secure, cipher configuration.
+ *
+ * https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_migrate
+ *
+ * After migrating, you won't be able to read the database from an older major version of SQLCipher.
+ *
+ * If for some reason you do not want to migrate to the new more secure defaults, setting this to
+ * (e.g.) `3` would allow you to upgrade to SQLCipher v4.0.1+, while maintaining the legacy cipher
+ * configuration. This would allow you to continue to access the database from a legacy SQLite
+ * client.
+ */
+@property (nonatomic, assign, readwrite) NSUInteger legacyCipherCompatibilityVersion;
+
+#endif // SQLITE_HAS_CODEC
 
 /**
  * There are a few edge-case scenarios where the sqlite WAL (write-ahead log) file
