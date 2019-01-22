@@ -22,7 +22,7 @@
 
 #pragma mark Properties
 
-- (YapDatabaseManualView *)autoView
+- (YapDatabaseManualView *)manualView
 {
 	return (YapDatabaseManualView *)parent;
 }
