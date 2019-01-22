@@ -11,6 +11,8 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+typedef NSArray<YapActionItem*> *_Nullable (^YapActionScheduler)(NSString *collection, NSString *key, id object);
+
 /**
  * This extension automatically monitors the database for objects that support the YapActionable protocol.
  *
@@ -34,9 +36,15 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YapDatabaseActionManager : YapDatabaseAutoView
 
 - (instancetype)init;
+
 - (instancetype)initWithConnection:(nullable YapDatabaseConnection *)connection;
+
 - (instancetype)initWithConnection:(nullable YapDatabaseConnection *)connection
                            options:(nullable YapDatabaseViewOptions *)options;
+
+- (instancetype)initWithConnection:(nullable YapDatabaseConnection *)connection
+                           options:(nullable YapDatabaseViewOptions *)options
+                         scheduler:(nullable YapActionScheduler)scheduler;
 
 #if !TARGET_OS_WATCH
 /**

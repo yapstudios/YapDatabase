@@ -80,15 +80,22 @@
 
 - (instancetype)init
 {
-	return [self initWithConnection:nil options:nil];
+	return [self initWithConnection:nil options:nil scheduler:nil];
 }
 
 - (instancetype)initWithConnection:(YapDatabaseConnection *)inConnection
 {
-	return [self initWithConnection:inConnection options:nil];
+	return [self initWithConnection:inConnection options:nil scheduler:nil];
 }
 
 - (instancetype)initWithConnection:(YapDatabaseConnection *)inConnection options:(YapDatabaseViewOptions *)inOptions
+{
+	return [self initWithConnection:inConnection options:inOptions scheduler:nil];
+}
+
+- (instancetype)initWithConnection:(nullable YapDatabaseConnection *)inConnection
+                           options:(nullable YapDatabaseViewOptions *)inOptions
+                         scheduler:(nullable YapActionScheduler)inScheduler
 {
 	// Create and configure view
 	
@@ -115,6 +122,8 @@
 		self.weakDbConnection = inConnection;
 		useWeakDbConnection = (inConnection != nil);
 		
+		scheduler = inScheduler;
+		
 		actionItemsDict = [[NSMutableDictionary alloc] init];
 		
 		suspendCount = 0;
@@ -125,12 +134,14 @@
 
 - (void)dealloc
 {
-    // libdispatch isn't happy about releasing suspended dispatch sources.
-    // See _dispatch_source_xref_release at https://opensource.apple.com/source/libdispatch/libdispatch-187.7/src/source.c
-    if(timer && timerSuspended) {
-        dispatch_resume(timer);
-        timerSuspended = NO;
-    }
+	// libdispatch isn't happy about releasing suspended dispatch sources.
+	// See _dispatch_source_xref_release at:
+	// https://opensource.apple.com/source/libdispatch/libdispatch-187.7/src/source.c
+	//
+	if (timer && timerSuspended) {
+		dispatch_resume(timer);
+		timerSuspended = NO;
+	}
     
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
 }
@@ -164,16 +175,33 @@
 	
 	__block BOOL supported = YES;
 	
-	[registeredExtensions enumerateKeysAndObjectsUsingBlock:^(id __unused key, id obj, BOOL *stop) {
+	if (scheduler)
+	{
+		// This ActionManager instance is configured with an explicit scheduler.
+		// Since the scheduler handles all the logic, there can be multiple such ActionManager instances.
+	}
+	else
+	{
+		// The ActionManager instance is configured to react to objects that
+		// implement the YapActionItem protocol. So there can only be one such
+		// configured ActionManager instance at a time. Otherwise EVERY registered
+		// ActionManager would react to the YapActionItem.
 		
-		if ([obj isKindOfClass:[YapDatabaseActionManager class]])
-		{
-			YDBLogWarn(@"Only 1 YapDatabaseActionManager instance is supported at a time");
-			
-			supported = NO;
-			*stop = YES;
-		}
-	}];
+		[registeredExtensions enumerateKeysAndObjectsUsingBlock:^(id __unused key, id obj, BOOL *stop) {
+	
+			if ([obj isKindOfClass:[YapDatabaseActionManager class]])
+			{
+				YapDatabaseActionManager *ext = (YapDatabaseActionManager *)obj;
+				if (ext->scheduler == nil)
+				{
+					YDBLogWarn(@"Only 1 YapDatabaseActionManager instance (sans scheduler) is supported at a time");
+					
+					supported = NO;
+					*stop = YES;
+				}
+			}
+		}];
+	}
 	
 	if (!supported) return NO;
 	

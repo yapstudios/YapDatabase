@@ -14,6 +14,13 @@
 
 #import "YapCache.h"
 
+@interface YapDatabaseActionManager () {
+@public
+	
+	YapActionScheduler scheduler;
+}
+@end
+
 @interface YapDatabaseActionManagerConnection () {
 @public
 
