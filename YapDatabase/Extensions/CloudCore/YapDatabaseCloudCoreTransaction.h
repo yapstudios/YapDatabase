@@ -313,7 +313,7 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)attachCloudURI:(NSString *)cloudURI
                 forKey:(NSString *)key
-          inCollection:(NSString *)collection;
+          inCollection:(nullable NSString *)collection;
 
 /**
  * @param cloudURI
@@ -336,7 +336,23 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)detachCloudURI:(NSString *)cloudURI
                 forKey:(NSString *)key
-          inCollection:(NSString *)collection;
+          inCollection:(nullable NSString *)collection;
+
+/**
+ * Allows you to enumerate the <collection, key> tuples attached to the given cloudURI.
+ *
+ * If a <collection, key> has been attached to the cloudURI, but the corresponding object hasn't been
+ * added to the database yet, the pending flag will be set to YES.
+**/
+- (void)enumerateAttachedForCloudURI:(NSString *)cloudURI
+                          usingBlock:(void (^)(NSString *key, NSString *collection, BOOL pending, BOOL *stop))block;
+
+/**
+ * Allows you to enumerate all attached cloudURI's for the given <collection, key> tuple.
+**/
+- (void)enumerateAttachedForKey:(NSString *)key
+                     collection:(nullable NSString *)collection
+                     usingBlock:(void (^)(NSString *cloudURI, BOOL *stop))block;
 
 @end
 

@@ -1462,7 +1462,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 #pragma mark Utilities - mappings
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (NSSet *)allAttachedCloudURIsForRowid:(int64_t)rowid
+- (NSSet<NSString *> *)allAttachedCloudURIsForRowid:(int64_t)rowid
 {
 	YDBLogAutoTrace();
 	
@@ -1521,7 +1521,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	return attachedCloudURIs;
 }
 
-- (NSSet *)allAttachedRowidsForCloudURI:(NSString *)cloudURI
+- (NSSet<NSNumber *> *)allAttachedRowidsForCloudURI:(NSString *)cloudURI
 {
 	YDBLogAutoTrace();
 	NSParameterAssert(cloudURI != nil);
@@ -3485,6 +3485,63 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	// Perform detach
 		
 	[self detachCloudURI:cloudURI forRowid:rowid];
+}
+
+- (void)enumerateAttachedForCloudURI:(NSString *)cloudURI
+                          usingBlock:(void (^)(NSString *key, NSString *collection, BOOL pending, BOOL *stop))block
+{
+	BOOL stop = NO;
+	
+	NSSet<NSNumber *> *rowids = [self allAttachedRowidsForCloudURI:cloudURI];
+	for (NSNumber *rowidNum in rowids)
+	{
+		YapCollectionKey *ck = [databaseTransaction collectionKeyForRowid:[rowidNum longLongValue]];
+		if (ck) {
+			block(ck.key, ck.collection, NO, &stop);
+		}
+		
+		if (stop) break;
+	}
+	
+	if (stop) return;
+	
+	if (parentConnection->pendingAttachRequests)
+	{
+		[parentConnection->pendingAttachRequests enumerateKeysForValue: cloudURI
+		                                                     withBlock:^(YapCollectionKey *ck, id metadata, BOOL *stop)
+		{
+			block(ck.key, ck.collection, YES, stop);
+		}];
+	}
+}
+
+- (void)enumerateAttachedForKey:(NSString *)key
+                     collection:(nullable NSString *)collection
+                     usingBlock:(void (^)(NSString *cloudURI, BOOL *stop))block
+{
+	int64_t rowid = 0;
+	if ([databaseTransaction getRowid:&rowid forKey:key inCollection:collection])
+	{
+		NSSet<NSString*> *cloudURIs = [self allAttachedCloudURIsForRowid:rowid];
+		
+		BOOL stop = NO;
+		for (NSString *cloudURI in cloudURIs)
+		{
+			block(cloudURI, &stop);
+			
+			if (stop) break;
+		}
+	}
+	else if (parentConnection->pendingAttachRequests)
+	{
+		YapCollectionKey *collectionKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
+		
+		[parentConnection->pendingAttachRequests enumerateValuesForKey:collectionKey
+		                                                     withBlock:^(NSString *cloudURI, id metadata, BOOL *stop)
+		{
+			block(cloudURI, stop);
+		}];
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
