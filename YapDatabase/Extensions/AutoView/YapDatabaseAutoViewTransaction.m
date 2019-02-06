@@ -454,6 +454,14 @@
 - (void)resortView {
 	YDBLogAutoTrace();
 
+	// TODO: Refactor
+	// This is written this way to avoid mutating the view while enumerating it.
+	// I didn't see another way of doing this that didn't end up invoking the grouping
+	// block, which is what we're trying to avoid here.
+	//
+	// Refactor in at least one of two ways:
+	// 1. Stop using NSNumber. int64_t is 8 bytes, but an NSNumber boxing an int64_t is...probably a lot more.
+	// 2. Stop storing all row ids in memory. If that's possible, #1 doesn't matter so much.
 	NSMutableDictionary *groups = NSMutableDictionary.new;
 
 	[self enumerateGroupsUsingBlock:^(NSString * _Nonnull group, BOOL * _Nonnull stop) {
