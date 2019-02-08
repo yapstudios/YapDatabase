@@ -89,13 +89,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)skipOperationWithUUID:(NSUUID *)operationUUID;
 - (void)skipOperationWithUUID:(NSUUID *)operationUUID inPipeline:(nullable NSString *)pipelineName;
 
-- (void)skipOperationsPassingTest:(BOOL (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                            YapDatabaseCloudCoreOperation *operation,
-                                            NSUInteger graphIdx, BOOL *stop))testBlock;
+- (void)skipOperationsPassingTest:(BOOL (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                       YapDatabaseCloudCoreOperation *operation,
+                                                       NSUInteger graphIdx, BOOL *stop))testBlock;
 
 - (void)skipOperationsInPipeline:(NSString *)pipeline
-                     passingTest:(BOOL (^)(YapDatabaseCloudCoreOperation *operation,
-                                           NSUInteger graphIdx, BOOL *stop))testBlock;
+                     passingTest:(BOOL (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                      NSUInteger graphIdx, BOOL *stop))testBlock;
 
 #pragma mark Operation Searching
 
@@ -153,9 +153,9 @@ NS_ASSUME_NONNULL_BEGIN
  *   For example, if an operation has been modified within the read-write transaction,
  *   then you'll see the uncommitted modified version of the operation when enumerating.
  **/
-- (void)enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                                YapDatabaseCloudCoreOperation *operation,
-                                                NSUInteger graphIdx, BOOL *stop))enumBlock;
+- (void)enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                           YapDatabaseCloudCoreOperation *operation,
+                                                           NSUInteger graphIdx, BOOL *stop))enumBlock;
 /**
  * Enumerates the queued operations in a particluar pipeline.
  *
@@ -172,8 +172,8 @@ NS_ASSUME_NONNULL_BEGIN
  *   then you'll see the uncommitted modified version of the operation when enumerating.
 **/
 - (void)enumerateOperationsInPipeline:(NSString *)pipeline
-                      usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                           NSUInteger graphIdx, BOOL *stop))enumBlock;
+                      usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                      NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 /**
  * Enumerates only those operations that have been added during this commit.
@@ -181,9 +181,9 @@ NS_ASSUME_NONNULL_BEGIN
  * That is, the operations added via the `addOperation:` method,
  * within the current readWriteTransaction.
 **/
-- (void)enumerateAddedOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                                     YapDatabaseCloudCoreOperation *operation,
-                                                     NSUInteger graphIdx, BOOL *stop))enumBlock;
+- (void)enumerateAddedOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                                YapDatabaseCloudCoreOperation *operation,
+                                                                NSUInteger graphIdx, BOOL *stop))enumBlock;
 /**
  * Enumerates only those operations that have been added during this commit.
  *
@@ -191,8 +191,8 @@ NS_ASSUME_NONNULL_BEGIN
  * within the current readWriteTransaction.
 **/
 - (void)enumerateAddedOperationsInPipeline:(NSString *)pipeline
-                                usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                                     NSUInteger graphIdx, BOOL *stop))enumBlock;
+                                usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                                NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 #pragma mark Tag Support
 
@@ -345,14 +345,14 @@ NS_ASSUME_NONNULL_BEGIN
  * added to the database yet, the pending flag will be set to YES.
 **/
 - (void)enumerateAttachedForCloudURI:(NSString *)cloudURI
-                          usingBlock:(void (^)(NSString *key, NSString *collection, BOOL pending, BOOL *stop))block;
+                          usingBlock:(void (NS_NOESCAPE^)(NSString *key, NSString *collection, BOOL pending, BOOL *stop))block;
 
 /**
  * Allows you to enumerate all attached cloudURI's for the given <collection, key> tuple.
 **/
 - (void)enumerateAttachedForKey:(NSString *)key
                      collection:(nullable NSString *)collection
-                     usingBlock:(void (^)(NSString *cloudURI, BOOL *stop))block;
+                     usingBlock:(void (NS_NOESCAPE^)(NSString *cloudURI, BOOL *stop))block;
 
 @end
 

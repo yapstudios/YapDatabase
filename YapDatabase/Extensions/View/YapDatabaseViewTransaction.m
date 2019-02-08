@@ -2894,7 +2894,7 @@
 #pragma mark Public API - Enumerating
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)enumerateGroupsUsingBlock:(void (^)(NSString *group, BOOL *stop))block
+- (void)enumerateGroupsUsingBlock:(void (NS_NOESCAPE^)(NSString *group, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -2918,7 +2918,7 @@
 }
 
 - (void)enumerateKeysInGroup:(NSString *)group
-                  usingBlock:(void (^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block
+                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -2932,7 +2932,7 @@
 
 - (void)enumerateKeysInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
-                  usingBlock:(void (^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block
+                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -2947,7 +2947,7 @@
 - (void)enumerateKeysInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                        range:(NSRange)range
-                  usingBlock:(void (^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block
+                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -2967,7 +2967,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)enumerateRowidsInGroup:(NSString *)group
-                    usingBlock:(void (^)(int64_t rowid, NSUInteger index, BOOL *stop))block
+                    usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3002,7 +3002,7 @@
 
 - (void)enumerateRowidsInGroup:(NSString *)group
                    withOptions:(NSEnumerationOptions)inOptions
-                    usingBlock:(void (^)(int64_t rowid, NSUInteger index, BOOL *stop))block
+                    usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3053,7 +3053,7 @@
 - (void)enumerateRowidsInGroup:(NSString *)group
                    withOptions:(NSEnumerationOptions)inOptions
                          range:(NSRange)range
-                    usingBlock:(void (^)(int64_t rowid, NSUInteger index, BOOL *stop))block
+                    usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3355,7 +3355,7 @@
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                              usingBlock:
-                    (void (^)(NSString *collection, NSString *key, id metadata, NSUInteger index, BOOL *stop))block
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3372,7 +3372,7 @@
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                             withOptions:(NSEnumerationOptions)options
                              usingBlock:
-                    (void (^)(NSString *collection, NSString *key, id metadata, NSUInteger index, BOOL *stop))block
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3392,7 +3392,7 @@
                             withOptions:(NSEnumerationOptions)options
                                   range:(NSRange)range
                              usingBlock:
-                    (void (^)(NSString *collection, NSString *key, id metadata, NSUInteger index, BOOL *stop))block
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3413,9 +3413,9 @@
                             withOptions:(NSEnumerationOptions)options
                                   range:(NSRange)range
                                  filter:
-                    (BOOL (^)(NSString *collection, NSString *key))filter
+                    (BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
                              usingBlock:
-                    (void (^)(NSString *collection, NSString *key, id metadata, NSUInteger index, BOOL *stop))block
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, NSUInteger index, BOOL *stop))block
 {
 	if (filter == NULL) {
 		[self enumerateKeysAndMetadataInGroup:group withOptions:options range:range usingBlock:block];
@@ -3445,7 +3445,7 @@
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                             usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3462,7 +3462,7 @@
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                            withOptions:(NSEnumerationOptions)options
                             usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3482,7 +3482,7 @@
                            withOptions:(NSEnumerationOptions)options
                                  range:(NSRange)range
                             usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3503,9 +3503,9 @@
                            withOptions:(NSEnumerationOptions)options
                                  range:(NSRange)range
                                 filter:
-            (BOOL (^)(NSString *collection, NSString *key))filter
+            (BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
                             usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
 {
 	if (filter == NULL) {
 		[self enumerateKeysAndObjectsInGroup:group withOptions:options range:range usingBlock:block];
@@ -3535,7 +3535,7 @@
 
 - (void)enumerateRowsInGroup:(NSString *)group
                   usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, id metadata, NSUInteger index, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3553,7 +3553,7 @@
 - (void)enumerateRowsInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                   usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, id metadata, NSUInteger index, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3574,7 +3574,7 @@
                  withOptions:(NSEnumerationOptions)options
                        range:(NSRange)range
                   usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, id metadata, NSUInteger index, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, NSUInteger index, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -3596,9 +3596,9 @@
                  withOptions:(NSEnumerationOptions)options
                        range:(NSRange)range
                       filter:
-            (BOOL (^)(NSString *collection, NSString *key))filter
+            (BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
                   usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, id metadata, NSUInteger index, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, NSUInteger index, BOOL *stop))block
 {
 	if (filter == NULL) {
 		[self enumerateRowsInGroup:group withOptions:options range:range usingBlock:block];

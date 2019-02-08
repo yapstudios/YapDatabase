@@ -63,7 +63,7 @@
 	}
 }
 
-- (void)enumerateObjectsUsingBlock:(void (^)(id obj, BOOL *stop))block
+- (void)enumerateObjectsUsingBlock:(void (NS_NOESCAPE^)(id obj, BOOL *stop))block
 {
 	if (set)
 	{

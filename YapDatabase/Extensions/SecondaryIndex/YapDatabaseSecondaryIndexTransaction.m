@@ -1176,7 +1176,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (BOOL)_enumerateRowidsMatchingQuery:(YapDatabaseQuery *)query
-                           usingBlock:(void (^)(int64_t rowid, BOOL *stop))block
+                           usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, BOOL *stop))block
 {
 	if (query == nil) return NO;
 	if (query.isAggregateQuery) return NO;
@@ -1231,7 +1231,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 }
 
 - (BOOL)enumerateKeysMatchingQuery:(YapDatabaseQuery *)query
-                        usingBlock:(void (^)(NSString *collection, NSString *key, BOOL *stop))block
+                        usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block
 {
 	BOOL result = [self _enumerateRowidsMatchingQuery:query usingBlock:^(int64_t rowid, BOOL *stop) {
 		
@@ -1251,7 +1251,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 
 - (BOOL)enumerateKeysAndMetadataMatchingQuery:(YapDatabaseQuery *)query
                                    usingBlock:
-                            (void (^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
 {
 	BOOL result = [self _enumerateRowidsMatchingQuery:query usingBlock:^(int64_t rowid, BOOL *stop) {
 		
@@ -1273,7 +1273,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 
 - (BOOL)enumerateKeysAndObjectsMatchingQuery:(YapDatabaseQuery *)query
                                   usingBlock:
-                            (void (^)(NSString *collection, NSString *key, id object, BOOL *stop))block
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block
 {
 	BOOL result = [self _enumerateRowidsMatchingQuery:query usingBlock:^(int64_t rowid, BOOL *stop) {
 		
@@ -1295,7 +1295,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 
 - (BOOL)enumerateRowsMatchingQuery:(YapDatabaseQuery *)query
                         usingBlock:
-                            (void (^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
 {
 	BOOL result = [self _enumerateRowidsMatchingQuery:query usingBlock:^(int64_t rowid, BOOL *stop) {
 		
@@ -1318,7 +1318,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 
 - (BOOL)_enumerateIndexedValuesInColumn:(NSString *)column
                           matchingQuery:(YapDatabaseQuery *)query
-                             usingBlock:(void (^)(id indexedValue, BOOL *stop))block
+                             usingBlock:(void (NS_NOESCAPE^)(id indexedValue, BOOL *stop))block
 {
 	if (column == nil) return NO;
 	if (query == nil) return NO;
@@ -1409,7 +1409,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 
 - (BOOL)enumerateIndexedValuesInColumn:(NSString *)column
                          matchingQuery:(YapDatabaseQuery *)query
-                            usingBlock:(void(^)(id indexedValue, BOOL *stop))block
+                            usingBlock:(void(NS_NOESCAPE^)(id indexedValue, BOOL *stop))block
 {
 	BOOL result = [self _enumerateIndexedValuesInColumn:column
 	                                      matchingQuery:query

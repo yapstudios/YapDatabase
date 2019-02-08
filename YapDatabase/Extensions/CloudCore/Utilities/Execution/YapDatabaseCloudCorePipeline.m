@@ -390,8 +390,8 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	return results;
 }
 
-- (void)enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                                NSUInteger graphIdx, BOOL *stop))enumBlock
+- (void)enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                           NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	[self _enumerateOperationsUsingBlock:^(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop) {
 		
@@ -399,8 +399,8 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	}];
 }
 
-- (void)_enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                                 NSUInteger graphIdx, BOOL *stop))enumBlock
+- (void)_enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                            NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	__block NSMutableArray<NSArray<YapDatabaseCloudCoreOperation *> *> *graphOperations = nil;
 	

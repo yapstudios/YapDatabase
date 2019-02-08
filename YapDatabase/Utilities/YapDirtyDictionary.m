@@ -161,7 +161,7 @@
 /**
  * Enumerates all key/value pairs, including both "dirty" & "clean" values.
 **/
-- (void)enumerateKeysAndObjectsUsingBlock:(void (^)(id key, id obj, BOOL *stop))block
+- (void)enumerateKeysAndObjectsUsingBlock:(void (NS_NOESCAPE^)(id key, id obj, BOOL *stop))block
 {
 	[dict enumerateKeysAndObjectsUsingBlock:^(id key, YapDirtyDictionaryItem *item, BOOL *stop) {
 		
@@ -172,7 +172,7 @@
 /**
  * Enumerates only the key/value pairs that are dirty (current value differs from original value).
 **/
-- (void)enumerateDirtyKeysAndObjectsUsingBlock:(void (^)(id key, id obj, BOOL *stop))block
+- (void)enumerateDirtyKeysAndObjectsUsingBlock:(void (NS_NOESCAPE^)(id key, id obj, BOOL *stop))block
 {
 	[dict enumerateKeysAndObjectsUsingBlock:^(id key, YapDirtyDictionaryItem *item, BOOL *stop) {
 		

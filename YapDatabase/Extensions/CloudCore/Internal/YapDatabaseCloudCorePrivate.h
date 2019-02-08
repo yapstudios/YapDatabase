@@ -190,35 +190,35 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
 - (YapDatabaseCloudCoreOperation *)_operationWithUUID:(NSUUID *)uuid;
 - (YapDatabaseCloudCoreOperation *)_operationWithUUID:(NSUUID *)uuid inPipeline:(NSString *)pipelineName;
 
-- (void)_enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                                 YapDatabaseCloudCoreOperation *operation,
-                                                 NSUInteger graphIdx, BOOL *stop))enumBlock;
+- (void)_enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                            YapDatabaseCloudCoreOperation *operation,
+                                                            NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 - (void)_enumerateOperationsInPipeline:(NSString *)pipelineName
-                            usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                                 NSUInteger graphIdx, BOOL *stop))enumBlock;
+                            usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                            NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 - (void)_enumerateOperations:(YDBCloudCore_EnumOps)flags
-                  usingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                       YapDatabaseCloudCoreOperation *operation,
-                                       NSUInteger graphIdx, BOOL *stop))enumBlock;
+                  usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                  YapDatabaseCloudCoreOperation *operation,
+                                                  NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 - (void)_enumerateOperations:(YDBCloudCore_EnumOps)flags
                   inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
-                  usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                       NSUInteger graphIdx, BOOL *stop))enumBlock;
+                  usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                  NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 - (void)_enumerateAndModifyOperations:(YDBCloudCore_EnumOps)flags
                            usingBlock:(YapDatabaseCloudCoreOperation *
-                                      (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                          YapDatabaseCloudCoreOperation *operation,
-                                          NSUInteger graphIdx, BOOL *stop))enumBlock;
+                                      (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                     YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 - (void)_enumerateAndModifyOperations:(YDBCloudCore_EnumOps)flags
                            inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
                            usingBlock:(YapDatabaseCloudCoreOperation *
-                                      (^)(YapDatabaseCloudCoreOperation *operation,
-                                          NSUInteger graphIdx, BOOL *stop))enumBlock;
+                                      (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 /**
  * Throw this if an attempt is made to invoke a read-write action within a read-only transaction.
