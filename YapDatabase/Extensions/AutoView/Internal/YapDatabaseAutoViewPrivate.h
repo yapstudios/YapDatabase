@@ -85,6 +85,9 @@
             sorting:(YapDatabaseViewSorting *)newSorting
          versionTag:(NSString *)newVersionTag;
 
+- (void)setSorting:(YapDatabaseViewSorting *)newSorting
+        versionTag:(NSString *)newVersionTag;
+
 @end
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

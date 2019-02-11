@@ -175,6 +175,16 @@
 	versionTagChanged = YES;
 }
 
+- (void)setSorting:(YapDatabaseViewSorting *)newSorting
+        versionTag:(NSString *)newVersionTag
+{
+	sorting = newSorting;
+	sortingChanged = YES;
+
+	versionTag = newVersionTag;
+	versionTagChanged = YES;
+}
+
 - (void)getGrouping:(YapDatabaseViewGrouping **)groupingPtr
             sorting:(YapDatabaseViewSorting **)sortingPtr
 {
