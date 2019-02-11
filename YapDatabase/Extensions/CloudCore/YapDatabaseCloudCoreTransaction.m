@@ -2126,9 +2126,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 /**
  * Subclasses may override this class to properly handle their specific flavor of operations.
 **/
-- (NSArray *)processOperations:(NSArray *)operations
-                    inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
-                  withGraphIdx:(NSUInteger)operationsGraphIdx
+- (NSArray<YapDatabaseCloudCoreOperation *> *)processOperations:(NSArray<YapDatabaseCloudCoreOperation *> *)operations
+                                                     inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+                                                   withGraphIdx:(NSUInteger)operationsGraphIdx
 {
 	return operations;
 }
@@ -3642,29 +3642,29 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 				for (YapDatabaseCloudCoreOperation *oldOp in oldOps)
 				{
 					NSUUID *uuid = oldOp.uuid;
-					YapDatabaseCloudCoreOperation *newOp = nil;
+					YapDatabaseCloudCoreOperation *newProcessedOp = nil;
 					
 					for (YapDatabaseCloudCoreOperation *op in newProcessedOps)
 					{
 						if ([op.uuid isEqual:uuid])
 						{
-							newOp = op;
+							newProcessedOp = op;
 							break;
 						}
 					}
 					
-					if (newOp)
+					if (newProcessedOp)
 					{
-						if (![newOp isEqualToOperation:oldOp])
+						if (![newProcessedOp isEqualToOperation:oldOp])
 						{
-							newOp.needsModifyDatabaseRow = YES;
+							newProcessedOp.needsModifyDatabaseRow = YES;
 							
-							parentConnection->operations_modified[uuid] = newOp;
+							parentConnection->operations_modified[uuid] = newProcessedOp;
 						}
 					}
 					else
 					{
-						newOp = [oldOp copy];
+						YapDatabaseCloudCoreOperation *newOp = [oldOp copy];
 						
 						newOp.needsDeleteDatabaseRow = YES;
 						newOp.pendingStatus = @(YDBCloudOperationStatus_Skipped);
@@ -3693,10 +3693,13 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 						}
 					}
 					
-					if (insertedOpSurvived)
+					if (insertedOpSurvived) {
 						i++;
-					else
+					}
+					else {
 						[insertedOps removeObjectAtIndex:i];
+						// ^ removes from: parentConnection->operations_inserted[pipeline.name][@(graphIdx)]
+					}
 				}
 				
 			} // end if (graphHasChanges)
@@ -3733,7 +3736,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
 			NSUInteger graphIdx = pipeline.graphCount;
 			 
-			NSArray *processedOperationsForPipeline =
+			NSArray<YapDatabaseCloudCoreOperation *> *processedOperationsForPipeline =
 			  [self processOperations:allAddedOperationsForPipeline inPipeline:pipeline withGraphIdx:graphIdx];
 			
 			if (processedOperationsForPipeline.count > 0)

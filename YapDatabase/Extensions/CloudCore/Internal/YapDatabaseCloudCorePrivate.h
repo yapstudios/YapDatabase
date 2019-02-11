@@ -172,9 +172,9 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
 // - automatically merging duplicate operations within same commit
 // - automatically adding dependencies for operations in earlier commits (if using FlatGraph optimization)
 //
-- (NSArray *)processOperations:(NSArray *)operations
-						  inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
-						withGraphIdx:(NSUInteger)operationsGraphIdx;
+- (NSArray<YapDatabaseCloudCoreOperation *> *)processOperations:(NSArray<YapDatabaseCloudCoreOperation *> *)operations
+                                                     inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+                                                   withGraphIdx:(NSUInteger)operationsGraphIdx;
 
 // Subclasses may override these methods to perform custom tasks as needed.
 - (void)didCompleteOperation:(YapDatabaseCloudCoreOperation *)operation;
