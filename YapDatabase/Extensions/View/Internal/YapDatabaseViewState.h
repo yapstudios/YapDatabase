@@ -13,8 +13,8 @@
 
 - (NSUInteger)numberOfGroups;
 
-- (void)enumerateGroupsWithBlock:(void (^)(NSString *group, BOOL *stop))block;
-- (void)enumerateWithBlock:(void (^)(NSString *group, NSArray *pagesMetadataForGroup, BOOL *stop))block;
+- (void)enumerateGroupsWithBlock:(void (NS_NOESCAPE^)(NSString *group, BOOL *stop))block;
+- (void)enumerateWithBlock:(void (NS_NOESCAPE^)(NSString *group, NSArray *pagesMetadataForGroup, BOOL *stop))block;
 
 #pragma mark Mutation
 

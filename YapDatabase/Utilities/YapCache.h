@@ -116,8 +116,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeObjectForKey:(KeyType)key;
 - (void)removeObjectsForKeys:(id <NSFastEnumeration>)keys;
 
-- (void)enumerateKeysWithBlock:(void (^)(KeyType key, BOOL *stop))block;
-- (void)enumerateKeysAndObjectsWithBlock:(void (^)(KeyType key, ObjectType obj, BOOL *stop))block;
+- (void)enumerateKeysWithBlock:(void (NS_NOESCAPE^)(KeyType key, BOOL *stop))block;
+- (void)enumerateKeysAndObjectsWithBlock:(void (NS_NOESCAPE^)(KeyType key, ObjectType obj, BOOL *stop))block;
 
 //
 // Some debugging stuff that gets compiled out

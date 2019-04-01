@@ -27,13 +27,13 @@
 
 - (BOOL)getIndex:(NSUInteger *)indexPtr ofRowid:(int64_t)rowid;
 
-- (void)enumerateRowidsUsingBlock:(void (^)(int64_t rowid, NSUInteger idx, BOOL *stop))block;
+- (void)enumerateRowidsUsingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSUInteger idx, BOOL *stop))block;
 
 - (void)enumerateRowidsWithOptions:(NSEnumerationOptions)options
-                        usingBlock:(void (^)(int64_t rowid, NSUInteger index, BOOL *stop))block;
+                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateRowidsWithOptions:(NSEnumerationOptions)options
                              range:(NSRange)range
-                        usingBlock:(void (^)(int64_t rowid, NSUInteger index, BOOL *stop))block;
+                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSUInteger index, BOOL *stop))block;
 
 @end

@@ -1984,7 +1984,7 @@ static int connectionBusyHandler(void *ptr, int count)
  *
  * This method is synchronous.
 **/
-- (void)readWithBlock:(void (^)(YapDatabaseReadTransaction *))block
+- (void)readWithBlock:(void (NS_NOESCAPE^)(YapDatabaseReadTransaction *))block
 {
 #if YapDatabaseEnforcePermittedTransactions
 	YapDatabasePermittedTransactions flags = self.permittedTransactions;
@@ -2050,7 +2050,7 @@ static int connectionBusyHandler(void *ptr, int count)
  * 
  * This method is synchronous.
 **/
-- (void)readWriteWithBlock:(void (^)(YapDatabaseReadWriteTransaction *transaction))block
+- (void)readWriteWithBlock:(void (NS_NOESCAPE^)(YapDatabaseReadWriteTransaction *transaction))block
 {
 #if YapDatabaseEnforcePermittedTransactions
 	YapDatabasePermittedTransactions flags = self.permittedTransactions;
@@ -4950,7 +4950,7 @@ static int connectionBusyHandler(void *ptr, int count)
 **/
 - (void)enumerateChangedKeysInCollection:(NSString *)collection
                          inNotifications:(NSArray *)notifications
-                              usingBlock:(void (^)(NSString *key, BOOL *stop))block
+                              usingBlock:(void (NS_NOESCAPE^)(NSString *key, BOOL *stop))block
 {
 	if (block == NULL) return;
 	if (collection == nil)
@@ -5030,7 +5030,7 @@ static int connectionBusyHandler(void *ptr, int count)
  * @see didClearAllCollectionsInNotifications:
 **/
 - (void)enumerateChangedCollectionKeysInNotifications:(NSArray *)notifications
-                                           usingBlock:(void (^)(YapCollectionKey *ck, BOOL *stop))block
+                                           usingBlock:(void (NS_NOESCAPE^)(YapCollectionKey *ck, BOOL *stop))block
 {
 	if (block == NULL) return;
 	

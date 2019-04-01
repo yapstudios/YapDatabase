@@ -884,7 +884,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 - (void)enumerateRowidsMatching:(NSString *)query
-                     usingBlock:(void (^)(int64_t rowid, BOOL *stop))block
+                     usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, BOOL *stop))block
 {
 	if (block == nil) return;
 	if ([query length] == 0) return;
@@ -930,7 +930,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 }
 
 - (void)enumerateKeysMatching:(NSString *)query
-                   usingBlock:(void (^)(NSString *collection, NSString *key, BOOL *stop))block
+                   usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block
 {
 	[self enumerateRowidsMatching:query usingBlock:^(int64_t rowid, BOOL *stop) {
 		
@@ -941,7 +941,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 }
 
 - (void)enumerateKeysAndMetadataMatching:(NSString *)query
-                              usingBlock:(void (^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                              usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
 {
 	[self enumerateRowidsMatching:query usingBlock:^(int64_t rowid, BOOL *stop) {
 		
@@ -954,7 +954,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 }
 
 - (void)enumerateKeysAndObjectsMatching:(NSString *)query
-                             usingBlock:(void (^)(NSString *collection, NSString *key, id object, BOOL *stop))block
+                             usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block
 {
 	[self enumerateRowidsMatching:query usingBlock:^(int64_t rowid, BOOL *stop) {
 		
@@ -967,7 +967,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 }
 
 - (void)enumerateRowsMatching:(NSString *)query
-                   usingBlock:(void (^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+                   usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
 {
 	[self enumerateRowidsMatching:query usingBlock:^(int64_t rowid, BOOL *stop) {
 		
@@ -986,7 +986,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 
 - (void)enumerateBm25OrderedRowidsMatching:(NSString *)query
                                withWeights:(nullable NSArray<NSNumber *> *)weights
-                                usingBlock:(void (^)(int64_t rowid, BOOL *stop))block
+                                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, BOOL *stop))block
 {
     if (![parentConnection->parent.ftsVersion isEqualToString:YapDatabaseFullTextSearchFTS5Version]) {
         NSString *reason = [NSString stringWithFormat:
@@ -1044,7 +1044,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 
 - (void)enumerateBm25OrderedKeysMatching:(NSString *)query
                              withWeights:(nullable NSArray<NSNumber *> *)weights
-                              usingBlock:(void (^)(NSString *collection, NSString *key, BOOL *stop))block {
+                              usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block {
     [self enumerateBm25OrderedRowidsMatching:query withWeights:weights usingBlock:^(int64_t rowid, BOOL *stop) {
         
         YapCollectionKey *ck = [self->databaseTransaction collectionKeyForRowid:rowid];
@@ -1055,7 +1055,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 
 - (void)enumerateBm25OrderedKeysAndMetadataMatching:(NSString *)query
                                         withWeights:(nullable NSArray<NSNumber *> *)weights
-                                         usingBlock:(void (^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block {
+                                         usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block {
     [self enumerateBm25OrderedRowidsMatching:query withWeights:weights usingBlock:^(int64_t rowid, BOOL *stop) {
         
         YapCollectionKey *ck = nil;
@@ -1068,7 +1068,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 
 - (void)enumerateBm25OrderedKeysAndObjectsMatching:(NSString *)query
                                        withWeights:(nullable NSArray<NSNumber *> *)weights
-                                        usingBlock:(void (^)(NSString *collection, NSString *key, id object, BOOL *stop))block {
+                                        usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block {
     [self enumerateBm25OrderedRowidsMatching:query withWeights:weights usingBlock:^(int64_t rowid, BOOL *stop) {
         
         YapCollectionKey *ck = nil;
@@ -1081,7 +1081,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 
 - (void)enumerateBm25OrderedRowsMatching:(NSString *)query
                              withWeights:(nullable NSArray<NSNumber *> *)weights
-                              usingBlock:(void (^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block {
+                              usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block {
     [self enumerateBm25OrderedRowidsMatching:query withWeights:weights usingBlock:^(int64_t rowid, BOOL *stop) {
         
         YapCollectionKey *ck = nil;
@@ -1100,7 +1100,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 - (void)enumerateRowidsMatching:(NSString *)query
              withSnippetOptions:(YapDatabaseFullTextSearchSnippetOptions *)inOptions
                      usingBlock:
-            (void (^)(NSString *snippet, int64_t rowid, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *snippet, int64_t rowid, BOOL *stop))block
 {
 	if (block == nil) return;
 	if ([query length] == 0) return;
@@ -1195,7 +1195,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 - (void)enumerateKeysMatching:(NSString *)query
            withSnippetOptions:(YapDatabaseFullTextSearchSnippetOptions *)options
                    usingBlock:
-            (void (^)(NSString *snippet, NSString *collection, NSString *key, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *snippet, NSString *collection, NSString *key, BOOL *stop))block
 {
 	[self enumerateRowidsMatching:query
 	           withSnippetOptions:options
@@ -1210,7 +1210,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 - (void)enumerateKeysAndMetadataMatching:(NSString *)query
                       withSnippetOptions:(YapDatabaseFullTextSearchSnippetOptions *)options
                               usingBlock:
-            (void (^)(NSString *snippet, NSString *collection, NSString *key, id metadata, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *snippet, NSString *collection, NSString *key, id metadata, BOOL *stop))block
 {
 	[self enumerateRowidsMatching:query
 	           withSnippetOptions:options
@@ -1227,7 +1227,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 - (void)enumerateKeysAndObjectsMatching:(NSString *)query
                      withSnippetOptions:(YapDatabaseFullTextSearchSnippetOptions *)options
                              usingBlock:
-            (void (^)(NSString *snippet, NSString *collection, NSString *key, id object, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *snippet, NSString *collection, NSString *key, id object, BOOL *stop))block
 {
 	[self enumerateRowidsMatching:query
 	           withSnippetOptions:options
@@ -1244,7 +1244,7 @@ static NSString *const ext_key__version_deprecated = @"version";
 - (void)enumerateRowsMatching:(NSString *)query
            withSnippetOptions:(YapDatabaseFullTextSearchSnippetOptions *)options
                    usingBlock:
-            (void (^)(NSString *snippet, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+            (void (NS_NOESCAPE^)(NSString *snippet, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
 {
 	[self enumerateRowidsMatching:query
 	           withSnippetOptions:options

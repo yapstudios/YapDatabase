@@ -255,7 +255,7 @@ static NSString *const changeset_key_reset            = @"reset";
 // Blob to go in 'modifiedRecords' column of database row.
 - (NSData *)serializeModifiedRecords;
 
-- (void)enumerateMissingRecordsWithBlock:(CKRecord* (^)(CKRecordID *recordID, NSArray *changedKeys))block;
+- (void)enumerateMissingRecordsWithBlock:(CKRecord* (NS_NOESCAPE^)(CKRecordID *recordID, NSArray *changedKeys))block;
 
 @end
 

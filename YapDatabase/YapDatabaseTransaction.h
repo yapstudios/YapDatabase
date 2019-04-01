@@ -186,7 +186,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This uses a "SELECT collection FROM database" operation,
  * and then steps over the results invoking the given block handler.
 **/
-- (void)enumerateCollectionsUsingBlock:(void (^)(NSString *collection, BOOL *stop))block;
+- (void)enumerateCollectionsUsingBlock:(void (NS_NOESCAPE^)(NSString *collection, BOOL *stop))block;
 
 /**
  * This method is rarely needed, but may be helpful in certain situations.
@@ -196,7 +196,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * Since there may be numerous collections for a given key, this method enumerates all possible collections.
 **/
-- (void)enumerateCollectionsForKey:(NSString *)key usingBlock:(void (^)(NSString *collection, BOOL *stop))block;
+- (void)enumerateCollectionsForKey:(NSString *)key usingBlock:(void (NS_NOESCAPE^)(NSString *collection, BOOL *stop))block;
 
 /**
  * Fast enumeration over all keys in the given collection.
@@ -205,7 +205,7 @@ NS_ASSUME_NONNULL_BEGIN
  * and then steps over the results invoking the given block handler.
 **/
 - (void)enumerateKeysInCollection:(nullable NSString *)collection
-                       usingBlock:(void (^)(NSString *key, BOOL *stop))block;
+                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, BOOL *stop))block;
 
 /**
  * Fast enumeration over all keys in the given collection.
@@ -213,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This uses a "SELECT collection, key FROM database" operation,
  * and then steps over the results invoking the given block handler.
 **/
-- (void)enumerateKeysInAllCollectionsUsingBlock:(void (^)(NSString *collection, NSString *key, BOOL *stop))block;
+- (void)enumerateKeysInAllCollectionsUsingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block;
 
 /**
  * Fast enumeration over all objects in the database.
@@ -226,7 +226,7 @@ NS_ASSUME_NONNULL_BEGIN
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
-                                 usingBlock:(void (^)(NSString *key, id object, BOOL *stop))block;
+                                 usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block;
 
 /**
  * Fast enumeration over objects in the database for which you're interested in.
@@ -237,8 +237,8 @@ NS_ASSUME_NONNULL_BEGIN
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
-                                 usingBlock:(void (^)(NSString *key, id object, BOOL *stop))block
-                                 withFilter:(nullable BOOL (^)(NSString *key))filter;
+                                 usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
+                                 withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter;
 
 /**
  * Enumerates all key/object pairs in all collections.
@@ -251,7 +251,7 @@ NS_ASSUME_NONNULL_BEGIN
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                                            (void (^)(NSString *collection, NSString *key, id object, BOOL *stop))block;
+                                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block;
 
 /**
  * Enumerates all key/object pairs in all collections.
@@ -265,8 +265,8 @@ NS_ASSUME_NONNULL_BEGIN
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                                            (void (^)(NSString *collection, NSString *key, id object, BOOL *stop))block
-                                 withFilter:(nullable BOOL (^)(NSString *collection, NSString *key))filter;
+                                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block
+                                 withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter;
 
 /**
  * Fast enumeration over all keys and associated metadata in the given collection.
@@ -280,7 +280,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
-                                  usingBlock:(void (^)(NSString *key, __nullable id metadata, BOOL *stop))block;
+                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Fast enumeration over all keys and associated metadata in the given collection.
@@ -292,8 +292,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
-                                  usingBlock:(void (^)(NSString *key, __nullable id metadata, BOOL *stop))block
-                                  withFilter:(nullable BOOL (^)(NSString *key))filter;
+                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, __nullable id metadata, BOOL *stop))block
+                                  withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter;
 
 
 
@@ -309,7 +309,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                            (void (^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block;
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Fast enumeration over all key/metadata pairs in all collections.
@@ -323,8 +323,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
  **/
 - (void)enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                            (void (^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block
-                 withFilter:(nullable BOOL (^)(NSString *collection, NSString *key))filter;
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block
+                 withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter;
 
 /**
  * Fast enumeration over all rows in the database.
@@ -337,7 +337,7 @@ NS_ASSUME_NONNULL_BEGIN
  * allowing you to skip the serialization step for those rows you're not interested in.
 **/
 - (void)enumerateRowsInCollection:(nullable NSString *)collection
-                       usingBlock:(void (^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block;
+                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Fast enumeration over rows in the database for which you're interested in.
@@ -348,8 +348,8 @@ NS_ASSUME_NONNULL_BEGIN
  * which avoids the cost associated with deserializing the object & metadata.
 **/
 - (void)enumerateRowsInCollection:(nullable NSString *)collection
-                       usingBlock:(void (^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block
-                       withFilter:(nullable BOOL (^)(NSString *key))filter;
+                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block
+                       withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter;
 
 /**
  * Enumerates all rows in all collections.
@@ -362,7 +362,7 @@ NS_ASSUME_NONNULL_BEGIN
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)enumerateRowsInAllCollectionsUsingBlock:
-                    (void (^)(NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Enumerates all rows in all collections.
@@ -376,8 +376,8 @@ NS_ASSUME_NONNULL_BEGIN
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)enumerateRowsInAllCollectionsUsingBlock:
-                    (void (^)(NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block
-         withFilter:(nullable BOOL (^)(NSString *collection, NSString *key))filter;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block
+         withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter;
 
 /**
  * Enumerates over the given list of keys (unordered).
@@ -393,7 +393,7 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)enumerateObjectsForKeys:(NSArray<NSString *> *)keys
                    inCollection:(nullable NSString *)collection
-            unorderedUsingBlock:(void (^)(NSUInteger keyIndex, id __nullable object, BOOL *stop))block;
+            unorderedUsingBlock:(void (NS_NOESCAPE^)(NSUInteger keyIndex, id __nullable object, BOOL *stop))block;
 
 /**
  * Enumerates over the given list of keys (unordered).
@@ -409,7 +409,7 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)enumerateMetadataForKeys:(NSArray<NSString *> *)keys
                     inCollection:(nullable NSString *)collection
-             unorderedUsingBlock:(void (^)(NSUInteger keyIndex, __nullable id metadata, BOOL *stop))block;
+             unorderedUsingBlock:(void (NS_NOESCAPE^)(NSUInteger keyIndex, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Enumerates over the given list of keys (unordered).
@@ -425,7 +425,7 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)enumerateRowsForKeys:(NSArray<NSString *> *)keys
                 inCollection:(nullable NSString *)collection
-         unorderedUsingBlock:(void (^)(NSUInteger keyIndex, __nullable id object, __nullable id metadata, BOOL *stop))block;
+         unorderedUsingBlock:(void (NS_NOESCAPE^)(NSUInteger keyIndex, __nullable id object, __nullable id metadata, BOOL *stop))block;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Extensions

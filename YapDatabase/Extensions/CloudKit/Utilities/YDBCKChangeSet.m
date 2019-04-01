@@ -212,7 +212,7 @@ databaseIdentifier:(NSString *)inDatabaseIdentifier
 	}
 }
 
-- (void)enumerateMissingRecordsWithBlock:(CKRecord* (^)(CKRecordID *recordID, NSArray *changedKeys))block
+- (void)enumerateMissingRecordsWithBlock:(CKRecord* (NS_NOESCAPE^)(CKRecordID *recordID, NSArray *changedKeys))block
 {
 	for (YDBCKChangeRecord *changeRecord in [modifiedRecords objectEnumerator])
 	{

@@ -45,9 +45,9 @@
 
 - (id)objectForKey:(id)key;
 
-- (void)enumerateKeysWithBlock:(void (^)(id key, BOOL *stop))block;
+- (void)enumerateKeysWithBlock:(void (NS_NOESCAPE^)(id key, BOOL *stop))block;
 
-- (void)enumerateKeysAndObjectsWithBlock:(void (^)(id key, id obj, BOOL *stop))block;
+- (void)enumerateKeysAndObjectsWithBlock:(void (NS_NOESCAPE^)(id key, id obj, BOOL *stop))block;
 
 //
 // For ReadWrite transactions:
