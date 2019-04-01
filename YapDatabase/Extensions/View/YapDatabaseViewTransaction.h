@@ -124,13 +124,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Enumerates the groups in the view.
 **/
-- (void)enumerateGroupsUsingBlock:(void (^)(NSString *group, BOOL *stop))block;
+- (void)enumerateGroupsUsingBlock:(void (NS_NOESCAPE^)(NSString *group, BOOL *stop))block;
 
 /**
  * Enumerates the keys in the given group.
 **/
 - (void)enumerateKeysInGroup:(NSString *)group
-                  usingBlock:(void (^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
+                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
 
 /**
  * Enumerates the keys in the given group.
@@ -138,7 +138,7 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)enumerateKeysInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
-                  usingBlock:(void (^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
+                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
 
 /**
  * Enumerates the keys in the range of the given group.
@@ -147,7 +147,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)enumerateKeysInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                        range:(NSRange)range
-                  usingBlock:(void (^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
+                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
 
 @end
 
@@ -270,26 +270,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                              usingBlock:
-                    (void (^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                             withOptions:(NSEnumerationOptions)options
                              usingBlock:
-                    (void (^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                             withOptions:(NSEnumerationOptions)options
                                   range:(NSRange)range
                              usingBlock:
-                    (void (^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                             withOptions:(NSEnumerationOptions)options
                                   range:(NSRange)range
                                  filter:
-                    (BOOL (^)(NSString *collection, NSString *key))filter
+                    (BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
                              usingBlock:
-                    (void (^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
 
 /**
  * The following methods are similar to invoking the enumerateKeysInGroup:... methods,
@@ -298,26 +298,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                             usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                            withOptions:(NSEnumerationOptions)options
                             usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                            withOptions:(NSEnumerationOptions)options
                                  range:(NSRange)range
                             usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                            withOptions:(NSEnumerationOptions)options
                                  range:(NSRange)range
                                 filter:
-            (BOOL (^)(NSString *collection, NSString *key))filter
+            (BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
                             usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
 
 /**
  * The following methods are similar to invoking the enumerateKeysInGroup:... methods,
@@ -326,26 +326,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enumerateRowsInGroup:(NSString *)group
                   usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateRowsInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                   usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateRowsInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                        range:(NSRange)range
                   usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
 
 - (void)enumerateRowsInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                        range:(NSRange)range
                       filter:
-            (BOOL (^)(NSString *collection, NSString *key))filter
+            (BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
                   usingBlock:
-            (void (^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
 
 @end
 

@@ -416,7 +416,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 	}
 }
 
-- (void)enumerateKeysWithBlock:(void (^)(id key, BOOL *stop))block
+- (void)enumerateKeysWithBlock:(void (NS_NOESCAPE^)(id key, BOOL *stop))block
 {
 	NSDictionary *nsdict = (__bridge NSDictionary *)cfdict;
 	BOOL stop = NO;
@@ -429,7 +429,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 	}
 }
 
-- (void)enumerateKeysAndObjectsWithBlock:(void (^)(id key, id obj, BOOL *stop))block
+- (void)enumerateKeysAndObjectsWithBlock:(void (NS_NOESCAPE^)(id key, id obj, BOOL *stop))block
 {
 	NSDictionary *nsdict = (__bridge NSDictionary *)cfdict;
 	

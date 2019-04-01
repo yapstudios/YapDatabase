@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   The name of the edge (case sensitive).
 **/
 - (void)enumerateEdgesWithName:(NSString *)name
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
 
 /**
  * Enumerates every edge that matches any parameters you specify.
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)enumerateEdgesWithName:(nullable NSString *)name
                      sourceKey:(nullable NSString *)sourceKey
                     collection:(nullable NSString *)sourceCollection
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
 
 /**
  * Enumerates every edge that matches any parameters you specify.
@@ -101,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)enumerateEdgesWithName:(nullable NSString *)name
                 destinationKey:(nullable NSString *)destinationKey
                     collection:(nullable NSString *)destinationCollection
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
 
 /**
  * Enumerates every edge that matches any parameters you specify.
@@ -119,7 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)enumerateEdgesWithName:(nullable NSString *)name
             destinationFileURL:(nullable NSURL *)destinationFileURL
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
 
 /**
  * Enumerates every edge that matches any parameters you specify.
@@ -158,7 +158,7 @@ NS_ASSUME_NONNULL_BEGIN
                     collection:(nullable NSString *)sourceCollection
                 destinationKey:(nullable NSString *)destinationKey
                     collection:(nullable NSString *)destinationCollection
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
 
 /**
  * Enumerates every edge that matches any parameters you specify.
@@ -190,7 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
                      sourceKey:(nullable NSString *)sourceKey
                     collection:(nullable NSString *)sourceCollection
             destinationFileURL:(nullable NSURL *)destinationFileURL
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
 
 #pragma mark Count
 

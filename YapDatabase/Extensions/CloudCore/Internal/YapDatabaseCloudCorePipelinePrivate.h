@@ -51,7 +51,7 @@
 
 - (YapDatabaseCloudCoreOperation *)_operationWithUUID:(NSUUID *)uuid;
 
-- (void)_enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                                 NSUInteger graphIdx, BOOL *stop))enumBlock;
+- (void)_enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                            NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 @end

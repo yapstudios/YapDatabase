@@ -2385,9 +2385,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 /**
  * Use this method to skip/abort operations (across all registered pipelines).
 **/
-- (void)skipOperationsPassingTest:(BOOL (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                            YapDatabaseCloudCoreOperation *operation,
-                                            NSUInteger graphIdx, BOOL *stop))testBlock
+- (void)skipOperationsPassingTest:(BOOL (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                       YapDatabaseCloudCoreOperation *operation,
+                                                       NSUInteger graphIdx, BOOL *stop))testBlock
 {
 	YDBLogAutoTrace();
 	
@@ -2436,8 +2436,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
  * Use this method to skip/abort operations in a specific pipeline.
 **/
 - (void)skipOperationsInPipeline:(NSString *)pipelineName
-                     passingTest:(BOOL (^)(YapDatabaseCloudCoreOperation *operation,
-                                           NSUInteger graphIdx, BOOL *stop))testBlock;
+                     passingTest:(BOOL (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                      NSUInteger graphIdx, BOOL *stop))testBlock;
 {
 	YDBLogAutoTrace();
 	
@@ -2741,9 +2741,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 /**
  * Public API
 **/
-- (void)enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                               YapDatabaseCloudCoreOperation *operation,
-                                               NSUInteger graphIdx, BOOL *stop))enumBlock
+- (void)enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                           YapDatabaseCloudCoreOperation *operation,
+                                                           NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	[self _enumerateOperationsUsingBlock:
 	    ^(YapDatabaseCloudCorePipeline *pipeline,
@@ -2758,7 +2758,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 **/
 - (void)enumerateOperationsInPipeline:(NSString *)pipelineName
                            usingBlock:
-    (void (^)(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop))enumBlock
+    (void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	[self _enumerateOperationsInPipeline:pipelineName
 									  usingBlock:^(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop)
@@ -2770,9 +2770,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 /**
  * Public API
 **/
-- (void)enumerateAddedOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                                     YapDatabaseCloudCoreOperation *operation,
-                                                     NSUInteger graphIdx, BOOL *stop))enumBlock
+- (void)enumerateAddedOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                                YapDatabaseCloudCoreOperation *operation,
+                                                                NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	if (enumBlock == nil) return;
 	if (databaseTransaction->isReadWriteTransaction == NO) return;
@@ -2792,8 +2792,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
  * Public API
 **/
 - (void)enumerateAddedOperationsInPipeline:(NSString *)pipelineName
-                                usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                                     NSUInteger graphIdx, BOOL *stop))enumBlock
+                                usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                                NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	if (enumBlock == nil) return;
 	if (databaseTransaction->isReadWriteTransaction == NO) return;
@@ -2816,9 +2816,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
  * The public version returns a copy of the operation (for safety).
  * The internal version returns the operation sans copy (only safe for internal components).
 **/
-- (void)_enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                                 YapDatabaseCloudCoreOperation *operation,
-                                                 NSUInteger graphIdx, BOOL *stop))enumBlock
+- (void)_enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                            YapDatabaseCloudCoreOperation *operation,
+                                                            NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	if (enumBlock == nil) return;
 	
@@ -2869,7 +2869,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 **/
 - (void)_enumerateOperationsInPipeline:(NSString *)pipelineName
                             usingBlock:
-    (void (^)(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop))enumBlock
+    (void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation, NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	if (enumBlock == nil) return;
 	
@@ -2905,9 +2905,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
  * Allows for enumeration of all existing, inserted & added operations (filtering as needed via parameter).
 **/
 - (void)_enumerateOperations:(YDBCloudCore_EnumOps)flags
-                  usingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                       YapDatabaseCloudCoreOperation *operation,
-                                       NSUInteger graphIdx, BOOL *stop))enumBlock
+                  usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                  YapDatabaseCloudCoreOperation *operation,
+                                                  NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	[self _enumerateAndModifyOperations:flags
 	                         usingBlock:
@@ -2926,8 +2926,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 **/
 - (void)_enumerateOperations:(YDBCloudCore_EnumOps)flags
                   inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
-                  usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                       NSUInteger graphIdx, BOOL *stop))enumBlock
+                  usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                  NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	[self _enumerateAndModifyOperations:flags
 	                         inPipeline:pipeline
@@ -2947,9 +2947,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 **/
 - (void)_enumerateAndModifyOperations:(YDBCloudCore_EnumOps)flags
                            usingBlock:(YapDatabaseCloudCoreOperation *
-                                      (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                          YapDatabaseCloudCoreOperation *operation,
-                                          NSUInteger graphIdx, BOOL *stop))enumBlock
+                                      (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                     YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	NSAssert(databaseTransaction->isReadWriteTransaction, @"Oops");
 	if (enumBlock == nil) return;
@@ -2977,8 +2977,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 - (void)_enumerateAndModifyOperations:(YDBCloudCore_EnumOps)flags
                            inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
                            usingBlock:(YapDatabaseCloudCoreOperation *
-                                      (^)(YapDatabaseCloudCoreOperation *operation,
-                                          NSUInteger graphIdx, BOOL *stop))enumBlock
+                                      (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                     NSUInteger graphIdx, BOOL *stop))enumBlock
 {
 	NSAssert(databaseTransaction->isReadWriteTransaction, @"Oops");
 	if (enumBlock == nil) return;
@@ -3488,7 +3488,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 }
 
 - (void)enumerateAttachedForCloudURI:(NSString *)cloudURI
-                          usingBlock:(void (^)(NSString *key, NSString *collection, BOOL pending, BOOL *stop))block
+                          usingBlock:(void (NS_NOESCAPE^)(NSString *key, NSString *collection, BOOL pending, BOOL *stop))block
 {
 	BOOL stop = NO;
 	
@@ -3517,7 +3517,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 
 - (void)enumerateAttachedForKey:(NSString *)key
                      collection:(nullable NSString *)collection
-                     usingBlock:(void (^)(NSString *cloudURI, BOOL *stop))block
+                     usingBlock:(void (NS_NOESCAPE^)(NSString *cloudURI, BOOL *stop))block
 {
 	int64_t rowid = 0;
 	if ([databaseTransaction getRowid:&rowid forKey:key inCollection:collection])

@@ -384,71 +384,71 @@ static NSString *const ext_key_class = @"class";
         withRowid:(int64_t)rowid;
 
 - (void)_enumerateKeysInCollection:(NSString *)collection
-                        usingBlock:(void (^)(int64_t rowid, NSString *key, BOOL *stop))block;
+                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, BOOL *stop))block;
 
 - (void)_enumerateKeysInCollections:(NSArray *)collections
-                         usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block;
+                         usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block;
 
 - (void)_enumerateKeysInAllCollectionsUsingBlock:
-                            (void (^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block;
+                            (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block;
 
 - (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
-                                   usingBlock:(void (^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block;
+                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block;
 - (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
-                                   usingBlock:(void (^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
-                                   withFilter:(BOOL (^)(int64_t rowid, NSString *key))filter;
+                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
+                                   withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
 
 - (void)_enumerateKeysAndMetadataInCollections:(NSArray *)collections
-                usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block;
+                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block;
 - (void)_enumerateKeysAndMetadataInCollections:(NSArray *)collections
-                usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
-                withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter;
+                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
 - (void)_enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                        (void (^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block;
+                        (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block;
 - (void)_enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                        (void (^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
-             withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter;
+                        (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
+             withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
 - (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
-                                  usingBlock:(void (^)(int64_t rowid, NSString *key, id object, BOOL *stop))block;
+                                  usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block;
 - (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
-                                  usingBlock:(void (^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
-                                  withFilter:(BOOL (^)(int64_t rowid, NSString *key))filter;
+                                  usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
+                                  withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
 
 - (void)_enumerateKeysAndObjectsInCollections:(NSArray *)collections
-                 usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block;
+                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block;
 - (void)_enumerateKeysAndObjectsInCollections:(NSArray *)collections
-                 usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
-                 withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter;
+                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
+                 withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
 - (void)_enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                            (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block;
+                            (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block;
 - (void)_enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                            (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
-                 withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter;
+                            (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
+                 withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
 - (void)_enumerateRowsInCollection:(NSString *)collection
-                        usingBlock:(void (^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block;
+                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block;
 - (void)_enumerateRowsInCollection:(NSString *)collection
-                        usingBlock:(void (^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
-                        withFilter:(BOOL (^)(int64_t rowid, NSString *key))filter;
+                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
+                        withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
 
 - (void)_enumerateRowsInCollections:(NSArray *)collections
-     usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
+     usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
 - (void)_enumerateRowsInCollections:(NSArray *)collections
-     usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
-     withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter;
+     usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+     withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
 - (void)_enumerateRowsInAllCollectionsUsingBlock:
-                (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
+                (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
 - (void)_enumerateRowsInAllCollectionsUsingBlock:
-                (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
-     withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter;
+                (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+     withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
 - (void)_enumerateRowidsForKeys:(NSArray *)keys
                    inCollection:(NSString *)collection
-            unorderedUsingBlock:(void (^)(NSUInteger keyIndex, int64_t rowid, BOOL *stop))block;
+            unorderedUsingBlock:(void (NS_NOESCAPE^)(NSUInteger keyIndex, int64_t rowid, BOOL *stop))block;
 
 @end
 

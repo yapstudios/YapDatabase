@@ -214,8 +214,8 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * This is useful for finding operation.
  * For example, you might use this to search for an upload operation with a certain cloudPath.
 **/
-- (void)enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                                NSUInteger graphIdx, BOOL *stop))enumBlock;
+- (void)enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                           NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 /**
  * Returns the number of graphs queued in the pipeline.

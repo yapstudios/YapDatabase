@@ -37,19 +37,19 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 
 - (BOOL)enumerateKeysMatchingQuery:(YapDatabaseQuery *)query
-                        usingBlock:(void (^)(NSString *collection, NSString *key, BOOL *stop))block;
+                        usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block;
 
 - (BOOL)enumerateKeysAndMetadataMatchingQuery:(YapDatabaseQuery *)query
                                    usingBlock:
-                            (void (^)(NSString *collection, NSString *key, _Nullable id metadata, BOOL *stop))block;
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, _Nullable id metadata, BOOL *stop))block;
 
 - (BOOL)enumerateKeysAndObjectsMatchingQuery:(YapDatabaseQuery *)query
                                   usingBlock:
-                            (void (^)(NSString *collection, NSString *key, id object, BOOL *stop))block;
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block;
 
 - (BOOL)enumerateRowsMatchingQuery:(YapDatabaseQuery *)query
                         usingBlock:
-                            (void (^)(NSString *collection, NSString *key, id object, _Nullable id metadata, BOOL *stop))block;
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, _Nullable id metadata, BOOL *stop))block;
 /**
  * Skips the enumeration process, and just gives you the count of matching rows.
 **/

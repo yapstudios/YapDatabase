@@ -61,12 +61,12 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Enumerates all key/value pairs, including both "dirty" & "clean" values.
 **/
-- (void)enumerateKeysAndObjectsUsingBlock:(void (^)(KeyType key, ObjectType obj, BOOL *stop))block;
+- (void)enumerateKeysAndObjectsUsingBlock:(void (NS_NOESCAPE^)(KeyType key, ObjectType obj, BOOL *stop))block;
 
 /**
  * Enumerates only the key/value pairs that are dirty (current value differs from original value).
 **/
-- (void)enumerateDirtyKeysAndObjectsUsingBlock:(void (^)(KeyType key, ObjectType obj, BOOL *stop))block;
+- (void)enumerateDirtyKeysAndObjectsUsingBlock:(void (NS_NOESCAPE^)(KeyType key, ObjectType obj, BOOL *stop))block;
 
 @end
 

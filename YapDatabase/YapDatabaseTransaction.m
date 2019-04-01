@@ -1560,7 +1560,7 @@
  * This uses a "SELECT collection FROM database" operation,
  * and then steps over the results invoking the given block handler.
 **/
-- (void)enumerateCollectionsUsingBlock:(void (^)(NSString *collection, BOOL *stop))block
+- (void)enumerateCollectionsUsingBlock:(void (NS_NOESCAPE^)(NSString *collection, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -1609,7 +1609,7 @@
  * 
  * Since there may be numerous collections for a given key, this method enumerates all possible collections.
 **/
-- (void)enumerateCollectionsForKey:(NSString *)key usingBlock:(void (^)(NSString *collection, BOOL *stop))block
+- (void)enumerateCollectionsForKey:(NSString *)key usingBlock:(void (NS_NOESCAPE^)(NSString *collection, BOOL *stop))block
 {
 	if (key == nil) return;
 	if (block == NULL) return;
@@ -1663,7 +1663,7 @@
  * and then steps over the results invoking the given block handler.
 **/
 - (void)enumerateKeysInCollection:(NSString *)collection
-                       usingBlock:(void (^)(NSString *key, BOOL *stop))block
+                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -1679,7 +1679,7 @@
  * This uses a "SELECT collection, key FROM database" operation,
  * and then steps over the results invoking the given block handler.
 **/
-- (void)enumerateKeysInAllCollectionsUsingBlock:(void (^)(NSString *collection, NSString *key, BOOL *stop))block
+- (void)enumerateKeysInAllCollectionsUsingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -1700,7 +1700,7 @@
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)enumerateKeysAndObjectsInCollection:(NSString *)collection
-                                 usingBlock:(void (^)(NSString *key, id object, BOOL *stop))block
+                                 usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
 {
 	[self enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:NULL];
 }
@@ -1714,8 +1714,8 @@
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)enumerateKeysAndObjectsInCollection:(NSString *)collection
-                                 usingBlock:(void (^)(NSString *key, id object, BOOL *stop))block
-                                 withFilter:(BOOL (^)(NSString *key))filter
+                                 usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
+                                 withFilter:(BOOL (NS_NOESCAPE^)(NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -1753,7 +1753,7 @@
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                            (void (^)(NSString *collection, NSString *key, id object, BOOL *stop))block
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block
 {
 	[self enumerateKeysAndObjectsInAllCollectionsUsingBlock:block withFilter:NULL];
 }
@@ -1770,8 +1770,8 @@
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                            (void (^)(NSString *collection, NSString *key, id object, BOOL *stop))block
-                 withFilter:(BOOL (^)(NSString *collection, NSString *key))filter
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block
+                 withFilter:(BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -1810,7 +1810,7 @@
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)enumerateKeysAndMetadataInCollection:(NSString *)collection
-                                  usingBlock:(void (^)(NSString *key, id metadata, BOOL *stop))block
+                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, id metadata, BOOL *stop))block
 {
 	[self enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:NULL];
 }
@@ -1825,8 +1825,8 @@
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)enumerateKeysAndMetadataInCollection:(NSString *)collection
-                                  usingBlock:(void (^)(NSString *key, id metadata, BOOL *stop))block
-                                  withFilter:(BOOL (^)(NSString *key))filter
+                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, id metadata, BOOL *stop))block
+                                  withFilter:(BOOL (NS_NOESCAPE^)(NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -1865,7 +1865,7 @@
  * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                                        (void (^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                                        (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
 {
 	[self enumerateKeysAndMetadataInAllCollectionsUsingBlock:block withFilter:NULL];
 }
@@ -1882,8 +1882,8 @@
  * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
  **/
 - (void)enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                                        (void (^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
-                             withFilter:(BOOL (^)(NSString *collection, NSString *key))filter
+                                        (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                             withFilter:(BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -1921,7 +1921,7 @@
  * allowing you to skip the serialization step for those rows you're not interested in.
 **/
 - (void)enumerateRowsInCollection:(NSString *)collection
-                       usingBlock:(void (^)(NSString *key, id object, id metadata, BOOL *stop))block
+                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, id metadata, BOOL *stop))block
 {
 	[self enumerateRowsInCollection:collection usingBlock:block withFilter:NULL];
 }
@@ -1935,8 +1935,8 @@
  * which avoids the cost associated with deserializing the object & metadata.
 **/
 - (void)enumerateRowsInCollection:(NSString *)collection
-                       usingBlock:(void (^)(NSString *key, id object, id metadata, BOOL *stop))block
-                       withFilter:(BOOL (^)(NSString *key))filter
+                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, id metadata, BOOL *stop))block
+                       withFilter:(BOOL (NS_NOESCAPE^)(NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -1974,7 +1974,7 @@
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)enumerateRowsInAllCollectionsUsingBlock:
-                            (void (^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
 {
 	[self enumerateRowsInAllCollectionsUsingBlock:block withFilter:NULL];
 }
@@ -1991,8 +1991,8 @@
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)enumerateRowsInAllCollectionsUsingBlock:
-                            (void (^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
-                 withFilter:(BOOL (^)(NSString *collection, NSString *key))filter
+                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+                 withFilter:(BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -2033,7 +2033,7 @@
 **/
 - (void)enumerateObjectsForKeys:(NSArray *)keys
                    inCollection:(NSString *)collection
-            unorderedUsingBlock:(void (^)(NSUInteger keyIndex, id object, BOOL *stop))block
+            unorderedUsingBlock:(void (NS_NOESCAPE^)(NSUInteger keyIndex, id object, BOOL *stop))block
 {
 	if (block == NULL) return;
 	if ([keys count] == 0) return;
@@ -2242,7 +2242,7 @@
 **/
 - (void)enumerateMetadataForKeys:(NSArray *)keys
                     inCollection:(NSString *)collection
-             unorderedUsingBlock:(void (^)(NSUInteger keyIndex, id metadata, BOOL *stop))block
+             unorderedUsingBlock:(void (NS_NOESCAPE^)(NSUInteger keyIndex, id metadata, BOOL *stop))block
 {
 	if (block == NULL) return;
 	if ([keys count] == 0) return;
@@ -2453,7 +2453,7 @@
 **/
 - (void)enumerateRowsForKeys:(NSArray *)keys
                 inCollection:(NSString *)collection
-         unorderedUsingBlock:(void (^)(NSUInteger keyIndex, id object, id metadata, BOOL *stop))block
+         unorderedUsingBlock:(void (NS_NOESCAPE^)(NSUInteger keyIndex, id object, id metadata, BOOL *stop))block
 {
 	if (block == NULL) return;
 	if ([keys count] == 0) return;
@@ -2698,7 +2698,7 @@
  * and then steps over the results invoking the given block handler.
 **/
 - (void)_enumerateKeysInCollection:(NSString *)collection
-                        usingBlock:(void (^)(int64_t rowid, NSString *key, BOOL *stop))block
+                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, BOOL *stop))block
 {
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
@@ -2755,7 +2755,7 @@
  * and then steps over the results invoking the given block handler.
 **/
 - (void)_enumerateKeysInCollections:(NSArray *)collections
-                         usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block
+                         usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block
 {
 	if (block == NULL) return;
 	if ([collections count] == 0) return;
@@ -2821,7 +2821,7 @@
  * and then steps over the results invoking the given block handler.
 **/
 - (void)_enumerateKeysInAllCollectionsUsingBlock:
-                            (void (^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block
+                            (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block
 {
 	if (block == NULL) return;
 	
@@ -2883,7 +2883,7 @@
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
-                                  usingBlock:(void (^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
+                                  usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
 {
 	[self _enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:NULL];
 }
@@ -2897,8 +2897,8 @@
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
-                                  usingBlock:(void (^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
-                                  withFilter:(BOOL (^)(int64_t rowid, NSString *key))filter
+                                  usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
+                                  withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
 {
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
@@ -2994,7 +2994,7 @@
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)_enumerateKeysAndObjectsInCollections:(NSArray *)collections usingBlock:
-                            (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
+                            (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
 {
 	[self _enumerateKeysAndObjectsInCollections:collections usingBlock:block withFilter:NULL];
 }
@@ -3008,8 +3008,8 @@
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)_enumerateKeysAndObjectsInCollections:(NSArray *)collections
-                 usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
-                 withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter
+                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
+                 withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	if ([collections count] == 0) return;
@@ -3118,7 +3118,7 @@
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)_enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                            (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
+                            (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
 {
 	[self _enumerateKeysAndObjectsInAllCollectionsUsingBlock:block withFilter:NULL];
 }
@@ -3135,8 +3135,8 @@
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)_enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                            (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
-                 withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter
+                            (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
+                 withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -3224,7 +3224,7 @@
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
-                                   usingBlock:(void (^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
+                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
 {
 	[self _enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:NULL];
 }
@@ -3239,8 +3239,8 @@
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
-                                   usingBlock:(void (^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
-                                   withFilter:(BOOL (^)(int64_t rowid, NSString *key))filter
+                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
+                                   withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
 {
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
@@ -3348,7 +3348,7 @@
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)_enumerateKeysAndMetadataInCollections:(NSArray *)collections
-                usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
 {
 	[self _enumerateKeysAndMetadataInCollections:collections usingBlock:block withFilter:NULL];
 }
@@ -3363,8 +3363,8 @@
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)_enumerateKeysAndMetadataInCollections:(NSArray *)collections
-                usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
-                withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter
+                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	if ([collections count] == 0) return;
@@ -3484,7 +3484,7 @@
  * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)_enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                        (void (^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                        (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
 {
 	[self _enumerateKeysAndMetadataInAllCollectionsUsingBlock:block withFilter:NULL];
 }
@@ -3501,8 +3501,8 @@
  * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
  **/
 - (void)_enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                        (void (^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
-             withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter
+                        (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
+             withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -3610,7 +3610,7 @@
  * allowing you to skip the serialization step for those rows you're not interested in.
 **/
 - (void)_enumerateRowsInCollection:(NSString *)collection
-                        usingBlock:(void (^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
+                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
 {
 	[self _enumerateRowsInCollection:collection usingBlock:block withFilter:NULL];
 }
@@ -3624,8 +3624,8 @@
  * which avoids the cost associated with deserializing the object & metadata.
 **/
 - (void)_enumerateRowsInCollection:(NSString *)collection
-                        usingBlock:(void (^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
-                        withFilter:(BOOL (^)(int64_t rowid, NSString *key))filter
+                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
+                        withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
 {
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
@@ -3760,7 +3760,7 @@
  * allowing you to skip the serialization step for those rows you're not interested in.
 **/
 - (void)_enumerateRowsInCollections:(NSArray *)collections usingBlock:
-                (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+                (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
 {
 	[self _enumerateRowsInCollections:collections usingBlock:block withFilter:NULL];
 }
@@ -3774,8 +3774,8 @@
  * which avoids the cost associated with deserializing the object & metadata.
 **/
 - (void)_enumerateRowsInCollections:(NSArray *)collections
-     usingBlock:(void (^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
-     withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter
+     usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+     withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	if ([collections count] == 0) return;
@@ -3923,7 +3923,7 @@
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)_enumerateRowsInAllCollectionsUsingBlock:
-                (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+                (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
 {
 	[self _enumerateRowsInAllCollectionsUsingBlock:block withFilter:NULL];
 }
@@ -3940,8 +3940,8 @@
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)_enumerateRowsInAllCollectionsUsingBlock:
-                (void (^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
-     withFilter:(BOOL (^)(int64_t rowid, NSString *collection, NSString *key))filter
+                (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+     withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -4054,7 +4054,7 @@
 **/
 - (void)_enumerateRowidsForKeys:(NSArray *)keys
                    inCollection:(NSString *)collection
-            unorderedUsingBlock:(void (^)(NSUInteger keyIndex, int64_t rowid, BOOL *stop))block
+            unorderedUsingBlock:(void (NS_NOESCAPE^)(NSUInteger keyIndex, int64_t rowid, BOOL *stop))block
 {
 	if (block == NULL) return;
 	if (keys.count == 0) return;

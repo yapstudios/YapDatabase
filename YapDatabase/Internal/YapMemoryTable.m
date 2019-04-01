@@ -298,7 +298,7 @@
 	return result;
 }
 
-- (void)enumerateKeysWithBlock:(void (^)(id key, BOOL *stop))userBlock
+- (void)enumerateKeysWithBlock:(void (NS_NOESCAPE^)(id key, BOOL *stop))userBlock
 {
 	dispatch_block_t block = ^{ @autoreleasepool {
 	#pragma clang diagnostic push
@@ -333,7 +333,7 @@
 		dispatch_sync(table->queue, block);
 }
 
-- (void)enumerateKeysAndObjectsWithBlock:(void (^)(id key, id obj, BOOL *stop))userBlock
+- (void)enumerateKeysAndObjectsWithBlock:(void (NS_NOESCAPE^)(id key, id obj, BOOL *stop))userBlock
 {
 	dispatch_block_t block = ^{ @autoreleasepool {
 	#pragma clang diagnostic push
