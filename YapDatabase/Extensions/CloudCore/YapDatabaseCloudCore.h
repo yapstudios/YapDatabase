@@ -22,8 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
  * The default version uses NSCoding.
  * However, an alternative may be substitued if desired.
 **/
-typedef NSData* (^YDBCloudCoreOperationSerializer)(YapDatabaseCloudCoreOperation *operation);
-typedef YapDatabaseCloudCoreOperation* (^YDBCloudCoreOperationDeserializer)(NSData *operationBlob);
+typedef NSData*_Nonnull (^YDBCloudCoreOperationSerializer)(YapDatabaseCloudCoreOperation *operation);
+typedef YapDatabaseCloudCoreOperation*_Nonnull (^YDBCloudCoreOperationDeserializer)(NSData *operationBlob);
 
 
 extern NSString *const YapDatabaseCloudCoreDefaultPipelineName; // = @"default";
