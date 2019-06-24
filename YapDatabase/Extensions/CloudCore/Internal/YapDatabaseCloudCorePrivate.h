@@ -220,6 +220,9 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
                                       (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
                                                      NSUInteger graphIdx, BOOL *stop))enumBlock;
 
+- (void)_enumerateAttachedForRowid:(int64_t)rowid
+                        usingBlock:(void (NS_NOESCAPE^)(NSString *cloudURI, BOOL *stop))block;
+
 /**
  * Throw this if an attempt is made to invoke a read-write action within a read-only transaction.
 **/

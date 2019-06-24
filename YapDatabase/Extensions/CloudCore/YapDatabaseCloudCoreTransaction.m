@@ -3519,8 +3519,10 @@ static NSString *const ext_key_versionTag   = @"versionTag";
                      collection:(nullable NSString *)collection
                      usingBlock:(void (NS_NOESCAPE^)(NSString *cloudURI, BOOL *stop))block
 {
+	YapCollectionKey *collectionKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
+	
 	int64_t rowid = 0;
-	if ([databaseTransaction getRowid:&rowid forKey:key inCollection:collection])
+	if ([databaseTransaction getRowid:&rowid forCollectionKey:collectionKey])
 	{
 		NSSet<NSString*> *cloudURIs = [self allAttachedCloudURIsForRowid:rowid];
 		
@@ -3534,13 +3536,25 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	}
 	else if (parentConnection->pendingAttachRequests)
 	{
-		YapCollectionKey *collectionKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
-		
 		[parentConnection->pendingAttachRequests enumerateValuesForKey:collectionKey
 		                                                     withBlock:^(NSString *cloudURI, id metadata, BOOL *stop)
 		{
 			block(cloudURI, stop);
 		}];
+	}
+}
+
+- (void)_enumerateAttachedForRowid:(int64_t)rowid
+                        usingBlock:(void (NS_NOESCAPE^)(NSString *cloudURI, BOOL *stop))block
+{
+	NSSet<NSString*> *cloudURIs = [self allAttachedCloudURIsForRowid:rowid];
+	
+	BOOL stop = NO;
+	for (NSString *cloudURI in cloudURIs)
+	{
+		block(cloudURI, &stop);
+		
+		if (stop) break;
 	}
 }
 
