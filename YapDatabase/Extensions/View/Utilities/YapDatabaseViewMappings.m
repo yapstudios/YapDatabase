@@ -515,7 +515,7 @@
 	
 	NSUInteger count = [[counts objectForKey:group] unsignedIntegerValue];
 	
-	NSUInteger desiredLength = rangeOpts.length;
+	NSUInteger desiredLength = rangeOpts.isFixedRange ? rangeOpts.maxLength : rangeOpts.length;
 	NSUInteger offset = rangeOpts.offset;
 	
 	NSUInteger maxLength = (offset >= count) ? 0 : count - offset;
