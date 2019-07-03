@@ -1707,6 +1707,106 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 #pragma mark Utilities - tag
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+- (id)tagForStatement:(sqlite3_stmt *)statement column:(int)column_idx_tag
+{
+	id tag = nil;
+	const int column_type = sqlite3_column_type(statement, column_idx_tag);
+	
+	if (column_type == SQLITE_INTEGER)
+	{
+		int64_t value = sqlite3_column_int64(statement, column_idx_tag);
+		
+		tag = @(value);
+	}
+	else if (column_type == SQLITE_FLOAT)
+	{
+		double value = sqlite3_column_double(statement, column_idx_tag);
+		
+		tag = @(value);
+	}
+	else if (column_type == SQLITE_TEXT)
+	{
+		const unsigned char *text = sqlite3_column_text(statement, column_idx_tag);
+		int textLen = sqlite3_column_bytes(statement, column_idx_tag);
+		
+		tag = [[NSString alloc] initWithBytes:text length:textLen encoding:NSUTF8StringEncoding];
+	}
+	else if (column_type == SQLITE_BLOB)
+	{
+		const void *blob = sqlite3_column_blob(statement, column_idx_tag);
+		int blobSize = sqlite3_column_bytes(statement, column_idx_tag);
+		
+		tag = [NSData dataWithBytes:(void *)blob length:blobSize];
+	}
+	
+	return tag;
+}
+
+- (NSDictionary<NSString*, id> *)allTagsForKey:(NSString *)key
+{
+	if (key == nil) return nil;
+	
+	NSAssert(parentConnection->parent->options.enableTagSupport, @"YapDatabaseCloudCoreOptions.enableTagSupport == NO");
+	
+	NSMutableDictionary *results = [NSMutableDictionary dictionary];
+	
+	sqlite3_stmt *statement = [parentConnection tagTable_enumerateForKeyStatement];
+	if (statement == NULL) {
+		return nil;
+	}
+	
+	// SELECT "identifier", "tag" FROM "<tagTableName>" WHERE "key" = ?;
+	
+	const int bind_idx_key = SQLITE_BIND_START + 0;
+	
+	YapDatabaseString _key; MakeYapDatabaseString(&_key, key);
+	sqlite3_bind_text(statement, bind_idx_key, _key.str, _key.length, SQLITE_STATIC);
+	
+	const int column_idx_identifier = SQLITE_COLUMN_START + 0;
+	const int column_idx_tag        = SQLITE_COLUMN_START + 1;
+	
+	int status;
+	while ((status = sqlite3_step(statement)) == SQLITE_ROW)
+	{
+		const unsigned char *text = sqlite3_column_text(statement, column_idx_identifier);
+		int textSize = sqlite3_column_bytes(statement, column_idx_identifier);
+		
+		NSString *identifier = [[NSString alloc] initWithBytes:text length:textSize encoding:NSUTF8StringEncoding];
+		if (identifier)
+		{
+			id tag = [self tagForStatement:statement column:column_idx_tag];
+			
+			results[identifier] = tag;
+		}
+	}
+	
+	if (status != SQLITE_DONE)
+	{
+		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		            status, sqlite3_errmsg(databaseTransaction->connection->db));
+	}
+	
+	sqlite3_clear_bindings(statement);
+	sqlite3_reset(statement);
+	FreeYapDatabaseString(&_key);
+	
+	[parentConnection->dirtyTags enumerateKeysAndObjectsUsingBlock:^(YapCollectionKey *tuple, id tag, BOOL *stop) {
+		
+		NSString *tuple_key        = tuple.collection;
+		NSString *tuple_identifier = tuple.key;
+		
+		if ([tuple_key isEqualToString:key])
+		{
+			if (tag == [NSNull null])
+				results[tuple_identifier] = nil;
+			else
+				results[tuple_identifier] = tag;
+		}
+	}];
+	
+	return results;
+}
+
 - (void)tagTable_insertOrUpdateRowWithKey:(NSString *)key
                                identifier:(NSString *)identifier
                                       tag:(id)tag
@@ -1788,7 +1888,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	NSAssert(parentConnection->parent->options.enableTagSupport, @"YapDatabaseCloudCoreOptions.enableTagSupport == NO");
 	
-	sqlite3_stmt *statement = [parentConnection tagTable_removeForBothStatement];
+	sqlite3_stmt *statement = [parentConnection tagTable_removeForKeyIdentifierStatement];
 	if (statement == NULL) {
 		return;
 	}
@@ -1823,7 +1923,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	NSAssert(parentConnection->parent->options.enableTagSupport, @"YapDatabaseCloudCoreOptions.enableTagSupport == NO");
 	
-	sqlite3_stmt *statement = [parentConnection tagTable_removeForCloudURIStatement];
+	sqlite3_stmt *statement = [parentConnection tagTable_removeForKeyStatement];
 	if (statement == NULL) {
 		return;
 	}
@@ -3164,10 +3264,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	// SELECT "tag" FROM "tagTableName" WHERE "key" = ? AND "identifier" = ?;
 	
-	int const column_idx_changeTag = SQLITE_COLUMN_START;
-	
-	int const bind_idx_key        = SQLITE_BIND_START + 0;
-	int const bind_idx_identifier = SQLITE_BIND_START + 1;
+	const int bind_idx_key        = SQLITE_BIND_START + 0;
+	const int bind_idx_identifier = SQLITE_BIND_START + 1;
 	
 	YapDatabaseString _key; MakeYapDatabaseString(&_key, key);
 	sqlite3_bind_text(statement, bind_idx_key, _key.str, _key.length, SQLITE_STATIC);
@@ -3175,37 +3273,12 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	YapDatabaseString _identifier; MakeYapDatabaseString(&_identifier, identifier);
 	sqlite3_bind_text(statement, bind_idx_identifier, _identifier.str, _identifier.length, SQLITE_STATIC);
 	
+	const int column_idx_tag = SQLITE_COLUMN_START;
+	
 	int status = sqlite3_step(statement);
 	if (status == SQLITE_ROW)
 	{
-		int column_type = sqlite3_column_type(statement, column_idx_changeTag);
-		
-		if (column_type == SQLITE_INTEGER)
-		{
-			int64_t value = sqlite3_column_int64(statement, column_idx_changeTag);
-			
-			tag = @(value);
-		}
-		else if (column_type == SQLITE_FLOAT)
-		{
-			double value = sqlite3_column_double(statement, column_idx_changeTag);
-			
-			tag = @(value);
-		}
-		else if (column_type == SQLITE_TEXT)
-		{
-			const unsigned char *text = sqlite3_column_text(statement, column_idx_changeTag);
-			int textLen = sqlite3_column_bytes(statement, column_idx_changeTag);
-			
-			tag = [[NSString alloc] initWithBytes:text length:textLen encoding:NSUTF8StringEncoding];
-		}
-		else if (column_type == SQLITE_BLOB)
-		{
-			const void *blob = sqlite3_column_blob(statement, column_idx_changeTag);
-			int blobSize = sqlite3_column_bytes(statement, column_idx_changeTag);
-			
-			tag = [NSData dataWithBytes:(void *)blob length:blobSize];
-		}
+		tag = [self tagForStatement:statement column:column_idx_tag];
 	}
 	else if (status == SQLITE_ERROR)
 	{
@@ -3291,6 +3364,25 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	[parentConnection->dirtyTags setObject:tag forKey:tuple];
 	[parentConnection->tagCache removeObjectForKey:tuple];
+}
+
+/**
+ * See header file for description.
+ */
+- (void)enumerateTagsForKey:(NSString *)key
+						withBlock:(void (^NS_NOESCAPE)(NSString *identifier, id tag, BOOL *stop))block
+{
+	YDBLogAutoTrace();
+	
+	if (key == nil) return;
+	if (block == nil) return;
+	
+	NSDictionary<NSString*, id> *results = [self allTagsForKey:key];
+	
+	[results enumerateKeysAndObjectsUsingBlock:^(NSString *identifier, id tag, BOOL *stop) {
+		
+		block(identifier, tag, stop);
+	}];
 }
 
 /**

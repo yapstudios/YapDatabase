@@ -122,8 +122,9 @@ static NSString *const changeset_key_reset            = @"reset";
 
 - (sqlite3_stmt *)tagTable_setStatement;
 - (sqlite3_stmt *)tagTable_fetchStatement;
-- (sqlite3_stmt *)tagTable_removeForBothStatement;
-- (sqlite3_stmt *)tagTable_removeForCloudURIStatement;
+- (sqlite3_stmt *)tagTable_enumerateForKeyStatement;
+- (sqlite3_stmt *)tagTable_removeForKeyStatement;
+- (sqlite3_stmt *)tagTable_removeForKeyIdentifierStatement;
 - (sqlite3_stmt *)tagTable_removeAllStatement;
 
 - (sqlite3_stmt *)mappingTable_insertStatement;

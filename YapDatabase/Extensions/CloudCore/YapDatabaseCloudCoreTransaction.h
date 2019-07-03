@@ -239,6 +239,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setTag:(nullable id)tag forKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
 
 /**
+ * Allows you to enumerate the current set of <identifier, tag> tuples associated with the given key.
+**/
+- (void)enumerateTagsForKey:(NSString *)key
+                  withBlock:(void (^NS_NOESCAPE)(NSString *identifier, id tag, BOOL *stop))block;
+
+/**
  * Removes the tag for the given key/identifier tuple.
  * 
  * Note that this method only removes the specific key+identifier value.
