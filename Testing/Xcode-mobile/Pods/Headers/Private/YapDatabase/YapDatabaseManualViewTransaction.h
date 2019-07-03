@@ -1,1 +1,0 @@
-../../../../../../YapDatabase/Extensions/ManualView/YapDatabaseManualViewTransaction.h
