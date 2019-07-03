@@ -55,8 +55,10 @@ typedef NS_ENUM(NSInteger, YDBCloudCorePipelineAlgorithm) {
 	 * - your formal dependency graph must determine if opB should depend on opA
 	 *
 	 * The recommended way of implementing your formal dependency graph is by
-	 * subclassing YapDatabaseCloudCoreTransaction & overriding the method
-	 * `processOperations:inPipeline:withGraphIdx:`.
+	 * subclassing YapDatabaseCloudCoreTransaction & overriding the various subclass hooks, such as:
+	 * - willAddOperation:inPipeline:withGraphIdx:
+	 * - willInsertOperation:inPipeline:withGraphIdx:
+	 * - willModifyOperation:inPipeline:withGraphIdx:
 	**/
 	YDBCloudCorePipelineAlgorithm_FlatGraph = 1
 };

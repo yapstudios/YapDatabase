@@ -165,18 +165,32 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
  * Subclass hooks
 **/
 
-// Allows subclasses to perform post-processing on operations before they are written to disk.
-// Examples of tasks a subclass may want to perform:
-//
-// - sanitization of various property values
-// - automatically merging duplicate operations within same commit
-// - automatically adding dependencies for operations in earlier commits (if using FlatGraph optimization)
-//
-- (NSArray<YapDatabaseCloudCoreOperation *> *)processOperations:(NSArray<YapDatabaseCloudCoreOperation *> *)operations
-                                                     inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
-                                                   withGraphIdx:(NSUInteger)operationsGraphIdx;
+- (void)validateOperation:(YapDatabaseCloudCoreOperation *)operation;
 
-// Subclasses may override these methods to perform custom tasks as needed.
+- (void)willAddOperation:(YapDatabaseCloudCoreOperation *)operation
+              inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+            withGraphIdx:(NSUInteger)opGraphIdx;
+
+- (void)didAddOperation:(YapDatabaseCloudCoreOperation *)operation
+             inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+           withGraphIdx:(NSUInteger)opGraphIdx;
+
+- (void)willInsertOperation:(YapDatabaseCloudCoreOperation *)operation
+                 inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+               withGraphIdx:(NSUInteger)opGraphIdx;
+
+- (void)didInsertOperation:(YapDatabaseCloudCoreOperation *)operation
+                inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+              withGraphIdx:(NSUInteger)opGraphIdx;
+
+- (void)willModifyOperation:(YapDatabaseCloudCoreOperation *)operation
+                 inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+               withGraphIdx:(NSUInteger)opGraphIdx;
+
+- (void)didModifyOperation:(YapDatabaseCloudCoreOperation *)operation
+                 inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+               withGraphIdx:(NSUInteger)opGraphIdx;
+
 - (void)didCompleteOperation:(YapDatabaseCloudCoreOperation *)operation;
 - (void)didSkipOperation:(YapDatabaseCloudCoreOperation *)operation;
 

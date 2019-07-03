@@ -1138,34 +1138,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	return parentConnection->parent->operationDeserializer(operationBlob);
 }
 
-/**
- * This method sets common properties on an operation, and adds it to the pending array.
-**/
-- (BOOL)importOperation:(YapDatabaseCloudCoreOperation *)operation
-           withGraphIdx:(NSNumber *)graphIdx
+- (YapDatabaseCloudCorePipeline *)standardizeOperationPipeline:(YapDatabaseCloudCoreOperation *)operation
 {
-	__unsafe_unretained YapDatabaseCloudCoreOptions *options = parentConnection->parent->options;
-	
-	NSSet *allowedOperationClasses = options.allowedOperationClasses;
-	if (allowedOperationClasses)
-	{
-		BOOL allowed = NO;
-		for (Class class in allowedOperationClasses)
-		{
-			if ([operation isKindOfClass:class])
-			{
-				allowed = YES;
-				break;
-			}
-		}
-		
-		if (!allowed)
-		{
-			@throw [self disallowedOperationClass:operation];
-			return NO;
-		}
-	}
-	
 	// Check to make sure the given pipeline name actually corresponds to a registered pipeline.
 	// If not, we need to fallback to the default pipeline.
 	//
@@ -1176,68 +1150,13 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	if (pipeline == nil)
 	{
 		YDBLogWarn(@"No registered pipeline for name: %@. "
-		           @"The operation will be scheduled in the default pipeline.", operation.pipeline);
+					  @"The operation will be scheduled in the default pipeline.", operation.pipeline);
 		
 		pipeline = [parentConnection->parent defaultPipeline];
 	}
 	
-	NSString *pipelineName = pipeline.name;
-	operation.pipeline = pipelineName; // enforce standardized name (not nil, not alias)
-	
-	BOOL shouldInsert = NO;
-	if (graphIdx != nil)
-	{
-		if (graphIdx.unsignedIntegerValue < pipeline.graphCount)
-		{
-			shouldInsert = YES;
-		}
-	}
-	
-	if (shouldInsert)
-	{
-		// Insert operation into existing graph
-		
-		uint64_t snapshot = 0;
-		[pipeline getSnapshot:&snapshot forGraphIndex:graphIdx.unsignedIntegerValue];
-		operation.snapshot = snapshot;
-		
-		NSMutableDictionary *graphs = parentConnection->operations_inserted[pipelineName];
-		
-		if (graphs == nil)
-		{
-			graphs = [NSMutableDictionary dictionaryWithCapacity:1];
-			parentConnection->operations_inserted[pipelineName] = graphs;
-		}
-		
-		NSMutableArray<YapDatabaseCloudCoreOperation *> *insertedOps = graphs[graphIdx];
-		
-		if (insertedOps == nil)
-		{
-			insertedOps = [NSMutableArray arrayWithCapacity:1];
-			graphs[graphIdx] = insertedOps;
-		}
-		
-		[insertedOps addObject:operation];
-	}
-	else
-	{
-		// Add operation to new graph
-		
-		uint64_t nextSnapshot = [databaseTransaction->connection snapshot] + 1;
-		operation.snapshot = nextSnapshot;
-		
-		NSMutableArray<YapDatabaseCloudCoreOperation *> *addedOps = parentConnection->operations_added[pipelineName];
-		
-		if (addedOps == nil)
-		{
-			addedOps = [NSMutableArray arrayWithCapacity:1];
-			parentConnection->operations_added[pipelineName] = addedOps;
-		}
-		
-		[addedOps addObject:operation];
-	}
-	
-	return YES;
+	operation.pipeline = pipeline.name; // enforce standardized name (not nil, not alias)
+	return pipeline;
 }
 
 /**
@@ -1247,7 +1166,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 {
 	NSParameterAssert(modifiedOp != nil);
 	
-	// Then find the originalOp & replace it.
+	// Find the originalOp & replace it.
 	
 	NSUUID *uuid = modifiedOp.uuid;
 	
@@ -2124,29 +2043,81 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Subclasses may override this class to properly handle their specific flavor of operations.
+ * Subclasses may override this method to perform additional validation.
 **/
-- (NSArray<YapDatabaseCloudCoreOperation *> *)processOperations:(NSArray<YapDatabaseCloudCoreOperation *> *)operations
-                                                     inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
-                                                   withGraphIdx:(NSUInteger)operationsGraphIdx
+- (void)validateOperation:(YapDatabaseCloudCoreOperation *)operation
 {
-	return operations;
+	NSSet *allowedOperationClasses = parentConnection->parent->options.allowedOperationClasses;
+	if (allowedOperationClasses)
+	{
+		BOOL allowed = NO;
+		for (Class class in allowedOperationClasses)
+		{
+			if ([operation isKindOfClass:class])
+			{
+				allowed = YES;
+				break;
+			}
+		}
+		
+		if (!allowed)
+		{
+			@throw [self disallowedOperationClass:operation];
+		}
+	}
 }
 
-/**
- * Subclasses may override this class to properly handle their specific flavor of operation.
-**/
+- (void)willAddOperation:(YapDatabaseCloudCoreOperation *)operation
+              inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+            withGraphIdx:(NSUInteger)opGraphIdx
+{
+	// Available as subclass hook.
+	// This is a good place to modify the operation (e.g. by adding implicit dependencies).
+}
+
+- (void)didAddOperation:(YapDatabaseCloudCoreOperation *)operation
+             inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+           withGraphIdx:(NSUInteger)opGraphIdx
+{
+	// Available as subclass hook.
+}
+
+- (void)willInsertOperation:(YapDatabaseCloudCoreOperation *)operation
+                 inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+               withGraphIdx:(NSUInteger)opGraphIdx
+{
+	// Available as subclass hook
+}
+
+- (void)didInsertOperation:(YapDatabaseCloudCoreOperation *)operation
+                inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+              withGraphIdx:(NSUInteger)opGraphIdx
+{
+	// Available as subclass hook
+}
+
+- (void)willModifyOperation:(YapDatabaseCloudCoreOperation *)operation
+                 inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+               withGraphIdx:(NSUInteger)opGraphIdx
+{
+	// Available as subclass hook
+}
+
+- (void)didModifyOperation:(YapDatabaseCloudCoreOperation *)operation
+                 inPipeline:(YapDatabaseCloudCorePipeline *)pipeline
+               withGraphIdx:(NSUInteger)opGraphIdx
+{
+	// Available as subclass hook
+}
+
 - (void)didCompleteOperation:(YapDatabaseCloudCoreOperation *)operation
 {
-	// Nothing to do here.
+	// Available as subclass hook
 }
 
-/**
- * Subclasses may override this class to properly handle their specific flavor of operation.
-**/
 - (void)didSkipOperation:(YapDatabaseCloudCoreOperation *)operation
 {
-	// Nothing to do here.
+	// Available as subclass hook
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2188,13 +2159,32 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	}
 	
 	// Public API safety:
-	// Prevent the user from modifying the operation after import.
+	// - prevent user from modifying the operation after import
+	// - ensure operation.pipeline is valid
 	
 	operation = [operation copy];
+	YapDatabaseCloudCorePipeline *pipeline = [self standardizeOperationPipeline:operation];
+	NSUInteger graphIdx = pipeline.graphCount;
 	
-	// Standard import logic
+	uint64_t nextSnapshot = [databaseTransaction->connection snapshot] + 1;
+	operation.snapshot = nextSnapshot;
 	
-	return [self importOperation:operation withGraphIdx:nil];
+	// Import logic
+	
+	[self validateOperation:operation];
+	[self willAddOperation:operation inPipeline:pipeline withGraphIdx:graphIdx];
+	
+	NSMutableArray<YapDatabaseCloudCoreOperation *> *addedOps = parentConnection->operations_added[pipeline.name];
+	if (addedOps == nil)
+	{
+		addedOps = [NSMutableArray arrayWithCapacity:1];
+		parentConnection->operations_added[pipeline.name] = addedOps;
+	}
+	
+	[addedOps addObject:operation];
+	
+	[self didAddOperation:operation inPipeline:pipeline withGraphIdx:graphIdx];
+	return YES;
 }
 
 /**
@@ -2245,13 +2235,46 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	}
 	
 	// Public API safety:
-	// Prevent the user from modifying the operation after import.
+	// - prevent user from modifying the operation after import
+	// - ensure operation.pipeline is valid
 	
 	operation = [operation copy];
+	YapDatabaseCloudCorePipeline *pipeline = [self standardizeOperationPipeline:operation];
 	
-	// Standard insert logic
+	// Is this a valid graphIdx ?
+	//
+	if (graphIdx >= pipeline.graphCount)
+	{
+		return [self addOperation:operation];
+	}
 	
-	return [self importOperation:operation withGraphIdx:@(graphIdx)];
+	uint64_t snapshot = 0;
+	[pipeline getSnapshot:&snapshot forGraphIndex:graphIdx];
+	operation.snapshot = snapshot;
+	
+	// Import logic
+	
+	[self validateOperation:operation];
+	[self willInsertOperation:operation inPipeline:pipeline withGraphIdx:graphIdx];
+	
+	NSMutableDictionary *graphs = parentConnection->operations_inserted[pipeline.name];
+	if (graphs == nil)
+	{
+		graphs = [NSMutableDictionary dictionaryWithCapacity:1];
+		parentConnection->operations_inserted[pipeline.name] = graphs;
+	}
+	
+	NSMutableArray<YapDatabaseCloudCoreOperation *> *insertedOps = graphs[@(graphIdx)];
+	if (insertedOps == nil)
+	{
+		insertedOps = [NSMutableArray arrayWithCapacity:1];
+		graphs[@(graphIdx)] = insertedOps;
+	}
+	
+	[insertedOps addObject:operation];
+	
+	[self didInsertOperation:operation inPipeline:pipeline withGraphIdx:graphIdx];
+	return YES;
 }
 
 /**
@@ -2274,8 +2297,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	if (operation == nil) return NO;
 	
-	YapDatabaseCloudCoreOperation *previous =
-		[self _operationWithUUID:operation.uuid inPipeline:operation.pipeline];
+	YapDatabaseCloudCoreOperation *previous = [self _operationWithUUID:operation.uuid inPipeline:operation.pipeline];
 	if (previous == nil)
 	{
 		// The operation doesn't appear to exist.
@@ -2290,9 +2312,17 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	operation.pipeline = previous.pipeline; // changing this not supported; delete old & create new.
 	operation.snapshot = previous.snapshot; // changing this not supported; delete old & create new.
 	
+	YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:operation.pipeline];
+	NSUInteger graphIdx = [self graphForOperation:operation];
+	
 	// Modify logic
 	
+	[self validateOperation:operation];
+	[self willModifyOperation:operation inPipeline:pipeline withGraphIdx:graphIdx];
+	
 	[self addModifiedOperation:operation];
+	
+	[self didModifyOperation:operation inPipeline:pipeline withGraphIdx:graphIdx];
 	return YES;
 }
 
@@ -3575,199 +3605,14 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 {
 	YDBLogAutoTrace();
 	
-	// Step 1 of 5:
-	//
-	// Post-Process all modified & inserted operations.
-	//
-	// - modified ops :
-	//     pre-existing operations (that were added in previous commits) that have been modified
-	// - inserted ops :
-	//     new operations that have been inserted into previous graphs (graphs that were added in previous commits)
-	//
-	// This is a tricky step, as a modified/inserted operation may end up modifying
-	// other operations within the same graph. This is due to dependencies.
-	//
-	// For example, say a graph consists of a single operation: <upload /foo/bar.pdf>
-	// Then an operation is inserted into the same graph: <createDir /foo>
-	//
-	// The end result is that the upload operation is modified,
-	// because it now implicitly depends on the new createDir operation.
-	//
-	// Here's how we deal with this:
-	//
-	// - enumerate each graph in each pipeline
-	// - check to see if there were modified or inserted operations
-	// - if so then:
-	//   - re-run the processOperations algorithm
-	//   - check for any operations that may have been modified or removed
-	
 	NSArray<YapDatabaseCloudCorePipeline *> *pipelines = [parentConnection->parent registeredPipelines];
-	
-	for (YapDatabaseCloudCorePipeline *pipeline in pipelines)
-	{
-		NSDictionary *graphs_inserted = parentConnection->operations_inserted[pipeline.name];
-		
-		NSArray<NSArray<YapDatabaseCloudCoreOperation *> *> *graphOperations = [pipeline graphOperations];
-		
-		NSUInteger graphIdx = 0;
-		for (NSArray<YapDatabaseCloudCoreOperation *> *oldOps in graphOperations)
-		{
-			NSMutableArray<YapDatabaseCloudCoreOperation *> *insertedOps = graphs_inserted[@(graphIdx)];
-			
-			BOOL graphHasChanges = (insertedOps.count > 0);
-			if (!graphHasChanges)
-			{
-				for (YapDatabaseCloudCoreOperation *oldOp in oldOps)
-				{
-					if (parentConnection->operations_modified[oldOp.uuid])
-					{
-						graphHasChanges = YES;
-						break;
-					}
-				}
-			}
-			
-			if (graphHasChanges)
-			{
-				// Create copy of oldOps list (that includes the modified & inserted ops)
-				
-				NSMutableArray<YapDatabaseCloudCoreOperation *> *newOps =
-				  [NSMutableArray arrayWithCapacity:(oldOps.count + insertedOps.count)];
-				
-				for (YapDatabaseCloudCoreOperation *oldOp in oldOps)
-				{
-					YapDatabaseCloudCoreOperation *modifiedOp = parentConnection->operations_modified[oldOp.uuid];
-					
-					if (modifiedOp)
-						[newOps addObject:modifiedOp];
-					else
-						[newOps addObject:[oldOp copy]];
-				}
-				
-				[newOps addObjectsFromArray:insertedOps];
-				
-				// Invoke processOperations algorithm
-				
-				NSArray<YapDatabaseCloudCoreOperation *> *newProcessedOps =
-				  [self processOperations:newOps inPipeline:pipeline withGraphIdx:graphIdx];
-				
-				// Compare the new list with the old list
-				
-				for (YapDatabaseCloudCoreOperation *oldOp in oldOps)
-				{
-					NSUUID *uuid = oldOp.uuid;
-					YapDatabaseCloudCoreOperation *newProcessedOp = nil;
-					
-					for (YapDatabaseCloudCoreOperation *op in newProcessedOps)
-					{
-						if ([op.uuid isEqual:uuid])
-						{
-							newProcessedOp = op;
-							break;
-						}
-					}
-					
-					if (newProcessedOp)
-					{
-						if (![newProcessedOp isEqualToOperation:oldOp])
-						{
-							newProcessedOp.needsModifyDatabaseRow = YES;
-							
-							parentConnection->operations_modified[uuid] = newProcessedOp;
-						}
-					}
-					else
-					{
-						YapDatabaseCloudCoreOperation *newOp = [oldOp copy];
-						
-						newOp.needsDeleteDatabaseRow = YES;
-						newOp.pendingStatus = @(YDBCloudOperationStatus_Skipped);
-						
-						parentConnection->operations_modified[uuid] = newOp;
-					}
-				}
-				
-				// Not every single inserted operation may have survived the processOperations algorithm.
-				// So we need to check the list here.
-				
-				NSUInteger i = 0;
-				while (i < insertedOps.count)
-				{
-					YapDatabaseCloudCoreOperation *insertedOp = insertedOps[i];
-					
-					NSUUID *uuid = insertedOp.uuid;
-					BOOL insertedOpSurvived = NO;
-					
-					for (YapDatabaseCloudCoreOperation *op in newProcessedOps)
-					{
-						if ([op.uuid isEqual:uuid])
-						{
-							insertedOpSurvived = YES;
-							break;
-						}
-					}
-					
-					if (insertedOpSurvived) {
-						i++;
-					}
-					else {
-						[insertedOps removeObjectAtIndex:i];
-						// ^ removes from: parentConnection->operations_inserted[pipeline.name][@(graphIdx)]
-					}
-				}
-				
-			} // end if (graphHasChanges)
-			
-			graphIdx++;
-			
-		}
-	
-	} // end for (YapDatabaseCloudCorePipeline *pipeline in pipelines)
-	
-	
-	// Step 2 of 5:
-	//
-	// Post-Process all added operations.
-	//
-	// - added ops:
-	//     new operations that are to be added to a new graph
-	//
-	// - consolidates duplicate operations into one (if possible)
-	// - updates older operations in the same pipeline (if needed)
-	
-	NSMutableDictionary *processedAddedOps = nil;
-	
-	if ([parentConnection->operations_added count] > 0)
-	{
-		processedAddedOps = [NSMutableDictionary dictionaryWithCapacity:[parentConnection->operations_added count]];
-		
-		[parentConnection->operations_added enumerateKeysAndObjectsUsingBlock:
-		    ^(NSString *pipelineName, NSArray *allAddedOperationsForPipeline, BOOL *stop)
-		{
-		#pragma clang diagnostic push
-		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
-			
-			YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
-			NSUInteger graphIdx = pipeline.graphCount;
-			 
-			NSArray<YapDatabaseCloudCoreOperation *> *processedOperationsForPipeline =
-			  [self processOperations:allAddedOperationsForPipeline inPipeline:pipeline withGraphIdx:graphIdx];
-			
-			if (processedOperationsForPipeline.count > 0)
-			{
-				processedAddedOps[pipelineName] = processedOperationsForPipeline;
-			}
-			
-		#pragma clang diagnostic pop
-		}];
-	}
-	
-	// Step 3 of 5:
+
+	// Step 1 of 3:
 	//
 	// Flush changes to queue table
 	
-	[processedAddedOps enumerateKeysAndObjectsUsingBlock:
-	    ^(NSString *pipelineName, NSArray *operations, BOOL *stop)
+	[parentConnection->operations_added enumerateKeysAndObjectsUsingBlock:
+	  ^(NSString *pipelineName, NSArray *addedOperations, BOOL *stop)
 	{
 	#pragma clang diagnostic push
 	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
@@ -3775,12 +3620,12 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		YapDatabaseCloudCorePipeline *pipeline = [parentConnection->parent pipelineWithName:pipelineName];
 		uint64_t nextSnapshot = [databaseTransaction->connection snapshot] + 1;
 		
-		[self queueTable_insertOperations: operations
+		[self queueTable_insertOperations: addedOperations
 		                     withSnapshot: nextSnapshot
 		                         pipeline: pipeline];
 		
 		YapDatabaseCloudCoreGraph *graph =
-		  [[YapDatabaseCloudCoreGraph alloc] initWithSnapshot:nextSnapshot operations:operations];
+		  [[YapDatabaseCloudCoreGraph alloc] initWithSnapshot:nextSnapshot operations:addedOperations];
 		
 		[parentConnection->graphs_added setObject:graph forKey:pipelineName];
 		
@@ -3803,19 +3648,19 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		}];
 	}
 	
-	for (YapDatabaseCloudCoreOperation *operation in [parentConnection->operations_modified objectEnumerator])
+	for (YapDatabaseCloudCoreOperation *modifiedOp in [parentConnection->operations_modified objectEnumerator])
 	{
-		if (operation.needsDeleteDatabaseRow)
+		if (modifiedOp.needsDeleteDatabaseRow)
 		{
-			[self queueTable_removeRowWithRowid:operation.operationRowid];
+			[self queueTable_removeRowWithRowid:modifiedOp.operationRowid];
 		}
-		else if (operation.needsModifyDatabaseRow)
+		else if (modifiedOp.needsModifyDatabaseRow)
 		{
-			[self queueTable_modifyOperation:operation];
+			[self queueTable_modifyOperation:modifiedOp];
 		}
 	}
 	
-	// Step 4 of 5:
+	// Step 2 of 3:
 	//
 	// Flush changes to mapping table
 	
@@ -3837,7 +3682,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		}];
 	}
 	
-	// Step 5 of 5:
+	// Step 3 of 3:
 	//
 	// Flush changes to tag table
 	
@@ -3872,9 +3717,9 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 {
 	YDBLogAutoTrace();
 	
-	[parentConnection->parent commitAddedGraphs:parentConnection->graphs_added
-	                         insertedOperations:parentConnection->operations_inserted
-	                         modifiedOperations:parentConnection->operations_modified];
+	[parentConnection->parent commitAddedGraphs: parentConnection->graphs_added
+	                         insertedOperations: parentConnection->operations_inserted
+	                         modifiedOperations: parentConnection->operations_modified];
 	
 	// Forward to connection for further cleanup.
 	
