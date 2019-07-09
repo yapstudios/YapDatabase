@@ -171,7 +171,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 		}
 		
 		if ([dependencyUUID isEqual:uuid]) {
-			// Ignore - op cannot depend on itself
+			YDBLogWarn(@"%@ - Ignoring: op cannot depend on itself", THIS_METHOD);
 			continue;
 		}
 		
@@ -212,7 +212,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 	}
 	
 	if ([dependencyUUID isEqual:uuid]) {
-		// Ignore - op cannot depend on itself
+		YDBLogWarn(@"%@ - Ignoring: op cannot depend on itself", THIS_METHOD);
 		return;
 	}
 	
