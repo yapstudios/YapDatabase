@@ -313,42 +313,6 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark Equality
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (BOOL)isEqual:(id)object
-{
-	if ([object isKindOfClass:[YapDatabaseCloudCoreOperation class]])
-		return [self isEqualToOperation:(YapDatabaseCloudCoreOperation *)object];
-	else
-		return NO;
-}
-
-/**
- * Subclasses should override this method, and add their own comparisons.
-**/
-- (BOOL)isEqualToOperation:(YapDatabaseCloudCoreOperation *)op
-{
-	if (operationRowid != op->operationRowid) return NO;
-	
-	if (needsDeleteDatabaseRow != op->needsDeleteDatabaseRow) return NO;
-	if (needsModifyDatabaseRow != op->needsModifyDatabaseRow) return NO;
-	
-	if (!YDB_IsEqualOrBothNil(pendingStatus, op->pendingStatus)) return NO;
-	
-	if (!YDB_IsEqualOrBothNil(uuid, op->uuid)) return NO;
-	if (snapshot != op->snapshot) return NO;
-	if (!YDB_IsEqualOrBothNil(pipeline, op->pipeline)) return NO;
-	
-	if (priority != op->priority) return NO;
-	
-	if (!YDB_IsEqualOrBothNil(dependencies, op->dependencies)) return NO;
-	if (!YDB_IsEqualOrBothNil(persistentUserInfo, op->persistentUserInfo)) return NO;
-	
-	return YES;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark General
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

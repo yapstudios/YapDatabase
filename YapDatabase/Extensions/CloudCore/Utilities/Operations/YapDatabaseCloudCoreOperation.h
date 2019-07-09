@@ -166,16 +166,6 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)setPersistentUserInfoObject:(id)object forKey:(NSString *)key;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark Equality
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * Compares the receiver with the given operation.
- * Subclasses should override this method, and add their own comparisons.
-**/
-- (BOOL)isEqualToOperation:(YapDatabaseCloudCoreOperation *)operation;
-
 @end
 
 NS_ASSUME_NONNULL_END
