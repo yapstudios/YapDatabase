@@ -97,6 +97,12 @@ NS_ASSUME_NONNULL_BEGIN
                      passingTest:(BOOL (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
                                                       NSUInteger graphIdx, BOOL *stop))testBlock;
 
+/**
+ * Returns ALL dependencies for the given operation,
+ * calculated by recursively visiting dependencies of dependecies.
+ */
+- (NSSet<NSUUID*> *)recursiveDependenciesForOperation:(YapDatabaseCloudCoreOperation *)operation;
+
 #pragma mark Operation Searching
 
 /**

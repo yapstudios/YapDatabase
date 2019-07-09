@@ -2613,6 +2613,34 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	}
 }
 
+/**
+ * Returns ALL dependencies for the given operation,
+ * calculated by recursively visiting dependencies of dependecies.
+ */
+- (NSSet<NSUUID*> *)recursiveDependenciesForOperation:(YapDatabaseCloudCoreOperation *)operation
+{
+	NSMutableSet<NSUUID*> *visited = [NSMutableSet set];
+	[self recursiveDependencies:operation visited:visited];
+	
+	return visited;
+}
+
+- (void)recursiveDependencies:(YapDatabaseCloudCoreOperation *)operation visited:(NSMutableSet<NSUUID*> *)visited
+{
+	for (NSUUID *depUUID in operation.dependencies)
+	{
+		if (![visited containsObject:depUUID])
+		{
+			YapDatabaseCloudCoreOperation *depOp = [self _operationWithUUID:depUUID inPipeline:operation.pipeline];
+			if (depOp)
+			{
+				[visited addObject:depUUID];
+				[self recursiveDependencies:depOp visited:visited];
+			}
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Operation Searching
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
