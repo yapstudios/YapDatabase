@@ -27,7 +27,7 @@
 @synthesize cipherSaltBlock = cipherSaltBlock;
 @synthesize cipherKeySpecBlock = cipherKeySpecBlock;
 @synthesize cipherUnencryptedHeaderLength = cipherUnencryptedHeaderLength;
-
+@synthesize cipherCompatability = cipherCompatability;
 #endif
 @synthesize aggressiveWALTruncationSize = aggressiveWALTruncationSize;
 @synthesize enableMultiProcessSupport = enableMultiProcessSupport;
@@ -63,6 +63,7 @@
     copy->cipherSaltBlock = cipherSaltBlock;
     copy->cipherKeySpecBlock = cipherKeySpecBlock;
     copy->cipherUnencryptedHeaderLength = cipherUnencryptedHeaderLength;
+    copy->cipherCompatability = cipherCompatability;
 #endif
 	copy->aggressiveWALTruncationSize = aggressiveWALTruncationSize;
     copy->enableMultiProcessSupport = enableMultiProcessSupport;
