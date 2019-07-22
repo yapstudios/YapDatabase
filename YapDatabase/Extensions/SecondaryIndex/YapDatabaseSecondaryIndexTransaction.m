@@ -499,7 +499,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 				{
 					__unsafe_unretained NSNumber *number = (NSNumber *)columnValue;
 					
-					CFNumberType numberType = CFNumberGetType((CFNumberRef)number);
+					CFNumberType numberType = CFNumberGetType((__bridge CFNumberRef)number);
 					
 					if (numberType == kCFNumberFloat32Type ||
 						numberType == kCFNumberFloat64Type ||

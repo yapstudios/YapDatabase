@@ -42,7 +42,7 @@
 	if (set)
 		return [set containsObject:object];
 	else
-		return CFDictionaryContainsKey((__bridge CFDictionaryRef)dictionary, (const void *)object);
+		return CFDictionaryContainsKey((__bridge CFDictionaryRef)dictionary, (__bridge const void *)object);
 }
 
 - (BOOL)intersectsSet:(NSSet *)otherSet
@@ -55,7 +55,7 @@
 	{
 		for (id object in otherSet)
 		{
-			if (CFDictionaryContainsKey((__bridge CFDictionaryRef)dictionary, (const void *)object))
+			if (CFDictionaryContainsKey((__bridge CFDictionaryRef)dictionary, (__bridge const void *)object))
 				return YES;
 		}
 		
