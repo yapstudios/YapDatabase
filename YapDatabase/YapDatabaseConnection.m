@@ -6042,7 +6042,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	
 	// Loop through the backup process
 	
-	BOOL cancelled = progress.cancelled;
+	BOOL cancelled = progress.isCancelled;
 	if (!cancelled)
 	{
 		while ((status = sqlite3_backup_step(backup, nPages)) == SQLITE_OK)
@@ -6055,7 +6055,7 @@ static int connectionBusyHandler(void *ptr, int count)
 				progress.totalUnitCount = pagecount;
 				progress.completedUnitCount = (pagecount - remaining);
 				
-				cancelled = progress.cancelled;
+				cancelled = progress.isCancelled;
 				if (cancelled) break;
 			}
 		}
