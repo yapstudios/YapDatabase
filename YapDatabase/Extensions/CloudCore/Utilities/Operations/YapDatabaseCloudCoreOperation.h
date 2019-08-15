@@ -108,9 +108,19 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Convenience method for adding a dependency to the list.
  *
- * @param op - May be either a NSUUID, or a YapDatabaseCloudCoreOperation (for convenience).
+ * @param op
+ *   May be either a NSUUID, or a YapDatabaseCloudCoreOperation (for convenience).
 **/
 - (void)addDependency:(id)op;
+
+/**
+ * Convenience method for adding dependencies to the list.
+ *
+ * @param ops
+ *   Each item in the array may be be either an NSUUID,
+ *   or a YapDatabaseCloudCoreOperation (for convenience).
+ */
+- (void)addDependencies:(NSArray<id> *)ops;
 
 /**
  * Every operation can optionally be assigned a priority.

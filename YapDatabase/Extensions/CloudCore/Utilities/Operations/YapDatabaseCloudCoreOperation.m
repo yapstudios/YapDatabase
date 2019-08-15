@@ -154,7 +154,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 #pragma mark Public API
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (void)setDependencies:(NSSet<NSUUID *> *)inDependencies
+- (void)extractAndUpdateDependencies:(NSArray<id> *)inDependencies
 {
 	NSMutableSet<NSUUID *> *newDependencies = [NSMutableSet setWithCapacity:inDependencies.count];
 	for (id dependency in inDependencies)
@@ -170,25 +170,17 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 			dependencyUUID = [(YapDatabaseCloudCoreOperation *)dependency uuid];
 		}
 		
-		if ([dependencyUUID isEqual:uuid]) {
-			YDBLogWarn(@"%@ - Ignoring: op cannot depend on itself", THIS_METHOD);
-			continue;
-		}
-		
-		if (dependencyUUID)
+		if (dependencyUUID == nil || [dependencyUUID isEqual:uuid])
 		{
-			[newDependencies addObject:dependencyUUID];
+			[self didRejectDependency:dependency];
 		}
 		else
 		{
-		#ifndef NS_BLOCK_ASSERTIONS
-			NSAssert(NO, @"Bad dependecy object !");
-		#endif
+			[newDependencies addObject:dependencyUUID];
 		}
 	}
 	
 	NSString *const propKey = NSStringFromSelector(@selector(dependencies));
-	
 	[self willChangeValueForKey:propKey];
 	{
 		dependencies = [newDependencies copy];
@@ -196,45 +188,51 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 	[self didChangeValueForKey:propKey];
 }
 
-- (void)addDependency:(id)dependency
+- (void)setDependencies:(NSSet<NSUUID *> *)inDependencies
 {
-	if (dependency == nil) return;
-		
-	NSUUID *dependencyUUID = nil;
+	// Theoretically, the set is composed of only NSUUID objects.
+	// But objective-c isn't very good at ensuring these kinds of things.
+	// So we're going to code defensively here.
 	
-	if ([dependency isKindOfClass:[NSUUID class]])
+	[self extractAndUpdateDependencies:[inDependencies allObjects]];
+}
+
+- (void)addDependency:(id)inDependency
+{
+	NSMutableArray<id> *newDependencies = [[dependencies allObjects] mutableCopy];
+	if (newDependencies == nil) {
+		newDependencies = [[NSMutableArray alloc] init];
+	}
+	
+	[newDependencies addObject:inDependency];
+	[self extractAndUpdateDependencies:newDependencies];
+}
+
+- (void)addDependencies:(NSArray<id> *)inDependencies
+{
+	NSMutableArray<id> *newDependencies = [[dependencies allObjects] mutableCopy];
+	if (newDependencies == nil) {
+		newDependencies = [[NSMutableArray alloc] init];
+	}
+	
+	[newDependencies addObjectsFromArray:inDependencies];
+	[self extractAndUpdateDependencies:newDependencies];
+}
+
+/**
+ * Subclasses may choose to override this method.
+ */
+- (void)didRejectDependency:(id)badDependency
+{
+	if ([badDependency isKindOfClass:[NSUUID class]] ||
+	    [badDependency isKindOfClass:[YapDatabaseCloudCoreOperation class]])
 	{
-		dependencyUUID = (NSUUID *)dependency;
+		YDBLogWarn(@"%@ - An operation cannot depend on itself", THIS_METHOD);
 	}
-	else if ([dependency isKindOfClass:[YapDatabaseCloudCoreOperation class]])
+	else if (badDependency != nil)
 	{
-		dependencyUUID = [(YapDatabaseCloudCoreOperation *)dependency uuid];
+		NSAssert(NO, @"Bad dependency object: %@", badDependency);
 	}
-	
-	if ([dependencyUUID isEqual:uuid]) {
-		YDBLogWarn(@"%@ - Ignoring: op cannot depend on itself", THIS_METHOD);
-		return;
-	}
-	
-#ifndef NS_BLOCK_ASSERTIONS
-	NSAssert(dependencyUUID != nil, @"Bad dependecy object !");
-#else
-	if (dependencyUUID == nil) {
-		// Ignore - non-supported dependency type
-		return;
-	}
-#endif
-	
-	NSString *const propKey = NSStringFromSelector(@selector(dependencies));
-	
-	[self willChangeValueForKey:propKey];
-	{
-		if (dependencies == nil)
-			dependencies = [NSSet setWithObject:dependencyUUID];
-		else
-			dependencies = [dependencies setByAddingObject:dependencyUUID];
-	}
-	[self didChangeValueForKey:propKey];
 }
 
 /**
