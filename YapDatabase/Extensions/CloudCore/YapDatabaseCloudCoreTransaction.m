@@ -3202,8 +3202,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	if (!stop && (flags & YDBCloudCore_EnumOps_Added))
 	{
-		NSUInteger lastGraphIdx = graphOperations.count;
-		NSUInteger nextGraphIdx = (lastGraphIdx == 0) ? 0 : (lastGraphIdx + 1);
+		NSUInteger nextGraphIdx = graphOperations.count;
 		
 		NSMutableArray<YapDatabaseCloudCoreOperation *> *addedOps =
 		  parentConnection->operations_added[pipeline.name];
