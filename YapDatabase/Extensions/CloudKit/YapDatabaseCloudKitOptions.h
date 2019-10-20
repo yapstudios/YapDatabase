@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  * So the GetRecordBlock would still be invoked as normal.
  *
  * The default value is nil.
-**/
+ */
 @property (nonatomic, strong, readwrite, nullable) YapWhitelistBlacklist *allowedCollections;
 
 

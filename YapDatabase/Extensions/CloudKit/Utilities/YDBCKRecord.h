@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Returns a "sanitized" copy of the given record.
  * That is, a copy that ONLY includes the "system fields" of the record.
  * It will NOT contain any key/value pairs from the original record.
-**/
+ */
 - (id)sanitizedCopy;
 
 /**
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This forced us to use a workaround.
  * 
  * The bug was fixed in iOS 9.
-**/
+ */
 - (id)safeCopy;
 
 @end
@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This method serializes just the "system fields" of the given record.
  * That is, it won't store any of the user-created key/value pairs.
  * It only stores the CloudKit specific stuff, such as the versioning info, syncing info, etc.
-**/
+ */
 + (NSData *)serializeRecord:(CKRecord *)record;
 
 /**
@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * If the record data came from [YDBCKRecord serializeRecord:],
  * then the returned record will only contain the "system fields".
-**/
+ */
 + (CKRecord *)deserializeRecord:(NSData *)data;
 
 #pragma mark Instance

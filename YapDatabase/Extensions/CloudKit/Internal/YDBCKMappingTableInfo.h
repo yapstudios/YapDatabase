@@ -14,7 +14,7 @@
  * 
  * cleanMappingTableInfo.key = rowid (NSNumber)
  * cleanMappingTableInfo.value = YDBCKCleanMappingTableInfo
-**/
+ */
 @interface YDBCKCleanMappingTableInfo : NSObject <YDBCKMappingTableInfo>
 
 - (instancetype)initWithRecordTableHash:(NSString *)hash;
@@ -34,7 +34,7 @@
  * 
  * dirtyMappingTableInfo.key = rowid (NSNumber)
  * dirtyMappingTableInfo.value = YDBCKDirtyMappingTableInfo
-**/
+ */
 @interface YDBCKDirtyMappingTableInfo : NSObject <YDBCKMappingTableInfo>
 
 - (instancetype)initWithRecordTableHash:(NSString *)hash;

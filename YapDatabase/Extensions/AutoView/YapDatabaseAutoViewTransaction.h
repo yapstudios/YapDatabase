@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Keep in mind that the YapDatabaseViewTransaction object is linked to the YapDatabaseReadTransaction object.
  * So don't try to use it outside the transaction block (cause it won't work).
-**/
+ */
 @interface YapDatabaseAutoViewTransaction : YapDatabaseViewTransaction
 
 #pragma mark Finding
@@ -122,7 +122,7 @@ NS_ASSUME_NONNULL_BEGIN
  *     If found, the range that matches the items within the desired range.
  *     That is, is these items were passed to the given block, the block would return NSOrderedSame.
  *     If not found, returns NSMakeRange(NSNotFound, 0).
-**/
+ */
 - (NSRange)findRangeInGroup:(NSString *)group using:(YapDatabaseViewFind *)find;
 
 /**
@@ -139,7 +139,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   If found, the index of the first match discovered.
  *   That is, an item where the find block returned NSOrderedSame.
  *   If not found, returns NSNotFound.
-**/
+ */
 - (NSUInteger)findFirstMatchInGroup:(NSString *)group using:(YapDatabaseViewFind *)find;
 
 @end
@@ -151,7 +151,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The methods in this ReadWrite category are only available from within a ReadWriteTransaction.
  * Invoking them from within a ReadOnlyTransaction does nothing (except log a warning).
-**/
+ */
 @interface YapDatabaseAutoViewTransaction (ReadWrite)
 
 /**
@@ -159,7 +159,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * Note: You must pass a different versionTag, or this method does nothing.
  * If needed, you can fetch the current versionTag via the [viewTransaction versionTag] method.
-**/
+ */
 - (void)setGrouping:(YapDatabaseViewGrouping *)grouping
             sorting:(YapDatabaseViewSorting *)sorting
          versionTag:(nullable NSString *)versionTag;
@@ -169,7 +169,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Note: You must pass a different versionTag, or this method does nothing.
  * If needed, you can fetch the current versionTag via the [viewTransaction versionTag] method.
- **/
+  */
 - (void)setSorting:(YapDatabaseViewSorting *)sorting
         versionTag:(nullable NSString *)versionTag;
 

@@ -12,7 +12,7 @@
  * 
  * This class is designed only to store the metadata in RAM.
  * When the metadata is stored to disk, the individual ivars have an associated column.
-**/
+ */
 @interface YapDatabaseViewPageMetadata : NSObject <NSCopying> {
 @public
 	

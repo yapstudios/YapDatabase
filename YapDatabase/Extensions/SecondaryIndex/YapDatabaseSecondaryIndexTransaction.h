@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return NO if there was a problem with the given query. YES otherwise.
  * 
  * @see YapDatabaseQuery
-**/
+ */
 
 - (BOOL)enumerateKeysMatchingQuery:(YapDatabaseQuery *)query
                         usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block;
@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Skips the enumeration process, and just gives you the count of matching rows.
-**/
+ */
 - (BOOL)getNumberOfRows:(NSUInteger *)count matchingQuery:(YapDatabaseQuery *)query;
 
 /**
@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * For more inforation, see the sqlite docs on "Aggregate Functions":
  * https://www.sqlite.org/lang_aggfunc.html
-**/
+ */
 - (nullable id)performAggregateQuery:(YapDatabaseQuery *)query;
 
 /**
@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * YapDatabaseQuery *query =
  *   [YapDatabaseQuery queryWithAggregateFunction:@"SUM(duration)" format:@"WHERE rowid IN (?)", rowids];
-**/
+ */
 - (NSDictionary<NSString*, NSNumber*> *)rowidsForKeys:(NSArray<NSString *> *)keys
                                          inCollection:(nullable NSString *)collection;
 

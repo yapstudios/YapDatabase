@@ -23,12 +23,12 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @see YapDatabaseFullTextSearch
  * @see YapDatabaseFullTextSearchTransaction
-**/
+ */
 @interface YapDatabaseFullTextSearchConnection : YapDatabaseExtensionConnection
 
 /**
  * Returns the parent instance.
-**/
+ */
 @property (nonatomic, strong, readonly) YapDatabaseFullTextSearch *fullTextSearch;
 
 @end

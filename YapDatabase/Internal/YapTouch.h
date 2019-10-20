@@ -7,7 +7,7 @@
  * When an item is touched, we use this singleton as the value to signify internally that the item didn't change.
  * This allows us to act as if the item did change in most all respects,
  * but internally won't cause us to flush the item from the caches.
-**/
+ */
 @interface YapTouch : NSObject
 
 + (id)touch;

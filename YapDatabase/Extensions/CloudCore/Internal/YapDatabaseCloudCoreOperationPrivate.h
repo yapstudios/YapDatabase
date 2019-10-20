@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import "YapDatabaseCloudCoreOperation.h"
 
@@ -28,7 +28,7 @@ NS_INLINE BOOL YDB_IsEqualOrBothNil(id obj1, id obj2)
  *
  * This property does NOT need to be included during serialization.
  * It gets it own separate column in the database table (obviously).
-**/
+ */
 @property (nonatomic, assign, readwrite) int64_t operationRowid;
 
 /**
@@ -38,7 +38,7 @@ NS_INLINE BOOL YDB_IsEqualOrBothNil(id obj1, id obj2)
  * YapDatabaseCloudCoreTransaction is responsible for setting this value when:
  * - restoring operations from disk
  * - adding/inserting/modifying operations
-**/
+ */
 @property (nonatomic, assign, readwrite) uint64_t snapshot;
 
 #pragma mark Transactional Changes
@@ -49,13 +49,13 @@ NS_INLINE BOOL YDB_IsEqualOrBothNil(id obj1, id obj2)
  * 
  * As one would expect, 'needsDeleteDatabaseRow' trumps 'needsModifyDatabaseRow'.
  * So if both are set, the operation will be deleted from the database.
-**/
+ */
 @property (nonatomic, assign, readwrite) BOOL needsDeleteDatabaseRow;
 @property (nonatomic, assign, readwrite) BOOL needsModifyDatabaseRow;
 
 /**
  * The status that will get synced to the pipeline after the transaction is committed.
-**/
+ */
 @property (nonatomic, strong, readwrite) NSNumber *pendingStatus;
 
 @property (nonatomic, readonly) BOOL pendingStatusIsCompletedOrSkipped;

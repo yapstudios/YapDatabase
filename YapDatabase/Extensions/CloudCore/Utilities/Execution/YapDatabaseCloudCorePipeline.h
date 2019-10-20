@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 
@@ -33,7 +33,7 @@ typedef NS_ENUM(NSInteger, YDBCloudCorePipelineAlgorithm) {
 	 * This is the safest option because it means:
 	 * - you only have to think about operation dependencies within the context of a single commit
 	 * - the pipeline ensures the cloud moves from commit to commit (just as occurred locally)
-	**/
+	 */
 	YDBCloudCorePipelineAlgorithm_CommitGraph = 0,
 	
 	/**
@@ -59,7 +59,7 @@ typedef NS_ENUM(NSInteger, YDBCloudCorePipelineAlgorithm) {
 	 * - willAddOperation:inPipeline:withGraphIdx:
 	 * - willInsertOperation:inPipeline:withGraphIdx:
 	 * - willModifyOperation:inPipeline:withGraphIdx:
-	**/
+	 */
 	YDBCloudCorePipelineAlgorithm_FlatGraph = 1
 };
 
@@ -72,13 +72,13 @@ typedef NS_ENUM(NSInteger, YDBCloudCoreOperationStatus) {
 	 * If an operation fails, the PipelineDelegate may re-queue the operation by marking its status as pending.
 	 * This gives control over the operation back to the pipeline,
 	 * and it will dispatch it to the PipelineDelegate again when ready.
-	**/
+	 */
 	YDBCloudOperationStatus_Pending = 0,
 	
 	/**
 	 * The operation has been started.
 	 * I.e. has been handed to the PipelineDelegate via 'startOperation::'.
-	**/
+	 */
 	YDBCloudOperationStatus_Active,
 	
 	/**
@@ -90,7 +90,7 @@ typedef NS_ENUM(NSInteger, YDBCloudCoreOperationStatus) {
 	 * - [YapDatabaseCloudCoreTransaction skipOperation:]
 	 * 
 	 * These methods allow the system to delete the operation from the internal sqlite table.
-	**/
+	 */
 	YDBCloudOperationStatus_Completed,
 	YDBCloudOperationStatus_Skipped,
 };
@@ -103,7 +103,7 @@ typedef NS_ENUM(NSInteger, YDBCloudCoreOperationStatus) {
  * - One or more operations were modified
  * 
  * This notification is posted to the main thread.
-**/
+ */
 extern NSString *const YDBCloudCorePipelineQueueChangedNotification;
 extern NSString *const YDBCloudCorePipelineQueueChangedKey_addedOperationUUIDs;
 extern NSString *const YDBCloudCorePipelineQueueChangedKey_modifiedOperationUUIDs;
@@ -113,13 +113,13 @@ extern NSString *const YDBCloudCorePipelineQueueChangedKey_removedOperationUUIDs
 /**
  * This notification is posted whenever the suspendCount changes.
  * This notification is posted to the main thread.
-**/
+ */
 extern NSString *const YDBCloudCorePipelineSuspendCountChangedNotification;
 
 /**
  * This notification is posted whenever the isActive status changes.
  * This notification is posted to the main thread.
-**/
+ */
 extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 
 /**
@@ -131,13 +131,13 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * The operations within a graph will be executed in accordance with the set dependencies & priorities.
  * 
  * The pipeline manages executing the operations within each graph.
-**/
+ */
 @interface YapDatabaseCloudCorePipeline : NSObject
 
 /**
  * Initializes a pipeline instance with the given name and delegate.
  * After creating a pipeline instance, you need to register it via [YapDatabaseCloudCore registerPipeline:].
-**/
+ */
 - (instancetype)initWithName:(NSString *)name
                     delegate:(id <YapDatabaseCloudCorePipelineDelegate>)delegate;
 
@@ -146,7 +146,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * Additionally, you may choose to use an advanced algorithm such as FlatGraph.
  *
  * After creating a pipeline instance, you need to register it via [YapDatabaseCloudCore registerPipeline:].
-**/
+ */
 - (instancetype)initWithName:(NSString *)name
                    algorithm:(YDBCloudCorePipelineAlgorithm)algorithm
                     delegate:(id <YapDatabaseCloudCorePipelineDelegate>)delegate;
@@ -165,7 +165,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * can be properly migrated to the new pipeline name.
  * 
  * This property must be set before the pipeline is registered.
-**/
+ */
 @property (nonatomic, copy, readwrite, nullable) NSSet *previousNames;
 
 /**
@@ -185,7 +185,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * Setting the value to zero is the equivalent of setting the value to NSUIntegerMax.
  * If your intention is to pause/suspend the queue, use the suspend/resume methods.
-**/
+ */
 @property (atomic, assign, readwrite) NSUInteger maxConcurrentOperationCount;
 
 #pragma mark Operation Searching
@@ -194,7 +194,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * Searches for an operation with the given UUID.
  *
  * @return The corresponding operation, if found. Otherwise nil.
-**/
+ */
 - (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
 
 /**
@@ -202,12 +202,12 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * @return A dictionary with all the found operations.
  *         Operations which were not found won't be present in the returned dictionary.
-**/
+ */
 - (NSDictionary<NSUUID*, YapDatabaseCloudCoreOperation*> *)operationsWithUUIDs:(NSArray<NSUUID*> *)uuids;
 
 /**
  * Returns a list of operations in state 'YDBCloudOperationStatus_Active'.
-**/
+ */
 - (NSArray<YapDatabaseCloudCoreOperation *> *)activeOperations;
 
 /**
@@ -215,21 +215,21 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * This is useful for finding operation.
  * For example, you might use this to search for an upload operation with a certain cloudPath.
-**/
+ */
 - (void)enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
                                                            NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 /**
  * Returns the number of graphs queued in the pipeline.
  * Each graph represents the operations from a particular commit.
-**/
+ */
 - (NSUInteger)graphCount;
 
 #pragma mark Operation Status
 
 /**
  * Returns the current status for the given operation.
-**/
+ */
 - (YDBCloudCoreOperationStatus)statusForOperationWithUUID:(NSUUID *)opUUID;
 
 /**
@@ -240,14 +240,14 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * If the app is relaunched, and you discover there are network tasks from a previous app session,
  * you'll obviously want to avoid starting the corresponding operation again.
  * In this case, you should use this method to inform the pipeline that the operation is already started.
-**/
+ */
 - (void)setStatusAsActiveForOperationWithUUID:(NSUUID *)opUUID;
 
 /**
  * The PipelineDelegate may invoke this method to reset a failed operation.
  * This gives control over the operation back to the pipeline,
  * and it will dispatch it back to the PipelineDelegate again when ready.
-**/
+ */
 - (void)setStatusAsPendingForOperationWithUUID:(NSUUID *)opUUID;
 
 #pragma mark Operation Hold
@@ -259,7 +259,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * For example, if an operation requires several different subsystems to each complete an action,
  * then each susbsystem can independently place a hold on the operation.
  * Once all holds are lifted, the pipeline can dispatch the operation again.
-**/
+ */
 - (nullable NSDate *)holdDateForOperationWithUUID:(NSUUID *)opUUID context:(NSString *)context;
 
 /**
@@ -271,7 +271,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * 
  * The operation won't be started again until all associated holdDate's have expired.
  * You can pass a nil date to remove a hold on an operation (for a given context).
-**/
+ */
 - (void)setHoldDate:(nullable NSDate *)date forOperationWithUUID:(NSUUID *)opUUID context:(NSString *)context;
 
 /**
@@ -279,17 +279,17 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * If there are no holdDates for the operation, returns nil.
  * If there are 1 or more holdDates, returns the latest date.
-**/
+ */
 - (nullable NSDate *)latestHoldDateForOperationWithUUID:(NSUUID *)opUUID;
 
 /**
  * Returns a dictionary of all the hold dates associated with an operation.
-**/
+ */
 - (nullable NSDictionary<NSString*, NSDate*> *)holdDatesForOperationWithUUID:(NSUUID *)opUUID;
 
 /**
  * Returns a dictionary of all the hold dates associated with a particular context.
-**/
+ */
 - (nullable NSDictionary<NSUUID*, NSDate*> *)holdDatesForContext:(NSString *)context;
 
 #pragma mark Suspend & Resume
@@ -299,7 +299,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * @see suspend
  * @see resume
-**/
+ */
 @property (atomic, readonly) BOOL isSuspended;
 
 /**
@@ -309,7 +309,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * @see suspend
  * @see resume
-**/
+ */
 @property (atomic, readonly) NSUInteger suspendCount;
 
 /**
@@ -324,7 +324,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * 
  * @see resume
  * @see suspendCount
-**/
+ */
 - (NSUInteger)suspend;
 
 /**
@@ -336,7 +336,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * @see suspend
  * @see suspendCount
-**/
+ */
 - (NSUInteger)suspendWithCount:(NSUInteger)suspendCountIncrement;
 
 /**
@@ -351,7 +351,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * @see suspend
  * @see suspendCount
-**/
+ */
 - (NSUInteger)resume;
 
 #pragma mark Activity
@@ -367,7 +367,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * ^In other words, there may be situations in which there are zero active operations,
  *  due to something like a conflict resolution, however the pipeline is still considered
  *  active because it still has pending operations, and it hasn't been suspended.
-**/
+ */
 @property (atomic, readonly) BOOL isActive;
 
 @end

@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The underlying object that the proxy represents may or may not be loaded in memory.
  * If not, the proxy is configured to automatically load the underlying object
  * (using the current transaction) on demand.
-**/
+ */
 
 @interface YapProxyObject : NSProxy
 

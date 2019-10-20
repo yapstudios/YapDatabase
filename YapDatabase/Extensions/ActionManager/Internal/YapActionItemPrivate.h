@@ -3,7 +3,7 @@
 
 /**
  * Private access for use by YapDatabaseActionManager ONLY.
-**/
+ */
 @interface YapActionItem ()
 
 @property (nonatomic, assign, readwrite) BOOL isStarted;
@@ -20,7 +20,7 @@
  * @return
  *   Returns NO if self.nextRetry is after atDate (comparitively in the future).
  *   Returns YES otherwise (comparitively in the past or present).
-**/
+ */
 - (BOOL)isReadyToRetryAtDate:(nullable NSDate *)atDate;
 
 @end

@@ -8,7 +8,7 @@
 
 /**
  * Changeset keys (for changeset notification dictionary)
-**/
+ */
 static NSString *const changeset_key_query = @"query";
 
 @interface YapDatabaseSearchResultsViewOptions ()

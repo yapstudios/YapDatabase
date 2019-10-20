@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * If you use the initWithPath initializer, the default serializer/deserializer are used.
  * Thus to store objects in the database, the objects need only support the NSCoding protocol.
  * You may optionally use a custom serializer/deserializer for the objects and/or metadata.
-**/
+ */
 typedef NSData * __nonnull (^YapDatabaseSerializer)(NSString *collection, NSString *key, id object);
 typedef id __nullable (^YapDatabaseDeserializer)(NSString *collection, NSString *key, NSData *data);
 
@@ -67,7 +67,7 @@ typedef id __nullable (^YapDatabaseDeserializer)(NSString *collection, NSString 
  *
  * An example of such a use for the PostSanitizer is discussed in the YapDatabaseCloudKit wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/YapDatabaseCloudKit
-**/
+ */
 typedef id __nonnull (^YapDatabasePreSanitizer)(NSString *collection, NSString *key, id obj);
 typedef void (^YapDatabasePostSanitizer)(NSString *collection, NSString *key, id obj);
 

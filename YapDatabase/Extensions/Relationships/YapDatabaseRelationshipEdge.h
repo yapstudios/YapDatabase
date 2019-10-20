@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * For tons of information about this extension, see the wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/Relationships
-**/
+ */
 
 typedef NS_OPTIONS(uint16_t, YDB_NodeDeleteRules) {
     // notify only
@@ -44,7 +44,7 @@ typedef NS_OPTIONS(uint16_t, YDB_NodeDeleteRules) {
  * 
  * This method is not suitable for use with manual edge management.
  * When manually adding an edge, you must fully specify the source node.
-**/
+ */
 + (instancetype)edgeWithName:(NSString *)name
               destinationKey:(NSString *)destinationKey
                   collection:(nullable NSString *)destinationCollection
@@ -65,7 +65,7 @@ typedef NS_OPTIONS(uint16_t, YDB_NodeDeleteRules) {
  * 
  * This method is not suitable for use with manual edge management.
  * When directly adding an edge, you must fully specify the source node.
-**/
+ */
 + (instancetype)edgeWithName:(NSString *)name
           destinationFileURL:(NSURL *)destinationFileURL
              nodeDeleteRules:(YDB_NodeDeleteRules)rules;
@@ -78,7 +78,7 @@ typedef NS_OPTIONS(uint16_t, YDB_NodeDeleteRules) {
  * If you're using the YapDatabaseRelationshipNode protocol, then you can use the shorter version of this method
  * which doesn't specify the source node. This is because the source node is implied with the
  * YapDatabaseRelationshipNode protocol, and thus doesn't need to be explicitly specified in the edge.
-**/
+ */
 + (instancetype)edgeWithName:(NSString *)name
                    sourceKey:(NSString *)sourceKey
                   collection:(nullable NSString *)sourceCollection
@@ -99,7 +99,7 @@ typedef NS_OPTIONS(uint16_t, YDB_NodeDeleteRules) {
  * If you're using the YapDatabaseRelationshipNode protocol, then you can use the shorter version of this method
  * which doesn't specify the source node. This is because the source node is implied with the
  * YapDatabaseRelationshipNode protocol, and thus doesn't need to be explicitly specified in the edge.
-**/
+ */
 + (instancetype)edgeWithName:(NSString *)name
                    sourceKey:(NSString *)sourceKey
                   collection:(nullable NSString *)sourceCollection
@@ -110,7 +110,7 @@ typedef NS_OPTIONS(uint16_t, YDB_NodeDeleteRules) {
 
 /**
  * For documentation @see edgeWithName:destinationKey:collection:nodeDeleteRules:
-**/
+ */
 - (id)initWithName:(NSString *)name
     destinationKey:(NSString *)key
         collection:(nullable NSString *)collection
@@ -118,13 +118,13 @@ typedef NS_OPTIONS(uint16_t, YDB_NodeDeleteRules) {
 
 /**
  * For documentation @see edgeWithName:destinationFileURL:nodeDeleteRules:
-**/
+ */
 - (id)initWithName:(NSString *)name destinationFileURL:(NSURL *)destinationFileURL
                                        nodeDeleteRules:(YDB_NodeDeleteRules)rules;
 
 /**
  * For documentation @see edgeWithName:sourceKey:collection:destinationKey:collection:nodeDeleteRules:
-**/
+ */
 - (id)initWithName:(NSString *)name
          sourceKey:(NSString *)sourceKey
         collection:(nullable NSString *)sourceCollection
@@ -134,7 +134,7 @@ typedef NS_OPTIONS(uint16_t, YDB_NodeDeleteRules) {
 
 /**
  * For documentation @see edgeWithName:sourceKey:collection:destinationFileURL:nodeDeleteRules:
-**/
+ */
 - (id)initWithName:(NSString *)name sourceKey:(NSString *)sourceKey
                                    collection:(nullable NSString *)sourceCollection
                            destinationFileURL:(NSURL *)destinationFileURL
@@ -157,7 +157,7 @@ typedef NS_OPTIONS(uint16_t, YDB_NodeDeleteRules) {
 /**
  * NO if the edge was created via the YapDatabaseRelationshipNode protocol.
  * YES if the edge was created via "manual edge management" methods.
-**/
+ */
 @property (nonatomic, assign, readonly) BOOL isManualEdge;
 
 @end

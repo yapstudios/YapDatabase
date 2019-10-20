@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param options
  *   The options allow you to specify things like creating an IN-MEMORY-ONLY VIEW (non persistent).
-**/
+ */
 - (id)initWithParentViewName:(NSString *)viewName
                    filtering:(YapDatabaseViewFiltering *)filtering
                   versionTag:(nullable NSString *)versionTag

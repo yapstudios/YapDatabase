@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 
@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The most recently accessed item is at the front of the linked-list,
  * and the least recently accessed item is at the back.
  * So it's very quick and efficient to evict items based on recent usage.
-**/
+ */
 @interface YapManyToManyCache : NSObject
 
 /**
@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
  * If you don't define a countLimit, then the default countLimit of 40 is used.
  * 
  * @see countLimit
-**/
+ */
 - (instancetype)init;
 - (instancetype)initWithCountLimit:(NSUInteger)countLimit;
 
@@ -65,12 +65,12 @@ NS_ASSUME_NONNULL_BEGIN
  * You may change the countLimit at any time.
  * Changes to the countLimit take immediate effect on the cache (before the set method returns).
  * Thus, if needed, you can temporarily increase the cache size for certain operations.
-**/
+ */
 @property (nonatomic, assign, readwrite) NSUInteger countLimit;
 
 /**
  * Returns the number of items in the cache.
-**/
+ */
 @property (nonatomic, readonly) NSUInteger count;
 
 /**
@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If the key/value tuple already exists, it's metadata value is used using the given metadata.
  * And then the key/value tuple is moved to the beginning of the most-recently-used linked-list.
-**/
+ */
 - (void)insertKey:(id)key value:(id)value;
 - (void)insertKey:(id)key value:(id)value metadata:(nullable id)metadata;
 
@@ -98,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * The key & value must be non-nil.
  * If you're only interested in matches for a key or value (but not together) use a different method.
-**/
+ */
 - (BOOL)containsKey:(id)key value:(id)value;
 
 /**
@@ -108,18 +108,18 @@ NS_ASSUME_NONNULL_BEGIN
  * or if the key/value tuple doesn't have any associated metadata.
  * 
  * If the key/value tuple exists, it's moved to the beginning of the most-recently-used linked-list.
-**/
+ */
 - (nullable id)metadataForKey:(id)key value:(id)value;
 
 /**
  * Returns YES if the given key or value has 1 or more entries in the cache.
-**/
+ */
 - (BOOL)containsKey:(id)key;
 - (BOOL)containsValue:(id)value;
 
 /**
  * Returns the number of entries for the given key or value.
-**/
+ */
 - (NSUInteger)countForKey:(id)key;
 - (NSUInteger)countForValue:(id)value;
 
@@ -129,7 +129,7 @@ NS_ASSUME_NONNULL_BEGIN
  * - all keys based on a given value
  * 
  * All key/value tuples accessed during enumeration are moved to the beginning of the most-recently-used linked-list.
-**/
+ */
 - (void)enumerateValuesForKey:(id)key withBlock:(void (NS_NOESCAPE^)(id value, __nullable id metadata, BOOL *stop))block;
 - (void)enumerateKeysForValue:(id)value withBlock:(void (NS_NOESCAPE^)(id value, __nullable id metadata, BOOL *stop))block;
 
@@ -137,7 +137,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Enumerates all key/value pairs in the cache.
  * 
  * As this method is designed to enumerate all values, it ddes not affect the most-recently-used linked-list.
-**/
+ */
 - (void)enumerateWithBlock:(void (NS_NOESCAPE^)(id key, id value, __nullable id metadata, BOOL *stop))block;
 
 /**
@@ -145,19 +145,19 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * The key & value must be non-nil.
  * If you're only interested in matches for a key or value (but not together) use a different method.
-**/
+ */
 - (void)removeItemWithKey:(id)key value:(id)value;
 
 /**
  * Removes all tuples that match the given key or value.
-**/
+ */
 - (void)removeAllItemsWithKey:(id)key;
 - (void)removeAllItemsWithValue:(id)value;
 
 /**
  * Removes all items in the cache.
  * Upon return the count will be zero.
-**/
+ */
 - (void)removeAllItems;
 
 - (void)debug;

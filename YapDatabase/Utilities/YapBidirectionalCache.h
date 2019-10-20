@@ -44,13 +44,13 @@ extern const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBac
  * The most recently accessed item is at the front of the linked-list,
  * and the least recently accessed item is at the back.
  * So it's very quick and efficient to evict items based on recent usage.
-**/
+ */
 @interface YapBidirectionalCache<KeyType, ObjectType> : NSObject
 
 /**
  * Initializes a cache.
  * If you don't define a countLimit, then the default countLimit of 40 is used.
-**/
+ */
 - (instancetype)init;
 - (instancetype)initWithCountLimit:(NSUInteger)countLimit;
 
@@ -64,7 +64,7 @@ extern const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBac
  *   equal = CFEqual,
  *   hash = CFHash
  * }
-**/
+ */
 - (instancetype)initWithCountLimit:(NSUInteger)countLimit
                       keyCallbacks:(const YapBidirectionalCacheCallBacks * _Nullable)keyCallbacks
                    objectCallbacks:(const YapBidirectionalCacheCallBacks * _Nullable)objectCallbacks;
@@ -80,7 +80,7 @@ extern const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBac
  * You may change the countLimit at any time.
  * Changes to the countLimit take immediate effect on the cache (before the set method returns).
  * Thus, if needed, you can temporarily increase the cache size for certain operations.
-**/
+ */
 @property (nonatomic, assign, readwrite) NSUInteger countLimit;
 
 /**
@@ -95,7 +95,7 @@ extern const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBac
  * Since this is for debugging, the checks are ONLY run when assertions are enabled.
  * In general, assertions are disabled when you compile for release.
  * But to be precise, the checks are only run if NS_BLOCK_ASSERTIONS is not defined.
-**/
+ */
 @property (nonatomic, copy, readwrite, nullable) NSSet<Class> *allowedKeyClasses;
 @property (nonatomic, copy, readwrite, nullable) NSSet<Class> *allowedObjectClasses;
 
@@ -105,7 +105,7 @@ extern const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBac
  * When querying the cache for an object via objectForKey,
  * the hitCount is incremented if the object is in the cache,
  * and the missCount is incremented if the object is not in the cache.
-**/
+ */
 @property (nonatomic, readonly) NSUInteger hitCount;
 @property (nonatomic, readonly) NSUInteger missCount;
 
@@ -113,7 +113,7 @@ extern const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBac
  * When adding objects to the cache via setObject:forKey:,
  * the evictionCount is incremented if the cache is full,
  * and the added object causes another object (the least recently used object) to be evicted.
-**/
+ */
 @property (nonatomic, readonly) NSUInteger evictionCount;
 
 #endif

@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  * An identifier permits to distinguish each database, and all processes listening on the same database
  * must use the same identifier.
  *
-**/
+ */
 @interface YapDatabaseCrossProcessNotification : YapDatabaseExtension
 
 - (id)initWithIdentifier:(NSString *)identifier;

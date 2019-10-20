@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  * And as such, it only needs to be run once (because the group will never change).
  * So you can use the 'options' parameter to specify YapDatabaseBlockInvokeOnInsertOnly.
  * This will allow the view to properly optimize based on the details of your actual groupingBlock implementation.
-**/
+ */
 
 @interface YapDatabaseViewGrouping : NSObject
 
@@ -109,7 +109,7 @@ typedef NSString* _Nullable (^YapDatabaseViewGroupingWithRowBlock)
  * while adding them to the database. One direction will hit the optimization every time. The other will cause
  * the view to perform a binary search every time.
  * These little one-liner optimzations are easy (given this internal information is known).
-**/
+ */
 @interface YapDatabaseViewSorting : NSObject
 
 typedef id YapDatabaseViewSortingBlock; // One of the YapDatabaseViewSortingX types below.
@@ -198,7 +198,7 @@ typedef NSComparisonResult (^YapDatabaseViewSortingWithRowBlock)
  * and the "right operand" is the desired range.
  * 
  * And NSOrderedSame means: "the passed row is within the range I'm looking for".
-**/
+ */
 @interface YapDatabaseViewFind : NSObject
 
 typedef id YapDatabaseViewFindBlock; // One of the YapDatabaseViewFindX types below.

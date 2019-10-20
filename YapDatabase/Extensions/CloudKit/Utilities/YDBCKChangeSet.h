@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  * then the transaction will result in multiple generated change-sets.
  *
  * You are free to inspect the change-set, however, it is not possible to modify it.
-**/
+ */
 @interface YDBCKChangeSet : NSObject
 
 @property (nonatomic, readonly) NSString *databaseIdentifier;

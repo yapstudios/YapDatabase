@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * YapDatabaseSearchResults allows you to pipe search results from YapDatabaseFullTextSearch into a YapDatabaseView.
  * This makes it easy to display search results in a tableView or collectionView.
-**/
+ */
 @interface YapDatabaseSearchResultsView : YapDatabaseAutoView
 
 /**
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  *   Extended options for the extension.
  *   You may pass nil to get the default extended options.
-**/
+ */
 - (id)initWithFullTextSearchName:(NSString *)fullTextSearchName
                   parentViewName:(NSString *)parentViewName
                       versionTag:(nullable NSString *)versionTag
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * For more information on the groupingBlock & sortingBlock parmaters,
  * please see the documentation in YapDatabaseView.h.
-**/
+ */
 - (id)initWithFullTextSearchName:(NSString *)fullTextSearchName
                         grouping:(YapDatabaseViewGrouping *)grouping
                          sorting:(YapDatabaseViewSorting *)sorting

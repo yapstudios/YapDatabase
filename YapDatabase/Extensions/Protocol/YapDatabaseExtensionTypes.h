@@ -4,7 +4,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Corresponds to the different type of blocks supported by the various extension subclasses.
-**/
+ */
 typedef NS_OPTIONS(NSUInteger, YapDatabaseBlockType) {
 	
 	// Flags Only
@@ -30,7 +30,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseBlockType) {
 
 /**
  * Advanced options concerning exactly when to invoke the block.
-**/
+ */
 typedef NS_OPTIONS(NSUInteger, YapDatabaseBlockInvoke) {
 	
 	// Only invoke the block when the row is inserted (or when the extension is initialized)

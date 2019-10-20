@@ -8,7 +8,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Note: This class extends YapDatabaseViewOptions.
-**/
+ */
 @interface YapDatabaseSearchResultsViewOptions : YapDatabaseViewOptions <NSCopying>
 
 /**
@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  * See YapDatabaseViewOptions.h for documentation.
  *
  * The default value is ** NO **. <<-- This is changed for YapDatabaseSearchResultsOptions
-**/
+ */
 //@property (nonatomic, assign, readwrite) BOOL isPersistent;
 
 
@@ -29,14 +29,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Note: This property only applies if using a parentView.
  *
  * The default value is nil.
-**/
+ */
 @property (nonatomic, strong, readwrite, nullable) YapWhitelistBlacklist *allowedGroups;
 
 /**
  * Set this option to include snippets with the search results.
  *
  * The default value is nil.
-**/
+ */
 @property (nonatomic, copy, readwrite, nullable) YapDatabaseFullTextSearchSnippetOptions *snippetOptions;
 
 @end

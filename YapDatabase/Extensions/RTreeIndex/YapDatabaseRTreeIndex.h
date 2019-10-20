@@ -33,7 +33,7 @@
  *
  * For more information, see the wiki article about rtree indexes:
  * https://github.com/yapstudios/YapDatabase/wiki/RTree-Indexes
-**/
+ */
 @interface YapDatabaseRTreeIndex : YapDatabaseExtension
 
 /**
@@ -55,7 +55,7 @@
  * @see YapDatabaseRTreeIndexHandler
  *
  * @see YapDatabase registerExtension:withName:
-**/
+ */
 - (id)initWithSetup:(YapDatabaseRTreeIndexSetup *)setup
             handler:(YapDatabaseRTreeIndexHandler *)handler;
 
@@ -82,7 +82,7 @@
  * @see YapDatabaseRTreeIndexHandler
  *
  * @see YapDatabase registerExtension:withName:
-**/
+ */
 - (id)initWithSetup:(YapDatabaseRTreeIndexSetup *)setup
             handler:(YapDatabaseRTreeIndexHandler *)handler
          versionTag:(NSString *)versionTag;
@@ -114,7 +114,7 @@
  * @see YapDatabaseRTreeIndexHandler
  *
  * @see YapDatabase registerExtension:withName:
-**/
+ */
 - (id)initWithSetup:(YapDatabaseRTreeIndexSetup *)setup
             handler:(YapDatabaseRTreeIndexHandler *)handler
          versionTag:(NSString *)versionTag
@@ -136,7 +136,7 @@
  * If you need to change the columnNames and/or block,
  * then simply pass a different versionTag during the init method,
  * and the extension will automatically update itself.
-**/
+ */
 @property (nonatomic, copy, readonly) NSString *versionTag;
 
 @end

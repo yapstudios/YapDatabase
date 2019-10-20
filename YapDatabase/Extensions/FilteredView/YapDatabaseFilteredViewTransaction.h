@@ -32,7 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
  * and swapping in/out a filterBlock to allow/disallow non-missed calls.
  *
  * Note: You must pass a different versionTag, or this method does nothing.
-**/
+ */
 - (void)setFiltering:(YapDatabaseViewFiltering *)filtering
           versionTag:(nullable NSString *)tag;
 

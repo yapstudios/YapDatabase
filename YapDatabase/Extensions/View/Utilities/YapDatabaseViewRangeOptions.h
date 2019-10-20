@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @see fixedRangeWithLength:offset:from:
  * @see flexibleRangeWithStartingLength:startingOffset:from:
-**/
+ */
 typedef NS_ENUM(NSInteger, YapDatabaseViewPin) {
 	YapDatabaseViewBeginning = 0, // index == 0
 	YapDatabaseViewEnd       = 1, // index == last
@@ -17,7 +17,7 @@ typedef NS_ENUM(NSInteger, YapDatabaseViewPin) {
  * Grow options allow you to specify in which direction flexible ranges can grow.
  *
  * @see growOptions
-**/
+ */
 typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
 	YapDatabaseViewGrowPinSide    = 1 << 0,
 	YapDatabaseViewGrowNonPinSide = 1 << 1,
@@ -36,7 +36,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
  * YapDatabaseViewRangeOptions are plugged into YapDatabaseViewMappings.
  *
  * @see YapDatabaseViewMappings setRangeOptions:forGroup:
-**/
+ */
 @interface YapDatabaseViewRangeOptions : NSObject <NSCopying>
 
 /**
@@ -79,7 +79,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
  * 
  *   Thus you get row animations for free, even when only displaying a subset.
  *   And all the math is already done for you.
-**/
+ */
 + (nullable YapDatabaseViewRangeOptions *)fixedRangeWithLength:(NSUInteger)length
 														offset:(NSUInteger)offset
 														  from:(YapDatabaseViewPin)beginningOrEnd;
@@ -128,7 +128,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
  *
  *   Thus you get row animations for free, even when only displaying a subset.
  *   And all the math is already done for you.
-**/
+ */
 + (nullable YapDatabaseViewRangeOptions *)flexibleRangeWithLength:(NSUInteger)length
 														   offset:(NSUInteger)offset
 															 from:(YapDatabaseViewPin)beginningOrEnd;
@@ -140,7 +140,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
  * 
  * For a fixed range, the length will always be less than or equal to the original length.
  * For a flexible range, the length will grow and shrink as items get inserted and removed from the original range.
-**/
+ */
 @property (nonatomic, assign, readonly) NSUInteger length;
 
 /**
@@ -148,7 +148,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
  * 
  * For a fixed range, the offset never changes.
  * For a flexible range, the offset will grow and shrink as items get inserted and removed between the range and pin.
-**/
+ */
 @property (nonatomic, assign, readonly) NSUInteger offset;
 
 /**
@@ -158,12 +158,12 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
  * - length=10, offset=10, pin=YapDatabaseViewBeginning => the range is [10-19](inclusive) (10 back from 0)
  *
  * - length=10, offset=10, pin=YapDatabaseViewEnd => the range is [30-39](inclusive) (10 back from 49)
-**/
+ */
 @property (nonatomic, assign, readonly) YapDatabaseViewPin pin;
 
 /**
  * There are 2 types of supported ranges: Fixed & Flexible
-**/
+ */
 @property (nonatomic, readonly) BOOL isFixedRange;
 @property (nonatomic, readonly) BOOL isFlexibleRange;
 
@@ -188,7 +188,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
  * but happens automatically without you having to write extra code to handle the edge case.
  * 
  * By default there is no maxLength, and thus the default maxLength is NSUIntegerMax.
-**/
+ */
 @property (nonatomic, readwrite) NSUInteger maxLength;
 
 /**
@@ -205,7 +205,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
  * This is sometimes useful if items can get deleted from your range.
  * 
  * By default there is no minLength, and thus the default minLength is zero.
-**/
+ */
 @property (nonatomic, readwrite) NSUInteger minLength;
 
 /**
@@ -316,12 +316,12 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewGrowOptions) {
  * | | |x|?|x|x|x| | |  => ALWAYS =>  | | |x|x|x|x|x| | |
  *  - - - - - - - - -                  - - - - - - - - -
  *  0 1 2 3 4 5 6 7 8                  0 1 2 3 4 5 6 7 8
-**/
+ */
 @property (nonatomic, readwrite) YapDatabaseViewGrowOptions growOptions;
 
 /**
  * Various copy options.
-**/
+ */
 - (id)copyWithNewLength:(NSUInteger)newLength;
 - (id)copyWithNewOffset:(NSUInteger)newOffset;
 - (id)copyWithNewLength:(NSUInteger)newLength newOffset:(NSUInteger)newOffset;

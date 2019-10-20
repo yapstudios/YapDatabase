@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * For the full documentation on Views, please see the related wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/Views
-**/
+ */
 @interface YapDatabaseAutoView : YapDatabaseView
 
 - (instancetype)initWithGrouping:(YapDatabaseViewGrouping *)grouping
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param options
  *   The options allow you to specify things like creating an in-memory-only view (non persistent).
-**/
+ */
 - (instancetype)initWithGrouping:(YapDatabaseViewGrouping *)grouping
                          sorting:(YapDatabaseViewSorting *)sorting
                       versionTag:(nullable NSString *)versionTag

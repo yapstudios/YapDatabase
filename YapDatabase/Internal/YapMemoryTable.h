@@ -10,7 +10,7 @@
  * The memory table is accessed via a YapMemoryTableTransaction instance,
  * which is itself associated with a particular timestamp. Thus the transaction is able to properly identify
  * which version is appropriate for itself.
-**/
+ */
 @interface YapMemoryTable : NSObject
 
 /**
@@ -18,18 +18,18 @@
  *
  * The keyClass is used for debugging, to ensure the proper key type is always used when accessing the table.
  * The keyClass is used within NSAssert statements that typically get compiled out for release builds.
-**/
+ */
 - (id)initWithKeyClass:(Class)keyClass;
 
 /**
  * Creates and returns a new connection associated with the shared cache.
-**/
+ */
 - (YapMemoryTableTransaction *)newReadTransactionWithSnapshot:(uint64_t)snapshot;
 - (YapMemoryTableTransaction *)newReadWriteTransactionWithSnapshot:(uint64_t)snapshot;
 
 /**
  * Invoked automatically by YapDatabase architecture.
-**/
+ */
 - (void)asyncCheckpoint:(int64_t)minSnapshot;
 
 @end

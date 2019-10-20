@@ -27,7 +27,7 @@ typedef struct yap_file yap_file;
  * 
  * The yap_vfs_shim provides a "shim" around a real VFS.
  * It's designed to provide additional functionality for YapDatabaseConnection.
-**/
+ */
 
 struct yap_vfs {
 	sqlite3_vfs base;         // Base class. Must be first in struct.
@@ -72,7 +72,7 @@ struct yap_file {
  * @return
  *   SQLITE_OK if everything went right.
  *   Some other SQLITE error if something went wrong.
-**/
+ */
 int yap_vfs_shim_register(const char *yap_vfs_name,         // Name for yap VFS shim
                           const char *underlying_vfs_name,  // Name of the underlying (real) VFS
                              yap_vfs **vfs_out);             // Allocated output
@@ -89,7 +89,7 @@ int yap_vfs_shim_register(const char *yap_vfs_name,         // Name for yap VFS 
  * @return
  *   SQLITE_OK if everything went right.
  *   Some other SQLITE error if something went wrong.
-**/
+ */
 int yap_vfs_shim_unregister(yap_vfs **vfs_in_out);
 
 /**
@@ -102,7 +102,7 @@ int yap_vfs_shim_unregister(yap_vfs **vfs_in_out);
  * This method is thread-safe, however it's your responsibility to protect against race conditions.
  * That is, you must ensure atomicity surrounding the code that may open the wal file,
  * and the subsequent invocation of this method.
-**/
+ */
 yap_file* yap_vfs_last_opened_wal(yap_vfs *vfs);
 
 #if defined __cplusplus

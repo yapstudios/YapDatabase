@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * This class is abstract and has no public API.
  * See concrete implementations such as YapDatabaseViewTransaction, YapDatabaseSecondaryIndexTransaction, etc.
-**/
+ */
 
 @end
 

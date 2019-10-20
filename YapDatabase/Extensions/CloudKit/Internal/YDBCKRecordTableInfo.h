@@ -22,7 +22,7 @@
  *
  * cleanRecordTableInfo.key = Hash(CKRecordID + databaseIdentifier)
  * cleanRecordTableInfo.value = YDBCKCleanRecordTableInfo
-**/
+ */
 @interface YDBCKCleanRecordTableInfo : NSObject <YDBCKRecordTableInfo>
 
 - (instancetype)initWithDatabaseIdentifier:(NSString *)databaseIdentifier
@@ -50,7 +50,7 @@
  *
  * dirtyRecordTableInfo.key = Hash(CKRecordID + databaseIdentifier)
  * dirtyRecordTableInfo.value = YDBCKDirtyRecordTableInfo
-**/
+ */
 @interface YDBCKDirtyRecordTableInfo : NSObject <YDBCKRecordTableInfo>
 
 - (instancetype)initWithDatabaseIdentifier:(NSString *)databaseIdentifier

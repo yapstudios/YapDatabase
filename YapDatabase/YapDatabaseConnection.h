@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * A connection instance is thread-safe, and operates by serializing access to itself.
  * Thus you can share a single connection between multiple threads.
  * But for conncurrent access between multiple threads you must use multiple connections.
-**/
+ */
 
 typedef NS_ENUM(NSInteger, YapDatabasePolicy) {
 	YapDatabasePolicyContainment = 0,
@@ -86,13 +86,13 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * This is to enforce the following core architecture rule:
  * A database instance cannot be deallocated if a corresponding connection is stil alive.
-**/
+ */
 @property (nonatomic, strong, readonly) YapDatabase *database;
 
 /**
  * The optional name property assists in debugging.
  * It is only used internally for log statements.
-**/
+ */
 @property (atomic, copy, readwrite) NSString *name;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,7 +120,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * Also see the wiki for a bit more info:
  * https://github.com/yapstudios/YapDatabase/wiki/Cache
-**/
+ */
 @property (atomic, assign, readwrite) BOOL objectCacheEnabled;
 @property (atomic, assign, readwrite) NSUInteger objectCacheLimit;
 
@@ -145,7 +145,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * Also see the wiki for a bit more info:
  * https://github.com/yapstudios/YapDatabase/wiki/Cache
-**/
+ */
 @property (atomic, assign, readwrite) BOOL metadataCacheEnabled;
 @property (atomic, assign, readwrite) NSUInteger metadataCacheLimit;
 
@@ -164,7 +164,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * These optimizations are discussed extensively in the wiki article "Performance Pro":
  * https://github.com/yapstudios/YapDatabase/wiki/Performance-Pro
-**/
+ */
 @property (atomic, assign, readwrite) YapDatabasePolicy objectPolicy;
 @property (atomic, assign, readwrite) YapDatabasePolicy metadataPolicy;
 
@@ -214,7 +214,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * 
  * The default value is YDB_AnyTransaction.
-**/
+ */
 #if YapDatabaseEnforcePermittedTransactions
 @property (atomic, assign, readwrite) YapDatabasePermittedTransactions permittedTransactions;
 #endif
@@ -281,7 +281,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * In general, the snapshot is primarily for internal use.
  * However, it may come in handy for some tricky edge-case bugs
  * (i.e. why doesn't my connection see that other commit ?)
-**/
+ */
 @property (atomic, assign, readonly) uint64_t snapshot;
 
 /**
@@ -294,7 +294,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * This is a generalized way to estimate the load on a connection,
  * and can be used for load balancing, such as done by YapDatabaseConnectionPool.
-**/
+ */
 @property (atomic, assign, readonly) uint64_t pendingTransactionCount;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -311,7 +311,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * to execute a readBlock or readWriteBlock. Recall that you may create multiple connections for concurrent access.
  *
  * This method is synchronous.
-**/
+ */
 - (void)readWithBlock:(void (NS_NOESCAPE^)(YapDatabaseReadTransaction *transaction))block;
 
 /**
@@ -319,7 +319,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * Only a single read-write block can execute among all sibling connections.
  * Thus this method may block if another sibling connection is currently executing a read-write block.
-**/
+ */
 - (void)readWriteWithBlock:(void (NS_NOESCAPE^)(YapDatabaseReadWriteTransaction *transaction))block;
 
 /**
@@ -329,7 +329,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * regardless of whether the sibling connections are executing read-only or read-write transactions.
  *
  * This method is asynchronous.
-**/
+ */
 - (void)asyncReadWithBlock:(void (^)(YapDatabaseReadTransaction *transaction))block;
 
 /**
@@ -342,7 +342,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * An optional completion block may be used.
  * The completionBlock will be invoked on the main thread (dispatch_get_main_queue()).
-**/
+ */
 - (void)asyncReadWithBlock:(void (^)(YapDatabaseReadTransaction *transaction))block
            completionBlock:(nullable dispatch_block_t)completionBlock;
 
@@ -357,7 +357,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * An optional completion block may be used.
  * Additionally the dispatch_queue to invoke the completion block may also be specified.
  * If NULL, dispatch_get_main_queue() is automatically used.
-**/
+ */
 - (void)asyncReadWithBlock:(void (^)(YapDatabaseReadTransaction *transaction))block
            completionQueue:(nullable dispatch_queue_t)completionQueue
            completionBlock:(nullable dispatch_block_t)completionBlock;
@@ -369,7 +369,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * Thus this method may block if another sibling connection is currently executing a read-write block.
  * 
  * This method is asynchronous.
-**/
+ */
 - (void)asyncReadWriteWithBlock:(void (^)(YapDatabaseReadWriteTransaction *transaction))block;
 
 /**
@@ -383,7 +383,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * An optional completion block may be used.
  * The completionBlock will be invoked on the main thread (dispatch_get_main_queue()).
-**/
+ */
 - (void)asyncReadWriteWithBlock:(void (^)(YapDatabaseReadWriteTransaction *transaction))block
                 completionBlock:(nullable dispatch_block_t)completionBlock;
 
@@ -399,7 +399,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * An optional completion block may be used.
  * Additionally the dispatch_queue to invoke the completion block may also be specified.
  * If NULL, dispatch_get_main_queue() is automatically used.
-**/
+ */
 - (void)asyncReadWriteWithBlock:(void (^)(YapDatabaseReadWriteTransaction *transaction))block
                 completionQueue:(nullable dispatch_queue_t)completionQueue
                 completionBlock:(nullable dispatch_block_t)completionBlock;
@@ -423,7 +423,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * @param completionBlock
  *   The block to invoke once all previously scheduled transactions have completed.
-**/
+ */
 - (void)flushTransactionsWithCompletionQueue:(nullable dispatch_queue_t)completionQueue
                              completionBlock:(nullable dispatch_block_t)completionBlock;
 
@@ -438,7 +438,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * For a complete discussion, please see the wiki page:
  * https://github.com/yapstudios/YapDatabase/wiki/LongLivedReadTransactions
-**/
+ */
 - (NSArray<NSNotification *> *)beginLongLivedReadTransaction;
 - (NSArray<NSNotification *> *)endLongLivedReadTransaction;
 
@@ -458,7 +458,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * In debug mode (#if DEBUG), these exceptions are turned ON by default.
  * In non-debug mode (#if !DEBUG), these exceptions are turned OFF by default.
-**/
+ */
 - (void)enableExceptionsForImplicitlyEndingLongLivedReadTransaction;
 - (void)disableExceptionsForImplicitlyEndingLongLivedReadTransaction;
 
@@ -476,7 +476,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * For more information on longLivedReadTransaction, see the following wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/LongLivedReadTransactions
-**/
+ */
 
 // Query for any change to a collection
 
@@ -524,7 +524,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * This method is designed to be used in conjunction with the enumerateChangedKeys.... methods (below).
  * The hasChange... methods (above) already take this into account.
-**/
+ */
 - (BOOL)didClearCollection:(NSString *)collection inNotifications:(NSArray<NSNotification *> *)notifications;
 
 /**
@@ -536,7 +536,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * This method is designed to be used in conjunction with the enumerateChangedKeys.... methods (below).
  * The hasChange... methods (above) already take this into account.
-**/
+ */
 - (BOOL)didClearAllCollectionsInNotifications:(NSArray<NSNotification *> *)notifications;
 
 /**
@@ -551,7 +551,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * @see didClearCollection:inNotifications:
  * @see didClearAllCollectionsInNotifications:
-**/
+ */
 - (void)enumerateChangedKeysInCollection:(NSString *)collection
                          inNotifications:(NSArray<NSNotification *> *)notifications
                               usingBlock:(void (NS_NOESCAPE^)(NSString *key, BOOL *stop))block;
@@ -568,7 +568,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * @see didClearCollection:inNotifications:
  * @see didClearAllCollectionsInNotifications:
-**/
+ */
 - (void)enumerateChangedCollectionKeysInNotifications:(NSArray<NSNotification *> *)notifications
                                            usingBlock:(void (NS_NOESCAPE^)(YapCollectionKey *ck, BOOL *stop))block;
 
@@ -588,7 +588,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * After registration everything works automatically using just the registered extension name.
  * 
  * @see YapDatabase registerExtension:withName:
-**/
+ */
 - (__kindof YapDatabaseExtensionConnection *)extension:(NSString *)extensionName;
 - (__kindof YapDatabaseExtensionConnection *)ext:(NSString *)extensionName; // <-- Shorthand (same as extension: method)
 
@@ -617,7 +617,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * YapDatabaseConnectionFlushMemoryFlags_All:
  *     Full flush of everything (caches, statements, internal)
-**/
+ */
 - (void)flushMemoryWithFlags:(YapDatabaseConnectionFlushMemoryFlags)flags;
 
 #if TARGET_OS_IOS || TARGET_OS_TV
@@ -628,7 +628,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * The default value is YapDatabaseConnectionFlushMemoryFlags_All.
  * 
  * @see flushMemoryWithFlags:
-**/
+ */
 @property (atomic, assign, readwrite) YapDatabaseConnectionFlushMemoryFlags autoFlushMemoryFlags;
 #endif
 
@@ -639,13 +639,13 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
 /**
  * Returns the current synchronous configuration via "PRAGMA synchronous;".
  * Allows you to verify that sqlite accepted your synchronous configuration request.
-**/
+ */
 - (NSString *)pragmaSynchronous;
 
 /**
  * Returns the current page_size configuration via "PRAGMA page_size;".
  * Allows you to verify that sqlite accepted your page_size configuration request.
-**/
+ */
 - (NSInteger)pragmaPageSize;
 
 /**
@@ -654,7 +654,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * Memory mapping may be disabled by sqlite's compile-time options.
  * Or it may restrict the mmap_size to something smaller than requested.
-**/
+ */
 - (NSInteger)pragmaMMapSize;
 
 /**
@@ -690,7 +690,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * [databaseConnection asyncReadWithBlock:^(YapDatabaseReadTransaction *transaction){
  *     NSString *value = [databaseConnection pragmaAutoVacuum];
  * }];
-**/
+ */
 - (NSString *)pragmaAutoVacuum;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -709,7 +709,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * Remember that YapDatabase operates in WAL mode, with "auto_vacuum=FULL" set.
  * 
  * @see pragmaAutoVacuum
-**/
+ */
 - (void)vacuum;
 
 /**
@@ -727,7 +727,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * The completionBlock will be invoked on the main thread (dispatch_get_main_queue()).
  * 
  * @see pragmaAutoVacuum
-**/
+ */
 - (void)asyncVacuumWithCompletionBlock:(nullable dispatch_block_t)completionBlock;
 
 /**
@@ -746,7 +746,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * If NULL, dispatch_get_main_queue() is automatically used.
  * 
  * @see pragmaAutoVacuum
-**/
+ */
 - (void)asyncVacuumWithCompletionQueue:(nullable dispatch_queue_t)completionQueue
                        completionBlock:(nullable dispatch_block_t)completionBlock;
 
@@ -768,7 +768,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * As stated in the sqlite docs, it is your responsibilty to ensure that nothing else is
  * currently using the backupDatabase.
-**/
+ */
 - (NSError *)backupToPath:(NSString *)backupDatabasePath;
 
 /**
@@ -792,7 +792,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * @return
  *   A NSProgress instance that may be used to track the backup progress.
  *   The progress in cancellable, meaning that invoking [progress cancel] will abort the backup operation.
-**/
+ */
 - (NSProgress *)asyncBackupToPath:(NSString *)backupDatabasePath
                   completionBlock:(nullable void (^)(NSError * _Nullable))completionBlock;
 
@@ -818,7 +818,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * @return
  *   A NSProgress instance that may be used to track the backup progress.
  *   The progress in cancellable, meaning that invoking [progress cancel] will abort the backup operation.
-**/
+ */
 - (NSProgress *)asyncBackupToPath:(NSString *)backupDatabasePath
                   completionQueue:(nullable dispatch_queue_t)completionQueue
                   completionBlock:(nullable void (^)(NSError * _Nullable))completionBlock;

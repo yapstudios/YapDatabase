@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * NSArray *departments = [self engineeringDepartments];
  * query = [YapDatabaseQuery queryWithFormat:@"WHERE title = ? AND department IN (?)", @"manager", departments];
-**/
+ */
 @interface YapDatabaseQuery : NSObject
 
 #pragma mark Standard Queries
@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Please note that you can ONLY pass objects as parameters.
  * Primitive types such as int, float, double, etc are NOT supported.
  * You MUST wrap these using NSNumber.
-**/
+ */
 + (instancetype)queryWithFormat:(NSString *)format, ...;
 
 /**
@@ -53,18 +53,18 @@ NS_ASSUME_NONNULL_BEGIN
  *         return withVaList(arguments, { YapDatabaseQuery(format: format, arguments: $0) })
  *     }
  * }
-**/
+ */
 + (instancetype)queryWithFormat:(NSString *)format arguments:(va_list)arguments;
 
 /**
  * Alternative initializer - generally preferred for Swift code.
-**/
+ */
 + (instancetype)queryWithString:(NSString *)queryString parameters:(NSArray *)queryParameters;
 
 /**
  * Shorthand for a query with no 'WHERE' clause.
  * Equivalent to [YapDatabaseQuery queryWithFormat:@""].
-**/
+ */
 + (instancetype)queryMatchingAll;
 
 #pragma mark Aggregate Queries
@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * For more inforation, see the sqlite docs on "Aggregate Functions":
  * https://www.sqlite.org/lang_aggfunc.html
-**/
+ */
 + (instancetype)queryWithAggregateFunction:(NSString *)aggregateFunction format:(NSString *)format, ...;
 
 + (instancetype)queryWithAggregateFunction:(NSString *)aggregateFunction

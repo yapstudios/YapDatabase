@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Returns an array of YapActionItem instances for the object.
  * Or nil if there are none.
-**/
+ */
 - (nullable NSArray<YapActionItem*> *)yapActionItems;
 
 @end

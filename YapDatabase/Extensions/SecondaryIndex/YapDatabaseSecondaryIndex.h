@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * For more information, see the wiki article about secondary indexes:
  * https://github.com/yapstudios/YapDatabase/wiki/Secondary-Indexes
-**/
+ */
 @interface YapDatabaseSecondaryIndex : YapDatabaseExtension
 
 /**
@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @see YapDatabaseSecondaryIndexHandler
  * 
  * @see YapDatabase registerExtension:withName:
-**/
+ */
 - (id)initWithSetup:(YapDatabaseSecondaryIndexSetup *)setup
             handler:(YapDatabaseSecondaryIndexHandler *)handler;
 
@@ -75,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @see YapDatabaseSecondaryIndexHandler
  *
  * @see YapDatabase registerExtension:withName:
-**/
+ */
 - (id)initWithSetup:(YapDatabaseSecondaryIndexSetup *)setup
             handler:(YapDatabaseSecondaryIndexHandler *)handler
          versionTag:(nullable NSString *)versionTag;
@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @see YapDatabaseSecondaryIndexHandler
  *
  * @see YapDatabase registerExtension:withName:
-**/
+ */
 - (id)initWithSetup:(YapDatabaseSecondaryIndexSetup *)setup
             handler:(YapDatabaseSecondaryIndexHandler *)handler
          versionTag:(nullable NSString *)versionTag
@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
  * If you need to change the columnNames and/or block,
  * then simply pass a different versionTag during the init method,
  * and the extension will automatically update itself.
-**/
+ */
 @property (nonatomic, copy, readonly) NSString *versionTag;
 
 @end

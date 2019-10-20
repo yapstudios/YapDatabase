@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Returns the parent view instance.
-**/
+ */
 @property (nonatomic, strong, readonly) YapDatabaseView *parent;
 
 /**
@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *    [self.tableView endUpdates];
  * }
-**/
+ */
 - (void)getSectionChanges:(NSArray<YapDatabaseViewSectionChange *> * _Nonnull * _Nullable)sectionChangesPtr
                rowChanges:(NSArray<YapDatabaseViewRowChange *> * _Nonnull * _Nullable)rowChangesPtr
          forNotifications:(NSArray<NSNotification *> *)notifications
@@ -115,17 +115,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * A simple YES/NO query to see if the view changed at all, inclusive of all groups.
-**/
+ */
 - (BOOL)hasChangesForNotifications:(NSArray<NSNotification *> *)notifications;
 
 /**
  * A simple YES/NO query to see if a particular group within the view changed at all.
-**/
+ */
 - (BOOL)hasChangesForGroup:(NSString *)group inNotifications:(NSArray<NSNotification *> *)notifications;
 
 /**
  * A simple YES/NO query to see if any of the given groups within the view changed at all.
-**/
+ */
 - (BOOL)hasChangesForAnyGroups:(NSSet<NSString *> *)groups inNotifications:(NSArray<NSNotification *> *)notifications;
 
 /**
@@ -190,7 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *     // Normal animation code goes here....
  * }
-**/
+ */
 - (NSUInteger)numberOfRawChangesForNotifications:(NSArray<NSNotification *> *)notifications;
 
 @end

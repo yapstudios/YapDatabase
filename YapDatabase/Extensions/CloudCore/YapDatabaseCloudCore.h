@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 
@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * The default version uses NSCoding.
  * However, an alternative may be substitued if desired.
-**/
+ */
 typedef NSData*_Nonnull (^YDBCloudCoreOperationSerializer)(YapDatabaseCloudCoreOperation *operation);
 typedef YapDatabaseCloudCoreOperation*_Nonnull (^YDBCloudCoreOperationDeserializer)(NSData *operationBlob);
 
@@ -60,13 +60,13 @@ extern NSString *const YapDatabaseCloudCoreDefaultPipelineName; // = @"default";
  * Note that every YDBCloudCore instance MUST have a defaultPipeline.
  * Without a defaultPipeline, attempts to register the extension (with YapDatabase) will fail.
  * So this value is safely nonnull after the extension is registered.
-**/
+ */
 - (nullable YapDatabaseCloudCorePipeline *)defaultPipeline;
 
 /**
  * Returns the registered pipeline with the given name.
  * If no pipeline is registered under the given name, returns nil.
-**/
+ */
 - (nullable YapDatabaseCloudCorePipeline *)pipelineWithName:(NSString *)name;
 
 /**
@@ -86,17 +86,17 @@ extern NSString *const YapDatabaseCloudCoreDefaultPipelineName; // = @"default";
  * worry about suspendCount mismanagement concerning this particlar situation.
  *
  * @return YES if the registration was successful, NO otherwise.
-**/
+ */
 - (BOOL)registerPipeline:(YapDatabaseCloudCorePipeline *)pipeline;
 
 /**
  * Returns all the registered pipelines.
-**/
+ */
 - (NSArray<YapDatabaseCloudCorePipeline *> *)registeredPipelines;
 
 /**
  * Returns all the registered pipeline names.
-**/
+ */
 - (NSArray<NSString *> *)registeredPipelineNames;
 
 
@@ -105,14 +105,14 @@ extern NSString *const YapDatabaseCloudCoreDefaultPipelineName; // = @"default";
 /**
  * Each pipeline has its own suspendCount, and suspend/resume methods.
  * The methods of this class allow you to invoke the suspend/resume method of every registered pipeline.
-**/
+ */
 
 /**
  * Returns whether or not the suspendCount is non-zero.
  *
  * Remember that each pipeline has its own suspendCount, and suspend/resume methods.
  * So even if the extension isn't suspended as a whole, an individual pipeline may be.
-**/
+ */
 @property (atomic, readonly) BOOL isSuspended;
 
 /**
@@ -120,18 +120,18 @@ extern NSString *const YapDatabaseCloudCoreDefaultPipelineName; // = @"default";
  *
  * Remember that each pipeline has its own suspendCount, and suspend/resume methods.
  * So even if the extension isn't suspended as a whole, an individual pipeline may be.
-**/
+ */
 @property (atomic, readonly) NSUInteger suspendCount;
 
 /**
  * Invokes the suspend method of every registerd pipeline, and also increments the local suspendCount.
-**/
+ */
 - (NSUInteger)suspend;
 - (NSUInteger)suspendWithCount:(NSUInteger)suspendCountIncrement;
 
 /**
  * Invokes the resume method of every registerd pipeline, and also decrements the local suspendCount.
-**/
+ */
 - (NSUInteger)resume;
 
 @end

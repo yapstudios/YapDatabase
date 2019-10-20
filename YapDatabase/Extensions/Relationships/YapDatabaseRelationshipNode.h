@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * For tons of information about this extension, see the wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/Relationships
-**/
+ */
 
 typedef NS_ENUM(NSInteger, YDB_NotifyReason) {
 	YDB_EdgeDeleted,
@@ -51,7 +51,7 @@ typedef NS_ENUM(NSInteger, YDB_NotifyReason) {
  * - You'd like to be able to delete objects in the database by simply setting identifier properties to nil
  * 
  * @see YapDatabaseRelationshipEdge
-**/
+ */
 @protocol YapDatabaseRelationshipNode <NSObject>
 @required
 
@@ -82,7 +82,7 @@ typedef NS_ENUM(NSInteger, YDB_NotifyReason) {
  * ... MyObject : NSObject <YapDatabaseRelationshipNode> // <-- Must be in protocol list
  *
  * @see YapDatabaseRelationshipEdge
-**/
+ */
 - (nullable NSArray<YapDatabaseRelationshipEdge *> *)yapDatabaseRelationshipEdges;
 
 @optional
@@ -129,7 +129,7 @@ typedef NS_ENUM(NSInteger, YDB_NotifyReason) {
  *
  *     return nil;
  * }
-**/
+ */
 - (nullable id)yapDatabaseRelationshipEdgeDeleted:(YapDatabaseRelationshipEdge *)edge
                                        withReason:(YDB_NotifyReason)reason;
 

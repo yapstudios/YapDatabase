@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @see YapDatabaseAutoView
  * @see YapDatabaseAutoViewTransaction
-**/
+ */
 @interface YapDatabaseAutoViewConnection : YapDatabaseViewConnection
 
 // Returns properly typed parent view instance

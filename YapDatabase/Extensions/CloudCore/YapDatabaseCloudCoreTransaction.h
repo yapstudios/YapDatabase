@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 #import "YapDatabaseExtensionTransaction.h"
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return
  *   NO if the operation isn't properly configured for use.
-**/
+ */
 - (BOOL)addOperation:(YapDatabaseCloudCoreOperation *)operation;
 
 /**
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return
  *   NO if the operation isn't properly configured for use.
-**/
+ */
 - (BOOL)insertOperation:(YapDatabaseCloudCoreOperation *)operation inGraph:(NSInteger)graphIdx;
 
 /**
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return
  *   NO if the operation isn't properly configured for use.
-**/
+ */
 - (BOOL)modifyOperation:(YapDatabaseCloudCoreOperation *)operation;
 
 /**
@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
  * And the only way to mark an operation as complete or skipped,
  * is to use either the `completeOperationWithUUID:` or one of the skipOperation methods.
  * These methods allow the system to remove the operation from its internal sqlite table.
-**/
+ */
 - (void)completeOperationWithUUID:(NSUUID *)operationUUID;
 - (void)completeOperationWithUUID:(NSUUID *)operationUUID inPipeline:(nullable NSString *)pipelineName;
 
@@ -85,7 +85,7 @@ NS_ASSUME_NONNULL_BEGIN
  * And the only way to mark an operation as complete or skipped,
  * is to use either the `completeOperationWithUUID:` or one of the skipOperation methods.
  * These methods allow the system to remove the operation from its internal sqlite table.
-**/
+ */
 - (void)skipOperationWithUUID:(NSUUID *)operationUUID;
 - (void)skipOperationWithUUID:(NSUUID *)operationUUID inPipeline:(nullable NSString *)pipelineName;
 
@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Searches for an operation with the given UUID.
  * 
  * @return The corresponding operation, if found. Otherwise nil.
-**/
+ */
 - (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
 
 /**
@@ -117,7 +117,7 @@ NS_ASSUME_NONNULL_BEGIN
  * If you know the pipeline, this method is a bit more efficient than 'operationWithUUID'.
  * 
  * @return The corresponding operation, if found. Otherwise nil.
-**/
+ */
 - (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid
                                                    inPipeline:(nullable NSString *)pipelineName;
 
@@ -130,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return
  *   The index of the graph that will contain newly added operations from this commit.
  *   Or NSNotFound if the pipeline isn't found.
-**/
+ */
 - (NSUInteger)graphForAddedOperationsInPipeline:(NSString *)pipelineName;
 
 /**
@@ -141,7 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @return
  *   The index of the graph that contains the given operation.
  *   Or NSNotFound if a graph isn't found.
-**/
+ */
 - (NSUInteger)graphForOperation:(YapDatabaseCloudCoreOperation *)operation;
 
 /**
@@ -158,7 +158,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   it will include added, inserted and modified operations.
  *   For example, if an operation has been modified within the read-write transaction,
  *   then you'll see the uncommitted modified version of the operation when enumerating.
- **/
+  */
 - (void)enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
                                                            YapDatabaseCloudCoreOperation *operation,
                                                            NSUInteger graphIdx, BOOL *stop))enumBlock;
@@ -176,7 +176,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   it will include added, inserted and modified operations.
  *   For example, if an operation has been modified within the read-write transaction,
  *   then you'll see the uncommitted modified version of the operation when enumerating.
-**/
+ */
 - (void)enumerateOperationsInPipeline:(NSString *)pipeline
                       usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
                                                       NSUInteger graphIdx, BOOL *stop))enumBlock;
@@ -186,7 +186,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * That is, the operations added via the `addOperation:` method,
  * within the current readWriteTransaction.
-**/
+ */
 - (void)enumerateAddedOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
                                                                 YapDatabaseCloudCoreOperation *operation,
                                                                 NSUInteger graphIdx, BOOL *stop))enumBlock;
@@ -195,7 +195,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * That is, the operations added via the `addOperation:` method,
  * within the current readWriteTransaction.
-**/
+ */
 - (void)enumerateAddedOperationsInPipeline:(NSString *)pipeline
                                 usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
                                                                 NSUInteger graphIdx, BOOL *stop))enumBlock;
@@ -216,7 +216,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return
  *   The most recently assigned tag.
-**/
+ */
 - (nullable id)tagForKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
 
 /**
@@ -241,12 +241,12 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If the given tag is nil, the effect is the same as invoking removeTagForKey:withIdentifier:.
  * If the given tag is an unsupported class, throws an exception.
-**/
+ */
 - (void)setTag:(nullable id)tag forKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
 
 /**
  * Allows you to enumerate the current set of <identifier, tag> tuples associated with the given key.
-**/
+ */
 - (void)enumerateTagsForKey:(NSString *)key
                   withBlock:(void (^NS_NOESCAPE)(NSString *identifier, id tag, BOOL *stop))block;
 
@@ -267,12 +267,12 @@ NS_ASSUME_NONNULL_BEGIN
  *   If nil, the identifier is automatically converted to the empty string.
  * 
  * @see removeAllTagsForCloudURI
-**/
+ */
 - (void)removeTagForKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
 
 /**
  * Removes all tags with the given key (matching any identifier).
-**/
+ */
 - (void)removeAllTagsForKey:(NSString *)key;
 
 #pragma mark Attach / Detach Support
@@ -322,7 +322,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param collection
  *   The collection of the row in YapDatabase
-**/
+ */
 - (void)attachCloudURI:(NSString *)cloudURI
                 forKey:(NSString *)key
           inCollection:(nullable NSString *)collection;
@@ -345,7 +345,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * Important: This method only works if within a readWriteTrasaction.
  * Invoking this method from within a read-only transaction will throw an exception.
-**/
+ */
 - (void)detachCloudURI:(NSString *)cloudURI
                 forKey:(NSString *)key
           inCollection:(nullable NSString *)collection;
@@ -355,13 +355,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * If a <collection, key> has been attached to the cloudURI, but the corresponding object hasn't been
  * added to the database yet, the pending flag will be set to YES.
-**/
+ */
 - (void)enumerateAttachedForCloudURI:(NSString *)cloudURI
                           usingBlock:(void (NS_NOESCAPE^)(NSString *key, NSString *collection, BOOL pending, BOOL *stop))block;
 
 /**
  * Allows you to enumerate all attached cloudURI's for the given <collection, key> tuple.
-**/
+ */
 - (void)enumerateAttachedForKey:(NSString *)key
                      collection:(nullable NSString *)collection
                      usingBlock:(void (NS_NOESCAPE^)(NSString *cloudURI, BOOL *stop))block;

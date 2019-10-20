@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 #import "YapDatabaseExtensionConnection.h"
@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Returns the parent instance.
-**/
+ */
 @property (nonatomic, strong, readonly) YapDatabaseCloudCore *cloudCore;
 
 @end

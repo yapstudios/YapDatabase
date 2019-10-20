@@ -30,7 +30,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewChangesBitMask) {
  * General information about technologies which integrate with Views:
  * https://github.com/yapstudios/YapDatabase/wiki/LongLivedReadTransactions
  * https://github.com/yapstudios/YapDatabase/wiki/YapDatabaseModifiedNotification
-**/
+ */
 
 @interface YapDatabaseViewSectionChange : NSObject <NSCopying>
 
@@ -40,7 +40,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewChangesBitMask) {
  * - YapDatabaseViewChangeDelete
  *
  * @see YapDatabaseViewChangeType
-**/
+ */
 @property (nonatomic, readonly) YapDatabaseViewChangeType type;
 
 /**
@@ -48,12 +48,12 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewChangesBitMask) {
  * 
  * If the type is YapDatabaseViewChangeDelete, then this represents the originalIndex of the section (pre-animation).
  * If the type is YapDatabaseViewChangeInsert, then this represents the finalIndex of the section (post-animation).
-**/
+ */
 @property (nonatomic, readonly) NSUInteger index;
 
 /**
  * The corresponding group for the section.
-**/
+ */
 @property (nonatomic, readonly) NSString *group;
 
 @end
@@ -72,7 +72,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewChangesBitMask) {
  * - YapDatabaseViewChangeUpdate
  * 
  * @see YapDatabaseViewChangeType
-**/
+ */
 @property (nonatomic, readonly) YapDatabaseViewChangeType type;
 
 /**
@@ -117,7 +117,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewChangesBitMask) {
  *
  *
  * @see YapDatabaseViewChangesBitMask
-**/
+ */
 @property (nonatomic, readonly) YapDatabaseViewChangesBitMask changes;
 
 /**
@@ -249,7 +249,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewChangesBitMask) {
  * }
  *
  * [self.tableView endUpdates];
-**/
+ */
 @property (nonatomic, readonly, nullable) NSIndexPath *indexPath;
 @property (nonatomic, readonly, nullable) NSIndexPath *newIndexPath;
 
@@ -261,7 +261,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewChangesBitMask) {
  * at the END of the read-write transaction(s).
  * 
  * This information also available in another form via the indexPath & newIndexPath properties.
-**/
+ */
 
 @property (nonatomic, readonly) NSUInteger originalIndex;
 @property (nonatomic, readonly) NSUInteger finalIndex;
@@ -313,7 +313,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseViewChangesBitMask) {
  * because the rowChange.indexPath is no longer valid for the current state of the database/view.
  *
  * And thus that information is available via this property, should you ever need it.
-**/
+ */
 
 @property (nonatomic, readonly) YapCollectionKey *collectionKey;
 

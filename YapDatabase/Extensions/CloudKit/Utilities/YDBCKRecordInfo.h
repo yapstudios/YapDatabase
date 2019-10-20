@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  *   - keysToRestore
  *   - versionInfo
-**/
+ */
 @interface YDBCKRecordInfo : NSObject
 
 /**
@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   If you specify a databaseIdentifier here,
  *   then you MUST also configure the YapDatabaseCloudKit instance with a databaseIdentifier block.
  *   Failure to do so will result in an exception.
-**/
+ */
 @property (nonatomic, copy, readwrite, nullable) NSString *databaseIdentifier;
 
 /**
@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * This dictionary will be stored alongside the modified CKRecord within the queue.
  * And will be made available during merge operations via YDBCKMergeInfo.originalValues.
-**/
+ */
 @property (nonatomic, strong, readwrite, nullable) NSDictionary<NSString *, id> *originalValues;
 
 /**
@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  * then YapDatabaseCloudKit will need to restore some CKRecords, and may need to restore certain values.
  *
  * You MUST check for this property within your recordHandler implementation.
-**/
+ */
 @property (nonatomic, strong, readonly, nullable) NSArray<NSString *> *keysToRestore;
 
 /**
@@ -83,7 +83,7 @@ NS_ASSUME_NONNULL_BEGIN
  * from the init method. Thus the recordHandler can discern between the initial population/repopulation,
  * and a normal user-initiated readWriteTransaction that's modifying an object in the database.
  * And it can then use the versionInfo to create the proper CKRecord.
-**/
+ */
 @property (nonatomic, strong, readonly) id versionInfo;
 
 @end

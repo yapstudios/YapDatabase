@@ -9,7 +9,7 @@
  * 
  * And thus, we replicate NSNull, and use it instead.
  * And now the user is free to use NSNull if needed.
-**/
+ */
 @interface YapNull : NSObject
 
 + (id)null;

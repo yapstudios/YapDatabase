@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * You should choose a block type that takes the minimum number of required parameters.
  * The extension can make various optimizations based on the required parameters of the block.
-**/
+ */
 @interface YapDatabaseFullTextSearchHandler : NSObject
 
 typedef id YapDatabaseFullTextSearchBlock; // One of YapDatabaseFullTextSearchXBlock types

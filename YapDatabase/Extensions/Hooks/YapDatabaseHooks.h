@@ -22,7 +22,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseHooksBitMask) {
 	 * 
 	 * When a row is explicitly touched in the database (e.g. touchObjectForKey:inCollection:)
 	 * then neither YapDatabaseHooksInsertedRow nor YapDatabaseHooksUpdatedRow will be set.
-	**/
+	 */
 	
 	// An insert means that the collection/key tuple does not currently exist in the database.
 	// So the object & metadata items are getting inserted / added.
@@ -41,7 +41,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseHooksBitMask) {
 	 * 
 	 * Either the metadata was changed (had it's value set) or was simply touched (value didn't change).
 	 * So either YapDatabaseHooksChangedMetadata or YapDatabaseHooksTouchedMetadata will be set. But not both.
-	**/
+	 */
 	
 	// The object is being modified.
 	// This will always be set if the InsertedRow flag is also set.
@@ -80,7 +80,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseHooksBitMask) {
  * then the object is immediately available, but the metadata isn't.
  * Thus the proxy is used to lazily load the metadata, if needed.
  * This allows a common API to support all scenarios.
-**/
+ */
 
 typedef void (^YDBHooks_WillModifyRow)
   (YapDatabaseReadWriteTransaction *transaction, NSString *collection, NSString *key,
@@ -100,7 +100,7 @@ typedef void (^YDBHooks_DidModifyRow)
  * 
  * Note: This method is NOT invoked if the entire database is cleared.
  * That is, if removeAllObjectsInAllCollections is invoked.
-**/
+ */
 
 typedef void (^YDBHooks_WillRemoveRow)
   (YapDatabaseReadWriteTransaction *transaction, NSString *collection, NSString *key);
@@ -111,7 +111,7 @@ typedef void (^YDBHooks_DidRemoveRow)
 /**
  * Corresponds to the following method(s) in YapDatabaseReadWriteTransaction:
  * - removeAllObjectsInAllCollections
-**/
+ */
 
 typedef void (^YDBHooks_WillRemoveAllRows)
   (YapDatabaseReadWriteTransaction *transaction);

@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * MurmurHash2 was written by Austin Appleby, and is placed in the public domain.
  * http://code.google.com/p/smhasher
-**/
+ */
 
 NSUInteger YapMurmurHash2(NSUInteger hash1, NSUInteger hash2);
 

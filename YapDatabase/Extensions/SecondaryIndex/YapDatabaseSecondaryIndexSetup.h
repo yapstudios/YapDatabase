@@ -7,7 +7,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * For detailed information on sqlite datatypes & affinity:
  * https://www.sqlite.org/datatype3.html
-**/
+ */
 typedef NS_ENUM(NSInteger, YapDatabaseSecondaryIndexType) {
 	YapDatabaseSecondaryIndexTypeInteger,
 	YapDatabaseSecondaryIndexTypeReal,

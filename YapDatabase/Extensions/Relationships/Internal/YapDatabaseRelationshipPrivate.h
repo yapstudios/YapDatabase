@@ -18,12 +18,12 @@
  * This version number is stored in the yap2 table.
  * If there is a major re-write to this class, then the version number will be incremented,
  * and the class can automatically rebuild the table as needed.
-**/
+ */
 #define YAP_DATABASE_RELATIONSHIP_CLASS_VERSION 4
 
 /**
  * Keys for yap2 extension configuration table.
-**/
+ */
 
 static NSString *const ext_key_classVersion       = @"classVersion";
 static NSString *const ext_key_versionTag         = @"versionTag";
@@ -31,7 +31,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 
 /**
  * Keys for changeset dictionary.
-**/
+ */
 
 static NSString *const changeset_key_deletedEdges  = @"deletedEdges";
 static NSString *const changeset_key_modifiedEdges = @"modifiedEdges";
@@ -53,7 +53,7 @@ static NSString *const changeset_key_reset         = @"reset";
 /**
  * The dispatch queue for performing file deletion operations.
  * Note: This method is not thread-safe, as it expects to only be invoked from within a read-write transaction.
-**/
+ */
 - (dispatch_queue_t)fileManagerQueue;
 
 @end

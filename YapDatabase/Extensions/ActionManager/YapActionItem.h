@@ -10,12 +10,12 @@ typedef void (^YapActionItemBlock)(NSString *collection, NSString *key, id objec
  * 
  * A YapActionItem encompasses a majority of the logic required to track
  * when a particular action should occur concerning a particular model object.
-**/
+ */
 @interface YapActionItem : NSObject <NSCopying>
 
 /**
  * See the description for each individual property below.
-**/
+ */
 
 - (instancetype)initWithIdentifier:(NSString *)identifier
                               date:(nullable NSDate *)date
@@ -39,7 +39,7 @@ typedef void (^YapActionItemBlock)(NSString *collection, NSString *key, id objec
  * The MyUser object has a refreshDate property.
  * An associated YapActionItem will be created in order to refresh the user's info from the server.
  * The identifier could simply be @"refresh".
-**/
+ */
 @property (nonatomic, copy, readonly) NSString *identifier;
 
 /**
@@ -47,7 +47,7 @@ typedef void (^YapActionItemBlock)(NSString *collection, NSString *key, id objec
  * 
  * If no date was given in the init method,
  * then the date will be [NSDate dateWithTimeIntervalSinceReferenceDate:0.0].
-**/
+ */
 @property (nonatomic, strong, readonly) NSDate *date;
 
 /**
@@ -65,7 +65,7 @@ typedef void (^YapActionItemBlock)(NSString *collection, NSString *key, id objec
  *   An associated YapActionItem (with identifier "refresh") will be created in order to invoke the refresh method.
  *   When the refresh succeeds, it should update the refreshDate to some point in the future.
  *   Which, in turn, will result in the MyUser creating a modified YapActionItem (same identifier, but different date).
-**/
+ */
 @property (nonatomic, assign, readonly) NSTimeInterval retryTimeout;
 
 /**
@@ -80,7 +80,7 @@ typedef void (^YapActionItemBlock)(NSString *collection, NSString *key, id objec
  * all items that require internet. And when the network comes back up, it will dequeue them.
  * 
  * Note: Not available on watchOS (due to lack of SystemConfiguration framework).
-**/
+ */
 @property (nonatomic, assign, readonly) BOOL requiresInternet;
 
 /**
@@ -88,7 +88,7 @@ typedef void (^YapActionItemBlock)(NSString *collection, NSString *key, id objec
  * 
  * If no queue is specified, a global queue is automatically used.
  * Specifically: dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
-**/
+ */
 @property (nonatomic, strong, readonly, nullable) dispatch_queue_t queue;
 
 /**
@@ -99,7 +99,7 @@ typedef void (^YapActionItemBlock)(NSString *collection, NSString *key, id objec
  * The block should rely upon the various parameters in order to get its information.
  * 
  * @see queue
-**/
+ */
 @property (nonatomic, strong, readonly) YapActionItemBlock block;
 
 
@@ -113,7 +113,7 @@ typedef void (^YapActionItemBlock)(NSString *collection, NSString *key, id objec
  * @return
  *   Returns NO if self.date is after atDate (comparitively in the future).
  *   Returns YES otherwise (comparitively in the past or present).
-**/
+ */
 - (BOOL)isReadyToStartAtDate:(nullable NSDate *)atDate;
 
 /**
@@ -128,13 +128,13 @@ typedef void (^YapActionItemBlock)(NSString *collection, NSString *key, id objec
  * The old item (same identifier, previous date in the past) would be considered complete,
  * because it is no longer being represented in the 'yapActionItems' array.
  * The new item (same identifier, new date in the future) would be considered new, and will be scheduled.
-**/
+ */
 - (BOOL)hasSameIdentifierAndDate:(YapActionItem *)another;
 
 /**
  * Used for sorting items based on their date.
  * If two items have the exact same date, the comparison will fallback to comparing identifiers.
-**/
+ */
 - (NSComparisonResult)compare:(YapActionItem *)another;
 
 @end

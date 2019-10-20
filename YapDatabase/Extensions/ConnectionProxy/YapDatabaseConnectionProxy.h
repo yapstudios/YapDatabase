@@ -86,13 +86,13 @@ NS_ASSUME_NONNULL_BEGIN
  *   - You write a different value (for the same collection/key) using the regular database connection.
  *   - The proxy later performs a readWrite, and writes its value for the collection/key,
  *     overwriting the regular database connection.
-**/
+ */
 @interface YapDatabaseConnectionProxy : NSObject
 
 /**
  * Initializes a new connction proxy by creating both the readOnlyConnection & readWriteConnection
  * via [database newConnection]. Both connection's receive the default configuration for the database.
-**/
+ */
 - (instancetype)initWithDatabase:(YapDatabase *)database;
 
 /**
@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * @param readWriteConnection
  *   You may pass a readWriteConnection if you want to share a read-write connection amongst multiple classes.
-**/
+ */
 - (instancetype)initWithDatabase:(YapDatabase *)database
               readOnlyConnection:(nullable YapDatabaseConnection *)readOnlyConnection
              readWriteConnection:(nullable YapDatabaseConnection *)readWriteConnection;
@@ -120,7 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If this proxy instance has recently had a value set for the given collection/key,
  * then that value is returned, even if the value has not been written to the database yet.
-**/
+ */
 - (nullable id)objectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 - (nullable id)metadataForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
@@ -143,7 +143,7 @@ NS_ASSUME_NONNULL_BEGIN
  * @param object
  *   The value for the collection/key tuple.
  *   If nil, this is equivalent to invoking removeObjectForKey:inCollection:
-**/
+ */
 - (void)setObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection;
 - (void)setObject:(nullable id)object
            forKey:(NSString *)key
@@ -163,7 +163,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This is the trade-off you make when using a proxy.
  * The values written to a proxy are not guaranteed to be written to the database.
  * However, the values are immediately available (from this proxy instance) without waiting for the database disk IO.
-**/
+ */
 - (void)replaceObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection;
 - (void)replaceMetadata:(nullable id)metadata forKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
@@ -177,7 +177,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This is the trade-off you make when using a proxy.
  * The values written to a proxy are not guaranteed to be written to the database.
  * However, the values are immediately available (from this proxy instance) without waiting for the database disk IO.
-**/
+ */
 - (void)removeObjectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 /**
@@ -190,7 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This is the trade-off you make when using a proxy.
  * The values written to a proxy are not guaranteed to be written to the database.
  * However, the values are immediately available (from this proxy instance) without waiting for the database disk IO.
-**/
+ */
 - (void)removeObjectsForKeys:(NSArray<NSString *> *)keys inCollection:(nullable NSString *)collection;
 
 /**
@@ -198,7 +198,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * That is, IF the proxy has a pending change (for the tuple) that it intends to write to the database
  * during the next flush, it will drop the pending change (and not write it to the database).
-**/
+ */
 - (void)resetObjectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 /**
@@ -206,7 +206,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * That is, IF the proxy has pending changes that it intends to write to the database
  * during the next flush, it will instead drop all those pending changes (and not write any of them).
-**/
+ */
 - (void)reset;
 
 /**
@@ -233,7 +233,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * Keep in mind that the fetchedCollectionsFilter only applies to how the proxy interacts with the readOnlyConnection.
  * That is, it still allows the proxy to write values to any collection.
-**/
+ */
 @property (atomic, strong, readwrite, nullable) YapWhitelistBlacklist *fetchedCollectionsFilter;
 
 /**
@@ -254,7 +254,7 @@ NS_ASSUME_NONNULL_BEGIN
  *     // allow the connectionProxy to start reading from the db again
  *     connectionProxy.fetchedCollectionsFilter = nil;
  * }];
-**/
+ */
 - (void)abortAndReset:(nullable YapWhitelistBlacklist *)fetchedCollectionsFilter __attribute((deprecated));
 
 @end

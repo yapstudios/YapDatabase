@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Returns the number of groups the view manages.
  * Each group has one or more keys in it.
-**/
+ */
 - (NSUInteger)numberOfGroups;
 
 /**
@@ -20,13 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
  * Each group has one or more keys in it.
  *
  * @see YapDatabaseView - groupingBlock
-**/
+ */
 - (NSArray<NSString *> *)allGroups;
 
 /**
  * Returns YES if there are any keys in the given group.
  * This is equivalent to ([viewTransaction numberOfItemsInGroup:group] > 0)
-**/
+ */
 - (BOOL)hasGroup:(NSString *)group;
 
 #pragma mark Counts
@@ -34,24 +34,24 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Returns the total number of keys in the given group.
  * If the group doesn't exist, returns zero.
-**/
+ */
 - (NSUInteger)numberOfItemsInGroup:(NSString *)group;
 
 /**
  * Returns the total number of keys in every single group.
-**/
+ */
 - (NSUInteger)numberOfItemsInAllGroups;
 
 /**
  * Returns YES if the group is empty (has zero items).
  * Shorthand for: [[transaction ext:viewName] numberOfItemsInGroup:group] == 0
-**/
+ */
 - (BOOL)isEmptyGroup:(NSString *)group;
 
 /**
  * Returns YES if the view is empty (has zero groups).
  * Shorthand for: [[transaction ext:viewName] numberOfItemsInAllGroups] == 0
-**/
+ */
 - (BOOL)isEmpty;
 
 #pragma mark Fetching
@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Returns the key & collection at the given index within the given group.
  * Returns nil if the group doesn't exist, or if the index is out of bounds.
-**/
+ */
 - (BOOL)getKey:(NSString * _Nullable * _Nullable)keyPtr
     collection:(NSString * _Nullable * _Nullable)collectionPtr
        atIndex:(NSUInteger)index
@@ -67,33 +67,33 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Shortcut for: [view getKey:&key collection:&collection atIndex:0 inGroup:group]
-**/
+ */
 - (BOOL)getFirstKey:(NSString * _Nullable * _Nullable)keyPtr
          collection:(NSString * _Nullable * _Nullable)collectionPtr
             inGroup:(NSString *)group;
 
 /**
  * Shortcut for: [view getKey:&key collection:&collection atIndex:(numberOfItemsInGroup-1) inGroup:group]
-**/
+ */
 - (BOOL)getLastKey:(NSString * _Nullable * _Nullable)keyPtr
         collection:(NSString * _Nullable * _Nullable)collectionPtr
            inGroup:(NSString *)group;
 
 /**
  * Shortcut for fetching just the collection at the given index.
-**/
+ */
 - (nullable NSString *)collectionAtIndex:(NSUInteger)index inGroup:(NSString *)group;
 
 /**
  * Shortcut for fetching just the key at the given index.
  * Convenient if you already know what collection the key is in.
-**/
+ */
 - (nullable NSString *)keyAtIndex:(NSUInteger)index inGroup:(NSString *)group;
 
 /**
  * If the given {collection, key} are included in the view, then returns the associated group.
  * If the {collection, key} isn't in the view, then returns nil.
-**/
+ */
 - (nullable NSString *)groupForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 /**
@@ -101,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Returns YES if the {collection, key} is included in the view.
  * Otherwise returns NO, and sets the parameters to nil & zero.
-**/
+ */
 - (BOOL)getGroup:(NSString * _Nullable * _Nullable)groupPtr
            index:(nullable NSUInteger *)indexPtr
           forKey:(NSString *)key
@@ -116,26 +116,26 @@ NS_ASSUME_NONNULL_BEGIN
  * Put another way:
  * - [YapDatabaseView versionTag]            = versionTag of most recent commit
  * - [YapDatabaseViewTransaction versionTag] = versionTag of this commit
-**/
+ */
 - (nullable NSString *)versionTag;
 
 #pragma mark Enumerating
 
 /**
  * Enumerates the groups in the view.
-**/
+ */
 - (void)enumerateGroupsUsingBlock:(void (NS_NOESCAPE^)(NSString *group, BOOL *stop))block;
 
 /**
  * Enumerates the keys in the given group.
-**/
+ */
 - (void)enumerateKeysInGroup:(NSString *)group
                   usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
 
 /**
  * Enumerates the keys in the given group.
  * Reverse enumeration is supported by passing NSEnumerationReverse. (No other enumeration options are supported.)
-**/
+ */
 - (void)enumerateKeysInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                   usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
@@ -143,7 +143,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Enumerates the keys in the range of the given group.
  * Reverse enumeration is supported by passing NSEnumerationReverse. (No other enumeration options are supported.)
-**/
+ */
 - (void)enumerateKeysInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                        range:(NSRange)range
@@ -158,7 +158,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The methods in this ReadWrite category are only available from within a ReadWriteTransaction.
  * Invoking them from within a ReadOnlyTransaction does nothing (except log a warning).
-**/
+ */
 @interface YapDatabaseViewTransaction (ReadWrite)
 
 /**
@@ -203,7 +203,7 @@ NS_ASSUME_NONNULL_BEGIN
  * then the view doesn't relect any change.
  * 
  * In all other cases, the view will properly reflect a corresponding change in the notification that's posted.
-**/
+ */
 
 - (void)touchRowForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 - (void)touchObjectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
@@ -220,7 +220,7 @@ NS_ASSUME_NONNULL_BEGIN
  * So, conceptually speaking, it only knows about collection/key tuples, groups, and indexes.
  * 
  * But it's really convenient to have methods that put it all together to fetch an object in a single method.
-**/
+ */
 @interface YapDatabaseViewTransaction (Convenience)
 
 /**
@@ -230,7 +230,7 @@ NS_ASSUME_NONNULL_BEGIN
  * if ([[transaction ext:@"myView"] getKey:&key collection:&collection atIndex:index inGroup:group]) {
  *     metadata = [transaction metadataForKey:key inCollection:collection];
  * }
-**/
+ */
 - (nullable id)metadataAtIndex:(NSUInteger)index inGroup:(NSString *)group;
 
 /**
@@ -240,7 +240,7 @@ NS_ASSUME_NONNULL_BEGIN
  * if ([[transaction ext:@"myView"] getKey:&key collection:&collection atIndex:index inGroup:group]) {
  *     object = [transaction objectForKey:key inCollection:collection];
  * }
-**/
+ */
 - (nullable id)objectAtIndex:(NSUInteger)keyIndex inGroup:(NSString *)group;
 
 /**
@@ -250,7 +250,7 @@ NS_ASSUME_NONNULL_BEGIN
  * if ([[transaction ext:@"myView"] getFirstKey:&key collection:&collection inGroup:group]) {
  *     object = [transaction objectForKey:key inCollection:collection];
  * }
-**/
+ */
 - (nullable id)firstObjectInGroup:(NSString *)group;
 
 /**
@@ -260,13 +260,13 @@ NS_ASSUME_NONNULL_BEGIN
  * if ([[transaction ext:@"myView"] getLastKey:&key collection:&collection inGroup:group]) {
  *     object = [transaction objectForKey:key inCollection:collection];
  * }
-**/
+ */
 - (nullable id)lastObjectInGroup:(NSString *)group;
 
 /**
  * The following methods are similar to invoking the enumerateKeysInGroup:... methods,
  * and then fetching the metadata within your own block.
-**/
+ */
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                              usingBlock:
@@ -294,7 +294,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The following methods are similar to invoking the enumerateKeysInGroup:... methods,
  * and then fetching the object within your own block.
-**/
+ */
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                             usingBlock:
@@ -322,7 +322,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * The following methods are similar to invoking the enumerateKeysInGroup:... methods,
  * and then fetching the object and metadata within your own block.
-**/
+ */
 
 - (void)enumerateRowsInGroup:(NSString *)group
                   usingBlock:
@@ -381,14 +381,14 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * So it's advised you save yourself the hassle (and the mental overhead),
  * and simply always use these methds when using mappings.
-**/
+ */
 @interface YapDatabaseViewTransaction (Mappings)
 
 /**
  * Gets the key & collection at the given indexPath, assuming the given mappings are being used.
  * Returns NO if the indexPath is invalid, or the mappings aren't initialized.
  * Otherwise returns YES, and sets the key & collection ptr (both optional).
-**/
+ */
 - (BOOL)getKey:(NSString * _Nullable * _Nullable)keyPtr
     collection:(NSString * _Nullable * _Nullable)collectionPtr
    atIndexPath:(NSIndexPath *)indexPath
@@ -398,7 +398,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Gets the key & collection at the given row & section, assuming the given mappings are being used.
  * Returns NO if the row or section is invalid, or the mappings aren't initialized.
  * Otherwise returns YES, and sets the key & collection ptr (both optional).
-**/
+ */
 - (BOOL)getKey:(NSString * _Nullable * _Nullable)keyPtr
     collection:(NSString * _Nullable * _Nullable)collectionPtr
         forRow:(NSUInteger)row
@@ -408,7 +408,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Fetches the indexPath for the given {collection, key} tuple, assuming the given mappings are being used.
  * Returns nil if the {collection, key} tuple isn't included in the view + mappings.
-**/
+ */
 - (nullable NSIndexPath *)indexPathForKey:(NSString *)key
                              inCollection:(nullable NSString *)collection
                              withMappings:(YapDatabaseViewMappings *)mappings;
@@ -417,7 +417,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Fetches the row & section for the given {collection, key} tuple, assuming the given mappings are being used.
  * Returns NO if the {collection, key} tuple isn't included in the view + mappings.
  * Otherwise returns YES, and sets the row & section (both optional).
-**/
+ */
 - (BOOL)getRow:(nullable NSUInteger *)rowPtr
        section:(nullable NSUInteger *)sectionPtr
         forKey:(NSString *)key
@@ -433,7 +433,7 @@ NS_ASSUME_NONNULL_BEGIN
  * if ([[transaction ext:@"myView"] getKey:&key collection:&collection atIndexPath:indexPath withMappings:mappings]) {
  *     object = [transaction objectForKey:key inCollection:collection];
  * }
-**/
+ */
 - (nullable id)objectAtIndexPath:(NSIndexPath *)indexPath
                     withMappings:(YapDatabaseViewMappings *)mappings;
 
@@ -450,7 +450,7 @@ NS_ASSUME_NONNULL_BEGIN
  *                            withMappings:mappings]) {
  *     object = [transaction objectForKey:key inCollection:collection];
  * }
-**/
+ */
 - (nullable id)objectAtRow:(NSUInteger)row
                  inSection:(NSUInteger)section
               withMappings:(YapDatabaseViewMappings *)mappings;
@@ -464,7 +464,7 @@ NS_ASSUME_NONNULL_BEGIN
  * if ([[transaction ext:@"myView"] getKey:&key collection:&collection atIndexPath:indexPath withMappings:mappings]) {
  *     metadata = [transaction metadataForKey:key inCollection:collection];
  * }
-**/
+ */
 - (nullable id)metadataAtIndexPath:(NSIndexPath *)indexPath
                       withMappings:(YapDatabaseViewMappings *)mappings;
 
@@ -481,7 +481,7 @@ NS_ASSUME_NONNULL_BEGIN
  *                            withMappings:mappings]) {
  *     metadata = [transaction metadataForKey:key inCollection:collection];
  * }
-**/
+ */
 - (nullable id)metadataAtRow:(NSUInteger)row
                    inSection:(NSUInteger)section
                 withMappings:(YapDatabaseViewMappings *)mappings;

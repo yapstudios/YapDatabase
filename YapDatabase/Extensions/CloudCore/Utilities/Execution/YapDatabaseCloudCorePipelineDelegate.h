@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 @class YapDatabaseCloudCorePipeline;
 @class YapDatabaseCloudCoreOperation;
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   The number of concurrent operations is limited by:
  *   - pipeline.maxConcurrentOperationCount
  *   - the operations within the pipeline, and their corresponding dependencies
-**/
+ */
 - (void)startOperation:(YapDatabaseCloudCoreOperation *)operation forPipeline:(YapDatabaseCloudCorePipeline *)pipeline;
 
 @end

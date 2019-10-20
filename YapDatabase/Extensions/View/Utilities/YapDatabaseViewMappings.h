@@ -157,12 +157,12 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  *     // configure and return cell...
  * }
-**/
+ */
 
 /**
  * The YapDatabaseViewRangePosition struct represents the range window within the full group.
  * @see rangePositionForGroup:
-**/
+ */
 struct YapDatabaseViewRangePosition {
 	NSUInteger offsetFromBeginning;
 	NSUInteger offsetFromEnd;
@@ -186,7 +186,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  *
  * @param registeredViewName
  *     This is the name of the view, as you registered it with the database system.
-**/
+ */
 + (instancetype)mappingsWithGroups:(NSArray<NSString *> *)allGroups view:(NSString *)registeredViewName;
 
 
@@ -201,7 +201,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * 
  * @param registeredViewName
  *     This is the name of the view, as you registered it with the database system.
-**/
+ */
 - (id)initWithGroups:(NSArray<NSString *> *)allGroups
 				view:(NSString *)registeredViewName;
 
@@ -215,7 +215,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * @param registeredViewName
  *      This is the name of the view, as you registered it with the database system.
  *
-**/
+ */
 - (id)initWithGroupFilterBlock:(YapDatabaseViewMappingGroupFilter)filterBlock
                      sortBlock:(YapDatabaseViewMappingGroupSort)sortBlock
                           view:(NSString *)registeredViewName;
@@ -229,12 +229,12 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * That is, all groups, whether currently visible or non-visible.
  * 
  * @see visibleGroups
-**/
+ */
 @property (nonatomic, copy, readonly) NSArray<NSString *> *allGroups;
 
 /**
  * The registeredViewName that was passed in the init method.
-**/
+ */
 @property (nonatomic, copy, readonly) NSString *view;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -300,7 +300,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * Once the configuration is set for all groups, you can then choose to provide overriden settings for select groups.
  * That is, if you then invoke setIsDynamicSection:forGroup: is will override the "global" setting
  * for this particular group.
-**/
+ */
 
 - (void)setIsDynamicSection:(BOOL)isDynamic forGroup:(NSString *)group;
 - (BOOL)isDynamicSectionForGroup:(NSString *)group;
@@ -339,7 +339,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * 
  * The rangeOptions you pass in are copied, and YapDatabaseViewMappings keeps a private immutable version of them.
  * So if you make changes to the rangeOptions, you need to invoke this method again to set the changes.
-**/
+ */
 
 - (void)setRangeOptions:(nullable YapDatabaseViewRangeOptions *)rangeOpts forGroup:(NSString *)group;
 - (nullable YapDatabaseViewRangeOptions *)rangeOptionsForGroup:(NSString *)group;
@@ -382,7 +382,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * 
  * If you have multiple cell drawing dependencies (e.g. +1 & -1),
  * then you can pass in an NSSet of NSNumbers.
-**/
+ */
 
 - (void)setCellDrawingDependencyForNeighboringCellWithOffset:(NSInteger)offset forGroup:(NSString *)group;
 
@@ -445,7 +445,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  *
  * It's simply a matter of how you visualize it.
  * Either order is fine, but one likely makes more sense in your head.
-**/
+ */
 
 - (void)setIsReversed:(BOOL)isReversed forGroup:(NSString *)group;
 - (BOOL)isReversedForGroup:(NSString *)group;
@@ -490,7 +490,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * This is exactly what the autoConsolidateGroupsThreshold does for you!
  *
  * The default threshold value is 0 (disabled).
-**/
+ */
 
 - (void)setAutoConsolidateGroupsThreshold:(NSUInteger)threshold withName:(NSString *)consolidatedGroupName;
 - (NSUInteger)autoConsolidateGroupsThreshold;
@@ -525,7 +525,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  *   and you're simply planning on doing a [tableView reloadData].
  * 
  * Please also see the example code above.
-**/
+ */
 - (void)updateWithTransaction:(YapDatabaseReadTransaction *)transaction;
 
 /**
@@ -541,7 +541,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * If never initialized/updated, the snapshot will be UINT64_MAX.
  * 
  * @see YapDatabaseConnection snapshot
-**/
+ */
 @property (nonatomic, readonly) uint64_t snapshotOfLastUpdate;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -554,13 +554,13 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * This number may be less than the original count of groups passed in the init method.
  * That is, if dynamic sections are enabled for one or more groups, and some of these groups have zero items,
  * then those groups will be removed from the visible list of groups. And thus the section count may be less.
-**/
+ */
 - (NSUInteger)numberOfSections;
 
 /**
  * Returns the number of items in the given section.
  * @see groupForSection
-**/
+ */
 - (NSUInteger)numberOfItemsInSection:(NSUInteger)section;
 
 /**
@@ -569,7 +569,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * This is the cached value from the last time one of the following methods was invoked:
  * - updateWithTransaction:
  * - changesForNotifications:withMappings:
-**/
+ */
 - (NSUInteger)numberOfItemsInGroup:(NSString *)group;
 
 /**
@@ -580,12 +580,12 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * However, if one or more sections are dynamic, then the visible groups may be a subset of allGroups.
  *
  * Dynamic groups/sections automatically "disappear" if/when they become empty.
-**/
+ */
 - (NSArray *)visibleGroups;
 
 /**
  * Returns YES if there are zero items in all sections/groups.
-**/
+ */
 - (BOOL)isEmpty;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -599,7 +599,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * This method properly takes into account dynamic groups.
  *
  * If the section is out-of-bounds, returns nil.
-**/
+ */
 - (nullable NSString *)groupForSection:(NSUInteger)section;
 
 /**
@@ -634,7 +634,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  *     
  *     // configure and return cell...
  * }
-**/
+ */
 - (BOOL)getGroup:(NSString * _Nonnull * _Nullable)groupPtr index:(nullable NSUInteger *)indexPtr forIndexPath:(NSIndexPath *)indexPath;
 
 /**
@@ -669,7 +669,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  *     
  *     // configure and return cell...
  * }
-**/
+ */
 - (BOOL)getGroup:(NSString * _Nonnull * _Nullable)groupPtr
            index:(nullable NSUInteger *)indexPtr
           forRow:(NSUInteger)row
@@ -682,7 +682,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * @see getGroup:index:forIndexPath:
  * 
  * Returns NSNotFound if the given row & section are invalid.
-**/
+ */
 - (NSUInteger)indexForRow:(NSUInteger)row inSection:(NSUInteger)section;
 
 /**
@@ -692,7 +692,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * @see getGroup:index:forIndexPath:
  * 
  * Returns NSNotFound if the given row & group are invalid.
-**/
+ */
 - (NSUInteger)indexForRow:(NSUInteger)row inGroup:(NSString *)group;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -704,7 +704,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  *
  * Returns the visible section number for the visible group.
  * Returns NSNotFound if the group is NOT visible (or invalid).
-**/
+ */
 - (NSUInteger)sectionForGroup:(NSString *)group;
 
 /**
@@ -713,7 +713,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * Returns YES if the proper row & section were found.
  * Returns NO if the given index is NOT visible (or out-of-bounds).
  * Returns NO if the given group is NOT visible (or invalid).
-**/
+ */
 - (BOOL)getRow:(nullable NSUInteger *)rowPtr
        section:(nullable NSUInteger *)sectionPtr
       forIndex:(NSUInteger)index
@@ -724,7 +724,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * 
  * Returns the indexPath with the proper section and row.
  * Returns nil if the given index & group is NOT visible (or out-of-bounds).
-**/
+ */
 - (nullable NSIndexPath *)indexPathForIndex:(NSUInteger)index inGroup:(NSString *)group;
 
 /**
@@ -734,7 +734,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  * @see getRow:section:forIndex:inGroup:
  * 
  * Returns NSNotFound if the given index & group is NOT visible (or out-of-bounds).
-**/
+ */
 - (NSUInteger)rowForIndex:(NSUInteger)index inGroup:(NSString *)group;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -743,12 +743,12 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
 
 /**
  * Whether or not the groups have been automatically consolidated due to the configured autoConsolidateGroupsThreshold.
-**/
+ */
 - (BOOL)isUsingConsolidatedGroup;
 
 /**
  * Returns the total number of items by summing up the totals across all groups.
-**/
+ */
 - (NSUInteger)numberOfItemsInAllGroups;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -771,7 +771,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  *     .offsetFromEnd = 80,
  *     .length = 20
  * }
-**/
+ */
 - (YapDatabaseViewRangePosition)rangePositionForGroup:(NSString *)group;
 
 /**
@@ -866,7 +866,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  *                               scrollPosition:UITableViewScrollPositionMiddle];
  *     }
  * }
-**/
+ */
 - (nullable NSIndexPath *)nearestIndexPathForRow:(NSUInteger)row inGroup:(NSString *)group;
 
 @end

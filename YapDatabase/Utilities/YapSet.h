@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * @see YapDatabaseConnection hasChangeForKey:inNotifications:
  * @see YapDatabaseConnection hasChangeForAnyKeys:inNotifications:
-**/
+ */
 @interface YapSet : NSObject <NSFastEnumeration>
 
 - (id)initWithSet:(NSMutableSet *)set;

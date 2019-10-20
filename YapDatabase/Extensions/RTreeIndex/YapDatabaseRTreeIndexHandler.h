@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  * You should choose a block type that takes the minimum number of required parameters.
  * The extension can make various optimizations based on required parameters of the block.
  * For example, if metadata isn't required, then the extension can ignore metadata-only updates.
-**/
+ */
 @interface YapDatabaseRTreeIndexHandler : NSObject
 
 typedef id YapDatabaseRTreeIndexBlock; // One of the YapDatabaseRTreeIndexWith_X_Block types below.

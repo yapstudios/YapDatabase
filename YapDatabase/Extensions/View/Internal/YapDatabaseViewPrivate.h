@@ -23,7 +23,7 @@
  * This version number is stored in the yap2 table.
  * If there is a major re-write to this class, then the version number will be incremented,
  * and the class can automatically rebuild the tables as needed.
-**/
+ */
 #define YAP_DATABASE_VIEW_CLASS_VERSION 3
 
 /**
@@ -31,12 +31,12 @@
  * In doing so, it splits the array into "pages" of rowids, and stores the pages in the database.
  * This reduces disk IO, as only the contents of a single page are written for a single change.
  * And only the contents of a single page need be read to fetch a single rowid.
-**/
+ */
 #define YAP_DATABASE_VIEW_MAX_PAGE_SIZE 50
 
 /**
  * Keys for yap2 extension configuration table.
-**/
+ */
 
 static NSString *const ext_key_classVersion       = @"classVersion";
 static NSString *const ext_key_versionTag         = @"versionTag";
@@ -45,7 +45,7 @@ static NSString *const ext_key_tag_deprecated     = @"tag";         // used by o
 
 /**
  * Keys for changeset dictionary.
-**/
+ */
 
 static NSString *const changeset_key_state      = @"state";
 static NSString *const changeset_key_dirtyMaps  = @"dirtyMaps";

@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
  * From the filter block, simply return YES if you'd like the block handler to be invoked for the given key.
  * If the filter block returns NO, then the block handler is skipped for the given key,
  * which avoids the cost associated with deserializing the object.
-**/
+ */
 - (void)enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
                                  withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  * which avoids the cost associated with deserializing the object.
  *
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
-**/
+ */
 - (void)enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
                                usingBlock:(void (NS_NOESCAPE^)(NSString *key, __nullable id metadata, BOOL *stop))block
                                withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
  * From the filter block, simply return YES if you'd like the block handler to be invoked for the given key.
  * If the filter block returns NO, then the block handler is skipped for the given key,
  * which avoids the cost associated with deserializing the object & metadata.
-**/
+ */
 - (void)enumerateRowsInCollection:(nullable NSString *)collection
                     usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block
                     withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter

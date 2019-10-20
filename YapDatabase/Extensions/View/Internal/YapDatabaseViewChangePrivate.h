@@ -3,7 +3,7 @@
 
 /**
  * This header file is PRIVATE, and is only to be used by the YapDatabaseView classes.
-**/
+ */
 
 @interface YapDatabaseViewSectionChange () {
 @public
@@ -58,7 +58,7 @@
  *
  * Post-processing figures out everything else, such as if an item was moved,
  * or if multiple operations can be consolidated into one.
-**/
+ */
 
 + (YapDatabaseViewRowChange *)insertCollectionKey:(YapCollectionKey *)key
                                           inGroup:(NSString *)group
@@ -84,7 +84,7 @@
 /**
  * The brains behind the post-processing logic.
  * Exposed privately to be used by the unit tests.
-**/
+ */
 + (void)processRowChanges:(NSMutableArray *)rowChanges
      withOriginalMappings:(YapDatabaseViewMappings *)originalMappings
             finalMappings:(YapDatabaseViewMappings *)finalMappings;
@@ -94,7 +94,7 @@
  * This method applies the given mappings, and then invokes the post-processing method.
  * 
  * This method is ONLY to be used by YapDatabaseViewConnection.
-**/
+ */
 + (void)getSectionChanges:(NSArray **)sectionChangesPtr
                rowChanges:(NSArray **)rowChangesPtr
 	 withOriginalMappings:(YapDatabaseViewMappings *)originalMappings

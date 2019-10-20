@@ -31,7 +31,7 @@ extern NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification;
  *
  * For the full documentation on Views, please see the related wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/YapDatabaseCloudKit
-**/
+ */
 @interface YapDatabaseCloudKit : YapDatabaseExtension
 
 
@@ -75,7 +75,7 @@ extern NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification;
  * 
  * @see suspend
  * @see resume
-**/
+ */
 @property (atomic, readonly) BOOL isSuspended;
 
 /**
@@ -85,7 +85,7 @@ extern NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification;
  * 
  * @see suspend
  * @see resume
-**/
+ */
 @property (atomic, readonly) NSUInteger suspendCount;
 
 /**
@@ -129,7 +129,7 @@ extern NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification;
  *   This will be 1 if the extension was previously active, and is now suspended due to this call.
  *   Otherwise it will be greater than one, meaning it was previously suspended,
  *   and you just incremented the suspend count.
-**/
+ */
 - (NSUInteger)suspend;
 
 /**
@@ -139,7 +139,7 @@ extern NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification;
  * You can invoke this method with a zero parameter in order to obtain the current suspend count, without modifying it.
  * 
  * @see suspend
-**/
+ */
 - (NSUInteger)suspendWithCount:(NSUInteger)suspendCountIncrement;
 
 /**
@@ -150,7 +150,7 @@ extern NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification;
  *   This will be 0 if the extension was previously suspended, and is now resumed due to this call.
  *   Otherwise it will be greater than one, meaning it's still suspended,
  *   and you just decremented the suspend count.
-**/
+ */
 - (NSUInteger)resume;
 
 #pragma mark Change-Sets
@@ -160,7 +160,7 @@ extern NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification;
  * which is either the inFlightChangeSet, or the next changeSet to go inFlight once resumed.
  *
  * In other words, the first YDBCKChangeSet in the queue.
-**/
+ */
 - (YDBCKChangeSet *)currentChangeSet;
 
 /**
@@ -175,7 +175,7 @@ extern NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification;
  * You can simply run a few tests with a debug database,
  * and keep the YapDatabaseCloudKit extension suspended the whole time.
  * Then just inspect the change-sets to ensure that everything is working as you expect.
-**/
+ */
 - (NSArray<YDBCKChangeSet *> *)pendingChangeSets;
 
 /**
@@ -197,14 +197,14 @@ extern NSString *const YapDatabaseCloudKitInFlightChangeSetChangedNotification;
  * numberOfInFlightChangeSets == numberOfPendingChangeSets  - numberOfQueuedChangeSets
  * numberOfQueuedChangeSets   == numberOfPendingChangeSets  - numberOfInFlightChangeSets
  * numberOfPendingChangeSets  == numberOfInFlightChangeSets + numberOfQueuedChangeSets
-**/
+ */
 @property (atomic, readonly) NSUInteger numberOfInFlightChangeSets;
 @property (atomic, readonly) NSUInteger numberOfQueuedChangeSets;
 @property (atomic, readonly) NSUInteger numberOfPendingChangeSets;
 
 /**
  * Atomic access to all counts at once.
-**/
+ */
 - (void)getNumberOfInFlightChangeSets:(NSUInteger *)numInFlightChangeSetsPtr
                      queuedChangeSets:(NSUInteger *)numQueuedChangeSetsPtr;
 

@@ -1,6 +1,6 @@
 /**
  * Wrapper for C++ code (std::unordered_set<int64_t>)
-**/
+ */
 
 #import <Foundation/Foundation.h>
 

@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 #import "YapWhitelistBlacklist.h"
@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  * - as a debugging tool, especially when transitioning to a different operation class
  *
  * The default value is nil.
-**/
+ */
 @property (nonatomic, copy, readwrite, nullable) NSSet *allowedOperationClasses;
 
 /**
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Or you may find it more convenient to store such values directly in your objects.
  *
  * The default value is NO (disabled).
-**/
+ */
 @property (nonatomic, assign, readwrite) BOOL enableTagSupport;
 
 /**
@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
  * (local collection/key tuple) <-> (cloudURI)
  *
  * The default value is NO (disabled).
-**/
+ */
 @property (nonatomic, assign, readwrite) BOOL enableAttachDetachSupport;
 
 @end

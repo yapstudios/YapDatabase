@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * For tons of information about this extension, see the wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/Relationships
-**/
+ */
 
 /**
  * The FileURLSerializer & FileURLDeserializer are used to convert between NSURL and the (serialized) blob
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * @see defaultFileURLSerializer
  * @see defaultFileURLDeserializer
-**/
+ */
 typedef NSData* _Nullable (^YapDatabaseRelationshipFileURLSerializer)(YapDatabaseRelationshipEdge *edge);
 typedef NSURL* _Nullable (^YapDatabaseRelationshipFileURLDeserializer)(YapDatabaseRelationshipEdge *edge, NSData *data);
 
@@ -50,13 +50,13 @@ typedef NSURL* _Nullable (^YapDatabaseRelationshipFileURLDeserializer)(YapDataba
  * 
  * @param data
  *   The encrypted filePath, generated from a previously configured filePathEncryption block.
-**/
+ */
 typedef NSURL* _Nullable (^YapDatabaseRelationshipMigration)(NSString *_Nullable filePath, NSData *_Nullable data);
 
 
 /**
  * This class allows for various customizations to the YapDatabaseRelationship extension.
-**/
+ */
 @interface YapDatabaseRelationshipOptions : NSObject <NSCopying>
 
 /**
@@ -66,7 +66,7 @@ typedef NSURL* _Nullable (^YapDatabaseRelationshipMigration)(NSString *_Nullable
  * then disabling the protocol, and its related processing, can reduce overhead.
  *
  * The default value is NO.
-**/
+ */
 @property (nonatomic, assign, readwrite) BOOL disableYapDatabaseRelationshipNodeProtocol;
 
 /**
@@ -94,7 +94,7 @@ typedef NSURL* _Nullable (^YapDatabaseRelationshipMigration)(NSString *_Nullable
  * because it already skips all associated processing.
  *
  * The default value is nil.
-**/
+ */
 @property (nonatomic, strong, readwrite, nullable) YapWhitelistBlacklist *allowedCollections;
 
 /**
@@ -106,7 +106,7 @@ typedef NSURL* _Nullable (^YapDatabaseRelationshipMigration)(NSString *_Nullable
  * 
  * @see defaultFileURLSerializer
  * @see defaultFileURLDeserializer
-**/
+ */
 @property (nonatomic, strong, readwrite) YapDatabaseRelationshipFileURLSerializer fileURLSerializer;
 @property (nonatomic, strong, readwrite) YapDatabaseRelationshipFileURLDeserializer fileURLDeserializer;
 
@@ -125,7 +125,7 @@ typedef NSURL* _Nullable (^YapDatabaseRelationshipMigration)(NSString *_Nullable
  * The default value is 'defaultMigration'.
  *
  * @see defaultMigration
-**/
+ */
 @property (nonatomic, strong, readwrite) YapDatabaseRelationshipMigration migration;
 
 /**
@@ -144,7 +144,7 @@ typedef NSURL* _Nullable (^YapDatabaseRelationshipMigration)(NSString *_Nullable
  * and store the remainder as a relative path.
  *
  * You can use your own serializer/deserializer if you need extra features.
-**/
+ */
 + (YapDatabaseRelationshipFileURLSerializer)defaultFileURLSerializer;
 + (YapDatabaseRelationshipFileURLDeserializer)defaultFileURLDeserializer;
 
@@ -160,7 +160,7 @@ typedef NSURL* _Nullable (^YapDatabaseRelationshipMigration)(NSString *_Nullable
  * For Mac OS X - a simplistic migration is performed.
  *
  *   A simplistic migration is performed - simply converts string-based filePath's to NSURL's.
-**/
+ */
 + (YapDatabaseRelationshipMigration)defaultMigration;
 
 @end

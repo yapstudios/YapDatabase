@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * For the full documentation on Views, please see the related wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/Views
-**/
+ */
 
 @interface YapDatabaseViewOptions : NSObject <NSCopying>
 
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  * In general, situations where it doesn't really make sense to persist the view.
  *
  * The default value is YES.
-**/
+ */
 @property (nonatomic, assign, readwrite) BOOL isPersistent;
 
 /**
@@ -60,14 +60,14 @@ NS_ASSUME_NONNULL_BEGIN
  * So the groupingBlock would still be invoked as normal.
  *
  * The default value is nil.
-**/
+ */
 @property (nonatomic, strong, readwrite, nullable) YapWhitelistBlacklist *allowedCollections;
 
 /**
  * You can configure the view to skip the initial view population.
  *
  * The default value is NO.
-**/
+ */
 @property (nonatomic, assign, readwrite) BOOL skipInitialViewPopulation;
 
 @end

@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Helper method to conditionally invoke sqlite3_finalize on a statement, and then set the ivar to NULL.
-**/
+ */
 NS_INLINE void sqlite_finalize_null(sqlite3_stmt *_Nonnull* _Nonnull stmtPtr)
 {
 	if (stmtPtr && *stmtPtr)
@@ -56,7 +56,7 @@ NS_INLINE void sqlite_enum_reset(sqlite3_stmt *stmt, BOOL needsFinalize)
 
 /**
  * Keys for changeset dictionary.
-**/
+ */
 
 extern NSString *const YapDatabaseRegisteredExtensionsKey;
 extern NSString *const YapDatabaseRegisteredMemoryTablesKey;
@@ -69,7 +69,7 @@ extern NSString *const YapDatabaseNotificationKey;
  * Key(s) for yap2 extension configuration table.
  *
  * This is the only key that is reserved, and should not be set by extension subclasses.
-**/
+ */
 static NSString *const ext_key_class = @"class";
 
 
@@ -104,7 +104,7 @@ static NSString *const ext_key_class = @"class";
 
 /**
  * General utility methods.
-**/
+ */
 
 + (int64_t)pragma:(NSString *)pragmaSetting using:(sqlite3 *)aDb;
 
@@ -119,19 +119,19 @@ static NSString *const ext_key_class = @"class";
 
 /**
  * Called from YapDatabaseConnection's dealloc method to remove connection's state from connectionStates array.
-**/
+ */
 - (void)removeConnection:(YapDatabaseConnection *)connection;
 
 /**
  * YapDatabaseConnection uses these methods to recycle sqlite3 instances using the connection pool.
-**/
+ */
 - (BOOL)connectionPoolEnqueue:(sqlite3 *)aDb main_file:(yap_file *)main_file wal_file:(yap_file *)wal_file;
 - (BOOL)connectionPoolDequeue:(sqlite3 *_Nonnull*_Nonnull)aDb main_file:(yap_file *_Nonnull*_Nonnull)main_file wal_file:(yap_file *_Nonnull*_Nonnull)wal_file;
 
 /**
  * These methods are only accessible from within the snapshotQueue.
  * Used by [YapDatabaseConnection prepare].
-**/
+ */
 - (NSDictionary *)registeredMemoryTables;
 - (NSArray *)extensionsOrder;
 - (NSDictionary *)extensionDependencies;
@@ -145,7 +145,7 @@ static NSString *const ext_key_class = @"class";
  * The following MUST be in the dictionary:
  *
  * - snapshot : NSNumber with the changeset's snapshot
-**/
+ */
 - (void)notePendingChangeset:(NSDictionary *)changeset fromConnection:(YapDatabaseConnection *)connection;
 
 /**
@@ -155,7 +155,7 @@ static NSString *const ext_key_class = @"class";
  * That is, the transaction started before it was able to process changesets from sibling connections.
  * 
  * It should fetch the changesets needed and then process them via [connection noteCommittedChangeset:].
-**/
+ */
 - (NSArray *)pendingAndCommittedChangesetsSince:(uint64_t)connectionSnapshot until:(uint64_t)maxSnapshot;
 
 /**
@@ -167,7 +167,7 @@ static NSString *const ext_key_class = @"class";
  * The following MUST be in the dictionary:
  * 
  * - snapshot : NSNumber with the changeset's snapshot
-**/
+ */
 - (void)noteCommittedChangeset:(NSDictionary *)changeset fromConnection:(YapDatabaseConnection *)connection;
 
 /**
@@ -178,20 +178,20 @@ static NSString *const ext_key_class = @"class";
  * Thus we know the point at which a commit/snapshot becomes checkpointable,
  * and we can thus optimize the checkpoint invocations such that
  * each invocation is able to checkpoint one or more commits.
-**/
+ */
 - (void)asyncCheckpoint:(uint64_t)maxCheckpointableSnapshot;
 
 /**
  * When aggressive checkpointing is enabled (occurs automatically if the WAL grows too big),
  * then read-write transactions will automatically start performing checkpoint operations after each commit.
-**/
+ */
 - (BOOL)aggressiveCheckpointEnabled;
 - (void)noteCheckpointWithTotalFrames:(int)totalFrameCount checkpointedFrames:(int)checkpointedFrameCount;
 
 #ifdef SQLITE_HAS_CODEC
 /**
  * Configures database encryption via SQLCipher.
- **/
+  */
 - (BOOL)configureEncryptionForDatabase:(sqlite3 *)sqlite;
 #endif
 

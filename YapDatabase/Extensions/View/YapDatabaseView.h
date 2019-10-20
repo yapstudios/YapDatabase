@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
  * and ask it to give you a list of changes that you can use to animate your tableView/collectionView:
  *
  * @see YapDatabaseConnection getSectionChanges:rowChanges:forNotifications:withMappings:
-**/
+ */
 extern NSString *const YapDatabaseViewChangesKey;
 
 /**
@@ -32,7 +32,7 @@ extern NSString *const YapDatabaseViewChangesKey;
  * - YapDatabaseAutoView
  * - YapDatabaseManualView
  * - YapDatabaseMultiView
-**/
+ */
 @interface YapDatabaseView : YapDatabaseExtension
 
 /**
@@ -61,12 +61,12 @@ extern NSString *const YapDatabaseViewChangesKey;
  * Note:
  * - [YapDatabaseView versionTag]            = versionTag of most recent commit
  * - [YapDatabaseViewTransaction versionTag] = versionTag of this commit
-**/
+ */
 @property (nonatomic, copy, readonly) NSString *versionTag;
 
 /**
  * The options allow you to specify things like creating an in-memory-only view (non persistent).
-**/
+ */
 @property (nonatomic, copy, readonly) YapDatabaseViewOptions *options;
 
 /**
@@ -87,7 +87,7 @@ extern NSString *const YapDatabaseViewChangesKey;
  * during registration if the versionTag is different from last time.
  * 
  * So you can use this method to fetch the previous versionTag.
-**/
+ */
 + (nullable NSString *)previousVersionTagForRegisteredViewName:(NSString *)name
                                                withTransaction:(YapDatabaseReadTransaction *)transaction;
 

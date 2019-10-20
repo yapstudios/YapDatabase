@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * For tons of information about this extension, see the wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/Relationships
-**/
+ */
 
 @interface YapDatabaseRelationshipTransaction : YapDatabaseExtensionTransaction
 
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Equivalent to:
  * 
  * [transaction objectForKey:edge.sourceKey inCollection:edge.sourceCollection];
-**/
+ */
 - (nullable id)sourceNodeForEdge:(YapDatabaseRelationshipEdge *)edge;
 
 /**
@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Equivalent to:
  * 
  * [transaction objectForKey:edge.destinationKey inCollection:edge.destinationCollection];
-**/
+ */
 - (nullable id)destinationNodeForEdge:(YapDatabaseRelationshipEdge *)edge;
 
 #pragma mark Enumerate
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * @param name
  *   The name of the edge (case sensitive).
-**/
+ */
 - (void)enumerateEdgesWithName:(NSString *)name
                     usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
 
@@ -72,7 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
  * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
-**/
+ */
 - (void)enumerateEdgesWithName:(nullable NSString *)name
                      sourceKey:(nullable NSString *)sourceKey
                     collection:(nullable NSString *)sourceCollection
@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If you pass a non-nil destinationKey, and destinationCollection is nil,
  * then the destinationCollection is treated as the empty string, just like the rest of the YapDatabase framework.
-**/
+ */
 - (void)enumerateEdgesWithName:(nullable NSString *)name
                 destinationKey:(nullable NSString *)destinationKey
                     collection:(nullable NSString *)destinationCollection
@@ -116,7 +116,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param destinationFileURL (optional)
  *   The edge.destinationFileURL to match.
-**/
+ */
 - (void)enumerateEdgesWithName:(nullable NSString *)name
             destinationFileURL:(nullable NSURL *)destinationFileURL
                     usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block;
@@ -152,7 +152,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If you pass a non-nil destinationKey, and destinationCollection is nil,
  * then the destinationCollection is treated as the empty string, just like the rest of the YapDatabase framework.
-**/
+ */
 - (void)enumerateEdgesWithName:(nullable NSString *)name
                      sourceKey:(nullable NSString *)sourceKey
                     collection:(nullable NSString *)sourceCollection
@@ -185,7 +185,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
  * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
-**/
+ */
 - (void)enumerateEdgesWithName:(nullable NSString *)name
                      sourceKey:(nullable NSString *)sourceKey
                     collection:(nullable NSString *)sourceCollection
@@ -199,7 +199,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * @param name
  *   The name of the edge (case sensitive).
-**/
+ */
 - (NSUInteger)edgeCountWithName:(NSString *)name;
 
 /**
@@ -221,7 +221,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
  * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
-**/
+ */
 - (NSUInteger)edgeCountWithName:(nullable NSString *)name
                       sourceKey:(nullable NSString *)sourceKey
                      collection:(nullable NSString *)sourceCollection;
@@ -245,7 +245,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If you pass a non-nil destinationKey, and destinationCollection is nil,
  * then the destinationCollection is treated as the empty string, just like the rest of the YapDatabase framework.
-**/
+ */
 - (NSUInteger)edgeCountWithName:(nullable NSString *)name
                  destinationKey:(nullable NSString *)destinationKey
                      collection:(nullable NSString *)destinationCollection;
@@ -263,7 +263,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param destinationFileURL (optional)
  *   The edge.destinationFileURL to match.
-**/
+ */
 - (NSUInteger)edgeCountWithName:(nullable NSString *)name
              destinationFileURL:(nullable NSURL *)destinationFileURL;
 
@@ -298,7 +298,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If you pass a non-nil destinationKey, and destinationCollection is nil,
  * then the destinationCollection is treated as the empty string, just like the rest of the YapDatabase framework.
-**/
+ */
 - (NSUInteger)edgeCountWithName:(nullable NSString *)name
                       sourceKey:(nullable NSString *)sourceKey
                      collection:(nullable NSString *)sourceCollection
@@ -330,7 +330,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
  * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
-**/
+ */
 - (NSUInteger)edgeCountWithName:(nullable NSString *)name
                       sourceKey:(nullable NSString *)sourceKey
                      collection:(nullable NSString *)sourceCollection
@@ -355,12 +355,12 @@ NS_ASSUME_NONNULL_BEGIN
  * For more information, see the wiki section "Edge Creation":
  * 
  * https://github.com/yapstudios/YapDatabase/wiki/Relationships#wiki-edge_creation
-**/
+ */
 
 /**
  * This method will add the manual edge (if it doesn't already exist).
  * Otherwise it will replace the the existing manual edge with the same name & srcKey/collection & dstKey/collection.
-**/
+ */
 - (void)addEdge:(YapDatabaseRelationshipEdge *)edge;
 
 /**
@@ -394,7 +394,7 @@ NS_ASSUME_NONNULL_BEGIN
  * A protocol edge is one created via the YapDatabaseRelationshipNode protocol.
  * So you cannot, for example, create an edge via the YapDatabaseRelationshipNode protocol,
  * and then manually delete it via the removeEdge:: method. This is what is meant by "different domains".
-**/
+ */
 - (void)removeEdgeWithName:(NSString *)edgeName
                  sourceKey:(NSString *)sourceKey
                 collection:(nullable NSString *)sourceCollection
@@ -414,7 +414,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The nodeDeleteRules of the pre-existing edge are processed according to the given reason.
  * 
  * @see removeEdgeWithName:sourceKey:collection:destinationKey:collection:withProcessing:
-**/
+ */
 - (void)removeEdge:(YapDatabaseRelationshipEdge *)edge withProcessing:(YDB_NotifyReason)reason;
 
 #pragma mark Force Processing
@@ -429,7 +429,7 @@ NS_ASSUME_NONNULL_BEGIN
  * For example, if you need a cascading delete to complete before continuing your transaction logic,
  * then you can force the extension processing to occur prior to the end of the readwrite transaction
  * by invoking this flush method
-**/
+ */
 - (void)flush;
 
 @end

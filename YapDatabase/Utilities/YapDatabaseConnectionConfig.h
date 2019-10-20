@@ -20,7 +20,7 @@
  * @see YapDatabaseConnection metadataPolicy
  * 
  * @see YapDatabaseConnection autoFlushMemoryLevel
-**/
+ */
 @interface YapDatabaseConnectionConfig : NSObject <NSCopying>
 
 @property (atomic, assign, readwrite) BOOL objectCacheEnabled;

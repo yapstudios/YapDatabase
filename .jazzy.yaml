@@ -1,0 +1,33 @@
+objc: true
+output: Docs
+framework_root: YapDatabase
+sdk: iphonesimulator
+umbrella_header: YapDatabase/YapDatabaseUmbrella.h
+theme: fullwidth
+author: YapStudios
+custom_categories:
+- name: Core
+  children:
+  - YapDatabase
+  - YapDatabaseOptions
+  - YapDatabaseConnection
+  - YapDatabaseReadTransaction
+  - YapDatabaseReadWriteTransaction
+- name: Utilities
+  children:
+  - YapBidirectionalCache
+  - YapCache
+  - YapCollectionKey
+  - YapDatabaseConnectionConfig
+  - YapDatabaseCryptoUtils
+  - YapDatabaseQuery
+  - YapMurmurHash
+  - YapProxyObject
+  - YapWhitelistBlacklist
+- name: Extension Protocol
+  children:
+  - YapDatabaseExtension
+  - YapDatabaseExtensionConnection
+  - YapDatabaseExtensionTransaction
+exclude:
+- /*/Internal/*

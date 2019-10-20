@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * You should choose a block type that takes the minimum number of required parameters.
  * The filterView can make various optimizations based on required parameters of the block.
-**/
+ */
 @interface YapDatabaseViewFiltering : NSObject
 
 typedef id YapDatabaseViewFilteringBlock; // One of the YapDatabaseViewGroupingX types below.

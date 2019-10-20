@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
  * But when the search overhead is higher, this allows for optimizations that help better meet UI expectations.
  * 
  * This class is thread-safe.
-**/
+ */
 @interface YapDatabaseSearchQueue : NSObject
 
 - (id)init;
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * Use this method to enqueue the proper query.
  * This is generally done when the search field changes (due to user interaction).
-**/
+ */
 - (void)enqueueQuery:(NSString *)query;
 
 /**
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * If the enqueuedQueryCount is positive, then there are queries pending.
  * Otherwise the searchResultsView is processing, or has processed, the most recent query.
-**/
+ */
 - (NSArray<NSString *> *)enqueuedQueries;
 - (NSUInteger)enqueuedQueryCount;
 
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * This technique is commonly used when the user clears the search field.
  * Thus you would invoke this method, and then enqueue a query for an empty string (no search results).
-**/
+ */
 - (void)abortSearchInProgressAndRollback:(BOOL)shouldRollback;
 
 @end

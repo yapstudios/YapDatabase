@@ -12,7 +12,7 @@
  *
  * For more information, see the wiki article about secondary indexes:
  * https://github.com/yapstudios/YapDatabase/wiki/Secondary-Indexes
-**/
+ */
 @interface YapDatabaseRTreeIndexOptions : NSObject <NSCopying>
 
 /**
@@ -35,7 +35,7 @@
  * So the rTreeIndexBlock would still be invoked as normal.
  *
  * The default value is nil.
-**/
+ */
 @property (nonatomic, strong, readwrite, nullable) YapWhitelistBlacklist *allowedCollections;
 
 @end

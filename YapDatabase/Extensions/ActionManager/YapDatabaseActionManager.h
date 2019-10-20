@@ -32,7 +32,7 @@ typedef NSArray<YapActionItem*> *_Nullable (^YapActionScheduler)(NSString *colle
  *   e.g.: removing cached files
  * - refreshing items when they've become "stale"
  *   e.g.: periodically updating user infromation from the server
-**/
+ */
 @interface YapDatabaseActionManager : YapDatabaseAutoView
 
 - (instancetype)init;
@@ -53,7 +53,7 @@ typedef NSArray<YapActionItem*> *_Nullable (^YapActionScheduler)(NSString *colle
  * 
  * If an instance is not assigned, then one will be automatically created (after registration)
  * via [YapReachability reachabilityForInternetConnection].
-**/
+ */
 @property (atomic, strong, readwrite, nullable) YapReachability *reachability;
 #endif
 
@@ -78,14 +78,14 @@ typedef NSArray<YapActionItem*> *_Nullable (^YapActionScheduler)(NSString *colle
  * a retain cycle if you were attemping to shut down the YapDatabase instance. However, you can break the
  * retain cycle by suspending the action manager. When suspended, YDBActionManager automatically releases its
  * strongly held internal YDBConnection.
-**/
+ */
 
 /**
  * Returns YES if the action manager is suspended.
  *
  * @see suspend
  * @see resume
-**/
+ */
 @property (atomic, readonly) BOOL isSuspended;
 
 /**
@@ -95,7 +95,7 @@ typedef NSArray<YapActionItem*> *_Nullable (^YapActionScheduler)(NSString *colle
  *
  * @see suspend
  * @see resume
-**/
+ */
 @property (atomic, readonly) NSUInteger suspendCount;
 
 /**
@@ -103,7 +103,7 @@ typedef NSArray<YapActionItem*> *_Nullable (^YapActionScheduler)(NSString *colle
  *
  * @return
  *   The new suspend count.
-**/
+ */
 - (NSUInteger)suspend;
 
 /**
@@ -115,7 +115,7 @@ typedef NSArray<YapActionItem*> *_Nullable (^YapActionScheduler)(NSString *colle
  *
  * @see suspend
  * @see suspendCount
-**/
+ */
 - (NSUInteger)suspendWithCount:(NSUInteger)suspendCountIncrement;
 
 /**
@@ -123,7 +123,7 @@ typedef NSArray<YapActionItem*> *_Nullable (^YapActionScheduler)(NSString *colle
  *
  * @return
  *   The new suspend count.
-**/
+ */
 - (NSUInteger)resume;
 
 @end

@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 
@@ -11,13 +11,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Do not directly create instances of this class.
  * Instead create instances of concrete subclass.
-**/
+ */
 @interface YapDatabaseCloudCoreOperation : NSObject <NSCoding, NSCopying>
 
 /**
  * Every operation has a randomly generated UUID.
  * This is used for dependency references, and for uniquely identifying this specific operation.
-**/
+ */
 @property (nonatomic, readonly) NSUUID *uuid;
 
 /**
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * The snapshot number is known for each graph.
  * And an operation's snapshot number is set when being added to the graph.
-**/
+ */
 @property (nonatomic, readonly) uint64_t snapshot;
 
 #pragma mark Configuration
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @see YapDatabaseOnwCloudPipeline
  * @see [YapDatabase registerPipeline]
-**/
+ */
 @property (nonatomic, copy, readwrite, nullable) NSString *pipeline;
 
 /**
@@ -102,7 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
  * If you create a circular dependency, the graph system will detect it and throw an exception.
  * 
  * @see addDependency
-**/
+ */
 @property (nonatomic, copy, readwrite, nullable) NSSet<NSUUID *> *dependencies;
 
 /**
@@ -110,7 +110,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @param op
  *   May be either a NSUUID, or a YapDatabaseCloudCoreOperation (for convenience).
-**/
+ */
 - (void)addDependency:(id)op;
 
 /**
@@ -152,7 +152,7 @@ NS_ASSUME_NONNULL_BEGIN
  *     and is opt-in via the FlatGraph optimization.)
  * 
  * Thus it is best to think of dependencies as hard requirements, and priorities as soft hints.
-**/
+ */
 @property (nonatomic, assign, readwrite) int32_t priority;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -168,12 +168,12 @@ NS_ASSUME_NONNULL_BEGIN
  * - information needed after the network operation completes (e.g. collection/key of associated database object)
  * 
  * @see setPersistentUserInfoObject:forKey:
-**/
+ */
 @property (nonatomic, copy, readwrite, nullable) NSDictionary *persistentUserInfo;
 
 /**
  * Convenience method for modifying the persistentUserInfo dictionary.
-**/
+ */
 - (void)setPersistentUserInfoObject:(id)object forKey:(NSString *)key;
 
 @end

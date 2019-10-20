@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Returns the parent view instance.
-**/
+ */
 @property (nonatomic, strong, readonly) YapDatabaseCloudKit *cloudKit;
 
 @end

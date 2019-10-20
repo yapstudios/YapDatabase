@@ -32,13 +32,13 @@ NS_ASSUME_NONNULL_BEGIN
  * (So you'll be handed the connection with the smallest queue of pending "work".)
  *
  * This allows for increased parallelization amongst your background tasks.
-**/
+ */
 @interface YapDatabaseConnectionPool : NSObject
 
 /**
  * Initializes a new connction pool with default configuration values.
  * All database connections are created on demand, so you can configure the pool after initialization.
-**/
+ */
 - (instancetype)initWithDatabase:(YapDatabase *)database;
 
 /**
@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * The default value is 3.
  * Zero is not a valid number, and will be treated as the default value.
-**/
+ */
 @property (atomic, assign, readwrite) NSUInteger connectionLimit;
 
 /**
@@ -59,13 +59,13 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * The default value for this property is nil,
  * which means new database connections will inherit their configuration from YapDatabase.connectionDefaults.
-**/
+ */
 @property (atomic, strong, readwrite) YapDatabaseConnectionConfig *connectionDefaults;
 
 /**
  * Allows you to perform additional configuration on a newly created connection.
  * This block is invoked BEFORE the connection is returned to the caller.
-**/
+ */
 @property (atomic, copy, readwrite) void(^didCreateNewConnectionBlock)(YapDatabaseConnection *newConnection);
 
 /**
@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   then that connection is returned.
  * - Otherwise, if the connection count is below connectionCount, a new connection is created & returned.
  * - Otherwise, an existing connection will be automatically chosen based on the number of pending/active transactions.
-**/
+ */
 - (YapDatabaseConnection *)connection;
 
 @end

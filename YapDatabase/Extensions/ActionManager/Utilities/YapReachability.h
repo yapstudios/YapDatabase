@@ -8,7 +8,7 @@
  *
  * We may revert to the official project if its Podspec is updated.
  * Or switch to another if a suitable alternative open-source project is found.
-**/
+ */
 
 #import <Availability.h>
 #import <TargetConditionals.h>
@@ -50,7 +50,7 @@
  * Create NS_ENUM macro if it does not exist on the targeted version of iOS or OS X.
  *
  * @see http://nshipster.com/ns_enum-ns_options/
- **/
+  */
 #ifndef NS_ENUM
 #define NS_ENUM(_type, _name) enum _name : _type _name; enum _name : _type
 #endif

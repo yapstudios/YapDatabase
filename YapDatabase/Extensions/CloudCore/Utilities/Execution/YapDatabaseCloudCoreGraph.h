@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 
@@ -14,12 +14,12 @@
  * 
  * The graph is in charge of managing the execution order of the operations
  * in accordance with the set dependencies & priorities.
-**/
+ */
 @interface YapDatabaseCloudCoreGraph : NSObject
 
 /**
  * A graph's operations are managed by the pipeline.
  * Use the methods in YapDatabaseCloudCorePipeline to enumerate operations in a graph.
-**/
+ */
 
 @end

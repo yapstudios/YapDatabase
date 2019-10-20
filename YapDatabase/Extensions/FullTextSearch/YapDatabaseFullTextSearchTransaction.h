@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  *         // matching row...
  *     }]
  * }];
-**/
+ */
 @interface YapDatabaseFullTextSearchTransaction : YapDatabaseExtensionTransaction
 
 // Regular query matching

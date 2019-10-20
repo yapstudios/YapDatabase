@@ -13,13 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  * After an extension has been successfully registered with a database,
  * the registeredName property will be set by the database.
-**/
+ */
 @property (atomic, copy, readonly, nullable) NSString *registeredName;
 
 /**
  * After an extension has been successfully registered with a database,
  * the registeredDatabase property will be set to that database.
-**/
+ */
 @property (atomic, weak, readonly, nullable) YapDatabase *registeredDatabase;
 
 @end

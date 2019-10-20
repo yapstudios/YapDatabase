@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Keep in mind that the YapDatabaseViewTransaction object is linked to the YapDatabaseReadTransaction object.
  * So don't try to use it outside the transaction block (cause it won't work).
- **/
+  */
 @interface YapDatabaseManualViewTransaction : YapDatabaseViewTransaction
 
 /**
@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * @return
  *   YES if the operation was successful. NO otherwise.
-**/
+ */
 - (BOOL)addKey:(NSString *)key inCollection:(nullable NSString *)collection toGroup:(NSString *)group;
 
 /**
@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * @return
  *   YES if the operation was successful. NO otherwise.
-**/
+ */
 - (BOOL)insertKey:(NSString *)key
      inCollection:(nullable NSString *)collection
           atIndex:(NSUInteger)index
@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return
  *   YES if the operation was successful (the group + index was valid). NO otherwise.
-**/
+ */
 - (BOOL)removeItemAtIndex:(NSUInteger)index inGroup:(NSString *)group;
 
 /**
@@ -73,12 +73,12 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * @return
  *   YES if the operation was successful. NO otherwise.
-**/
+ */
 - (BOOL)removeKey:(NSString *)key inCollection:(nullable NSString *)collection fromGroup:(NSString *)group;
 
 /**
  * Removes all <collection, key> tuples from the given group.
-**/
+ */
 - (void)removeAllItemsInGroup:(NSString *)group;
 
 @end

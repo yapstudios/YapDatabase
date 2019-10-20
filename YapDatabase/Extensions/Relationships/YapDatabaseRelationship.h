@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * For tons of information about this extension, see the wiki article:
  * https://github.com/yapstudios/YapDatabase/wiki/Relationships
-**/
+ */
 
 @interface YapDatabaseRelationship : YapDatabaseExtension
 
@@ -43,12 +43,12 @@ NS_ASSUME_NONNULL_BEGIN
  * the YapDatabaseRelationship extension will notice the different versionTag, and will then automatically
  * remove all protocol edges from the database, and automatically repopulate its list of protocol edges
  * by enumerating the nodes in the database.
-**/
+ */
 @property (nonatomic, copy, readonly) NSString *versionTag;
 
 /**
  * The options that were used to initialize the instance.
-**/
+ */
 @property (nonatomic, copy, readonly) YapDatabaseRelationshipOptions *options;
 
 @end

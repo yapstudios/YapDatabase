@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 
@@ -30,7 +30,7 @@
  * This version number is stored in the yap2 table.
  * If there is a major re-write to this class, then the version number will be incremented,
  * and the class can automatically rebuild the tables as needed.
-**/
+ */
 #define YAPDATABASE_CLOUDCORE_CLASS_VERSION 3
 
 static NSString * const YDBCloudCore_DiryMappingMetadata_NeedsRemove = @"NeedsRemove";
@@ -164,7 +164,7 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
 
 /**
  * Subclass hooks
-**/
+ */
 
 - (void)validateOperation:(YapDatabaseCloudCoreOperation *)operation;
 
@@ -200,7 +200,7 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
  * always return a copy of the internally held operation.
  * 
  * Internal methods can avoid the copy overhead by using the underscore versions below.
-**/
+ */
 
 - (YapDatabaseCloudCoreOperation *)_operationWithUUID:(NSUUID *)uuid;
 - (YapDatabaseCloudCoreOperation *)_operationWithUUID:(NSUUID *)uuid inPipeline:(NSString *)pipelineName;
@@ -240,7 +240,7 @@ typedef NS_OPTIONS(uint8_t, YDBCloudCore_EnumOps) {
 
 /**
  * Throw this if an attempt is made to invoke a read-write action within a read-only transaction.
-**/
+ */
 - (NSException *)requiresReadWriteTransactionException:(NSString *)methodName;
 
 @end

@@ -35,7 +35,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags_Extension) 
 	 * there may be scenarios where the changeset from process A doesn't get propogated to process B.
 	 * If this happens, the `_flushMemoryWithFlags` method is invoked,
 	 * and this flag is passed to warn the extension that it's cached state may be invalid.
-	**/
+	 */
 	YapDatabaseConnectionFlushMemoryFlags_Extension_State = 1 << 3,
 };
 
@@ -44,7 +44,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags_Extension) 
 
 /**
  * See YapDatabaseExtension.m for discussion of these methods.
-**/
+ */
 
 + (void)dropTablesForRegisteredName:(NSString *)registeredName
                     withTransaction:(YapDatabaseReadWriteTransaction *)transaction
@@ -76,7 +76,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags_Extension) 
 
 /**
  * See YapDatabaseExtensionConnection.m for discussion of these methods
-**/
+ */
 
 - (YapDatabaseExtension *)extension;
 
@@ -103,7 +103,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags_Extension) 
 
 /**
  * See YapDatabaseExtensionTransaction.m for discussion of these methods
-**/
+ */
 
 - (YapDatabaseExtensionConnection *)extensionConnection;
 - (YapDatabaseReadTransaction *)databaseTransaction;
@@ -121,7 +121,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags_Extension) 
 
 /**
  * See YapDatabaseExtensionTransaction.m for discussion of these methods
-**/
+ */
 
 - (void)didInsertObject:(id)object
        forCollectionKey:(YapCollectionKey *)collectionKey
@@ -181,7 +181,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags_Extension) 
 
 /**
  * See YapDatabaseExtensionTransaction.m for discussion of these methods
-**/
+ */
 
 - (BOOL)getBoolValue:(BOOL *)valuePtr forExtensionKey:(NSString *)key persistent:(BOOL)inDatabaseOrMemoryTable;
 - (BOOL)boolValueForExtensionKey:(NSString *)key persistent:(BOOL)inDatabaseOrMemoryTable;

@@ -19,7 +19,7 @@
  * 
  * Note: This technique ONLY applies to key names and collection names.
  * It does NOT apply to object/primitiveData or metadata. Those are binded to sqlite3 statements using binary blobs.
-**/
+ */
 
 
 /**
@@ -27,7 +27,7 @@
  * This is possibe if really huge key names or collection names are used.
  *
  * The number below represents the largest amount of memory (in bytes) that will be allocated on the stack per string.
-**/
+ */
 #define YapDatabaseStringMaxStackLength (1024 * 4)
 
 /**
@@ -57,7 +57,7 @@
  * Thus the "setup" and "teardown" methods below will automatically switch to heap storage (just like UTF8String),
  * if the key/collection name is too long, and performance will be equivalent.
  * But in the common case of short key/collection names, we can skip the more expensive heap allocation/deallocation.
-**/
+ */
 struct YapDatabaseString {
 	int length;
 	char strStack[YapDatabaseStringMaxStackLength];
@@ -71,7 +71,7 @@ typedef struct YapDatabaseString YapDatabaseString;
  * It will automatically use heap storage if the given NSString is too long.
  * 
  * This method should always be balanced with a call to FreeYapDatabaseString.
-**/
+ */
 NS_INLINE void MakeYapDatabaseString(YapDatabaseString *dbStr, NSString *nsStr)
 {
 	if (nsStr)
@@ -109,7 +109,7 @@ NS_INLINE void MakeYapDatabaseString(YapDatabaseString *dbStr, NSString *nsStr)
  * In the common case of stack storage, strHeap will be NULL, and this method is essentially a no-op.
  * 
  * This method should be invoked AFTER sqlite3_clear_bindings (assuming SQLITE_STATIC is used).
-**/
+ */
 NS_INLINE void FreeYapDatabaseString(YapDatabaseString *dbStr)
 {
 	if (dbStr->strHeap)

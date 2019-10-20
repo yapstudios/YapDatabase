@@ -1,6 +1,6 @@
 /**
  * Copyright Deusty LLC.
-**/
+ */
 
 #import <Foundation/Foundation.h>
 
@@ -22,7 +22,7 @@
  * In addition to saving a small amount of space, this makes changing pipelines significantly easier:
  * - renaming a pipeline
  * - changing a pipeline's algorithm
-**/
+ */
 @property (nonatomic, assign, readwrite) int64_t rowid;
 
 - (BOOL)setOwner:(YapDatabaseCloudCore *)owner;
@@ -47,7 +47,7 @@
  * always return a copy of the internally held operation.
  *
  * Internal methods can avoid the copy overhead by using the underscore versions below.
-**/
+ */
 
 - (YapDatabaseCloudCoreOperation *)_operationWithUUID:(NSUUID *)uuid;
 

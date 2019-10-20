@@ -11,7 +11,7 @@
  * - Drawing attention to potential mis-configurations or mis-uses of the API
  * 
  * Ultimately logging is an interactive extension to comments.
-**/
+ */
 
 /**
  * Define log levels.
@@ -25,7 +25,7 @@
  * Notice that the levels are actually defined using bitwise flags.
  * This means you have full control to flip individual logs on/off.
  * For example, you could enable errors and info, but not warnings, if you wanted.
-**/
+ */
 
 #define YDB_LOG_FLAG_ERROR   (1 << 0) // 0...00001
 #define YDB_LOG_FLAG_WARN    (1 << 1) // 0...00010
@@ -46,7 +46,7 @@
 /**
  * Define trace, which is in addition to log levels.
  * It may be turned on/off independent of the log level.
-**/
+ */
 
 #define YDB_LOG_FLAG_TRACE   (1 << 4) // 0...10000
 
@@ -62,7 +62,7 @@
  * You are strongly discouraged from modifying this file.
  * If you do, you make it more difficult on yourself to merge future bug fixes and improvements from the project.
  * Instead, you should override the default values in your own application.
-**/
+ */
 
 #define YapDatabaseLoggingTechnique_Lumberjack 2 // optimal
 #define YapDatabaseLoggingTechnique_NSLog      1 // slower
@@ -75,7 +75,7 @@
 /**
  * CocoaLumberjack has several useful macros and functions.
  * If not using Lumberjack, we re-define these macros for our own use.
-**/
+ */
 
 #if YapDatabaseLoggingTechnique != YapDatabaseLoggingTechnique_Lumberjack
 

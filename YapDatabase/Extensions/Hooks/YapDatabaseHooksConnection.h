@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Returns the parent extension instance.
-**/
+ */
 @property (nonatomic, strong, readonly) YapDatabaseHooks *parent;
 
 @end

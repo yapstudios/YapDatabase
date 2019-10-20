@@ -9,7 +9,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Returns the parent instance.
-**/
+ */
 @property (nonatomic, strong, readonly) YapDatabaseSecondaryIndex *secondaryIndex;
 
 /**
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * To disable the cache entirely, set queryCacheEnabled to NO.
  * To use an inifinite cache size, set the queryCacheLimit to ZERO.
-**/
+ */
 @property (atomic, assign, readwrite) BOOL queryCacheEnabled;
 @property (atomic, assign, readwrite) NSUInteger queryCacheLimit;
 

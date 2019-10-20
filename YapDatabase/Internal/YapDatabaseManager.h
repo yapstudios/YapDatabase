@@ -8,7 +8,7 @@
  * 
  * The architecture is built around this restriction, and is dependent upon it for proper operation.
  * This class simply helps maintain this requirement.
-**/
+ */
 @interface YapDatabaseManager : NSObject
 
 + (BOOL)registerDatabaseForPath:(NSString *)path;

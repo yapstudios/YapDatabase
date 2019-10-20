@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Returns the snippet for the given collection/key tuple.
  *
  * Note: snippets must be enabled via YapDatabaseSearchResultsViewOptions.
-**/
+ */
 - (nullable NSString *)snippetForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 @end
@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Represents the most recent search query that is providing the search results.
-**/
+ */
 - (NSString *)query;
 
 /**
@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
  * and then properly pipe the results into the view.
  * 
  * @see performSearchWithQueue:
-**/
+ */
 - (void)performSearchFor:(NSString *)query;
 
 /**
@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
  * and always perform the most recent query in the queue.
  *
  * A search queue can also be used to abort an in-progress search.
-**/
+ */
 - (void)performSearchWithQueue:(YapDatabaseSearchQueue *)queue;
 
 @end
