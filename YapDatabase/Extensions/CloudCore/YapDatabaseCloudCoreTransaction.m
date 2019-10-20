@@ -841,7 +841,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			for (YapDatabaseCloudCorePipeline *pipeline in pipelinesToUpdate)
 			{
 				sqlite3_bind_text(statement, bind_idx_name, [pipeline.name UTF8String], -1, SQLITE_TRANSIENT);
-				sqlite3_bind_int(statement, bind_idx_algorithm, pipeline.algorithm);
+				sqlite3_bind_int(statement, bind_idx_algorithm, (int)pipeline.algorithm);
 				sqlite3_bind_int64(statement, bind_idx_rowid, pipeline.rowid);
 				
 				int status = sqlite3_step(statement);
@@ -877,7 +877,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			for (YapDatabaseCloudCorePipeline *pipeline in pipelinesToInsert)
 			{
 				sqlite3_bind_text(statement, bind_idx_name, [pipeline.name UTF8String], -1, SQLITE_TRANSIENT);
-				sqlite3_bind_int(statement, bind_idx_algorithm, pipeline.algorithm);
+				sqlite3_bind_int(statement, bind_idx_algorithm, (int)pipeline.algorithm);
 				
 				int status = sqlite3_step(statement);
 				if (status == SQLITE_DONE)
