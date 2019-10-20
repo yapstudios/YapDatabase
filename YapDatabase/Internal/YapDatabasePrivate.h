@@ -19,10 +19,12 @@
 #endif
 #import "yap_vfs_shim.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Helper method to conditionally invoke sqlite3_finalize on a statement, and then set the ivar to NULL.
 **/
-NS_INLINE void sqlite_finalize_null(sqlite3_stmt **stmtPtr)
+NS_INLINE void sqlite_finalize_null(sqlite3_stmt *_Nonnull* _Nonnull stmtPtr)
 {
 	if (stmtPtr && *stmtPtr)
 	{
@@ -124,7 +126,7 @@ static NSString *const ext_key_class = @"class";
  * YapDatabaseConnection uses these methods to recycle sqlite3 instances using the connection pool.
 **/
 - (BOOL)connectionPoolEnqueue:(sqlite3 *)aDb main_file:(yap_file *)main_file wal_file:(yap_file *)wal_file;
-- (BOOL)connectionPoolDequeue:(sqlite3 **)aDb main_file:(yap_file **)main_file wal_file:(yap_file **)wal_file;
+- (BOOL)connectionPoolDequeue:(sqlite3 *_Nonnull*_Nonnull)aDb main_file:(yap_file *_Nonnull*_Nonnull)main_file wal_file:(yap_file *_Nonnull*_Nonnull)wal_file;
 
 /**
  * These methods are only accessible from within the snapshotQueue.
@@ -242,7 +244,7 @@ static NSString *const ext_key_class = @"class";
 }
 
 - (instancetype)initWithDatabase:(YapDatabase *)database;
-- (instancetype)initWithDatabase:(YapDatabase *)database config:(YapDatabaseConnectionConfig *)config;
+- (instancetype)initWithDatabase:(YapDatabase *)database config:(nullable YapDatabaseConnectionConfig *)config;
 
 - (sqlite3_stmt *)beginTransactionStatement;
 - (sqlite3_stmt *)beginImmediateTransactionStatement;
@@ -302,7 +304,9 @@ static NSString *const ext_key_class = @"class";
 
 - (void)markSqlLevelSharedReadLockAcquired;
 
-- (void)getInternalChangeset:(NSMutableDictionary **)internalPtr externalChangeset:(NSMutableDictionary **)externalPtr;
+- (void)getInternalChangeset:(NSMutableDictionary *_Nonnull*_Nonnull)internalPtr
+           externalChangeset:(NSMutableDictionary *_Nonnull*_Nonnull)externalPtr;
+
 - (void)noteCommittedChangeset:(NSDictionary *)changeset;
 
 - (BOOL)resetLongLivedReadTransaction;
@@ -351,17 +355,22 @@ static NSString *const ext_key_class = @"class";
 
 - (NSException *)mutationDuringEnumerationException;
 
-- (BOOL)getRowid:(int64_t *)rowidPtr forCollectionKey:(YapCollectionKey *)collectionKey;
-- (BOOL)getRowid:(int64_t *)rowidPtr forKey:(NSString *)key inCollection:(NSString *)collection;
+- (BOOL)getRowid:(int64_t *_Nullable)rowidPtr forCollectionKey:(YapCollectionKey *)collectionKey;
+- (BOOL)getRowid:(int64_t *_Nullable)rowidPtr forKey:(NSString *)key inCollection:(NSString *)collection;
 
 - (YapCollectionKey *)collectionKeyForRowid:(int64_t)rowid;
 
-- (BOOL)getCollectionKey:(YapCollectionKey **)collectionKeyPtr object:(id *)objectPtr forRowid:(int64_t)rowid;
-- (BOOL)getCollectionKey:(YapCollectionKey **)collectionKeyPtr metadata:(id *)metadataPtr forRowid:(int64_t)rowid;
+- (BOOL)getCollectionKey:(YapCollectionKey *_Nullable*_Nullable)collectionKeyPtr
+                  object:(id _Nullable *_Nullable)objectPtr
+                forRowid:(int64_t)rowid;
 
-- (BOOL)getCollectionKey:(YapCollectionKey **)collectionKeyPtr
-				  object:(id *)objectPtr
-				metadata:(id *)metadataPtr
+- (BOOL)getCollectionKey:(YapCollectionKey *_Nullable*_Nullable)collectionKeyPtr
+                metadata:(id _Nullable *_Nullable)metadataPtr
+                forRowid:(int64_t)rowid;
+
+- (BOOL)getCollectionKey:(YapCollectionKey *_Nullable*_Nullable)collectionKeyPtr
+						object:(id _Nullable *_Nullable)objectPtr
+					 metadata:(id _Nullable *_Nullable)metadataPtr
 				forRowid:(int64_t)rowid;
 
 - (BOOL)hasRowid:(int64_t)rowid;
@@ -372,81 +381,94 @@ static NSString *const ext_key_class = @"class";
 - (id)metadataForKey:(NSString *)key inCollection:(NSString *)collection withRowid:(int64_t)rowid;
 - (id)metadataForCollectionKey:(YapCollectionKey *)cacheKey withRowid:(int64_t)rowid;
 
-- (BOOL)getObject:(id *)objectPtr
-         metadata:(id *)metadataPtr
+- (BOOL)getObject:(id _Nullable *_Nullable)objectPtr
+			metadata:(id _Nullable *_Nullable)metadataPtr
            forKey:(NSString *)key
      inCollection:(NSString *)collection
         withRowid:(int64_t)rowid;
 
-- (BOOL)getObject:(id *)objectPtr
-         metadata:(id *)metadataPtr
+- (BOOL)getObject:(id _Nullable *_Nullable)objectPtr
+			metadata:(id _Nullable *_Nullable)metadataPtr
  forCollectionKey:(YapCollectionKey *)collectionKey
         withRowid:(int64_t)rowid;
 
 - (void)_enumerateKeysInCollection:(NSString *)collection
                         usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, BOOL *stop))block;
 
-- (void)_enumerateKeysInCollections:(NSArray *)collections
+- (void)_enumerateKeysInCollections:(NSArray<NSString*> *)collections
                          usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block;
 
 - (void)_enumerateKeysInAllCollectionsUsingBlock:
                             (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, BOOL *stop))block;
 
-- (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
-                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block;
-- (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
-                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
-                                   withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
+- (void)_enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
+                           usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block;
+- (void)_enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
+                           usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
+                           withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
+- (void)_enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
+                           usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
+                           withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
+                         deserializer:(nullable YapDatabaseSerializer)deserializer;
 
 - (void)_enumerateKeysAndMetadataInCollections:(NSArray *)collections
                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block;
 - (void)_enumerateKeysAndMetadataInCollections:(NSArray *)collections
                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
-                withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
+                withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
 - (void)_enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                        (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block;
+                (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block;
 - (void)_enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                        (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
-             withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
+                (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
+     withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
-- (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
-                                  usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block;
-- (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
-                                  usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
-                                  withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
+- (void)_enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
+        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block;
+- (void)_enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
+        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
+        withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
+- (void)_enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
+        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
+        withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
+      deserializer:(nullable YapDatabaseDeserializer)deserializer;
 
-- (void)_enumerateKeysAndObjectsInCollections:(NSArray *)collections
-                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block;
-- (void)_enumerateKeysAndObjectsInCollections:(NSArray *)collections
-                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
-                 withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
+- (void)_enumerateKeysAndObjectsInCollections:(NSArray<NSString*> *)collections
+       usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block;
+- (void)_enumerateKeysAndObjectsInCollections:(NSArray<NSString*> *)collections
+        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
+        withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
 - (void)_enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                            (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block;
+                  (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block;
 - (void)_enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                            (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
-                 withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
+                  (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
+       withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
-- (void)_enumerateRowsInCollection:(NSString *)collection
-                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block;
-- (void)_enumerateRowsInCollection:(NSString *)collection
-                        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
-                        withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
+- (void)_enumerateRowsInCollection:(nullable NSString *)collection
+                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block;
+- (void)_enumerateRowsInCollection:(nullable NSString *)collection
+                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
+                withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
+- (void)_enumerateRowsInCollection:(nullable NSString *)collection
+                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
+                withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
+        objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+      metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer;
 
-- (void)_enumerateRowsInCollections:(NSArray *)collections
+- (void)_enumerateRowsInCollections:(NSArray<NSString*> *)collections
      usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
-- (void)_enumerateRowsInCollections:(NSArray *)collections
+- (void)_enumerateRowsInCollections:(NSArray<NSString*> *)collections
      usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
-     withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
+     withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
 - (void)_enumerateRowsInAllCollectionsUsingBlock:
-                (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
+     (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;
 - (void)_enumerateRowsInAllCollectionsUsingBlock:
-                (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
-     withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
+     (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+  withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter;
 
-- (void)_enumerateRowidsForKeys:(NSArray *)keys
+- (void)_enumerateRowidsForKeys:(NSArray<NSString*> *)keys
                    inCollection:(NSString *)collection
             unorderedUsingBlock:(void (NS_NOESCAPE^)(NSUInteger keyIndex, int64_t rowid, BOOL *stop))block;
 
@@ -467,15 +489,15 @@ static NSString *const ext_key_class = @"class";
 
 - (void)replaceObject:(id)object
                forKey:(NSString *)key
-         inCollection:(NSString *)collection
+         inCollection:(nullable NSString *)collection
             withRowid:(int64_t)rowid
-     serializedObject:(NSData *)preSerializedObject;
+     serializedObject:(nullable NSData *)preSerializedObject;
 
 - (void)replaceMetadata:(id)metadata
                  forKey:(NSString *)key
-           inCollection:(NSString *)collection
+           inCollection:(nullable NSString *)collection
               withRowid:(int64_t)rowid
-     serializedMetadata:(NSData *)preSerializedMetadata;
+     serializedMetadata:(nullable NSData *)preSerializedMetadata;
 
 - (void)removeObjectForCollectionKey:(YapCollectionKey *)collectionKey withRowid:(int64_t)rowid;
 - (void)removeObjectForKey:(NSString *)key inCollection:(NSString *)collection withRowid:(int64_t)rowid;
@@ -493,3 +515,5 @@ static NSString *const ext_key_class = @"class";
 - (void)removeAllValuesForExtension:(NSString *)extensionName;
 
 @end
+
+NS_ASSUME_NONNULL_END

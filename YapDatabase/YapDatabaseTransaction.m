@@ -1,4 +1,6 @@
 #import "YapDatabaseTransaction.h"
+#import "YapDatabaseTransaction+Swift.h"
+
 #import "YapDatabasePrivate.h"
 #import "YapDatabaseExtensionPrivate.h"
 #import "YapDatabaseString.h"
@@ -799,10 +801,18 @@
 	return [self getRowid:NULL forCollectionKey:cacheKey];
 }
 
-- (id)objectForKey:(NSString *)key inCollection:(NSString *)collection
+- (nullable id)objectForKey:(NSString *)key inCollection:(nullable NSString *)collection
+{
+	return [self objectForKey:key inCollection:collection withDeserializer:nil];
+}
+
+- (nullable id)objectForKey:(NSString *)key
+               inCollection:(nullable NSString *)collection
+           withDeserializer:(nullable YapDatabaseDeserializer)deserializer
 {
 	if (key == nil) return nil;
 	if (collection == nil) collection = @"";
+	if (deserializer == nil) deserializer = connection->database->objectDeserializer;
 	
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
 	
@@ -835,7 +845,7 @@
 			// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 			
 			NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-			object = connection->database->objectDeserializer(cacheKey.collection, cacheKey.key, data);
+			object = deserializer(collection, key, data);
 			
 			if (object)
 				[connection->objectCache setObject:object forKey:cacheKey];
@@ -878,7 +888,7 @@
 			// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 			
 			NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-			object = connection->database->objectDeserializer(collection, key, data);
+			object = deserializer(collection, key, data);
 			
 			// Update caches
 			
@@ -903,10 +913,18 @@
 	return object;
 }
 
-- (id)metadataForKey:(NSString *)key inCollection:(NSString *)collection
+- (nullable id)metadataForKey:(NSString *)key inCollection:(nullable NSString *)collection
+{
+	return [self metadataForKey:key inCollection:collection withDeserializer:nil];
+}
+
+- (nullable id)metadataForKey:(NSString *)key
+                 inCollection:(nullable NSString *)collection
+             withDeserializer:(nullable YapDatabaseDeserializer)deserializer
 {
 	if (key == nil) return nil;
 	if (collection == nil) collection = @"";
+	if (deserializer == nil) deserializer = connection->database->metadataDeserializer;
 	
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
 	
@@ -946,7 +964,7 @@
 				// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 				
 				NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-				metadata = connection->database->metadataDeserializer(cacheKey.collection, cacheKey.key, data);
+				metadata = deserializer(collection, key, data);
 			}
 			
 			// Update cache
@@ -996,7 +1014,7 @@
 				// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 				
 				NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-				metadata = connection->database->metadataDeserializer(collection, key, data);
+				metadata = deserializer(collection, key, data);
 			}
 			
 			// Update caches
@@ -1025,6 +1043,21 @@
 
 - (BOOL)getObject:(id *)objectPtr metadata:(id *)metadataPtr forKey:(NSString *)key inCollection:(NSString *)collection
 {
+	return [self getObject: objectPtr
+	              metadata: metadataPtr
+	                forKey: key
+	          inCollection: collection
+	withObjectDeserializer: nil
+	  metadataDeserializer: nil];
+}
+
+- (BOOL)getObject:(__nullable id * __nullable)objectPtr
+         metadata:(__nullable id * __nullable)metadataPtr
+           forKey:(NSString *)key
+     inCollection:(nullable NSString *)collection
+     withObjectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+       metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
+{
 	if (key == nil)
 	{
 		if (objectPtr) *objectPtr = nil;
@@ -1033,6 +1066,8 @@
 		return NO;
 	}
 	if (collection == nil) collection = @"";
+	if (objectDeserializer == nil) objectDeserializer = connection->database->objectDeserializer;
+	if (metadataDeserializer == nil) metadataDeserializer = connection->database->metadataDeserializer;
 	
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
 	
@@ -1095,7 +1130,7 @@
 					// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 					
 					NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-					object = connection->database->objectDeserializer(cacheKey.collection, cacheKey.key, oData);
+					object = objectDeserializer(collection, key, oData);
 					
 					if (object)
 						[connection->objectCache setObject:object forKey:cacheKey];
@@ -1112,7 +1147,7 @@
 						// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 						
 						NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-						metadata = connection->database->metadataDeserializer(cacheKey.collection, cacheKey.key, mData);
+						metadata = metadataDeserializer(collection, key, mData);
 					}
 					
 					if (metadata)
@@ -1167,7 +1202,7 @@
 					int oBlobSize = sqlite3_column_bytes(statement, column_idx_data);
 				
 					NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-					object = connection->database->objectDeserializer(collection, key, oData);
+					object = objectDeserializer(collection, key, oData);
 					
 					if (object)
 						[connection->objectCache setObject:object forKey:cacheKey];
@@ -1181,7 +1216,7 @@
 					if (mBlobSize > 0)
 					{
 						NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-						metadata = connection->database->metadataDeserializer(collection, key, mData);
+						metadata = metadataDeserializer(collection, key, mData);
 					}
 					
 					if (metadata)
@@ -1702,7 +1737,7 @@
 - (void)enumerateKeysAndObjectsInCollection:(NSString *)collection
                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
 {
-	[self enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:NULL];
+	[self enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:nil deserializer:nil];
 }
 
 /**
@@ -1717,6 +1752,14 @@
                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
                                  withFilter:(BOOL (NS_NOESCAPE^)(NSString *key))filter
 {
+	[self enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:filter deserializer:nil];
+}
+
+- (void)enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
+                                 usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
+                                 withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter
+                               deserializer:(YapDatabaseDeserializer)deserializer
+{
 	if (block == NULL) return;
 	
 	if (filter)
@@ -1729,7 +1772,8 @@
 		} withFilter:^BOOL(int64_t __unused rowid, NSString *key) {
 			
 			return filter(key);
-		}];
+			
+		} deserializer:deserializer];
 	}
 	else
 	{
@@ -1738,7 +1782,7 @@
 			
 			block(key, object, stop);
 			
-		} withFilter:NULL];
+		} withFilter:nil deserializer:deserializer];
 	}
 }
 
@@ -1799,34 +1843,31 @@
 }
 
 /**
- * Fast enumeration over all keys and associated metadata in the given collection.
- * 
- * This uses a "SELECT key, metadata FROM database WHERE collection = ?" operation and steps over the results.
- * 
- * If you only need to enumerate over certain items (e.g. keys with a particular prefix),
- * consider using the alternative version below which provides a filter,
- * allowing you to skip the deserialization step for those items you're not interested in.
- * 
- * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
-**/
+ * See header file for description.
+ */
 - (void)enumerateKeysAndMetadataInCollection:(NSString *)collection
                                   usingBlock:(void (NS_NOESCAPE^)(NSString *key, id metadata, BOOL *stop))block
 {
-	[self enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:NULL];
+	[self enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:nil deserializer:nil];
 }
 
 /**
- * Fast enumeration over all keys and associated metadata in the given collection.
- *
- * From the filter block, simply return YES if you'd like the block handler to be invoked for the given key.
- * If the filter block returns NO, then the block handler is skipped for the given key,
- * which avoids the cost associated with deserializing the object.
- * 
- * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
-**/
+ * See header file for description.
+ */
 - (void)enumerateKeysAndMetadataInCollection:(NSString *)collection
                                   usingBlock:(void (NS_NOESCAPE^)(NSString *key, id metadata, BOOL *stop))block
                                   withFilter:(BOOL (NS_NOESCAPE^)(NSString *key))filter
+{
+	[self enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:filter deserializer:nil];
+}
+
+/**
+ * See header file for description.
+ */
+- (void)enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
+                               usingBlock:(void (NS_NOESCAPE^)(NSString *key, __nullable id metadata, BOOL *stop))block
+                               withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter
+                             deserializer:(nullable YapDatabaseDeserializer)deserializer
 {
 	if (block == NULL) return;
 	
@@ -1840,7 +1881,8 @@
 		} withFilter:^BOOL(int64_t __unused rowid, NSString *key) {
 			
 			return filter(key);
-		}];
+			
+		} deserializer:deserializer];
 	}
 	else
 	{
@@ -1849,41 +1891,25 @@
 		
 			block(key, metadata, stop);
 			
-		} withFilter:NULL];
+		} withFilter:nil deserializer:deserializer];
 	}
 }
 
 /**
- * Fast enumeration over all key/metadata pairs in all collections.
- * 
- * This uses a "SELECT metadata FROM database ORDER BY collection ASC" operation, and steps over the results.
- * 
- * If you only need to enumerate over certain objects (e.g. keys with a particular prefix),
- * consider using the alternative version below which provides a filter,
- * allowing you to skip the deserialization step for those objects you're not interested in.
- * 
- * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
-**/
+ * See header file for description.
+ */
 - (void)enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                                        (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                               (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
 {
 	[self enumerateKeysAndMetadataInAllCollectionsUsingBlock:block withFilter:NULL];
 }
 
 /**
- * Fast enumeration over all key/metadata pairs in all collections.
- *
- * This uses a "SELECT metadata FROM database ORDER BY collection ASC" operation and steps over the results.
- * 
- * From the filter block, simply return YES if you'd like the block handler to be invoked for the given key.
- * If the filter block returns NO, then the block handler is skipped for the given key,
- * which avoids the cost associated with deserializing the object.
- *
- * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
- **/
+ * See header file for description.
+ */
 - (void)enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                                        (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
-                             withFilter:(BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
+                               (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id metadata, BOOL *stop))block
+                    withFilter:(BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	
@@ -1911,32 +1937,40 @@
 }
 
 /**
- * Fast enumeration over all rows in the database.
- *
- * This uses a "SELECT key, data, metadata from database WHERE collection = ?" operation,
- * and then steps over the results, deserializing each object & metadata, and then invoking the given block handler.
- *
- * If you only need to enumerate over certain rows (e.g. keys with a particular prefix),
- * consider using the alternative version below which provides a filter,
- * allowing you to skip the serialization step for those rows you're not interested in.
-**/
+ * See header file for description.
+ */
 - (void)enumerateRowsInCollection:(NSString *)collection
                        usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, id metadata, BOOL *stop))block
 {
-	[self enumerateRowsInCollection:collection usingBlock:block withFilter:NULL];
+	[self enumerateRowsInCollection: collection
+	                     usingBlock: block
+	                     withFilter: nil
+	             objectDeserializer: nil
+	           metadataDeserializer: nil];
 }
 
 /**
- * Fast enumeration over rows in the database for which you're interested in.
- * The filter block allows you to decide which rows you're interested in.
- *
- * From the filter block, simply return YES if you'd like the block handler to be invoked for the given key.
- * If the filter block returns NO, then the block handler is skipped for the given key,
- * which avoids the cost associated with deserializing the object & metadata.
-**/
+ * See header file for description.
+ */
 - (void)enumerateRowsInCollection:(NSString *)collection
                        usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, id metadata, BOOL *stop))block
                        withFilter:(BOOL (NS_NOESCAPE^)(NSString *key))filter
+{
+	[self enumerateRowsInCollection: collection
+	                     usingBlock: block
+	                     withFilter: filter
+	             objectDeserializer: nil
+	           metadataDeserializer: nil];
+}
+
+/**
+ * See header file for description.
+ */
+- (void)enumerateRowsInCollection:(nullable NSString *)collection
+                    usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block
+                    withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter
+            objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+          metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
 {
 	if (block == NULL) return;
 	
@@ -1950,7 +1984,8 @@
 		} withFilter:^BOOL(int64_t __unused rowid, NSString *key) {
 			
 			return filter(key);
-		}];
+			
+		} objectDeserializer:objectDeserializer metadataDeserializer:metadataDeserializer];
 	}
 	else
 	{
@@ -1959,22 +1994,15 @@
 			
 			block(key, object, metadata, stop);
 			
-		} withFilter:NULL];
+		} withFilter:nil objectDeserializer:objectDeserializer metadataDeserializer:metadataDeserializer];
 	}
 }
 
 /**
- * Enumerates all rows in all collections.
- * 
- * The enumeration is sorted by collection. That is, it will enumerate fully over a single collection
- * before moving onto another collection.
- * 
- * If you only need to enumerate over certain rows (e.g. subset of collections, or keys with a particular prefix),
- * consider using the alternative version below which provides a filter,
- * allowing you to skip the serialization step for those objects you're not interested in.
-**/
+ * See header file for description.
+ */
 - (void)enumerateRowsInAllCollectionsUsingBlock:
-                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block
 {
 	[self enumerateRowsInAllCollectionsUsingBlock:block withFilter:NULL];
 }
@@ -2885,7 +2913,7 @@
 - (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
 {
-	[self _enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:NULL];
+	[self _enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:nil deserializer:nil];
 }
 
 /**
@@ -2900,8 +2928,17 @@
                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
                                   withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
 {
+	[self _enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:filter deserializer:nil];
+}
+
+- (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
+                                  usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
+                                  withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
+                                deserializer:(YapDatabaseDeserializer)deserializer
+{
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
+	if (deserializer == nil) deserializer = connection->database->objectDeserializer;
 	
 	BOOL needsFinalize;
 	sqlite3_stmt *statement = [connection enumerateKeysAndObjectsInCollectionStatement:&needsFinalize];
@@ -2947,7 +2984,7 @@
 				// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 				
 				NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-				object = connection->database->objectDeserializer(collection, key, oData);
+				object = deserializer(collection, key, oData);
 				
 				// Cache considerations:
 				// Do we want to add the objects/metadata to the cache here?
@@ -3008,8 +3045,8 @@
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)_enumerateKeysAndObjectsInCollections:(NSArray *)collections
-                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
-                 withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
+        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block
+        withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
 {
 	if (block == NULL) return;
 	if ([collections count] == 0) return;
@@ -3213,37 +3250,35 @@
 }
 
 /**
- * Fast enumeration over all keys and associated metadata in the given collection.
- * 
- * This uses a "SELECT key, metadata FROM database WHERE collection = ?" operation and steps over the results.
- * 
- * If you only need to enumerate over certain items (e.g. keys with a particular prefix),
- * consider using the alternative version below which provides a filter,
- * allowing you to skip the deserialization step for those items you're not interested in.
- * 
- * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
-**/
+ * Declared in header file: YapDatabasePrivate.h
+ */
 - (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
                                    usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
 {
-	[self _enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:NULL];
+	[self _enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:nil deserializer:nil];
 }
 
 /**
- * Fast enumeration over all keys and associated metadata in the given collection.
- *
- * From the filter block, simply return YES if you'd like the block handler to be invoked for the given key.
- * If the filter block returns NO, then the block handler is skipped for the given key,
- * which avoids the cost associated with deserializing the object.
- * 
- * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
-**/
+ * Declared in header file: YapDatabasePrivate.h
+ */
 - (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
                                    usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
                                    withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
 {
+	[self _enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:filter deserializer:nil];
+}
+
+/**
+ * Declared in header file: YapDatabasePrivate.h
+ */
+- (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
+                          usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
+                          withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
+                        deserializer:(nullable YapDatabaseSerializer)deserializer
+{
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
+	if (deserializer == nil) deserializer = connection->database->metadataDeserializer;
 	
 	BOOL needsFinalize;
 	sqlite3_stmt *statement = [connection enumerateKeysAndMetadataInCollectionStatement:&needsFinalize];
@@ -3296,7 +3331,7 @@
 					// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 					
 					NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-					metadata = connection->database->metadataDeserializer(collection, key, mData);
+					metadata = deserializer(collection, key, mData);
 				}
 				
 				// Cache considerations:
@@ -3337,31 +3372,17 @@
 }
 
 /**
- * Fast enumeration over select keys and associated metadata in the given collection.
- * 
- * This uses a "SELECT key, metadata FROM database WHERE collection = ?" operation and steps over the results.
- * 
- * If you only need to enumerate over certain items (e.g. keys with a particular prefix),
- * consider using the alternative version below which provides a filter,
- * allowing you to skip the deserialization step for those items you're not interested in.
- * 
- * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
-**/
+ * Declared in header file: YapDatabasePrivate.h
+ */
 - (void)_enumerateKeysAndMetadataInCollections:(NSArray *)collections
                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
 {
-	[self _enumerateKeysAndMetadataInCollections:collections usingBlock:block withFilter:NULL];
+	[self _enumerateKeysAndMetadataInCollections:collections usingBlock:block withFilter:nil];
 }
 
 /**
- * Fast enumeration over selected keys and associated metadata in the given collection.
- *
- * From the filter block, simply return YES if you'd like the block handler to be invoked for the given key.
- * If the filter block returns NO, then the block handler is skipped for the given key,
- * which avoids the cost associated with deserializing the object.
- * 
- * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
-**/
+ * Declared in header file: YapDatabasePrivate.h
+ */
 - (void)_enumerateKeysAndMetadataInCollections:(NSArray *)collections
                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
                 withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
@@ -3473,16 +3494,8 @@
 }
 
 /**
- * Fast enumeration over all key/metadata pairs in all collections.
- * 
- * This uses a "SELECT metadata FROM database ORDER BY collection ASC" operation, and steps over the results.
- * 
- * If you only need to enumerate over certain objects (e.g. keys with a particular prefix),
- * consider using the alternative version below which provides a filter,
- * allowing you to skip the deserialization step for those objects you're not interested in.
- * 
- * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
-**/
+ * Declared in header file: YapDatabasePrivate.h
+ */
 - (void)_enumerateKeysAndMetadataInAllCollectionsUsingBlock:
                         (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
 {
@@ -3490,16 +3503,8 @@
 }
 
 /**
- * Fast enumeration over all key/metadata pairs in all collections.
- *
- * This uses a "SELECT metadata FROM database ORDER BY collection ASC" operation and steps over the results.
- * 
- * From the filter block, simply return YES if you'd like the block handler to be invoked for the given key.
- * If the filter block returns NO, then the block handler is skipped for the given key,
- * which avoids the cost associated with deserializing the object.
- *
- * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
- **/
+ * Declared in header file: YapDatabasePrivate.h
+ */
 - (void)_enumerateKeysAndMetadataInAllCollectionsUsingBlock:
                         (void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block
              withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key))filter
@@ -3600,35 +3605,45 @@
 }
 
 /**
- * Fast enumeration over all rows in the database.
- *
- * This uses a "SELECT key, data, metadata from database WHERE collection = ?" operation,
- * and then steps over the results, deserializing each object & metadata, and then invoking the given block handler.
- *
- * If you only need to enumerate over certain rows (e.g. keys with a particular prefix),
- * consider using the alternative version below which provides a filter,
- * allowing you to skip the serialization step for those rows you're not interested in.
-**/
+ * Declared in header file: YapDatabasePrivate.h
+ */
 - (void)_enumerateRowsInCollection:(NSString *)collection
                         usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
 {
-	[self _enumerateRowsInCollection:collection usingBlock:block withFilter:NULL];
+	[self _enumerateRowsInCollection: collection
+	                      usingBlock: block
+	                      withFilter: nil
+	              objectDeserializer: nil
+	            metadataDeserializer: nil];
 }
 
 /**
- * Fast enumeration over rows in the database for which you're interested in.
- * The filter block allows you to decide which rows you're interested in.
- *
- * From the filter block, simply return YES if you'd like the block handler to be invoked for the given key.
- * If the filter block returns NO, then the block handler is skipped for the given key,
- * which avoids the cost associated with deserializing the object & metadata.
-**/
+ * Declared in header file: YapDatabasePrivate.h
+ */
 - (void)_enumerateRowsInCollection:(NSString *)collection
                         usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
                         withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
 {
+	[self _enumerateRowsInCollection: collection
+	                      usingBlock: block
+	                      withFilter: filter
+	              objectDeserializer: nil
+	            metadataDeserializer: nil];
+}
+
+/**
+ * Declared in header file: YapDatabasePrivate.h
+ */
+- (void)_enumerateRowsInCollection:(nullable NSString *)collection
+                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
+                withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
+        objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
+      metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
+{
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
+	if (objectDeserializer == nil) objectDeserializer = connection->database->objectDeserializer;
+	if (metadataDeserializer == nil) metadataDeserializer = connection->database->metadataDeserializer;
 	
 	BOOL needsFinalize;
 	sqlite3_stmt *statement = [connection enumerateRowsInCollectionStatement:&needsFinalize];
@@ -3676,7 +3691,7 @@
 				// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 				
 				NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-				object = connection->database->objectDeserializer(collection, key, oData);
+				object = objectDeserializer(collection, key, oData);
 				
 				// Cache considerations:
 				// Do we want to add the objects/metadata to the cache here?
@@ -3709,7 +3724,7 @@
 					// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 					
 					NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-					metadata = connection->database->metadataDeserializer(collection, key, mData);
+					metadata = metadataDeserializer(collection, key, mData);
 				}
 				
 				// Cache considerations:

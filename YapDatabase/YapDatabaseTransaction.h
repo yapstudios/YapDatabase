@@ -1,5 +1,7 @@
 #import <Foundation/Foundation.h>
 
+#import "YapDatabaseTypes.h"
+
 @class YapDatabaseConnection;
 @class YapDatabaseExtensionTransaction;
 
@@ -114,15 +116,22 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark Object & Metadata
 
 /**
- * Object access.
- * Objects are automatically deserialized using database's configured deserializer.
-**/
-- (nullable id)objectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
-
-/**
  * Returns whether or not the given key/collection exists in the database.
 **/
 - (BOOL)hasObjectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
+
+/**
+ * Object access.
+ * Objects are automatically deserialized using database's configured deserializer.
+**/
+- (nullable id)objectForKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
+
+/**
+ * Returns the metadata associated with the {collection, key} tuple.
+ * If the item is cached in memory, it's immediately returned.
+ * Otherwise the item is fetched from disk and deserialized.
+ */
+- (nullable id)metadataForKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
 
 /**
  * Provides access to both object and metadata in a single call.
@@ -132,13 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)getObject:(__nullable id * __nullable)objectPtr
          metadata:(__nullable id * __nullable)metadataPtr
            forKey:(NSString *)key
-     inCollection:(nullable NSString *)collection;
-
-/**
- * Provides access to the metadata.
- * This fetches directly from the metadata dictionary stored in memory, and thus never hits the disk.
-**/
-- (nullable id)metadataForKey:(NSString *)key inCollection:(nullable NSString *)collection;
+     inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
 
 #pragma mark Primitive
 
@@ -186,7 +189,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This uses a "SELECT collection FROM database" operation,
  * and then steps over the results invoking the given block handler.
 **/
-- (void)enumerateCollectionsUsingBlock:(void (NS_NOESCAPE^)(NSString *collection, BOOL *stop))block;
+- (void)enumerateCollectionsUsingBlock:(void (NS_NOESCAPE^)(NSString *collection, BOOL *stop))block NS_REFINED_FOR_SWIFT;
 
 /**
  * This method is rarely needed, but may be helpful in certain situations.
@@ -205,7 +208,7 @@ NS_ASSUME_NONNULL_BEGIN
  * and then steps over the results invoking the given block handler.
 **/
 - (void)enumerateKeysInCollection:(nullable NSString *)collection
-                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, BOOL *stop))block;
+                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, BOOL *stop))block NS_REFINED_FOR_SWIFT;
 
 /**
  * Fast enumeration over all keys in the given collection.
@@ -213,7 +216,7 @@ NS_ASSUME_NONNULL_BEGIN
  * This uses a "SELECT collection, key FROM database" operation,
  * and then steps over the results invoking the given block handler.
 **/
-- (void)enumerateKeysInAllCollectionsUsingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block;
+- (void)enumerateKeysInAllCollectionsUsingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block NS_REFINED_FOR_SWIFT;
 
 /**
  * Fast enumeration over all objects in the database.
@@ -226,7 +229,7 @@ NS_ASSUME_NONNULL_BEGIN
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
-                                 usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block;
+                                 usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block NS_REFINED_FOR_SWIFT;
 
 /**
  * Fast enumeration over objects in the database for which you're interested in.
@@ -238,7 +241,7 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
-                                 withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter;
+                                 withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter NS_REFINED_FOR_SWIFT;
 
 /**
  * Enumerates all key/object pairs in all collections.
@@ -251,7 +254,7 @@ NS_ASSUME_NONNULL_BEGIN
  * allowing you to skip the serialization step for those objects you're not interested in.
 **/
 - (void)enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block;
+                               (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block;
 
 /**
  * Enumerates all key/object pairs in all collections.
@@ -265,8 +268,8 @@ NS_ASSUME_NONNULL_BEGIN
  * which avoids the cost associated with deserializing the object.
 **/
 - (void)enumerateKeysAndObjectsInAllCollectionsUsingBlock:
-                                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block
-                                 withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter;
+                               (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block
+                    withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter;
 
 /**
  * Fast enumeration over all keys and associated metadata in the given collection.
@@ -280,7 +283,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Keep in mind that you cannot modify the collection mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
-                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, __nullable id metadata, BOOL *stop))block;
+                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, __nullable id metadata, BOOL *stop))block NS_REFINED_FOR_SWIFT;
 
 /**
  * Fast enumeration over all keys and associated metadata in the given collection.
@@ -293,9 +296,7 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
                                   usingBlock:(void (NS_NOESCAPE^)(NSString *key, __nullable id metadata, BOOL *stop))block
-                                  withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter;
-
-
+                                  withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter NS_REFINED_FOR_SWIFT;
 
 /**
  * Fast enumeration over all key/metadata pairs in all collections.
@@ -309,7 +310,7 @@ NS_ASSUME_NONNULL_BEGIN
  * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
 **/
 - (void)enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block;
 
 /**
  * Fast enumeration over all key/metadata pairs in all collections.
@@ -323,8 +324,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Keep in mind that you cannot modify the database mid-enumeration (just like any other kind of enumeration).
  **/
 - (void)enumerateKeysAndMetadataInAllCollectionsUsingBlock:
-                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block
-                 withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block
+         withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *collection, NSString *key))filter;
 
 /**
  * Fast enumeration over all rows in the database.
@@ -337,7 +338,7 @@ NS_ASSUME_NONNULL_BEGIN
  * allowing you to skip the serialization step for those rows you're not interested in.
 **/
 - (void)enumerateRowsInCollection:(nullable NSString *)collection
-                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block;
+                       usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block NS_REFINED_FOR_SWIFT;
 
 /**
  * Fast enumeration over rows in the database for which you're interested in.
@@ -349,7 +350,7 @@ NS_ASSUME_NONNULL_BEGIN
 **/
 - (void)enumerateRowsInCollection:(nullable NSString *)collection
                        usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block
-                       withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter;
+                       withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter NS_REFINED_FOR_SWIFT;
 
 /**
  * Enumerates all rows in all collections.
@@ -508,7 +509,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   The <collection, key> tuple is used to uniquely identify the row in the database.
  *   If a nil collection is passed, then the collection is implicitly the empty string (@"").
 **/
-- (void)setObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection;
+- (void)setObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
 
 /**
  * Sets the object & metadata for the given key/collection.
@@ -538,7 +539,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setObject:(nullable id)object
            forKey:(NSString *)key
      inCollection:(nullable NSString *)collection
-     withMetadata:(nullable id)metadata;
+     withMetadata:(nullable id)metadata NS_REFINED_FOR_SWIFT;
 
 /**
  * Sets the object & metadata for the given key/collection.
@@ -613,7 +614,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   The <collection, key> tuple is used to uniquely identify the row in the database.
  *   If a nil collection is passed, then the collection is implicitly the empty string (@"").
 **/
-- (void)replaceObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection;
+- (void)replaceObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
 
 /**
  * If a row with the given key/collection exists, then replaces the object for that row with the new value.
@@ -675,7 +676,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   The <collection, key> tuple is used to uniquely identify the row in the database.
  *   If a nil collection is passed, then the collection is implicitly the empty string (@"").
 **/
-- (void)replaceMetadata:(nullable id)metadata forKey:(NSString *)key inCollection:(nullable NSString *)collection;
+- (void)replaceMetadata:(nullable id)metadata forKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
 
 /**
  * If a row with the given key/collection exists, then replaces the metadata for that row with the new value.
