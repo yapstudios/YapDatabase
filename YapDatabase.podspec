@@ -72,6 +72,10 @@ Pod::Spec.new do |s|
 			ssc.dependency 'CocoaLumberjack'
 			ssc.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}', 'YapDatabase/Extensions/Protocol/**/*.{h,m,mm,c}'
 			ssc.private_header_files = 'YapDatabase/Internal/*.h'
+
+			ssc.subspec 'Swift' do |sscs|
+				sscs.source_files = 'YapDatabase/Swift/*.{swift}'
+			end
 		end
 
 		ss.subspec 'Extensions' do |sse|
@@ -206,6 +210,10 @@ Pod::Spec.new do |s|
 			ssc.dependency 'CocoaLumberjack'
 			ssc.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}', 'YapDatabase/Extensions/Protocol/**/*.{h,m,mm,c}'
 			ssc.private_header_files = 'YapDatabase/Internal/*.h'
+
+			ssc.subspec 'Swift' do |sscs|
+				sscs.source_files = 'YapDatabase/Swift/*.{swift}'
+			end
 		end
 
 		ss.subspec 'Extensions' do |sse|

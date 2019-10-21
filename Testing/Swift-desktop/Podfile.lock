@@ -9,6 +9,9 @@ PODS:
     - YapDatabase/Standard/Extensions (= 3.1.4)
   - YapDatabase/Standard/Core (3.1.4):
     - CocoaLumberjack
+    - YapDatabase/Standard/Core/Swift (= 3.1.4)
+  - YapDatabase/Standard/Core/Swift (3.1.4):
+    - CocoaLumberjack
   - YapDatabase/Standard/Extensions (3.1.4):
     - YapDatabase/Standard/Core
     - YapDatabase/Standard/Extensions/ActionManager (= 3.1.4)
@@ -79,7 +82,7 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   CocoaLumberjack: 78b0c238666f4f58db069738ec176f4519557516
-  YapDatabase: e9cf10cbf11d91f7c6dc723b0ff54fa8a04e3c8d
+  YapDatabase: dcd967fc6f9cb07c4b99a475254edf75049f4383
 
 PODFILE CHECKSUM: 703087df398a473253845a5d458eaa73ded47c6e
 

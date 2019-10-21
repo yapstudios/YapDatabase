@@ -16,7 +16,7 @@
 #import "YapDatabaseExtensionConnection.h"
 #import "YapDatabaseExtensionTransaction.h"
 
-#import "YapBiDirectionalCache.h"
+#import "YapBidirectionalCache.h"
 #import "YapCache.h"
 #import "YapCollectionKey.h"
 #import "YapDatabaseConnectionConfig.h"
