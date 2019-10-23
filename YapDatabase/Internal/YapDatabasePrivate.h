@@ -88,18 +88,6 @@ static NSString *const ext_key_class = @"class";
 	NSMutableArray *connectionStates; // Only to be used by YapDatabaseConnection
 	
 	NSArray *previouslyRegisteredExtensionNames; // Writeable only within snapshot queue
-	
-	YapDatabaseSerializer objectSerializer;         // Read-only by transactions
-	YapDatabaseDeserializer objectDeserializer;     // Read-only by transactions
-	
-	YapDatabaseSerializer metadataSerializer;       // Read-only by transactions
-	YapDatabaseDeserializer metadataDeserializer;   // Read-only by transactions
-	
-	YapDatabasePreSanitizer objectPreSanitizer;     // Read-only by transactions
-	YapDatabasePostSanitizer objectPostSanitizer;   // Read-only by transactions
-	
-	YapDatabasePreSanitizer metadataPreSanitizer;   // Read-only by transactions
-	YapDatabasePostSanitizer metadataPostSanitizer; // Read-only by transactions
 }
 
 /**
@@ -127,6 +115,18 @@ static NSString *const ext_key_class = @"class";
  */
 - (BOOL)connectionPoolEnqueue:(sqlite3 *)aDb main_file:(yap_file *)main_file wal_file:(yap_file *)wal_file;
 - (BOOL)connectionPoolDequeue:(sqlite3 *_Nonnull*_Nonnull)aDb main_file:(yap_file *_Nonnull*_Nonnull)main_file wal_file:(yap_file *_Nonnull*_Nonnull)wal_file;
+
+- (YapDatabaseSerializer)objectSerializerForCollection:(nullable NSString *)collection;
+- (YapDatabaseSerializer)metadataSerializerForCollection:(nullable NSString *)collection;
+
+- (YapDatabaseDeserializer)objectDeserializerForCollection:(nullable NSString *)collection;
+- (YapDatabaseDeserializer)metadataDeserializerForCollection:(nullable NSString *)collection;
+
+- (nullable YapDatabasePreSanitizer)objectPreSanitizerForCollection:(nullable NSString *)collection;
+- (nullable YapDatabasePreSanitizer)metadataPreSanitizerForCollection:(nullable NSString *)collection;
+
+- (nullable YapDatabasePostSanitizer)objectPostSanitizerForCollection:(nullable NSString *)collection;
+- (nullable YapDatabasePostSanitizer)metadataPostSanitizerForCollection:(nullable NSString *)collection;
 
 /**
  * These methods are only accessible from within the snapshotQueue.
@@ -406,10 +406,6 @@ static NSString *const ext_key_class = @"class";
 - (void)_enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
                            usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
                            withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
-- (void)_enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
-                           usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
-                           withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
-                         deserializer:(nullable YapDatabaseSerializer)deserializer;
 
 - (void)_enumerateKeysAndMetadataInCollections:(NSArray *)collections
                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id metadata, BOOL *stop))block;
@@ -428,10 +424,6 @@ static NSString *const ext_key_class = @"class";
 - (void)_enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
         usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
         withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
-- (void)_enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
-        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
-        withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
-      deserializer:(nullable YapDatabaseDeserializer)deserializer;
 
 - (void)_enumerateKeysAndObjectsInCollections:(NSArray<NSString*> *)collections
        usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, BOOL *stop))block;
@@ -450,11 +442,6 @@ static NSString *const ext_key_class = @"class";
 - (void)_enumerateRowsInCollection:(nullable NSString *)collection
                 usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
                 withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter;
-- (void)_enumerateRowsInCollection:(nullable NSString *)collection
-                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
-                withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
-        objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-      metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer;
 
 - (void)_enumerateRowsInCollections:(NSArray<NSString*> *)collections
      usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *collection, NSString *key, id object, id metadata, BOOL *stop))block;

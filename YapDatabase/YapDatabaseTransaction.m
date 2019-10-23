@@ -1,5 +1,4 @@
 #import "YapDatabaseTransaction.h"
-#import "YapDatabaseTransaction+Swift.h"
 
 #import "YapDatabasePrivate.h"
 #import "YapDatabaseExtensionPrivate.h"
@@ -585,6 +584,9 @@
 	int status = sqlite3_step(statement);
 	if (status == SQLITE_ROW)
 	{
+		YapDatabaseDeserializer objectDeserializer =
+		  [connection->database objectDeserializerForCollection:cacheKey.collection];
+		
 		const void *blob = sqlite3_column_blob(statement, column_idx_data);
 		int blobSize = sqlite3_column_bytes(statement, column_idx_data);
 		
@@ -592,7 +594,7 @@
 		// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 		
 		NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-		object = connection->database->objectDeserializer(cacheKey.collection, cacheKey.key, data);
+		object = objectDeserializer(cacheKey.collection, cacheKey.key, data);
 		
 		if (object)
 			[connection->objectCache setObject:object forKey:cacheKey];
@@ -646,11 +648,14 @@
 		
 		if (blobSize > 0)
 		{
+			YapDatabaseDeserializer metadataDeserializer =
+			  [connection->database metadataDeserializerForCollection:cacheKey.collection];
+			
 			// Performance tuning:
 			// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 			
 			NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-			metadata = connection->database->metadataDeserializer(cacheKey.collection, cacheKey.key, data);
+			metadata = metadataDeserializer(cacheKey.collection, cacheKey.key, data);
 		}
 		
 		if (metadata)
@@ -729,6 +734,9 @@
 		{
 			if (objectPtr)
 			{
+				YapDatabaseDeserializer objectDeserializer =
+				  [connection->database objectDeserializerForCollection:cacheKey.collection];
+				
 				const void *oBlob = sqlite3_column_blob(statement, column_idx_data);
 				int oBlobSize = sqlite3_column_bytes(statement, column_idx_data);
 				
@@ -736,7 +744,7 @@
 				// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 				
 				NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-				object = connection->database->objectDeserializer(cacheKey.collection, cacheKey.key, oData);
+				object = objectDeserializer(cacheKey.collection, cacheKey.key, oData);
 				
 				if (object)
 					[connection->objectCache setObject:object forKey:cacheKey];
@@ -749,11 +757,14 @@
 				
 				if (mBlobSize > 0)
 				{
+					YapDatabaseDeserializer metadataDeserializer =
+					  [connection->database metadataDeserializerForCollection:cacheKey.collection];
+					
 					// Performance tuning:
 					// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 					
 					NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-					metadata = connection->database->metadataDeserializer(cacheKey.collection, cacheKey.key, mData);
+					metadata = metadataDeserializer(cacheKey.collection, cacheKey.key, mData);
 				}
 				
 				if (metadata)
@@ -803,16 +814,8 @@
 
 - (nullable id)objectForKey:(NSString *)key inCollection:(nullable NSString *)collection
 {
-	return [self objectForKey:key inCollection:collection withDeserializer:nil];
-}
-
-- (nullable id)objectForKey:(NSString *)key
-               inCollection:(nullable NSString *)collection
-           withDeserializer:(nullable YapDatabaseDeserializer)deserializer
-{
 	if (key == nil) return nil;
 	if (collection == nil) collection = @"";
-	if (deserializer == nil) deserializer = connection->database->objectDeserializer;
 	
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
 	
@@ -838,6 +841,9 @@
 		int status = sqlite3_step(statement);
 		if (status == SQLITE_ROW)
 		{
+			YapDatabaseDeserializer objectDeserializer =
+			  [connection->database objectDeserializerForCollection:collection];
+			
 			const void *blob = sqlite3_column_blob(statement, column_idx_data);
 			int blobSize = sqlite3_column_bytes(statement, column_idx_data);
 			
@@ -845,7 +851,7 @@
 			// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 			
 			NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-			object = deserializer(collection, key, data);
+			object = objectDeserializer(collection, key, data);
 			
 			if (object)
 				[connection->objectCache setObject:object forKey:cacheKey];
@@ -879,6 +885,9 @@
 		int status = sqlite3_step(statement);
 		if (status == SQLITE_ROW)
 		{
+			YapDatabaseDeserializer objectDeserializer =
+			  [connection->database objectDeserializerForCollection:collection];
+			
 			int64_t rowid = sqlite3_column_int64(statement, column_idx_rowid);
 			
 			const void *blob = sqlite3_column_blob(statement, column_idx_data);
@@ -888,7 +897,7 @@
 			// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 			
 			NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-			object = deserializer(collection, key, data);
+			object = objectDeserializer(collection, key, data);
 			
 			// Update caches
 			
@@ -924,7 +933,7 @@
 {
 	if (key == nil) return nil;
 	if (collection == nil) collection = @"";
-	if (deserializer == nil) deserializer = connection->database->metadataDeserializer;
+	if (deserializer == nil) deserializer = [connection->database metadataDeserializerForCollection:collection];
 	
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
 	
@@ -1043,21 +1052,6 @@
 
 - (BOOL)getObject:(id *)objectPtr metadata:(id *)metadataPtr forKey:(NSString *)key inCollection:(NSString *)collection
 {
-	return [self getObject: objectPtr
-	              metadata: metadataPtr
-	                forKey: key
-	          inCollection: collection
-	withObjectDeserializer: nil
-	  metadataDeserializer: nil];
-}
-
-- (BOOL)getObject:(__nullable id * __nullable)objectPtr
-         metadata:(__nullable id * __nullable)metadataPtr
-           forKey:(NSString *)key
-     inCollection:(nullable NSString *)collection
-     withObjectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-       metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
-{
 	if (key == nil)
 	{
 		if (objectPtr) *objectPtr = nil;
@@ -1066,8 +1060,6 @@
 		return NO;
 	}
 	if (collection == nil) collection = @"";
-	if (objectDeserializer == nil) objectDeserializer = connection->database->objectDeserializer;
-	if (metadataDeserializer == nil) metadataDeserializer = connection->database->metadataDeserializer;
 	
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
 	
@@ -1123,6 +1115,9 @@
 			{
 				if (objectPtr)
 				{
+					YapDatabaseDeserializer objectDeserializer =
+					  [connection->database objectDeserializerForCollection:collection];
+					
 					const void *oBlob = sqlite3_column_blob(statement, column_idx_data);
 					int oBlobSize = sqlite3_column_bytes(statement, column_idx_data);
 					
@@ -1143,6 +1138,9 @@
 					
 					if (mBlobSize > 0)
 					{
+						YapDatabaseDeserializer metadataDeserializer =
+						  [connection->database metadataDeserializerForCollection:collection];
+						
 						// Performance tuning:
 						// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 						
@@ -1198,6 +1196,9 @@
 				
 				if (objectPtr)
 				{
+					YapDatabaseDeserializer objectDeserializer =
+					  [connection->database objectDeserializerForCollection:collection];
+					
 					const void *oBlob = sqlite3_column_blob(statement, column_idx_data);
 					int oBlobSize = sqlite3_column_bytes(statement, column_idx_data);
 				
@@ -1215,6 +1216,9 @@
 				
 					if (mBlobSize > 0)
 					{
+						YapDatabaseDeserializer metadataDeserializer =
+						  [connection->database metadataDeserializerForCollection:collection];
+						
 						NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
 						metadata = metadataDeserializer(collection, key, mData);
 					}
@@ -1737,7 +1741,7 @@
 - (void)enumerateKeysAndObjectsInCollection:(NSString *)collection
                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
 {
-	[self enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:nil deserializer:nil];
+	[self enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:nil];
 }
 
 /**
@@ -1752,14 +1756,6 @@
                                  usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
                                  withFilter:(BOOL (NS_NOESCAPE^)(NSString *key))filter
 {
-	[self enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:filter deserializer:nil];
-}
-
-- (void)enumerateKeysAndObjectsInCollection:(nullable NSString *)collection
-                                 usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, BOOL *stop))block
-                                 withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter
-                               deserializer:(YapDatabaseDeserializer)deserializer
-{
 	if (block == NULL) return;
 	
 	if (filter)
@@ -1773,7 +1769,7 @@
 			
 			return filter(key);
 			
-		} deserializer:deserializer];
+		}];
 	}
 	else
 	{
@@ -1782,7 +1778,7 @@
 			
 			block(key, object, stop);
 			
-		} withFilter:nil deserializer:deserializer];
+		} withFilter:nil];
 	}
 }
 
@@ -1848,7 +1844,7 @@
 - (void)enumerateKeysAndMetadataInCollection:(NSString *)collection
                                   usingBlock:(void (NS_NOESCAPE^)(NSString *key, id metadata, BOOL *stop))block
 {
-	[self enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:nil deserializer:nil];
+	[self enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:nil];
 }
 
 /**
@@ -1857,17 +1853,6 @@
 - (void)enumerateKeysAndMetadataInCollection:(NSString *)collection
                                   usingBlock:(void (NS_NOESCAPE^)(NSString *key, id metadata, BOOL *stop))block
                                   withFilter:(BOOL (NS_NOESCAPE^)(NSString *key))filter
-{
-	[self enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:filter deserializer:nil];
-}
-
-/**
- * See header file for description.
- */
-- (void)enumerateKeysAndMetadataInCollection:(nullable NSString *)collection
-                               usingBlock:(void (NS_NOESCAPE^)(NSString *key, __nullable id metadata, BOOL *stop))block
-                               withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter
-                             deserializer:(nullable YapDatabaseDeserializer)deserializer
 {
 	if (block == NULL) return;
 	
@@ -1882,7 +1867,7 @@
 			
 			return filter(key);
 			
-		} deserializer:deserializer];
+		}];
 	}
 	else
 	{
@@ -1891,7 +1876,7 @@
 		
 			block(key, metadata, stop);
 			
-		} withFilter:nil deserializer:deserializer];
+		} withFilter:nil];
 	}
 }
 
@@ -1944,9 +1929,7 @@
 {
 	[self enumerateRowsInCollection: collection
 	                     usingBlock: block
-	                     withFilter: nil
-	             objectDeserializer: nil
-	           metadataDeserializer: nil];
+	                     withFilter: nil];
 }
 
 /**
@@ -1955,22 +1938,6 @@
 - (void)enumerateRowsInCollection:(NSString *)collection
                        usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, id metadata, BOOL *stop))block
                        withFilter:(BOOL (NS_NOESCAPE^)(NSString *key))filter
-{
-	[self enumerateRowsInCollection: collection
-	                     usingBlock: block
-	                     withFilter: filter
-	             objectDeserializer: nil
-	           metadataDeserializer: nil];
-}
-
-/**
- * See header file for description.
- */
-- (void)enumerateRowsInCollection:(nullable NSString *)collection
-                    usingBlock:(void (NS_NOESCAPE^)(NSString *key, id object, __nullable id metadata, BOOL *stop))block
-                    withFilter:(nullable BOOL (NS_NOESCAPE^)(NSString *key))filter
-            objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-          metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
 {
 	if (block == NULL) return;
 	
@@ -1984,8 +1951,7 @@
 		} withFilter:^BOOL(int64_t __unused rowid, NSString *key) {
 			
 			return filter(key);
-			
-		} objectDeserializer:objectDeserializer metadataDeserializer:metadataDeserializer];
+		}];
 	}
 	else
 	{
@@ -1994,7 +1960,7 @@
 			
 			block(key, object, metadata, stop);
 			
-		} withFilter:nil objectDeserializer:objectDeserializer metadataDeserializer:metadataDeserializer];
+		} withFilter:nil];
 	}
 }
 
@@ -2107,6 +2073,7 @@
 	
 	// Go to database for any missing keys (if needed)
 	
+	YapDatabaseDeserializer objectDeserializer = [connection->database objectDeserializerForCollection:collection];
 	YapDatabaseString _collection; MakeYapDatabaseString(&_collection, collection);
 	
 	NSMutableDictionary *keyIndexDict = nil;
@@ -2195,7 +2162,7 @@
 			int blobSize = sqlite3_column_bytes(statement, column_idx_data);
 			
 			NSData *objectData = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
-			id object = connection->database->objectDeserializer(collection, key, objectData);
+			id object = objectDeserializer(collection, key, objectData);
 			
 			if (object)
 			{
@@ -2319,6 +2286,7 @@
 	
 	// Go to database for any missing keys (if needed)
 	
+	YapDatabaseDeserializer metadataDeserializer = [connection->database metadataDeserializerForCollection:collection];
 	YapDatabaseString _collection; MakeYapDatabaseString(&_collection, collection);
 	
 	NSMutableDictionary *keyIndexDict = nil;
@@ -2405,7 +2373,7 @@
 			
 			NSData *data = [NSData dataWithBytesNoCopy:(void *)blob length:blobSize freeWhenDone:NO];
 			
-			id metadata = data ? connection->database->metadataDeserializer(collection, key, data) : nil;
+			id metadata = data ? metadataDeserializer(collection, key, data) : nil;
 			
 			if (metadata)
 			{
@@ -2538,6 +2506,9 @@
 	
 	// Go to database for any missing keys (if needed)
 	
+	YapDatabaseDeserializer objectDeserializer = [connection->database objectDeserializerForCollection:collection];
+	YapDatabaseDeserializer metadataDeserializer = [connection->database metadataDeserializerForCollection:collection];
+	
 	YapDatabaseString _collection; MakeYapDatabaseString(&_collection, collection);
 	
 	NSMutableDictionary *keyIndexDict = nil;
@@ -2633,7 +2604,7 @@
 				int oBlobSize = sqlite3_column_bytes(statement, column_idx_data);
 				
 				NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-				object = connection->database->objectDeserializer(collection, key, oData);
+				object = objectDeserializer(collection, key, oData);
 				
 				if (object)
 					[connection->objectCache setObject:object forKey:cacheKey];
@@ -2653,7 +2624,7 @@
 				if (mBlobSize > 0)
 				{
 					NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-					metadata = connection->database->metadataDeserializer(collection, key, mData);
+					metadata = metadataDeserializer(collection, key, mData);
 				}
 				
 				if (metadata)
@@ -2913,7 +2884,7 @@
 - (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
 {
-	[self _enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:nil deserializer:nil];
+	[self _enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:nil];
 }
 
 /**
@@ -2928,17 +2899,8 @@
                                   usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
                                   withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
 {
-	[self _enumerateKeysAndObjectsInCollection:collection usingBlock:block withFilter:filter deserializer:nil];
-}
-
-- (void)_enumerateKeysAndObjectsInCollection:(NSString *)collection
-                                  usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, BOOL *stop))block
-                                  withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
-                                deserializer:(YapDatabaseDeserializer)deserializer
-{
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
-	if (deserializer == nil) deserializer = connection->database->objectDeserializer;
 	
 	BOOL needsFinalize;
 	sqlite3_stmt *statement = [connection enumerateKeysAndObjectsInCollectionStatement:&needsFinalize];
@@ -2957,6 +2919,7 @@
 	YapDatabaseString _collection; MakeYapDatabaseString(&_collection, collection);
 	sqlite3_bind_text(statement, bind_idx_collection, _collection.str, _collection.length, SQLITE_STATIC);
 	
+	YapDatabaseDeserializer objectDeserializer = [connection->database objectDeserializerForCollection:collection];
 	BOOL unlimitedObjectCacheLimit = (connection->objectCacheLimit == 0);
 	
 	int status;
@@ -2984,7 +2947,7 @@
 				// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 				
 				NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-				object = deserializer(collection, key, oData);
+				object = objectDeserializer(collection, key, oData);
 				
 				// Cache considerations:
 				// Do we want to add the objects/metadata to the cache here?
@@ -3069,6 +3032,8 @@
 	
 	for (NSString *collection in collections)
 	{
+		YapDatabaseDeserializer objectDeserializer = [connection->database objectDeserializerForCollection:collection];
+		
 		YapDatabaseString _collection; MakeYapDatabaseString(&_collection, collection);
 		sqlite3_bind_text(statement, bind_idx_collection, _collection.str, _collection.length, SQLITE_STATIC);
 		
@@ -3097,7 +3062,7 @@
 					// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 					
 					NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-					object = connection->database->objectDeserializer(collection, key, oData);
+					object = objectDeserializer(collection, key, oData);
 					
 					// Cache considerations:
 					// Do we want to add the objects/metadata to the cache here?
@@ -3217,11 +3182,14 @@
 			id object = [connection->objectCache objectForKey:cacheKey];
 			if (object == nil)
 			{
+				YapDatabaseDeserializer objectDeserializer =
+				  [connection->database objectDeserializerForCollection:collection];
+				
 				const void *oBlob = sqlite3_column_blob(statement, column_idx_data);
 				int oBlobSize = sqlite3_column_bytes(statement, column_idx_data);
 				
 				NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-				object = connection->database->objectDeserializer(collection, key, oData);
+				object = objectDeserializer(collection, key, oData);
 				
 				if (unlimitedObjectCacheLimit || [connection->objectCache count] < connection->objectCacheLimit)
 				{
@@ -3255,7 +3223,7 @@
 - (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
                                    usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
 {
-	[self _enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:nil deserializer:nil];
+	[self _enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:nil];
 }
 
 /**
@@ -3265,20 +3233,8 @@
                                    usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
                                    withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
 {
-	[self _enumerateKeysAndMetadataInCollection:collection usingBlock:block withFilter:filter deserializer:nil];
-}
-
-/**
- * Declared in header file: YapDatabasePrivate.h
- */
-- (void)_enumerateKeysAndMetadataInCollection:(NSString *)collection
-                          usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id metadata, BOOL *stop))block
-                          withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
-                        deserializer:(nullable YapDatabaseSerializer)deserializer
-{
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
-	if (deserializer == nil) deserializer = connection->database->metadataDeserializer;
 	
 	BOOL needsFinalize;
 	sqlite3_stmt *statement = [connection enumerateKeysAndMetadataInCollectionStatement:&needsFinalize];
@@ -3297,6 +3253,7 @@
 	YapDatabaseString _collection; MakeYapDatabaseString(&_collection, collection);
 	sqlite3_bind_text(statement, bind_idx_collection, _collection.str, _collection.length, SQLITE_STATIC);
 	
+	YapDatabaseDeserializer metadataDeserializer = [connection->database metadataDeserializerForCollection:collection];
 	BOOL unlimitedMetadataCacheLimit = (connection->metadataCacheLimit == 0);
 	
 	int status;
@@ -3331,7 +3288,7 @@
 					// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 					
 					NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-					metadata = deserializer(collection, key, mData);
+					metadata = metadataDeserializer(collection, key, mData);
 				}
 				
 				// Cache considerations:
@@ -3408,6 +3365,9 @@
 	
 	for (NSString *collection in collections)
 	{
+		YapDatabaseDeserializer metadataDeserializer =
+		  [connection->database metadataDeserializerForCollection:collection];
+		
 		YapDatabaseString _collection; MakeYapDatabaseString(&_collection, collection);
 		sqlite3_bind_text(statement, bind_idx_collection, _collection.str, _collection.length, SQLITE_STATIC);
 		
@@ -3443,7 +3403,7 @@
 						// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 						
 						NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-						metadata = connection->database->metadataDeserializer(collection, key, mData);
+						metadata = metadataDeserializer(collection, key, mData);
 					}
 					
 					// Cache considerations:
@@ -3561,11 +3521,14 @@
 				
 				if (mBlobSize > 0)
 				{
+					YapDatabaseDeserializer metadataDeserializer =
+					  [connection->database metadataDeserializerForCollection:cacheKey.collection];
+					
 					// Performance tuning:
 					// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 					
 					NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-					metadata = connection->database->metadataDeserializer(collection, key, mData);
+					metadata = metadataDeserializer(collection, key, mData);
 				}
 				
 				// Cache considerations:
@@ -3612,9 +3575,7 @@
 {
 	[self _enumerateRowsInCollection: collection
 	                      usingBlock: block
-	                      withFilter: nil
-	              objectDeserializer: nil
-	            metadataDeserializer: nil];
+	                      withFilter: nil];
 }
 
 /**
@@ -3624,26 +3585,8 @@
                         usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
                         withFilter:(BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
 {
-	[self _enumerateRowsInCollection: collection
-	                      usingBlock: block
-	                      withFilter: filter
-	              objectDeserializer: nil
-	            metadataDeserializer: nil];
-}
-
-/**
- * Declared in header file: YapDatabasePrivate.h
- */
-- (void)_enumerateRowsInCollection:(nullable NSString *)collection
-                usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, NSString *key, id object, id metadata, BOOL *stop))block
-                withFilter:(nullable BOOL (NS_NOESCAPE^)(int64_t rowid, NSString *key))filter
-        objectDeserializer:(nullable YapDatabaseDeserializer)objectDeserializer
-      metadataDeserializer:(nullable YapDatabaseDeserializer)metadataDeserializer
-{
 	if (block == NULL) return;
 	if (collection == nil) collection = @"";
-	if (objectDeserializer == nil) objectDeserializer = connection->database->objectDeserializer;
-	if (metadataDeserializer == nil) metadataDeserializer = connection->database->metadataDeserializer;
 	
 	BOOL needsFinalize;
 	sqlite3_stmt *statement = [connection enumerateRowsInCollectionStatement:&needsFinalize];
@@ -3662,6 +3605,9 @@
 	
 	YapDatabaseString _collection; MakeYapDatabaseString(&_collection, collection);
 	sqlite3_bind_text(statement, bind_idx_collection, _collection.str, _collection.length, SQLITE_STATIC);
+	
+	YapDatabaseDeserializer objectDeserializer = [connection->database objectDeserializerForCollection:collection];
+	YapDatabaseDeserializer metadataDeserializer = [connection->database metadataDeserializerForCollection:collection];
 	
 	BOOL unlimitedObjectCacheLimit = (connection->objectCacheLimit == 0);
 	BOOL unlimitedMetadataCacheLimit = (connection->metadataCacheLimit == 0);
@@ -3815,6 +3761,9 @@
 	
 	for (NSString *collection in collections)
 	{
+		YapDatabaseDeserializer objectDeserializer = [connection->database objectDeserializerForCollection:collection];
+		YapDatabaseDeserializer metadataDeserializer = [connection->database metadataDeserializerForCollection:collection];
+		
 		YapDatabaseString _collection; MakeYapDatabaseString(&_collection, collection);
 		sqlite3_bind_text(statement, bind_idx_collection, _collection.str, _collection.length, SQLITE_STATIC);
 		
@@ -3843,7 +3792,7 @@
 					// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 					
 					NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-					object = connection->database->objectDeserializer(collection, key, oData);
+					object = objectDeserializer(collection, key, oData);
 					
 					// Cache considerations:
 					// Do we want to add the objects/metadata to the cache here?
@@ -3877,7 +3826,7 @@
 						// Use dataWithBytesNoCopy to avoid an extra allocation and memcpy.
 						
 						NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-						metadata = connection->database->metadataDeserializer(collection, key, mData);
+						metadata = metadataDeserializer(collection, key, mData);
 					}
 					
 					// Cache considerations:
@@ -4002,11 +3951,14 @@
 			id object = [connection->objectCache objectForKey:cacheKey];
 			if (object == nil)
 			{
+				YapDatabaseDeserializer objectDeserializer =
+				  [connection->database objectDeserializerForCollection:collection];
+				
 				const void *oBlob = sqlite3_column_blob(statement, column_idx_data);
 				int oBlobSize = sqlite3_column_bytes(statement, column_idx_data);
 				
 				NSData *oData = [NSData dataWithBytesNoCopy:(void *)oBlob length:oBlobSize freeWhenDone:NO];
-				object = connection->database->objectDeserializer(collection, key, oData);
+				object = objectDeserializer(collection, key, oData);
 				
 				if (unlimitedObjectCacheLimit || [connection->objectCache count] < connection->objectCacheLimit)
 				{
@@ -4028,8 +3980,11 @@
 				
 				if (mBlobSize > 0)
 				{
+					YapDatabaseDeserializer metadataDeserializer =
+					  [connection->database metadataDeserializerForCollection:collection];
+					
 					NSData *mData = [NSData dataWithBytesNoCopy:(void *)mBlob length:mBlobSize freeWhenDone:NO];
-					metadata = connection->database->metadataDeserializer(collection, key, mData);
+					metadata = metadataDeserializer(collection, key, mData);
 				}
 				
 				if (unlimitedMetadataCacheLimit ||
@@ -4756,9 +4711,10 @@
 	if (key == nil) return;
 	if (collection == nil) collection = @"";
 	
-	if (connection->database->objectPreSanitizer)
+	YapDatabasePreSanitizer objectPreSanitizer = [connection->database objectPreSanitizerForCollection:collection];
+	if (objectPreSanitizer)
 	{
-		object = connection->database->objectPreSanitizer(collection, key, object);
+		object = objectPreSanitizer(collection, key, object);
 		if (object == nil)
 		{
 			YDBLogWarn(@"The objectPreSanitizer returned nil for collection(%@) key(%@)", collection, key);
@@ -4767,12 +4723,18 @@
 			return;
 		}
 	}
-	if (metadata && connection->database->metadataPreSanitizer)
+	if (metadata)
 	{
-		metadata = connection->database->metadataPreSanitizer(collection, key, metadata);
-		if (metadata == nil)
+		YapDatabasePreSanitizer metadataPreSanitizer =
+		  [connection->database metadataPreSanitizerForCollection:collection];
+		
+		if (metadataPreSanitizer)
 		{
-			YDBLogWarn(@"The metadataPresanitizer returned nil for collection(%@) key(%@)", collection, key);
+			metadata = metadataPreSanitizer(collection, key, metadata);
+			if (metadata == nil)
+			{
+				YDBLogWarn(@"The metadataPresanitizer returned nil for collection(%@) key(%@)", collection, key);
+			}
 		}
 	}
 	
@@ -4780,18 +4742,22 @@
 	// This ensures the data isn't released until it goes out of scope.
 	
 	__attribute__((objc_precise_lifetime)) NSData *serializedObject = nil;
-	if (preSerializedObject)
+	if (preSerializedObject) {
 		serializedObject = preSerializedObject;
-	else
-		serializedObject = connection->database->objectSerializer(collection, key, object);
+	} else {
+		YapDatabaseSerializer objectSerializer = [connection->database objectSerializerForCollection:collection];
+		serializedObject = objectSerializer(collection, key, object);
+	}
 	
 	__attribute__((objc_precise_lifetime)) NSData *serializedMetadata = nil;
 	if (metadata)
 	{
-		if (preSerializedMetadata)
+		if (preSerializedMetadata) {
 			serializedMetadata = preSerializedMetadata;
-		else
-			serializedMetadata = connection->database->metadataSerializer(collection, key, metadata);
+		} else {
+			YapDatabaseSerializer metadataSerializer = [connection->database metadataSerializerForCollection:collection];
+			serializedMetadata = metadataSerializer(collection, key, metadata);
+		}
 	}
 	
 	YapCollectionKey *cacheKey = [[YapCollectionKey alloc] initWithCollection:collection key:key];
@@ -4959,13 +4925,18 @@
 			                          rowid:rowid];
 	}
 	
-	if (connection->database->objectPostSanitizer)
+	YapDatabasePostSanitizer objectPostSanitizer = [connection->database objectPostSanitizerForCollection:collection];
+	if (objectPostSanitizer)
 	{
-		connection->database->objectPostSanitizer(collection, key, object);
+		objectPostSanitizer(collection, key, object);
 	}
-	if (metadata && connection->database->metadataPostSanitizer)
+	if (metadata)
 	{
-		connection->database->metadataPostSanitizer(collection, key, metadata);
+		YapDatabasePostSanitizer metadataPostSanitizer =
+		  [connection->database metadataPostSanitizerForCollection:collection];
+		if (metadataPostSanitizer) {
+			metadataPostSanitizer(collection, key, metadata);
+		}
 	}
 }
 
@@ -5063,9 +5034,10 @@
 	NSAssert(key != nil, @"Internal error");
 	if (collection == nil) collection = @"";
 	
-	if (connection->database->objectPreSanitizer)
+	YapDatabasePreSanitizer objectPreSanitizer = [connection->database objectPreSanitizerForCollection:collection];
+	if (objectPreSanitizer)
 	{
-		object = connection->database->objectPreSanitizer(collection, key, object);
+		object = objectPreSanitizer(collection, key, object);
 		if (object == nil)
 		{
 			YDBLogWarn(@"The objectPreSanitizer returned nil for collection(%@) key(%@)", collection, key);
@@ -5079,10 +5051,12 @@
 	// This ensures the data isn't released until it goes out of scope.
 	
 	__attribute__((objc_precise_lifetime)) NSData *serializedObject = nil;
-	if (preSerializedObject)
+	if (preSerializedObject) {
 		serializedObject = preSerializedObject;
-	else
-		serializedObject = connection->database->objectSerializer(collection, key, object);
+	} else {
+		YapDatabaseSerializer objectSerializer = [connection->database objectSerializerForCollection:collection];
+		serializedObject = objectSerializer(collection, key, object);
+	}
 	
 	sqlite3_stmt *statement = [connection updateObjectForRowidStatement];
 	if (statement == NULL) return;
@@ -5145,9 +5119,10 @@
 		[extTransaction didReplaceObject:object forCollectionKey:cacheKey withRowid:rowid];
 	}
 	
-	if (connection->database->objectPostSanitizer)
+	YapDatabasePostSanitizer objectPostSanitizer = [connection->database objectPostSanitizerForCollection:collection];
+	if (objectPostSanitizer)
 	{
-		connection->database->objectPostSanitizer(collection, key, object);
+		objectPostSanitizer(collection, key, object);
 	}
 }
 
@@ -5241,12 +5216,17 @@
 	NSAssert(key != nil, @"Internal error");
 	if (collection == nil) collection = @"";
 	
-	if (metadata && connection->database->metadataPreSanitizer)
+	if (metadata)
 	{
-		metadata = connection->database->metadataPreSanitizer(collection, key, metadata);
-		if (metadata == nil)
+		YapDatabasePreSanitizer metadataPreSanitizer =
+		  [connection->database metadataPreSanitizerForCollection:collection];
+		if (metadataPreSanitizer)
 		{
-			YDBLogWarn(@"The metadataPreSanitizer returned nil for collection(%@) key(%@)", collection, key);
+			metadata = metadataPreSanitizer(collection, key, metadata);
+			if (metadata == nil)
+			{
+				YDBLogWarn(@"The metadataPreSanitizer returned nil for collection(%@) key(%@)", collection, key);
+			}
 		}
 	}
 	
@@ -5256,10 +5236,12 @@
 	__attribute__((objc_precise_lifetime)) NSData *serializedMetadata = nil;
 	if (metadata)
 	{
-		if (preSerializedMetadata)
+		if (preSerializedMetadata) {
 			serializedMetadata = preSerializedMetadata;
-		else
-			serializedMetadata = connection->database->metadataSerializer(collection, key, metadata);
+		} else {
+			YapDatabaseSerializer metadataSerializer = [connection->database metadataSerializerForCollection:collection];
+			serializedMetadata = metadataSerializer(collection, key, metadata);
+		}
 	}
 	
 	sqlite3_stmt *statement = [connection updateMetadataForRowidStatement];
@@ -5333,9 +5315,13 @@
 		[extTransaction didReplaceMetadata:metadata forCollectionKey:cacheKey withRowid:rowid];
 	}
 	
-	if (metadata && connection->database->metadataPostSanitizer)
+	if (metadata)
 	{
-		connection->database->metadataPostSanitizer(collection, key, metadata);
+		YapDatabasePostSanitizer metadataPostSanitizer =
+		  [connection->database metadataPostSanitizerForCollection:collection];
+		if (metadataPostSanitizer) {
+			metadataPostSanitizer(collection, key, metadata);
+		}
 	}
 }
 

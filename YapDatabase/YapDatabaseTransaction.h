@@ -124,14 +124,14 @@ NS_ASSUME_NONNULL_BEGIN
  * Object access.
  * Objects are automatically deserialized using database's configured deserializer.
  */
-- (nullable id)objectForKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
+- (nullable id)objectForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 /**
  * Returns the metadata associated with the {collection, key} tuple.
  * If the item is cached in memory, it's immediately returned.
  * Otherwise the item is fetched from disk and deserialized.
  */
-- (nullable id)metadataForKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
+- (nullable id)metadataForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 /**
  * Provides access to both object and metadata in a single call.
@@ -509,7 +509,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   The <collection, key> tuple is used to uniquely identify the row in the database.
  *   If a nil collection is passed, then the collection is implicitly the empty string (@"").
  */
-- (void)setObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
+- (void)setObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 /**
  * Sets the object & metadata for the given key/collection.
@@ -539,7 +539,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)setObject:(nullable id)object
            forKey:(NSString *)key
      inCollection:(nullable NSString *)collection
-     withMetadata:(nullable id)metadata NS_REFINED_FOR_SWIFT;
+     withMetadata:(nullable id)metadata;
 
 /**
  * Sets the object & metadata for the given key/collection.
@@ -614,7 +614,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   The <collection, key> tuple is used to uniquely identify the row in the database.
  *   If a nil collection is passed, then the collection is implicitly the empty string (@"").
  */
-- (void)replaceObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
+- (void)replaceObject:(nullable id)object forKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 /**
  * If a row with the given key/collection exists, then replaces the object for that row with the new value.
@@ -676,7 +676,7 @@ NS_ASSUME_NONNULL_BEGIN
  *   The <collection, key> tuple is used to uniquely identify the row in the database.
  *   If a nil collection is passed, then the collection is implicitly the empty string (@"").
  */
-- (void)replaceMetadata:(nullable id)metadata forKey:(NSString *)key inCollection:(nullable NSString *)collection NS_REFINED_FOR_SWIFT;
+- (void)replaceMetadata:(nullable id)metadata forKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 /**
  * If a row with the given key/collection exists, then replaces the metadata for that row with the new value.

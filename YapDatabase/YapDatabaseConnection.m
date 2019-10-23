@@ -279,7 +279,8 @@ static int connectionBusyHandler(void *ptr, int count)
 			
 			int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_PRIVATECACHE;
 			
-			int status = sqlite3_open_v2([database.databasePath UTF8String], &db, flags,
+			const char *databasePath = [[database.databaseURL path] UTF8String];
+			int status = sqlite3_open_v2(databasePath, &db, flags,
 			                             [database->yap_vfs_shim_name UTF8String]);
 			if (status != SQLITE_OK)
 			{
@@ -409,7 +410,7 @@ static int connectionBusyHandler(void *ptr, int count)
 - (void)dealloc
 {
 	YDBLogVerbose(@"Dealloc <YapDatabaseConnection %p: databaseName=%@>",
-	              self, [database.databasePath lastPathComponent]);
+	              self, [database.databaseURL lastPathComponent]);
 	
 	dispatch_block_t block = ^{ @autoreleasepool {
 	#pragma clang diagnostic push // silence warnings: synchronous access

@@ -6,52 +6,50 @@ import YapDatabase
 class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
-		testDatabase()
+		self.testDatabase()
 	}
 	
 	private func testDatabase() {
 		
-		let baseDir =
-			NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first ??
-			NSTemporaryDirectory()
-		
-		let databasePath = baseDir.appending("database.sqlite")
-		
-		let database = YapDatabase(path: databasePath)
+		let baseDirs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+		let baseDir = baseDirs[0]
+
+		let databaseURL = baseDir.appendingPathComponent("database.sqlite")
+
+		let database = YapDatabase(url: databaseURL)
+		database?.registerCodableSerialization(List.self, forCollection: kCollection_List)
+
 		let databaseConnection = database?.newConnection()
-		
 		let uuid = "fobar"
-		
-		databaseConnection?.asyncReadWrite({ (transaction) in
-			
-			let list = List(uuid: uuid, title: "Groceries")
-			
-			transaction.setObject(list, key: list.uuid, collection: kCollection_List)
-		})
-		
+
+//		databaseConnection?.asyncReadWrite({ (transaction) in
+//
+//			let list = List(uuid: uuid, title: "Groceries")
+//			transaction.setObject(list, forKey: list.uuid, inCollection: kCollection_List)
+//		})
+
 		databaseConnection?.asyncRead({ (transaction) in
-			
-			if let list: List = transaction.object(key: uuid, collection: kCollection_List) {
+
+			if let list: List = transaction.object(forKey: uuid, inCollection: kCollection_List) as? List {
 				print("Read list: \(list.title)")
 			} else {
 				print("wtf")
 			}
-			
+
 			transaction.iterateCollections { (collection, stop) in
-				
+
 				print("row: collection: \(collection)")
 			}
-			
-			transaction.iterateKeys(collection: kCollection_List) { (key, stop) in
-				
+
+			transaction.iterateKeys(inCollection: kCollection_List) { (key, stop) in
+
 				print("row: key: \(key)")
 			}
-			
-			transaction.iterateKeysAndObjects(collection: kCollection_List) { (key, list: List, stop) in
-		
+
+			transaction.iterateKeysAndObjects(inCollection: kCollection_List) { (key, list: List, stop) in
+
 				print("Iterate list: \(list.title)")
 			}
 		})
-		
 	}
 }

@@ -40,9 +40,9 @@
 
 NSString *const YapDatabaseClosedNotification = @"YapDatabaseClosedNotification";
 
-NSString *const YapDatabasePathKey    = @"databasePath";
-NSString *const YapDatabasePathWalKey = @"databasePath_wal";
-NSString *const YapDatabasePathShmKey = @"databasePath_shm";
+NSString *const YapDatabaseUrlKey    = @"databaseURL";
+NSString *const YapDatabaseUrlWalKey = @"databaseURL_wal";
+NSString *const YapDatabaseUrlShmKey = @"databaseURL_shm";
 
 /**
  * YapDatabaseModifiedNotification & corresponding keys.
@@ -121,6 +121,20 @@ static int connectionBusyHandler(void *ptr, int count) {
 	dispatch_queue_t checkpointQueue;
 	
 	YapDatabaseConnectionConfig *connectionDefaults;
+	
+	YAPUnfairLock serializationLock;
+	
+	NSMutableDictionary<id, YapDatabaseSerializer> *objectSerializers;
+	NSMutableDictionary<id, YapDatabaseDeserializer> *objectDeserializers;
+	
+	NSMutableDictionary<id, YapDatabasePreSanitizer> *objectPreSanitizers;
+	NSMutableDictionary<id, YapDatabasePostSanitizer> *objectPostSanitizers;
+	
+	NSMutableDictionary<id, YapDatabaseSerializer> *metadataSerializers;
+	NSMutableDictionary<id, YapDatabaseDeserializer> *metadataDeserializers;
+	
+	NSMutableDictionary<id, YapDatabasePreSanitizer> *metadataPreSanitizers;
+	NSMutableDictionary<id, YapDatabasePostSanitizer> *metadataPostSanitizers;
 	
 	NSDictionary *registeredExtensions;
 	NSDictionary *registeredMemoryTables;
@@ -244,33 +258,23 @@ static int connectionBusyHandler(void *ptr, int count) {
 #pragma mark Properties
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-@synthesize databasePath = databasePath;
-@dynamic databasePath_wal;
-@dynamic databasePath_shm;
-
-@synthesize objectSerializer = objectSerializer;
-@synthesize objectDeserializer = objectDeserializer;
-
-@synthesize metadataSerializer = metadataSerializer;
-@synthesize metadataDeserializer = metadataDeserializer;
-
-@synthesize objectPreSanitizer = objectPreSanitizer;
-@synthesize objectPostSanitizer = objectPostSanitizer;
-
-@synthesize metadataPreSanitizer = metadataPreSanitizer;
-@synthesize metadataPostSanitizer = metadataPostSanitizer;
+@synthesize databaseURL = databaseURL;
+@dynamic databaseURL_wal;
+@dynamic databaseURL_shm;
 
 @dynamic options;
 @dynamic sqliteVersion;
 
-- (NSString *)databasePath_wal
+- (NSURL *)databaseURL_wal
 {
-	return [databasePath stringByAppendingString:@"-wal"];
+	NSString *path = [[databaseURL path] stringByAppendingString:@"-wal"];
+	return [NSURL fileURLWithPath:path isDirectory:NO];
 }
 
-- (NSString *)databasePath_shm
+- (NSURL *)databaseURL_shm
 {
-	return [databasePath stringByAppendingString:@"-shm"];
+	NSString *path = [[databaseURL path] stringByAppendingString:@"-shm"];
+	return [NSURL fileURLWithPath:path isDirectory:NO];
 }
 
 - (YapDatabaseOptions *)options
@@ -298,139 +302,20 @@ static int connectionBusyHandler(void *ptr, int count) {
 #pragma mark Init
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-- (id)initWithPath:(NSString *)inPath
+- (id)initWithURL:(NSURL *)inURL
 {
-	return [self initWithPath:inPath
-	         objectSerializer:NULL
-	       objectDeserializer:NULL
-	       metadataSerializer:NULL
-	     metadataDeserializer:NULL
-	       objectPreSanitizer:NULL
-	      objectPostSanitizer:NULL
-	     metadataPreSanitizer:NULL
-	    metadataPostSanitizer:NULL
-	                  options:nil];
+	return [self initWithURL:inURL options:nil];
 }
 
-- (id)initWithPath:(NSString *)inPath
-           options:(nullable YapDatabaseOptions *)inOptions
+- (id)initWithURL:(NSURL *)inURL options:(nullable YapDatabaseOptions *)inOptions
 {
-	return [self initWithPath:inPath
-	         objectSerializer:NULL
-	       objectDeserializer:NULL
-	       metadataSerializer:NULL
-	     metadataDeserializer:NULL
-	       objectPreSanitizer:NULL
-	      objectPostSanitizer:NULL
-	     metadataPreSanitizer:NULL
-	    metadataPostSanitizer:NULL
-	                  options:inOptions];
-}
-
-- (id)initWithPath:(NSString *)inPath
-        serializer:(YapDatabaseSerializer)inSerializer
-      deserializer:(YapDatabaseDeserializer)inDeserializer
-{
-	return [self initWithPath:inPath
-	         objectSerializer:inSerializer
-	       objectDeserializer:inDeserializer
-	       metadataSerializer:inSerializer
-	     metadataDeserializer:inDeserializer
-	       objectPreSanitizer:NULL
-	      objectPostSanitizer:NULL
-	     metadataPreSanitizer:NULL
-	    metadataPostSanitizer:NULL
-	                  options:nil];
-}
-
-- (id)initWithPath:(NSString *)inPath
-        serializer:(YapDatabaseSerializer)inSerializer
-      deserializer:(YapDatabaseDeserializer)inDeserializer
-           options:(YapDatabaseOptions *)inOptions
-{
-	return [self initWithPath:inPath
-	         objectSerializer:inSerializer
-	       objectDeserializer:inDeserializer
-	       metadataSerializer:inSerializer
-	     metadataDeserializer:inDeserializer
-	       objectPreSanitizer:NULL
-	      objectPostSanitizer:NULL
-	     metadataPreSanitizer:NULL
-	    metadataPostSanitizer:NULL
-	                  options:inOptions];
-}
-
-- (id)initWithPath:(NSString *)inPath
-        serializer:(YapDatabaseSerializer)inSerializer
-      deserializer:(YapDatabaseDeserializer)inDeserializer
-      preSanitizer:(YapDatabasePreSanitizer)inPreSanitizer
-     postSanitizer:(YapDatabasePostSanitizer)inPostSanitizer
-           options:(YapDatabaseOptions *)inOptions
-{
-	return [self initWithPath:inPath
-	         objectSerializer:inSerializer
-	       objectDeserializer:inDeserializer
-	       metadataSerializer:inSerializer
-	     metadataDeserializer:inDeserializer
-	       objectPreSanitizer:inPreSanitizer
-	      objectPostSanitizer:inPostSanitizer
-	     metadataPreSanitizer:inPreSanitizer
-	    metadataPostSanitizer:inPostSanitizer
-	                  options:inOptions];
-}
-
-- (id)initWithPath:(NSString *)inPath objectSerializer:(YapDatabaseSerializer)inObjectSerializer
-                                    objectDeserializer:(YapDatabaseDeserializer)inObjectDeserializer
-                                    metadataSerializer:(YapDatabaseSerializer)inMetadataSerializer
-                                  metadataDeserializer:(YapDatabaseDeserializer)inMetadataDeserializer
-{
-	return [self initWithPath:inPath
-	         objectSerializer:inObjectSerializer
-	       objectDeserializer:inObjectDeserializer
-	       metadataSerializer:inMetadataSerializer
-	     metadataDeserializer:inMetadataDeserializer
-	       objectPreSanitizer:NULL
-	      objectPostSanitizer:NULL
-	     metadataPreSanitizer:NULL
-	    metadataPostSanitizer:NULL
-	                  options:nil];
-}
-
-- (id)initWithPath:(NSString *)inPath objectSerializer:(YapDatabaseSerializer)inObjectSerializer
-                                    objectDeserializer:(YapDatabaseDeserializer)inObjectDeserializer
-                                    metadataSerializer:(YapDatabaseSerializer)inMetadataSerializer
-                                  metadataDeserializer:(YapDatabaseDeserializer)inMetadataDeserializer
-                                               options:(YapDatabaseOptions *)inOptions
-{
-	return [self initWithPath:inPath
-	         objectSerializer:inObjectSerializer
-	       objectDeserializer:inObjectDeserializer
-	       metadataSerializer:inMetadataSerializer
-	     metadataDeserializer:inMetadataDeserializer
-	       objectPreSanitizer:NULL
-	      objectPostSanitizer:NULL
-	     metadataPreSanitizer:NULL
-	    metadataPostSanitizer:NULL
-	                  options:inOptions];
-}
-
-- (id)initWithPath:(NSString *)inPath objectSerializer:(YapDatabaseSerializer)inObjectSerializer
-                                    objectDeserializer:(YapDatabaseDeserializer)inObjectDeserializer
-                                    metadataSerializer:(YapDatabaseSerializer)inMetadataSerializer
-                                  metadataDeserializer:(YapDatabaseDeserializer)inMetadataDeserializer
-                                    objectPreSanitizer:(YapDatabasePreSanitizer)inObjectPreSanitizer
-                                   objectPostSanitizer:(YapDatabasePostSanitizer)inObjectPostSanitizer
-                                  metadataPreSanitizer:(YapDatabasePreSanitizer)inMetadataPreSanitizer
-                                 metadataPostSanitizer:(YapDatabasePostSanitizer)inMetadataPostSanitizer
-                                               options:(YapDatabaseOptions *)inOptions
-{
-	// First, standardize path.
-	// This allows clients to be lazy when passing paths.
-	NSString *path = [inPath stringByStandardizingPath];
+	// Standardize the path.
+	// This allows for fileReferenceURL's, and non-standard paths to be passed without issue.
+	NSString *databasePath = [[[inURL filePathURL] path] stringByStandardizingPath];
 	
 	// Ensure there is only a single database instance per file.
 	// However, clients may create as many connections as desired.
-	if (![YapDatabaseManager registerDatabaseForPath:path])
+	if (![YapDatabaseManager registerDatabaseForPath:databasePath])
 	{
 		YDBLogError(@"Only a single database instance is allowed per file. "
 		            @"For concurrency you create multiple connections from a single database instance.");
@@ -439,7 +324,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	
 	if ((self = [super init]))
 	{
-		databasePath = path;
+		databaseURL = [NSURL fileURLWithPath:databasePath isDirectory:NO];
 		options = inOptions ? [inOptions copy] : [[YapDatabaseOptions alloc] init];
 		
 		__block BOOL isNewDatabaseFile = ![[NSFileManager defaultManager] fileExistsAtPath:databasePath];
@@ -451,9 +336,9 @@ static int connectionBusyHandler(void *ptr, int count) {
 			BOOL result = YES;
 			
 			if (result) result = [self openDatabase];
-#ifdef SQLITE_HAS_CODEC
-            if (result) result = [self configureEncryptionForDatabase:db];
-#endif
+		#ifdef SQLITE_HAS_CODEC
+			if (result) result = [self configureEncryptionForDatabase:db];
+		#endif
 			if (result) result = [self configureDatabase:isNewDatabaseFile];
 			if (result) result = [self createTables];
 			
@@ -500,9 +385,9 @@ static int connectionBusyHandler(void *ptr, int count) {
 					else
 					{
 						NSError *error = nil;
-						renamed = [[NSFileManager defaultManager] moveItemAtPath:databasePath
-						                                                  toPath:newDatabasePath
-						                                                   error:&error];
+						renamed = [[NSFileManager defaultManager] moveItemAtPath: databasePath
+						                                                  toPath: newDatabasePath
+						                                                   error: &error];
 						if (!renamed)
 						{
 							failed = YES;
@@ -532,7 +417,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 				// Try to delete the corrupt database file.
 				
 				NSError *error = nil;
-				BOOL deleted = [[NSFileManager defaultManager] removeItemAtPath:path error:&error];
+				BOOL deleted = [[NSFileManager defaultManager] removeItemAtPath:databasePath error:&error];
 				
 				if (deleted)
 				{
@@ -574,6 +459,29 @@ static int connectionBusyHandler(void *ptr, int count) {
 		
 		connectionDefaults = [[YapDatabaseConnectionConfig alloc] init];
 		
+		serializationLock = YAP_UNFAIR_LOCK_INIT;
+		
+		objectSerializers = [[NSMutableDictionary alloc] init];
+		objectDeserializers = [[NSMutableDictionary alloc] init];
+		
+		objectPreSanitizers = [[NSMutableDictionary alloc] init];
+		objectPostSanitizers = [[NSMutableDictionary alloc] init];
+		
+		metadataSerializers = [[NSMutableDictionary alloc] init];
+		metadataDeserializers = [[NSMutableDictionary alloc] init];
+		
+		metadataPreSanitizers = [[NSMutableDictionary alloc] init];
+		metadataPostSanitizers = [[NSMutableDictionary alloc] init];
+		
+		YapDatabaseSerializer defaultSerializer = [[self class] defaultSerializer];
+		YapDatabaseDeserializer defaultDeserializer = [[self class] defaultDeserializer];
+		
+		objectSerializers[[NSNull null]] = defaultSerializer;
+		objectDeserializers[[NSNull null]] = defaultDeserializer;
+		
+		metadataSerializers[[NSNull null]] = defaultSerializer;
+		metadataDeserializers[[NSNull null]] = defaultDeserializer;
+		
 		registeredExtensions = [[NSDictionary alloc] init];
 		registeredMemoryTables = [[NSDictionary alloc] init];
 		
@@ -582,27 +490,6 @@ static int connectionBusyHandler(void *ptr, int count) {
 		
 		maxConnectionPoolCount = DEFAULT_MAX_CONNECTION_POOL_COUNT;
 		connectionPoolLifetime = DEFAULT_CONNECTION_POOL_LIFETIME;
-		
-		YapDatabaseSerializer defaultSerializer     = nil;
-		YapDatabaseDeserializer defaultDeserializer = nil;
-		
-		if (!inObjectSerializer || !inMetadataSerializer)
-			defaultSerializer = [[self class] defaultSerializer];
-		
-		if (!inObjectDeserializer || !inMetadataDeserializer)
-			defaultDeserializer = [[self class] defaultDeserializer];
-		
-		objectSerializer = (YapDatabaseSerializer)[inObjectSerializer copy] ?: defaultSerializer;
-		objectDeserializer = (YapDatabaseDeserializer)[inObjectDeserializer copy] ?: defaultDeserializer;
-		
-		metadataSerializer = (YapDatabaseSerializer)[inMetadataSerializer copy] ?: defaultSerializer;
-		metadataDeserializer = (YapDatabaseDeserializer)[inMetadataDeserializer copy] ?: defaultDeserializer;
-		
-		objectPreSanitizer = (YapDatabasePreSanitizer)[inObjectPreSanitizer copy];
-		objectPostSanitizer = (YapDatabasePostSanitizer)[inObjectPostSanitizer copy];
-		
-		metadataPreSanitizer = (YapDatabasePreSanitizer)[inMetadataPreSanitizer copy];
-		metadataPostSanitizer = (YapDatabasePostSanitizer)[inMetadataPostSanitizer copy];
 		
 		// Mark the queues so we can identify them.
 		// There are several methods whose use is restricted to within a certain queue.
@@ -626,13 +513,13 @@ static int connectionBusyHandler(void *ptr, int count) {
 
 - (void)dealloc
 {
-	YDBLogVerbose(@"Dealloc <%@ %p: databaseName=%@>", [self class], self, [databasePath lastPathComponent]);
+	YDBLogVerbose(@"Dealloc <%@ %p: databaseName=%@>", [self class], self, [databaseURL lastPathComponent]);
 	
-	NSDictionary *userInfo = @{
-		YapDatabasePathKey    : self.databasePath     ?: @"",
-		YapDatabasePathWalKey : self.databasePath_wal ?: @"",
-		YapDatabasePathShmKey : self.databasePath_shm ?: @""
-	};
+	NSMutableDictionary *userInfo = [NSMutableDictionary dictionaryWithCapacity:3];
+	userInfo[YapDatabaseUrlKey]    = self.databaseURL;
+	userInfo[YapDatabaseUrlWalKey] = self.databaseURL_wal;
+	userInfo[YapDatabaseUrlShmKey] = self.databaseURL_shm;
+	
 	NSNotification *notification =
 	  [NSNotification notificationWithName:YapDatabaseClosedNotification
 	                                object:nil // Cannot retain self within dealloc method
@@ -665,7 +552,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 		yap_vfs_shim_unregister(&yap_vfs_shim);
 	}
 	
-	[YapDatabaseManager deregisterDatabaseForPath:databasePath];
+	[YapDatabaseManager deregisterDatabaseForPath:[databaseURL path]];
 	
 #if !OS_OBJECT_USE_OBJC
 	if (internalQueue)
@@ -700,7 +587,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	
 	int flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_NOMUTEX | SQLITE_OPEN_PRIVATECACHE;
     
-	int status = sqlite3_open_v2([databasePath UTF8String], &db, flags, NULL);
+	int status = sqlite3_open_v2([[databaseURL path] UTF8String], &db, flags, NULL);
 	if (status != SQLITE_OK)
 	{
 		// There are a few reasons why the database might not open.
@@ -1461,7 +1348,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 		if ([self respondsToSelector:sel])
 		{
 			YDBLogInfo(@"Upgrading database (%@) from version %d to %d...",
-			          [databasePath lastPathComponent], user_version, new_user_version);
+			          [databaseURL lastPathComponent], user_version, new_user_version);
 			
 			#pragma clang diagnostic push
 			#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
@@ -1472,7 +1359,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 			}
 			else
 			{
-				YDBLogError(@"Error upgrading database (%@)", [databasePath lastPathComponent]);
+				YDBLogError(@"Error upgrading database (%@)", [databaseURL lastPathComponent]);
 				break;
 			}
 		}
@@ -1614,6 +1501,266 @@ static int connectionBusyHandler(void *ptr, int count) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark Serialization
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (void)registerDefaultSerializer:(YapDatabaseSerializer)serializer
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = [NSNull null];
+		objectSerializers[key] = [serializer copy];
+		metadataSerializers[key] = [serializer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerDefaultDeserializer:(YapDatabaseDeserializer)deserializer
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = [NSNull null];
+		objectDeserializers[key] = [deserializer copy];
+		metadataDeserializers[key] = [deserializer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerDefaultPreSanitizer:(nullable YapDatabasePreSanitizer)preSanitizer
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = [NSNull null];
+		objectPreSanitizers[key] = [preSanitizer copy];
+		metadataPreSanitizers[key] = [preSanitizer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerDefaultPostSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = [NSNull null];
+		objectPostSanitizers[key] = [postSanitizer copy];
+		metadataPostSanitizers[key] = [postSanitizer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerSerializer:(YapDatabaseSerializer)serializer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		objectSerializers[key] = [serializer copy];
+		metadataSerializers[key] = [serializer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerDeserializer:(YapDatabaseDeserializer)deserializer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		objectDeserializers[key] = [deserializer copy];
+		metadataDeserializers[key] = [deserializer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerPreSanitizer:(YapDatabasePreSanitizer)preSanitizer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		objectPreSanitizers[key] = [preSanitizer copy];
+		metadataPreSanitizers[key] = [preSanitizer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		objectPostSanitizers[key] = [postSanitizer copy];
+		metadataPostSanitizers[key] = [postSanitizer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerObjectSerializer:(YapDatabaseSerializer)serializer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		objectSerializers[key] = [serializer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerObjectDeserializer:(YapDatabaseDeserializer)deserializer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		objectDeserializers[key] = [deserializer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerObjectPreSanitizer:(YapDatabasePreSanitizer)preSanitizer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		objectPreSanitizers[key] = [preSanitizer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerObjectPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		objectPostSanitizers[key] = [postSanitizer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerMetadataSerializer:(YapDatabaseSerializer)serializer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		metadataSerializers[key] = [serializer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerMetadataDeserializer:(YapDatabaseDeserializer)deserializer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		metadataDeserializers[key] = [deserializer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerMetadataPreSanitizer:(YapDatabasePreSanitizer)preSanitizer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		metadataPreSanitizers[key] = [preSanitizer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (void)registerMetadataPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		id key = collection ?: @"";
+		metadataPostSanitizers[key] = [postSanitizer copy];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+- (YapDatabaseSerializer)objectSerializerForCollection:(nullable NSString *)collection
+{
+	YapDatabaseSerializer result = nil;
+	YAPUnfairLockLock(&serializationLock);
+	{
+		result = objectSerializers[collection ?: @""] ?: objectSerializers[[NSNull null]];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+	return result;
+}
+
+- (YapDatabaseSerializer)metadataSerializerForCollection:(nullable NSString *)collection
+{
+	YapDatabaseSerializer result = nil;
+	YAPUnfairLockLock(&serializationLock);
+	{
+		result = metadataSerializers[collection ?: @""] ?: metadataSerializers[[NSNull null]];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+	return result;
+}
+
+- (YapDatabaseDeserializer)objectDeserializerForCollection:(nullable NSString *)collection
+{
+	YapDatabaseDeserializer result = nil;
+	YAPUnfairLockLock(&serializationLock);
+	{
+		result = objectDeserializers[collection ?: @""] ?: objectDeserializers[[NSNull null]];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+	return result;
+}
+
+- (YapDatabaseDeserializer)metadataDeserializerForCollection:(nullable NSString *)collection
+{
+	YapDatabaseDeserializer result = nil;
+	YAPUnfairLockLock(&serializationLock);
+	{
+		result = metadataDeserializers[collection ?: @""] ?: metadataDeserializers[[NSNull null]];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+	return result;
+}
+
+- (nullable YapDatabasePreSanitizer)objectPreSanitizerForCollection:(nullable NSString *)collection
+{
+	YapDatabasePreSanitizer result = nil;
+	YAPUnfairLockLock(&serializationLock);
+	{
+		result = objectPreSanitizers[collection ?: @""] ?: objectPreSanitizers[[NSNull null]];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+	return result;
+}
+
+- (nullable YapDatabasePreSanitizer)metadataPreSanitizerForCollection:(nullable NSString *)collection
+{
+	YapDatabasePreSanitizer result = nil;
+	YAPUnfairLockLock(&serializationLock);
+	{
+		result = metadataPreSanitizers[collection ?: @""] ?: metadataPreSanitizers[[NSNull null]];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+	return result;
+}
+
+- (nullable YapDatabasePostSanitizer)objectPostSanitizerForCollection:(nullable NSString *)collection
+{
+	YapDatabasePostSanitizer result = nil;
+	YAPUnfairLockLock(&serializationLock);
+	{
+		result = objectPostSanitizers[collection ?: @""] ?: objectPostSanitizers[[NSNull null]];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+	return result;
+}
+
+- (nullable YapDatabasePostSanitizer)metadataPostSanitizerForCollection:(nullable NSString *)collection
+{
+	YapDatabasePostSanitizer result = nil;
+	YAPUnfairLockLock(&serializationLock);
+	{
+		result = metadataPostSanitizers[collection ?: @""] ?: metadataPostSanitizers[[NSNull null]];
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+	return result;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Defaults
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1728,7 +1875,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 			[connectionStates addObject:state];
 			
 			YDBLogVerbose(@"Created new connection(%p) for <%@ %p: databaseName=%@, connectionCount=%lu>",
-			              connection, [self class], self, [databasePath lastPathComponent],
+			              connection, [self class], self, [databaseURL lastPathComponent],
 			              (unsigned long)[connectionStates count]);
 			
 			// Invoke the one-time prepare method, so the connection can perform any needed initialization.
@@ -1763,7 +1910,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 		}
 		
 		YDBLogVerbose(@"Removed connection(%p) from <%@ %p: databaseName=%@, connectionCount=%lu>",
-		              connection, [self class], self, [databasePath lastPathComponent],
+		              connection, [self class], self, [databaseURL lastPathComponent],
 		              (unsigned long)[connectionStates count]);
 		
 	#pragma clang diagnostic pop
