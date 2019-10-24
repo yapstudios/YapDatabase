@@ -30,11 +30,11 @@ NS_ASSUME_NONNULL_BEGIN
  * Keep in mind that, although there can be multiple values for a given key,
  * the same key/value tuple can only be inserted once.
  *
- * Caching:
+ * **Caching**:
  * 
- * When the countLimit is non-zero,
+ * - When the countLimit is non-zero,
  *   this class operates as a cache, enforcing the designed limit, and using eviction when the limit is exceeded.
- * When the countLimit is zero,
+ * - When the countLimit is zero,
  *   this class operates as a generic container (with no limit, and no automatic eviction).
  *
  * Eviction depends entirely on usage.

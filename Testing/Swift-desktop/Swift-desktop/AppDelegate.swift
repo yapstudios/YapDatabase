@@ -22,11 +22,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 		let databaseConnection = database?.newConnection()
 		let uuid = "fobar"
 
-//		databaseConnection?.asyncReadWrite({ (transaction) in
-//
-//			let list = List(uuid: uuid, title: "Groceries")
-//			transaction.setObject(list, forKey: list.uuid, inCollection: kCollection_List)
-//		})
+		databaseConnection?.asyncReadWrite({ (transaction) in
+
+			let list = List(uuid: uuid, title: "Groceries")
+			transaction.setObject(list, forKey: list.uuid, inCollection: kCollection_List)
+		})
 
 		databaseConnection?.asyncRead({ (transaction) in
 

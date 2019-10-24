@@ -21,9 +21,9 @@ NS_ASSUME_NONNULL_BEGIN
  * This leaves only non-main-thread read-only transactions. What's the recommendation for them?
  * You could create a single read-only connection that will be shared by all background tasks.
  * However, since all transactions are serialized via the shared connection,
- * this implies that background task A may have to wait for background task B to finish its read-only transaction
- * before background task A can execute its transaction.
- * And for background tasks, this is likely not the intended result.
+ * this implies that background taskA may have to wait for background taskB to finish its read-only transaction
+ * before background taskA can execute its transaction.
+ * And for background tasks, this is NOT the preferred scenario.
  *
  * The connection pool was designed to increase the performance in these scenarios.
  * It will create connections on demand, up to (but not over) the connectionLimit.

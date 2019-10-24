@@ -7,12 +7,13 @@ NS_ASSUME_NONNULL_BEGIN
  * The query is generally a subset of a full SQL query, as the system can handle various details automatically.
  * 
  * For example:
- *
+ * ```
  * query = [YapDatabaseQuery queryWithFormat:@"WHERE department = ? AND salary >= ?", deptStr, @(minSalary)];
  * [secondaryIndex enumerateKeysAndObjectsMatchingQuery:query
  *                                           usingBlock:^(NSString *collection, NSString *key, id object, BOOL *stop){
  *     ...
  * }];
+ * ```
  *
  * YapDatabaseQuery supports the following types as query parameters:
  * - NSNumber
@@ -22,9 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
  * - NSArray   (of any regular type above)
  * 
  * Array example:
- * 
+ * ```
  * NSArray *departments = [self engineeringDepartments];
  * query = [YapDatabaseQuery queryWithFormat:@"WHERE title = ? AND department IN (?)", @"manager", departments];
+ * ```
  */
 @interface YapDatabaseQuery : NSObject
 

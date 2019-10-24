@@ -19,9 +19,9 @@ custom_categories:
   - YapCache
   - YapCollectionKey
   - YapDatabaseConnectionConfig
-  - YapDatabaseCryptoUtils
+  - YapDatabaseConnectionPool
+  - YapDatabaseConnectionProxy
   - YapDatabaseQuery
-  - YapMurmurHash
   - YapProxyObject
   - YapWhitelistBlacklist
 - name: Extension Protocol
@@ -58,6 +58,85 @@ custom_categories:
   - YapDatabaseFilteredViewConnection
   - YapDatabaseFilteredViewTransaction
   - YapDatabaseViewFiltering
+- name: SearchResultsView
+  children:
+  - YapDatabaseSearchResultsView
+  - YapDatabaseSearchResultsViewOptions
+  - YapDatabaseSearchResultsViewConnection
+  - YapDatabaseSearchResultsViewTransaction
+  - YapDatabaseSearchQueue
+- name: SecondaryIndex
+  children:
+  - YapDatabaseSecondaryIndex
+  - YapDatabaseSecondaryIndexOptions
+  - YapDatabaseSecondaryIndexConnection
+  - YapDatabaseSecondaryIndexTransaction
+  - YapDatabaseSecondaryIndexHandler
+  - YapDatabaseSecondaryIndexSetup
+  - YapDatabaseSecondaryIndexColumn
+- name: Relationship
+  children:
+  - YapDatabaseRelationship
+  - YapDatabaseRelationshipOptions
+  - YapDatabaseRelationshipConnection
+  - YapDatabaseRelationshipTransaction
+  - YapDatabaseRelationshipEdge
+  - YapDatabaseRelationshipNode
+- name: FullTextSearch
+  children:
+  - YapDatabaseFullTextSearch
+  - YapDatabaseFullTextSearchConnection
+  - YapDatabaseFullTextSearchTransaction
+  - YapDatabaseFullTextSearchHandler
+  - YapDatabaseFullTextSearchSnippetOptions
+- name: RTreeIndex
+  children:
+  - YapDatabaseRTreeIndex
+  - YapDatabaseRTreeIndexOptions
+  - YapDatabaseRTreeIndexConnection
+  - YapDatabaseRTreeIndexTransaction
+  - YapDatabaseRTreeIndexHandler
+  - YapDatabaseRTreeIndexSetup
+- name: Hooks
+  children:
+  - YapDatabaseHooks
+  - YapDatabaseHooksConnection
+  - YapDatabaseHooksTransaction
+- name: ActionManager
+  children:
+  - YapDatabaseActionManager
+  - YapDatabaseActionManagerConnection
+  - YapDatabaseActionManagerTransaction
+  - YapActionItem
+  - YapActionable
+  - YapReachability
+- name: CloudKit
+  children:
+  - YapDatabaseCloudKit
+  - YapDatabaseCloudKitOptions
+  - YapDatabaseCloudKitConnection
+  - YapDatabaseCloudKitTransaction
+  - YapDatabaseCloudKitRecordHandler
+  - YDBCKRecord
+  - YDBCKRecordInfo
+  - YDBCKChangeSet
+  - YDBCKMergeInfo
+  - CKRecord(YapDatabaseCloudKit)
+- name: CloudCore
+  children:
+  - YapDatabaseCloudCore
+  - YapDatabaseCloudCoreOptions
+  - YapDatabaseCloudCoreConnection
+  - YapDatabaseCloudCoreTransaction
+  - YapDatabaseCloudCoreOperation
+  - YapDatabaseCloudCorePipeline
+  - YapDatabaseCloudCorePipelineDelegate
+  - YapDatabaseCloudCoreGraph
+- name: CrosssProcessNotification
+  children:
+  - YapDatabaseCrossProcessNotification
+  - YapDatabaseCrossProcessNotificationConnection
+  - YapDatabaseCrossProcessNotificationTransaction
 - name: Notifications
   children:
   - YapDatabaseClosedNotification

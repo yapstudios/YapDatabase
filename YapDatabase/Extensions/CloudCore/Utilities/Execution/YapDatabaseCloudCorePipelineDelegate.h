@@ -7,6 +7,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/**
+ * Every pipeline must have a delegate, which is responsible for performing the operations in the pipeline queue. 
+ */
 @protocol YapDatabaseCloudCorePipelineDelegate
 @required
 

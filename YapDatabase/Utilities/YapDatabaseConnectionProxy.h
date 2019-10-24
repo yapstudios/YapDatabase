@@ -213,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
  * The fetchedCollectionsFilter is useful when you need to delete one or more collections from the database.
  * For example:
  * - you're going to ASYNCHRONOUSLY delete the "foobar" collection from the database
- * - you want to instruct the connectionProxy to act as if it's readOnlyConnection doesn't see
+ * - you want to instruct the connectionProxy to act as if its readOnlyConnection doesn't see
  *   any objects in this collection (even before the ASYNC cleanup transaction completes).
  * - when the cleanup transaction does complete, you instruct the connectionProxy to return to normal.
  *
