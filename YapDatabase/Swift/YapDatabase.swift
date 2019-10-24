@@ -98,6 +98,11 @@ extension YapDatabaseReadTransaction {
 	
 	public func iterateKeysAndObjects<T>(inCollection collection: String?, using block: (String, T, inout Bool) -> Void) {
 		
+		self.iterateKeysAndObjects(inCollection: collection, using: block, filter: nil)
+	}
+	
+	public func iterateKeysAndObjects<T>(inCollection collection: String?, using block: (String, T, inout Bool) -> Void, filter: ((String) -> Bool)?) {
+		
 		let enumBlock = {(key: String, object: Any, outerStop: UnsafeMutablePointer<ObjCBool>) -> Void in
 			
 			if let object = object as? T {
@@ -111,11 +116,35 @@ extension YapDatabaseReadTransaction {
 			}
 		}
 		
-		self.__enumerateKeysAndObjects(inCollection: collection,
-		                                      using: enumBlock)
+		self.__enumerateKeysAndObjects(inCollection: collection, using: enumBlock, withFilter: filter)
+	}
+	
+	public func iterateKeysAndObjectsInAllCollections(_ block: (String, String, Any, inout Bool) -> Void) {
+		
+		self.iterateKeysAndObjectsInAllCollections(block, filter: nil)
+	}
+	
+	public func iterateKeysAndObjectsInAllCollections(_ block: (String, String, Any, inout Bool) -> Void, filter: ((String, String) -> Bool)?) {
+		
+		let enumBlock = {(collection: String, key: String, object: Any, outerStop: UnsafeMutablePointer<ObjCBool>) -> Void in
+			
+			var innerStop = false
+			block(collection, key, object, &innerStop)
+			
+			if innerStop {
+				outerStop.pointee = true
+			}
+		}
+		
+		self.__enumerateKeysAndObjectsInAllCollections(enumBlock, withFilter: filter)
 	}
 	
 	public func iterateKeysAndMetadata<T>(inCollection collection: String?, using block: (String, T?, inout Bool) -> Void) {
+		
+		self.iterateKeysAndMetadata(inCollection: collection, using: block, filter: nil)
+	}
+	
+	public func iterateKeysAndMetadata<T>(inCollection collection: String?, using block: (String, T?, inout Bool) -> Void, filter: ((String) -> Bool)?) {
 		
 		let enumBlock = {(key: String, metadata: Any, outerStop: UnsafeMutablePointer<ObjCBool>) -> Void in
 			
@@ -127,11 +156,35 @@ extension YapDatabaseReadTransaction {
 			}
 		}
 		
-		self.__enumerateKeysAndMetadata(inCollection: collection,
-		                                       using: enumBlock)
+		self.__enumerateKeysAndMetadata(inCollection: collection, using: enumBlock, withFilter: filter)
+	}
+	
+	public func iterateKeysAndMetadataInAllCollections(_ block: (String, String, Any?, inout Bool) -> Void) {
+		
+		self.iterateKeysAndMetadataInAllCollections(block, filter: nil)
+	}
+	
+	public func iterateKeysAndMetadataInAllCollections(_ block: (String, String, Any?, inout Bool) -> Void, filter: ((String, String) -> Bool)?) {
+		
+		let enumBlock = {(collection: String, key: String, metadata: Any, outerStop: UnsafeMutablePointer<ObjCBool>) -> Void in
+			
+			var innerStop = false
+			block(collection, key, metadata, &innerStop)
+			
+			if innerStop {
+				outerStop.pointee = true
+			}
+		}
+		
+		self.__enumerateKeysAndMetadataInAllCollections(enumBlock, withFilter: filter)
 	}
 	
 	public func iterateRows<O, M>(inCollection collection: String?, using block: (String, O, M?, inout Bool) -> Void) {
+		
+		self.iterateRows(inCollection: collection, using: block, filter: nil)
+	}
+	
+	public func iterateRows<O, M>(inCollection collection: String?, using block: (String, O, M?, inout Bool) -> Void, filter: ((String) -> Bool)?) {
 		
 		let enumBlock = {(key: String, object: Any, metadata: Any, outerStop: UnsafeMutablePointer<ObjCBool>) -> Void in
 			
@@ -146,7 +199,26 @@ extension YapDatabaseReadTransaction {
 			}
 		}
 		
-		self.__enumerateRows(inCollection: collection,
-		                            using: enumBlock)
+		self.__enumerateRows(inCollection: collection, using: enumBlock, withFilter: filter)
+	}
+	
+	public func iterateRowsInAllCollections(_ block: (String, String, Any, Any?, inout Bool) -> Void) {
+		
+		self.iterateRowsInAllCollections(block, filter: nil)
+	}
+	
+	public func iterateRowsInAllCollections(_ block: (String, String, Any, Any?, inout Bool) -> Void, filter: ((String, String) -> Bool)?) {
+		
+		let enumBlock = {(collection: String, key: String, object: Any, metadata: Any?, outerStop: UnsafeMutablePointer<ObjCBool>) -> Void in
+			
+			var innerStop = false
+			block(collection, key, object, metadata, &innerStop)
+			
+			if innerStop {
+				outerStop.pointee = true
+			}
+		}
+		
+		self.__enumerateRowsInAllCollections(enumBlock, withFilter: filter)
 	}
 }

@@ -26,4 +26,25 @@
 #import "YapProxyObject.h"
 #import "YapWhitelistBlacklist.h"
 
+#import "YapDatabaseConnectionPool.h"
 
+#import "YapDatabaseView.h"
+#import "YapDatabaseViewConnection.h"
+#import "YapDatabaseViewTransaction.h"
+#import "YapDatabaseViewChange.h"
+#import "YapDatabaseViewMappings.h"
+#import "YapDatabaseViewRangeOptions.h"
+
+#import "YapDatabaseAutoView.h"
+#import "YapDatabaseAutoViewConnection.h"
+#import "YapDatabaseAutoViewTransaction.h"
+#import "YapDatabaseViewTypes.h"
+
+#import "YapDatabaseManualView.h"
+#import "YapDatabaseManualViewConnection.h"
+#import "YapDatabaseManualViewTransaction.h"
+
+#import "YapDatabaseFilteredView.h"
+#import "YapDatabaseFilteredViewConnection.h"
+#import "YapDatabaseFilteredViewTransaction.h"
+#import "YapDatabaseFilteredViewTypes.h"

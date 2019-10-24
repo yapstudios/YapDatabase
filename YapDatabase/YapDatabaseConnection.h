@@ -8,31 +8,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/**
- * Welcome to YapDatabase!
- *
- * The project page has a wealth of documentation if you have any questions.
- * https://github.com/yapstudios/YapDatabase
- *
- * If you're new to the project you may want to visit the wiki.
- * https://github.com/yapstudios/YapDatabase/wiki
- *
- * From a single YapDatabase instance you can create multiple connections.
- * Each connection is thread-safe and may be used concurrently with other connections.
- * 
- * Multiple connections can simultaneously read from the database.
- * Multiple connections can simultaneously read from the database while another connection is modifying the database.
- * For example, the main thread could be reading from the database via connection A,
- * while a background thread is writing to the database via connection B.
- *
- * However, only a single connection may be writing to the database at any one time.
- * This is an inherent limitation of the underlying sqlite database.
- *
- * A connection instance is thread-safe, and operates by serializing access to itself.
- * Thus you can share a single connection between multiple threads.
- * But for conncurrent access between multiple threads you must use multiple connections.
- */
-
 typedef NS_ENUM(NSInteger, YapDatabasePolicy) {
 	YapDatabasePolicyContainment = 0,
 	YapDatabasePolicyShare       = 1,
@@ -67,25 +42,71 @@ typedef NS_OPTIONS(NSUInteger, YapDatabasePermittedTransactions) {
 };
 #endif
 
+/**
+ * Specifies what YapDatabase should do when the OS broadcasts a low-memory warning to the app.
+ */
 typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
+	/**
+	 * Flushes nothing from memory.
+	 */
 	YapDatabaseConnectionFlushMemoryFlags_None       = 0,
+	
+	/**
+	 * Flushes the caches (objectCache & metadataCache) from memory.
+	 */
 	YapDatabaseConnectionFlushMemoryFlags_Caches     = 1 << 0,
+	
+	/**
+	 * Flushes pre-complied SQL statements from memory.
+	 */
 	YapDatabaseConnectionFlushMemoryFlags_Statements = 1 << 1,
+	
+	/**
+	 * Flushes internal caches from memory.
+	 * This is primarily an instruction for extensions, telling them to flush whatever they can.
+	 */
 	YapDatabaseConnectionFlushMemoryFlags_Internal   = 1 << 2,
+	
+	/**
+	 * Flushes everything possible. (All of the other options combined.)
+	 */
 	YapDatabaseConnectionFlushMemoryFlags_All        = (YapDatabaseConnectionFlushMemoryFlags_Caches     |
 	                                                    YapDatabaseConnectionFlushMemoryFlags_Statements |
 	                                                    YapDatabaseConnectionFlushMemoryFlags_Internal   ),
 };
 
 
-
+/**
+ * Welcome to YapDatabase!
+ *
+ * The project page has a wealth of documentation if you have any questions.
+ * https://github.com/yapstudios/YapDatabase
+ *
+ * If you're new to the project you may want to visit the wiki.
+ * https://github.com/yapstudios/YapDatabase/wiki
+ *
+ * From a single YapDatabase instance you can create multiple connections.
+ * Each connection is thread-safe and may be used concurrently with other connections.
+ *
+ * Multiple connections can simultaneously read from the database.
+ * Multiple connections can simultaneously read from the database while another connection is modifying the database.
+ * For example, the main thread could be reading from the database via connectionA,
+ * while a background thread is writing to the database via connectionB.
+ *
+ * However, only a single connection may be writing to the database at any one time.
+ * This is an inherent limitation of the underlying sqlite database.
+ *
+ * A connection instance is thread-safe, and operates by serializing access to itself.
+ * Thus you can share a single connection between multiple threads.
+ * But for conncurrent access between multiple threads you must use multiple connections.
+ */
 @interface YapDatabaseConnection : NSObject
 
 /**
  * A database connection maintains a strong reference to its parent.
  *
  * This is to enforce the following core architecture rule:
- * A database instance cannot be deallocated if a corresponding connection is stil alive.
+ * **A database instance cannot be deallocated if a corresponding connection is stil alive.**
  */
 @property (nonatomic, strong, readonly) YapDatabase *database;
 
@@ -112,16 +133,33 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * By default the objectCache is enabled and has a limit of 250.
  *
- * New connections will inherit the default values set by the parent database object.
+ * New connections will inherit the default values set by the parent database via `-[YapDatabase connectionDefaults]`.
  * Thus the default values for new connection instances are configurable.
- * 
- * @see YapDatabase defaultObjectCacheEnabled
- * @see YapDatabase defaultObjectCacheLimit
  * 
  * Also see the wiki for a bit more info:
  * https://github.com/yapstudios/YapDatabase/wiki/Cache
  */
 @property (atomic, assign, readwrite) BOOL objectCacheEnabled;
+
+/**
+ * Each database connection maintains an independent cache of deserialized objects.
+ * This reduces disk IO and the overhead of the deserialization process.
+ * You can optionally configure the cache size, or disable it completely.
+ *
+ * The cache is properly kept in sync with the atomic snapshot architecture of the database system.
+ *
+ * You can configure the objectCache at any time, including within readBlocks or readWriteBlocks.
+ * To disable the object cache entirely, set objectCacheEnabled to NO.
+ * To use an inifinite cache size, set the objectCacheLimit to zero.
+ *
+ * By default the objectCache is enabled and has a limit of 250.
+ *
+ * New connections will inherit the default values set by the parent database via `-[YapDatabase connectionDefaults]`.
+ * Thus the default values for new connection instances are configurable.
+ *
+ * Also see the wiki for a bit more info:
+ * https://github.com/yapstudios/YapDatabase/wiki/Cache
+ */
 @property (atomic, assign, readwrite) NSUInteger objectCacheLimit;
 
 /**
@@ -137,16 +175,33 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * By default the metadataCache is enabled and has a limit of 250.
  * 
- * New connections will inherit the default values set by the parent database object.
+ * New connections will inherit the default values set by the parent database via `-[YapDatabase connectionDefaults]`.
  * Thus the default values for new connection instances are configurable.
- *
- * @see YapDatabase defaultMetadataCacheEnabled
- * @see YapDatabase defaultMetadataCacheLimit
  *
  * Also see the wiki for a bit more info:
  * https://github.com/yapstudios/YapDatabase/wiki/Cache
  */
 @property (atomic, assign, readwrite) BOOL metadataCacheEnabled;
+
+/**
+ * Each database connection maintains an independent cache of deserialized metadata.
+ * This reduces disk IO and the overhead of the deserialization process.
+ * You can optionally configure the cache size, or disable it completely.
+ *
+ * The cache is properly kept in sync with the atomic snapshot architecture of the database system.
+ *
+ * You can configure the metadataCache at any time, including within readBlocks or readWriteBlocks.
+ * To disable the metadata cache entirely, set metadataCacheEnabled to NO.
+ * To use an inifinite cache size, set the metadataCacheLimit to zero.
+ *
+ * By default the metadataCache is enabled and has a limit of 250.
+ *
+ * New connections will inherit the default values set by the parent database via `-[YapDatabase connectionDefaults]`.
+ * Thus the default values for new connection instances are configurable.
+ *
+ * Also see the wiki for a bit more info:
+ * https://github.com/yapstudios/YapDatabase/wiki/Cache
+ */
 @property (atomic, assign, readwrite) NSUInteger metadataCacheLimit;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,24 +210,37 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
 
 /**
  * YapDatabase can use various optimizations to reduce overhead and memory footprint.
- * The policy properties allow you to opt in to these optimizations when ready.
+ * The policy properties allow you to opt-in to these optimizations when ready.
  *
  * The default value is YapDatabasePolicyContainment.
  *
  * It is the slowest, but also the safest policy.
  * The other policies require a little more work, and little deeper understanding.
  *
- * These optimizations are discussed extensively in the wiki article "Performance Pro":
- * https://github.com/yapstudios/YapDatabase/wiki/Performance-Pro
+ * These optimizations are discussed extensively in the wiki article:
+ * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
  */
 @property (atomic, assign, readwrite) YapDatabasePolicy objectPolicy;
+
+/**
+ * YapDatabase can use various optimizations to reduce overhead and memory footprint.
+ * The policy properties allow you to opt-in to these optimizations when ready.
+ *
+ * The default value is YapDatabasePolicyContainment.
+ *
+ * It is the slowest, but also the safest policy.
+ * The other policies require a little more work, and little deeper understanding.
+ *
+ * These optimizations are discussed extensively in the wiki article:
+ * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
+ */
 @property (atomic, assign, readwrite) YapDatabasePolicy metadataPolicy;
 
 /**
  * When architecting your application, you will likely create a few dedicated connections for particular uses.
  * This property allows you to enforce only allowed transaction types for your dedicated connections.
  *
- * --- Example 1: ---
+ * **Example 1**:
  *
  * You have a connection designed for use on the main thread which uses a longLivedReadTransaction.
  * Ideally this connection has the following constraints:
@@ -186,32 +254,34 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * using the connection on a background thread.
  * 
  * To enforce this, you can do something like this within your app:
- *
+ * ```
  * uiDatabaseConnection.permittedTransactions = YDB_SyncReadTransaction | YDB_MainThreadOnly;
- * [uiDatabaseConnection beginLongLivedReadTransaction];
+ * uiDatabaseConnection.beginLongLivedReadTransaction()
+ * ```
  * 
- * --- Example 2: ---
+ * **Example 2:**
  * 
  * You have a dedicated connection designed for read-only operations in background tasks.
  * And you want to make sure that no read-write transactions are accidentally invoked on this connection,
  * as that would slow your background tasks (which are designed to asynchronous, but generally very fast).
  * 
  * To enforce this, you can do something like this within your app:
- * 
+ * ```
  * roDatabaseConnection.permittedTransactions = YDB_AnyReadTransaction;
- * 
- * --- Example 3: ---
+ * ```
+ *
+ * **Example 3:**
  * 
  * You have an internal databaseConnection within some highly asynchronous manager class.
  * You've designed just about every method to be asynchronous,
  * and you want to make sure you always remember to use asynchronous transactions.
  * 
  * So, for debugging purposes, you do something like this:
- * 
+ * ```
  * #if DEBUG
  * databaseConnection.permittedTransactions = YBD_AnyAsyncTransaction;
  * #endif
- *
+ * ```
  * 
  * The default value is YDB_AnyTransaction.
  */
@@ -225,6 +295,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
 
 /**
  * The snapshot number is the internal synchronization state primitive for the connection.
+ *
  * It's generally only useful for database internals,
  * but it can sometimes come in handy for general debugging of your app.
  *
@@ -240,38 +311,41 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * Example:
  * 
- * YapDatabase *database = [[YapDatabase alloc] init...];
- * database.snapshot; // returns zero
+ * ```
+ * let database = YapDatabase(url: url)
+ * let _ = database.snapshot // returns zero
  *
- * YapDatabaseConnection *connection1 = [database newConnection];
- * YapDatabaseConnection *connection2 = [database newConnection];
- * 
- * connection1.snapshot; // returns zero
- * connection2.snapshot; // returns zero
- * 
- * [connection1 readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction){
- *     [transaction setObject:objectA forKey:keyA];
- * }];
- * 
- * database.snapshot;    // returns 1
- * connection1.snapshot; // returns 1
- * connection2.snapshot; // returns 1
- * 
- * [connection1 asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction){
- *     [transaction setObject:objectB forKey:keyB];
- *     [NSThread sleepForTimeInterval:1.0]; // sleep for 1 second
- *     
- *     connection1.snapshot; // returns 1 (we know it will turn into 2 once the transaction completes)
- * } completion:^{
- *     
+ * let connection1 = database.newConnection()
+ * let connection2 = database.newConnection()
+ *
+ * let _ = connection1.snapshot // returns zero
+ * let _ = connection2.snapshot // returns zero
+ *
+ * connection1.readWrite {(transaction) in
+ *    transaction.setObject(objectA, forKey:keyA, inCollection:nil)
+ * }
+ *
+ * let _ = database.snapshot;    // returns 1
+ * let _ = connection1.snapshot; // returns 1
+ * let _ = connection2.snapshot; // returns 1
+ *
+ * connection1.asyncReadWrite({ (transaction) in
+ *    transaction.setObject(objectB, forKey:keyB, inCollection:nil)
+ *    Thread.sleep(forTimeInterval: 1.0) // sleep for 1 second
+ *
+ *    let _ = connection1.snapshot // returns 1 (we know it will turn into 2 once the transaction completes)
+ *
+ * }, completionBlock: {
+ *
  *     connection1.snapshot; // returns 2
- * }];
- * 
- * [connection2 asyncReadWithBlock:^(YapDatabaseReadTransaction *transaction){
- *     [NSThread sleepForTimeInterval:5.0]; // sleep for 5 seconds
- * 
- *     connection2.snapshot; // returns 1. See why?
- * }];
+ * })
+ *
+ * connection2.asyncRead {(transaction) in
+ *    Thread.sleep(forTimeInterval: 5.0) // sleep for 5 seconds
+ *
+ *    let _ = connection2.snapshot // returns 1. Understand why? See below.
+ * }
+ * ```
  *
  * It's because connection2 started its transaction when the database was in snapshot 1.
  * Thus, for the duration of its transaction, the database remains in that state.
@@ -293,7 +367,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * it's still considered "pending" since it hasn't completed yet.
  *
  * This is a generalized way to estimate the load on a connection,
- * and can be used for load balancing, such as done by YapDatabaseConnectionPool.
+ * and can be used for load balancing, such as done by `YapDatabaseConnectionPool`.
  */
 @property (atomic, assign, readonly) uint64_t pendingTransactionCount;
 
@@ -440,8 +514,20 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * https://github.com/yapstudios/YapDatabase/wiki/LongLivedReadTransactions
  */
 - (NSArray<NSNotification *> *)beginLongLivedReadTransaction;
+
+/**
+ * Invoke this method to start a long-lived read-only transaction.
+ * This allows you to effectively create a stable state for the connection.
+ * This is most often used for connections that service the main thread for UI data.
+ *
+ * For a complete discussion, please see the wiki page:
+ * https://github.com/yapstudios/YapDatabase/wiki/LongLivedReadTransactions
+ */
 - (NSArray<NSNotification *> *)endLongLivedReadTransaction;
 
+/**
+ * Returns YES if `beginLongLivedReadTransaction` has been called, and the transaction is still active.
+ */
 - (BOOL)isInLongLivedReadTransaction;
 
 /**
@@ -456,10 +542,26 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * For a complete discussion, please see the wiki page:
  * https://github.com/yapstudios/YapDatabase/wiki/LongLivedReadTransactions
  *
- * In debug mode (#if DEBUG), these exceptions are turned ON by default.
- * In non-debug mode (#if !DEBUG), these exceptions are turned OFF by default.
+ * In debug mode (`#if DEBUG`), these exceptions are turned ON by default.
+ * In non-debug mode (`#if !DEBUG`), these exceptions are turned OFF by default.
  */
 - (void)enableExceptionsForImplicitlyEndingLongLivedReadTransaction;
+
+/**
+ * A long-lived read-only transaction is most often setup on a connection that is designed to be read-only.
+ * But sometimes we forget, and a read-write transaction gets added that uses the read-only connection.
+ * This will implicitly end the long-lived read-only transaction. Oops.
+ *
+ * This is a bug waiting to happen.
+ * And when it does happen, it will be one of those bugs that's nearly impossible to reproduce.
+ * So its better to have an early warning system to help you fix the bug before it occurs.
+ *
+ * For a complete discussion, please see the wiki page:
+ * https://github.com/yapstudios/YapDatabase/wiki/LongLivedReadTransactions
+ *
+ * In debug mode (`#if DEBUG`), these exceptions are turned ON by default.
+ * In non-debug mode (`#if !DEBUG`), these exceptions are turned OFF by default.
+ */
 - (void)disableExceptionsForImplicitlyEndingLongLivedReadTransaction;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -579,18 +681,21 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
 /**
  * Creates or fetches the extension with the given name.
  * If this connection has not yet initialized the proper extension connection, it is done automatically.
- * 
- * @return
- *     A subclass of YapDatabaseExtensionConnection,
- *     according to the type of extension registered under the given name.
  *
  * One must register an extension with the database before it can be accessed from within connections or transactions.
  * After registration everything works automatically using just the registered extension name.
- * 
- * @see YapDatabase registerExtension:withName:
+ *
+ * @see `-[YapDatabase registerExtension:withName:]`
+ *
+ * @return A subclass of YapDatabaseExtensionConnection,
+ *         according to the type of extension registered under the given name.
  */
 - (__kindof YapDatabaseExtensionConnection *)extension:(NSString *)extensionName;
-- (__kindof YapDatabaseExtensionConnection *)ext:(NSString *)extensionName; // <-- Shorthand (same as extension: method)
+
+/**
+ * Shorthand for `-[YapDatabaseConnection extension:]`
+ */
+- (__kindof YapDatabaseExtensionConnection *)ext:(NSString *)extensionName;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Memory
@@ -602,21 +707,21 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * Depending upon how often you use the database connection,
  * you may want to be more or less aggressive on how much stuff you flush.
  *
- * YapDatabaseConnectionFlushMemoryFlags_None:
- *     No-op. Doesn't flush anything.
+ * - **YapDatabaseConnectionFlushMemoryFlags_None**<br/>
+ *   No-op. Doesn't flush anything.
  * 
- * YapDatabaseConnectionFlushMemoryFlags_Caches:
- *     Flushes all caches, including the object cache and metadata cache.
+ * - **YapDatabaseConnectionFlushMemoryFlags_Caches**<br/>
+ *   Flushes all caches, including the object cache and metadata cache.
  * 
- * YapDatabaseConnectionFlushMemoryFlags_Statements:
- *     Flushes all pre-compiled sqlite statements.
+ * - **YapDatabaseConnectionFlushMemoryFlags_Statements**<br/>
+ *   Flushes all pre-compiled sqlite statements.
  * 
- * YapDatabaseConnectionFlushMemoryFlags_Internal
- *     Flushes internal memory used by sqlite instance via sqlite_db_release_memory.
- *     Generally this means cached database pages.
+ * - **YapDatabaseConnectionFlushMemoryFlags_Internal**<br/>
+ *   Flushes internal memory used by sqlite instance via sqlite_db_release_memory.
+ *   Generally this means cached database pages.
  * 
- * YapDatabaseConnectionFlushMemoryFlags_All:
- *     Full flush of everything (caches, statements, internal)
+ * - **YapDatabaseConnectionFlushMemoryFlags_All**<br/>
+ *   Full flush of everything (caches, statements, internal)
  */
 - (void)flushMemoryWithFlags:(YapDatabaseConnectionFlushMemoryFlags)flags;
 
@@ -627,7 +732,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * 
  * The default value is YapDatabaseConnectionFlushMemoryFlags_All.
  * 
- * @see flushMemoryWithFlags:
+ * @see `-[YapDatabaseConnection flushMemoryWithFlags:]`
  */
 @property (atomic, assign, readwrite) YapDatabaseConnectionFlushMemoryFlags autoFlushMemoryFlags;
 #endif

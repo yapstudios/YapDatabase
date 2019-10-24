@@ -29,5 +29,39 @@ custom_categories:
   - YapDatabaseExtension
   - YapDatabaseExtensionConnection
   - YapDatabaseExtensionTransaction
+- name: View
+  children:
+  - YapDatabaseView
+  - YapDatabaseViewOptions
+  - YapDatabaseViewConnection
+  - YapDatabaseViewTransaction
+  - YapDatabaseViewMappings
+  - YapDatabaseViewRowChange
+  - YapDatabaseViewSectionChange
+  - YapDatabaseViewRangeOptions
+- name: AutoView
+  children:
+  - YapDatabaseAutoView
+  - YapDatabaseAutoViewConnection
+  - YapDatabaseAutoViewTransaction
+  - YapDatabaseViewGrouping
+  - YapDatabaseViewSorting
+  - YapDatabaseViewFind
+- name: ManualView
+  children:
+  - YapDatabaseManualView
+  - YapDatabaseManualViewConnection
+  - YapDatabaseManualViewTransaction
+- name: FilteredView
+  children:
+  - YapDatabaseFilteredView
+  - YapDatabaseFilteredViewConnection
+  - YapDatabaseFilteredViewTransaction
+  - YapDatabaseViewFiltering
+- name: Notifications
+  children:
+  - YapDatabaseClosedNotification
+  - YapDatabaseModifiedExternallyNotification
+  - YapDatabaseModifiedNotification
 exclude:
 - /*/Internal/*
