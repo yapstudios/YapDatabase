@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Core  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/objc/Section/Core" class="dashAnchor"></a>
+
+    <a title="Core  Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="index.html">
+          YapDatabase Docs
+        </a>
+         (53% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="index.html">YapDatabase Reference</a>
+      <img class="carat" src="img/carat.png" />
+      Core  Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Core.html">Core</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabase.html">YapDatabase</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseOptions.html">YapDatabaseOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseConnection.html">YapDatabaseConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseReadTransaction.html">YapDatabaseReadTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseReadWriteTransaction.html">YapDatabaseReadWriteTransaction</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Utilities.html">Utilities</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapBidirectionalCache.html">YapBidirectionalCache</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapCache.html">YapCache</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapCollectionKey.html">YapCollectionKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseConnectionConfig.html">YapDatabaseConnectionConfig</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseConnectionPool.html">YapDatabaseConnectionPool</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseConnectionProxy.html">YapDatabaseConnectionProxy</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseQuery.html">YapDatabaseQuery</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapProxyObject.html">YapProxyObject</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapWhitelistBlacklist.html">YapWhitelistBlacklist</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Extension%20Protocol.html">Extension Protocol</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseExtension.html">YapDatabaseExtension</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extension%20Protocol.html#/c:objc(cs)YapDatabaseExtensionConnection">YapDatabaseExtensionConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extension%20Protocol.html#/c:objc(cs)YapDatabaseExtensionTransaction">YapDatabaseExtensionTransaction</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="View.html">View</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseView.html">YapDatabaseView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewOptions.html">YapDatabaseViewOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewConnection.html">YapDatabaseViewConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewTransaction.html">YapDatabaseViewTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewMappings.html">YapDatabaseViewMappings</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewRowChange.html">YapDatabaseViewRowChange</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewSectionChange.html">YapDatabaseViewSectionChange</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewRangeOptions.html">YapDatabaseViewRangeOptions</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="AutoView.html">AutoView</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseAutoView.html">YapDatabaseAutoView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseAutoViewConnection.html">YapDatabaseAutoViewConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseAutoViewTransaction.html">YapDatabaseAutoViewTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewGrouping.html">YapDatabaseViewGrouping</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewSorting.html">YapDatabaseViewSorting</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewFind.html">YapDatabaseViewFind</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="ManualView.html">ManualView</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseManualView.html">YapDatabaseManualView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseManualViewConnection.html">YapDatabaseManualViewConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseManualViewTransaction.html">YapDatabaseManualViewTransaction</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="FilteredView.html">FilteredView</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseFilteredView.html">YapDatabaseFilteredView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseFilteredViewConnection.html">YapDatabaseFilteredViewConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseFilteredViewTransaction.html">YapDatabaseFilteredViewTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseViewFiltering.html">YapDatabaseViewFiltering</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="SearchResultsView.html">SearchResultsView</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSearchResultsView.html">YapDatabaseSearchResultsView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSearchResultsViewOptions.html">YapDatabaseSearchResultsViewOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSearchResultsViewConnection.html">YapDatabaseSearchResultsViewConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSearchResultsViewTransaction.html">YapDatabaseSearchResultsViewTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSearchQueue.html">YapDatabaseSearchQueue</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="SecondaryIndex.html">SecondaryIndex</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSecondaryIndex.html">YapDatabaseSecondaryIndex</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSecondaryIndexOptions.html">YapDatabaseSecondaryIndexOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSecondaryIndexConnection.html">YapDatabaseSecondaryIndexConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSecondaryIndexTransaction.html">YapDatabaseSecondaryIndexTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSecondaryIndexHandler.html">YapDatabaseSecondaryIndexHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSecondaryIndexSetup.html">YapDatabaseSecondaryIndexSetup</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseSecondaryIndexColumn.html">YapDatabaseSecondaryIndexColumn</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Relationship.html">Relationship</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRelationship.html">YapDatabaseRelationship</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRelationshipOptions.html">YapDatabaseRelationshipOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRelationshipConnection.html">YapDatabaseRelationshipConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRelationshipTransaction.html">YapDatabaseRelationshipTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRelationshipEdge.html">YapDatabaseRelationshipEdge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/YapDatabaseRelationshipNode.html">YapDatabaseRelationshipNode</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="FullTextSearch.html">FullTextSearch</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseFullTextSearch.html">YapDatabaseFullTextSearch</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseFullTextSearchConnection.html">YapDatabaseFullTextSearchConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseFullTextSearchTransaction.html">YapDatabaseFullTextSearchTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseFullTextSearchHandler.html">YapDatabaseFullTextSearchHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseFullTextSearchSnippetOptions.html">YapDatabaseFullTextSearchSnippetOptions</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="RTreeIndex.html">RTreeIndex</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRTreeIndex.html">YapDatabaseRTreeIndex</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRTreeIndexOptions.html">YapDatabaseRTreeIndexOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRTreeIndexConnection.html">YapDatabaseRTreeIndexConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRTreeIndexTransaction.html">YapDatabaseRTreeIndexTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRTreeIndexHandler.html">YapDatabaseRTreeIndexHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseRTreeIndexSetup.html">YapDatabaseRTreeIndexSetup</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Hooks.html">Hooks</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseHooks.html">YapDatabaseHooks</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseHooksConnection.html">YapDatabaseHooksConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Hooks.html#/c:objc(cs)YapDatabaseHooksTransaction">YapDatabaseHooksTransaction</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="ActionManager.html">ActionManager</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseActionManager.html">YapDatabaseActionManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="ActionManager.html#/c:objc(cs)YapDatabaseActionManagerConnection">YapDatabaseActionManagerConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="ActionManager.html#/c:objc(cs)YapDatabaseActionManagerTransaction">YapDatabaseActionManagerTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapActionItem.html">YapActionItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/YapActionable.html">YapActionable</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapReachability.html">YapReachability</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="CloudKit.html">CloudKit</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudKit.html">YapDatabaseCloudKit</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudKitOptions.html">YapDatabaseCloudKitOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudKitConnection.html">YapDatabaseCloudKitConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudKitTransaction.html">YapDatabaseCloudKitTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudKitRecordHandler.html">YapDatabaseCloudKitRecordHandler</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YDBCKRecord.html">YDBCKRecord</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YDBCKRecordInfo.html">YDBCKRecordInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YDBCKChangeSet.html">YDBCKChangeSet</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YDBCKMergeInfo.html">YDBCKMergeInfo</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Categories/CKRecord%28YapDatabaseCloudKit%29.html">CKRecord(YapDatabaseCloudKit)</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="CloudCore.html">CloudCore</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudCore.html">YapDatabaseCloudCore</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudCoreOptions.html">YapDatabaseCloudCoreOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudCoreConnection.html">YapDatabaseCloudCoreConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudCoreTransaction.html">YapDatabaseCloudCoreTransaction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudCoreOperation.html">YapDatabaseCloudCoreOperation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCloudCorePipeline.html">YapDatabaseCloudCorePipeline</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/YapDatabaseCloudCorePipelineDelegate.html">YapDatabaseCloudCorePipelineDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="CloudCore.html#/c:objc(cs)YapDatabaseCloudCoreGraph">YapDatabaseCloudCoreGraph</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="CrosssProcessNotification.html">CrosssProcessNotification</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseCrossProcessNotification.html">YapDatabaseCrossProcessNotification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="CrosssProcessNotification.html#/c:objc(cs)YapDatabaseCrossProcessNotificationConnection">YapDatabaseCrossProcessNotificationConnection</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="CrosssProcessNotification.html#/c:objc(cs)YapDatabaseCrossProcessNotificationTransaction">YapDatabaseCrossProcessNotificationTransaction</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Notifications.html">Notifications</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Notifications.html#/c:@YapDatabaseClosedNotification">YapDatabaseClosedNotification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Notifications.html#/c:@YapDatabaseModifiedExternallyNotification">YapDatabaseModifiedExternallyNotification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Notifications.html#/c:@YapDatabaseModifiedNotification">YapDatabaseModifiedNotification</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Other%20Constants.html">Other Constants</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YDBCloudCorePipelineActiveStatusChangedNotification">YDBCloudCorePipelineActiveStatusChangedNotification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YDBCloudCorePipelineQueueChangedKey_addedOperationUUIDs">YDBCloudCorePipelineQueueChangedKey_addedOperationUUIDs</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YDBCloudCorePipelineQueueChangedKey_insertedOperationUUIDs">YDBCloudCorePipelineQueueChangedKey_insertedOperationUUIDs</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YDBCloudCorePipelineQueueChangedKey_modifiedOperationUUIDs">YDBCloudCorePipelineQueueChangedKey_modifiedOperationUUIDs</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YDBCloudCorePipelineQueueChangedKey_removedOperationUUIDs">YDBCloudCorePipelineQueueChangedKey_removedOperationUUIDs</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YDBCloudCorePipelineQueueChangedNotification">YDBCloudCorePipelineQueueChangedNotification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YDBCloudCorePipelineSuspendCountChangedNotification">YDBCloudCorePipelineSuspendCountChangedNotification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseAllKeysRemovedKey">YapDatabaseAllKeysRemovedKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseCloudCoreDefaultPipelineName">YapDatabaseCloudCoreDefaultPipelineName</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseCloudKitInFlightChangeSetChangedNotification">YapDatabaseCloudKitInFlightChangeSetChangedNotification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseCloudKitSuspendCountChangedNotification">YapDatabaseCloudKitSuspendCountChangedNotification</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseConnectionKey">YapDatabaseConnectionKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseCustomKey">YapDatabaseCustomKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseExtensionsKey">YapDatabaseExtensionsKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseFullTextSearchFTS3Version">YapDatabaseFullTextSearchFTS3Version</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseFullTextSearchFTS4Version">YapDatabaseFullTextSearchFTS4Version</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseFullTextSearchFTS5Version">YapDatabaseFullTextSearchFTS5Version</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseInsertedKeysKey">YapDatabaseInsertedKeysKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseMetadataChangesKey">YapDatabaseMetadataChangesKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseModifiedExternallyKey">YapDatabaseModifiedExternallyKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseObjectChangesKey">YapDatabaseObjectChangesKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseRemovedCollectionsKey">YapDatabaseRemovedCollectionsKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseRemovedKeysKey">YapDatabaseRemovedKeysKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseSnapshotKey">YapDatabaseSnapshotKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseUrlKey">YapDatabaseUrlKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseUrlShmKey">YapDatabaseUrlShmKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseUrlWalKey">YapDatabaseUrlWalKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@YapDatabaseViewChangesKey">YapDatabaseViewChangesKey</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@kYapBidirectionalCacheDefaultCallBacks">kYapBidirectionalCacheDefaultCallBacks</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Constants.html#/c:@kYapReachabilityChangedNotification">kYapReachabilityChangedNotification</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Other%20Enums.html">Other Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDBCloudCoreOperationStatus.html">YDBCloudCoreOperationStatus</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDBCloudCorePipelineAlgorithm.html">YDBCloudCorePipelineAlgorithm</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDB_NodeDeleteRules.html">YDB_NodeDeleteRules</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDB_NotifyReason.html">YDB_NotifyReason</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseBlockInvoke.html">YapDatabaseBlockInvoke</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseBlockType.html">YapDatabaseBlockType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseConnectionFlushMemoryFlags.html">YapDatabaseConnectionFlushMemoryFlags</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseCorruptAction.html">YapDatabaseCorruptAction</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseHooksBitMask.html">YapDatabaseHooksBitMask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabasePolicy.html">YapDatabasePolicy</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabasePragmaSynchronous.html">YapDatabasePragmaSynchronous</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseSecondaryIndexType.html">YapDatabaseSecondaryIndexType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseViewChangeType.html">YapDatabaseViewChangeType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseViewChangesBitMask.html">YapDatabaseViewChangesBitMask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseViewGrowOptions.html">YapDatabaseViewGrowOptions</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapDatabaseViewPin.html">YapDatabaseViewPin</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YapReachabilityStatus.html">YapReachabilityStatus</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Other%20Type%20Definitions.html">Other Type Definitions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapReachability.h@T@NetworkReachableBlock">NetworkReachableBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapReachability.h@T@NetworkUnreachableBlock">NetworkUnreachableBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudCore.h@T@YDBCloudCoreOperationDeserializer">YDBCloudCoreOperationDeserializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudCore.h@T@YDBCloudCoreOperationSerializer">YDBCloudCoreOperationSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseHooks.h@T@YDBHooks_DidModifyRow">YDBHooks_DidModifyRow</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseHooks.h@T@YDBHooks_DidRemoveAllRows">YDBHooks_DidRemoveAllRows</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseHooks.h@T@YDBHooks_DidRemoveRow">YDBHooks_DidRemoveRow</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseHooks.h@T@YDBHooks_WillModifyRow">YDBHooks_WillModifyRow</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseHooks.h@T@YDBHooks_WillRemoveAllRows">YDBHooks_WillRemoveAllRows</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseHooks.h@T@YDBHooks_WillRemoveRow">YDBHooks_WillRemoveRow</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapActionItem.h@T@YapActionItemBlock">YapActionItemBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseActionManager.h@T@YapActionScheduler">YapActionScheduler</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapBidirectionalCache.h@T@YapBidirectionalCacheCallBacks">YapBidirectionalCacheCallBacks</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudKitTypes.h@T@YapDatabaseCloudKitDatabaseIdentifierBlock">YapDatabaseCloudKitDatabaseIdentifierBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudKitTypes.h@T@YapDatabaseCloudKitMergeBlock">YapDatabaseCloudKitMergeBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudKitTypes.h@T@YapDatabaseCloudKitOperationErrorBlock">YapDatabaseCloudKitOperationErrorBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudKitTypes.h@T@YapDatabaseCloudKitRecordBlock">YapDatabaseCloudKitRecordBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudKitTypes.h@T@YapDatabaseCloudKitRecordWithKeyBlock">YapDatabaseCloudKitRecordWithKeyBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudKitTypes.h@T@YapDatabaseCloudKitRecordWithMetadataBlock">YapDatabaseCloudKitRecordWithMetadataBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudKitTypes.h@T@YapDatabaseCloudKitRecordWithObjectBlock">YapDatabaseCloudKitRecordWithObjectBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseCloudKitTypes.h@T@YapDatabaseCloudKitRecordWithRowBlock">YapDatabaseCloudKitRecordWithRowBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabaseDeserializer">YapDatabaseDeserializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFullTextSearchHandler.h@T@YapDatabaseFullTextSearchBlock">YapDatabaseFullTextSearchBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFullTextSearchHandler.h@T@YapDatabaseFullTextSearchWithKeyBlock">YapDatabaseFullTextSearchWithKeyBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFullTextSearchHandler.h@T@YapDatabaseFullTextSearchWithMetadataBlock">YapDatabaseFullTextSearchWithMetadataBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFullTextSearchHandler.h@T@YapDatabaseFullTextSearchWithObjectBlock">YapDatabaseFullTextSearchWithObjectBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFullTextSearchHandler.h@T@YapDatabaseFullTextSearchWithRowBlock">YapDatabaseFullTextSearchWithRowBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabasePostSanitizer">YapDatabasePostSanitizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabasePreSanitizer">YapDatabasePreSanitizer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseRTreeIndexHandler.h@T@YapDatabaseRTreeIndexBlock">YapDatabaseRTreeIndexBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseRTreeIndexHandler.h@T@YapDatabaseRTreeIndexWithKeyBlock">YapDatabaseRTreeIndexWithKeyBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseRTreeIndexHandler.h@T@YapDatabaseRTreeIndexWithMetadataBlock">YapDatabaseRTreeIndexWithMetadataBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseRTreeIndexHandler.h@T@YapDatabaseRTreeIndexWithObjectBlock">YapDatabaseRTreeIndexWithObjectBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseRTreeIndexHandler.h@T@YapDatabaseRTreeIndexWithRowBlock">YapDatabaseRTreeIndexWithRowBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseRelationshipOptions.h@T@YapDatabaseRelationshipFileURLDeserializer">YapDatabaseRelationshipFileURLDeserializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseRelationshipOptions.h@T@YapDatabaseRelationshipFileURLSerializer">YapDatabaseRelationshipFileURLSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseRelationshipOptions.h@T@YapDatabaseRelationshipMigration">YapDatabaseRelationshipMigration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseSecondaryIndexHandler.h@T@YapDatabaseSecondaryIndexBlock">YapDatabaseSecondaryIndexBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseSecondaryIndexHandler.h@T@YapDatabaseSecondaryIndexWithKeyBlock">YapDatabaseSecondaryIndexWithKeyBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseSecondaryIndexHandler.h@T@YapDatabaseSecondaryIndexWithMetadataBlock">YapDatabaseSecondaryIndexWithMetadataBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseSecondaryIndexHandler.h@T@YapDatabaseSecondaryIndexWithObjectBlock">YapDatabaseSecondaryIndexWithObjectBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseSecondaryIndexHandler.h@T@YapDatabaseSecondaryIndexWithRowBlock">YapDatabaseSecondaryIndexWithRowBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabaseSerializer">YapDatabaseSerializer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFilteredViewTypes.h@T@YapDatabaseViewFilteringBlock">YapDatabaseViewFilteringBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFilteredViewTypes.h@T@YapDatabaseViewFilteringWithKeyBlock">YapDatabaseViewFilteringWithKeyBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFilteredViewTypes.h@T@YapDatabaseViewFilteringWithMetadataBlock">YapDatabaseViewFilteringWithMetadataBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFilteredViewTypes.h@T@YapDatabaseViewFilteringWithObjectBlock">YapDatabaseViewFilteringWithObjectBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseFilteredViewTypes.h@T@YapDatabaseViewFilteringWithRowBlock">YapDatabaseViewFilteringWithRowBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewFindBlock">YapDatabaseViewFindBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewFindWithKeyBlock">YapDatabaseViewFindWithKeyBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewFindWithMetadataBlock">YapDatabaseViewFindWithMetadataBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewFindWithObjectBlock">YapDatabaseViewFindWithObjectBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewFindWithRowBlock">YapDatabaseViewFindWithRowBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewGroupingBlock">YapDatabaseViewGroupingBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewGroupingWithKeyBlock">YapDatabaseViewGroupingWithKeyBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewGroupingWithMetadataBlock">YapDatabaseViewGroupingWithMetadataBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewGroupingWithObjectBlock">YapDatabaseViewGroupingWithObjectBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewGroupingWithRowBlock">YapDatabaseViewGroupingWithRowBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewMappings.h@T@YapDatabaseViewMappingGroupFilter">YapDatabaseViewMappingGroupFilter</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewMappings.h@T@YapDatabaseViewMappingGroupSort">YapDatabaseViewMappingGroupSort</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewMappings.h@T@YapDatabaseViewRangePosition">YapDatabaseViewRangePosition</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewSortingBlock">YapDatabaseViewSortingBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewSortingWithKeyBlock">YapDatabaseViewSortingWithKeyBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewSortingWithMetadataBlock">YapDatabaseViewSortingWithMetadataBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewSortingWithObjectBlock">YapDatabaseViewSortingWithObjectBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapDatabaseViewTypes.h@T@YapDatabaseViewSortingWithRowBlock">YapDatabaseViewSortingWithRowBlock</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Type%20Definitions.html#/c:YapWhitelistBlacklist.h@T@YapWhitelistBlacklistFilterBlock">YapWhitelistBlacklistFilterBlock</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Other%20Functions.html">Other Functions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Functions.html#/c:@F@NSStringFromYapDatabaseSecondaryIndexType">NSStringFromYapDatabaseSecondaryIndexType</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Functions.html#/c:@F@YapCollectionKeyEqual">YapCollectionKeyEqual</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Functions.html#/c:@F@YapCollectionKeyHash">YapCollectionKeyHash</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Functions.html#/c:@F@YapMurmurHash2">YapMurmurHash2</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Functions.html#/c:@F@YapMurmurHash3">YapMurmurHash3</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Functions.html#/c:@F@YapMurmurHashData">YapMurmurHashData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Functions.html#/c:@F@YapMurmurHashData_32">YapMurmurHashData_32</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Other%20Functions.html#/c:@F@YapMurmurHashData_64">YapMurmurHashData_64</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Other%20Structs.html">Other Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/YapBidirectionalCacheCallBacks.html">YapBidirectionalCacheCallBacks</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/YapDatabaseViewRangePosition.html">YapDatabaseViewRangePosition</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content">
+            <h1>Core</h1>
+            
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabase"></a>
+                    <a name="//apple_ref/objc/Class/YapDatabase" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabase">YapDatabase</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Welcome to YapDatabase!</p>
+
+<p>The project page has a wealth of documentation if you have any questions.
+ <a href="https://github.com/yapstudios/YapDatabase">https://github.com/yapstudios/YapDatabase</a></p>
+
+<p>If you&rsquo;re new to the project you may want to visit the wiki.
+ <a href="https://github.com/yapstudios/YapDatabase/wiki">https://github.com/yapstudios/YapDatabase/wiki</a></p>
+
+<p>There are 3 primary classes you&rsquo;ll deal with:</p>
+
+<ul>
+<li>YapDatabase</li>
+<li>YapDatabaseConnection</li>
+<li>YapDatabaseTransaction</li>
+</ul>
+
+<p>YapDatabase represents the top-level class, and is used to initialize the database and customize default settings.</p>
+
+<p>To access or modify the database you create one or more connections to it. (YapDatabaseConnection)
+ Connections are thread-safe, and you can spawn multiple connections in order to achieve
+ concurrent access to the database from multiple threads. For example, you can read from the database
+ concurrently from multiple connections. And you can even read from the database while writing to it
+ from another connection.</p>
+
+<p>The process of reading or writing from the database happens via a transaction. (YapDatabaseTransaction)
+ You create a read-only or read-write transaction from a connection.
+ A transaction represents an atomic action within the database.</p>
+
+                        <a href="Classes/YapDatabase.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YapDatabase</span> <span class="p">:</span> <span class="nc">NSObject</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">YapDatabase</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabaseOptions"></a>
+                    <a name="//apple_ref/objc/Class/YapDatabaseOptions" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabaseOptions">YapDatabaseOptions</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="Classes/YapDatabaseOptions.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YapDatabaseOptions</span> <span class="p">:</span> <span class="nc">NSObject</span> <span class="o">&lt;</span><span class="n">NSCopying</span><span class="o">&gt;</span>
+
+<span class="cm">/**
+ * How should YapDatabase proceed if it is unable to open an existing database file
+ * because sqlite finds it to be corrupt?
+ *
+ * - YapDatabaseCorruptAction_Fail
+ *     The YapDatabase alloc/init operation will fail, and the init method will ultimately return nil.
+ * 
+ * - YapDatabaseCorruptAction_Rename
+ *     The YapDatabase init operation will succeed, a new database file will be created,
+ *     and the corrupt file will be renamed by adding the suffix ".X.corrupt", where X is a number.
+ *
+ * - YapDatabaseCorruptAction_Delete
+ *     The YapDatabase init operation will succeed, a new database file will be created,
+ *     and the corrupt file will be deleted.
+ *
+ * The default value is YapDatabaseCorruptAction_Rename.
+ */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n"><a href="Enums/YapDatabaseCorruptAction.html">YapDatabaseCorruptAction</a></span> <span class="n">corruptAction</span><span class="p">;</span>
+
+<span class="cm">/**
+ * Allows you to configure the sqlite "PRAGMA synchronous" option.
+ * 
+ * For more information, see the sqlite docs:
+ * https://www.sqlite.org/pragma.html#pragma_synchronous
+ * https://www.sqlite.org/wal.html#fast
+ * 
+ * Note that YapDatabase uses sqlite in WAL mode.
+ *
+ * The default value is YapDatabasePragmaSynchronous_Full.
+ */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n"><a href="Enums/YapDatabasePragmaSynchronous.html">YapDatabasePragmaSynchronous</a></span> <span class="n">pragmaSynchronous</span><span class="p">;</span>
+
+<span class="cm">/**
+ * Allows you to configure the sqlite "PRAGMA journal_size_limit" option.
+ * 
+ * For more information, see the sqlite docs:
+ * http://www.sqlite.org/pragma.html#pragma_journal_size_limit
+ * 
+ * Note that YapDatabase uses sqlite in WAL mode.
+ * 
+ * The default value is zero,
+ * meaning that every checkpoint will reduce the WAL file to its minimum size (if possible).
+ */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">NSInteger</span> <span class="n">pragmaJournalSizeLimit</span><span class="p">;</span>
+
+<span class="cm">/**
+ * Allows you to configure the sqlite "PRAGMA page_size" option.
+ * 
+ * For more information, see the sqlite docs:
+ * https://www.sqlite.org/pragma.html#pragma_page_size
+ * 
+ * The default page_size is traditionally 4096 on Apple systems.
+ * 
+ * Important: "It is not possible to change the database page size after entering WAL mode".
+ * https://www.sqlite.org/wal.html
+ *
+ * And YapDatabase uses sqlite in WAL mode.
+ * This means that if you intend to use a non-default page_size, you MUST configure the pragmaPageSize
+ * before you first create the sqlite database file.
+ * 
+ * Example 1:
+ * - sqlite database file does not exist
+ * - configure pragmaPageSize
+ * - initialize YapDatabase with corresponding YapDatabaseOptions
+ * - page_size will be set according to configuration
+ * 
+ * Example 2:
+ * - sqlite database file already exists
+ * - configure pragmaPageSize
+ * - initialize YapDatabase with corresponding YapDatabaseOptions
+ * - page_size cannot be changed - it remains as it was before
+ * 
+ * The default value is zero, meaning the default page size will be used.
+ * E.g. YapDatabase will not attempt to set an explicit page_size.
+ * 
+ * You can verify whether or not sqlite accepted your page_size configuration request via:
+ * - [yapdbConnection pragmaPageSize]
+ */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">NSInteger</span> <span class="n">pragmaPageSize</span><span class="p">;</span>
+
+<span class="cm">/**
+ * Allows you to configure the sqlite "PRAGMA mmap_size" option.
+ * 
+ * For more information, see the sqlite docs:
+ * https://www.sqlite.org/pragma.html#pragma_mmap_size
+ * 
+ * This option allows you to enable Memory Mapped I/O.
+ * https://www.sqlite.org/mmap.html
+ * 
+ * The value is specified in BYTES.
+ *
+ * The default value is zero, meaning that Memory Mapped I/O is not used.
+ * It is likely that you can achieve improved performance by setting this to a large value.
+ * 
+ * Note that memory mapping may not be available.
+ * The feature was added to sqlite in version 3.7.17.
+ * If using the built-in version of sqlite (with the OS), then this requires a minimum of:
+ * - iOS 8.2
+ * - Max OS X 10.10
+ * 
+ * For more information on SQLite versions that come pre-installed with the OS:
+ * https://github.com/yapstudios/YapDatabase/wiki/SQLite-version-(bundled-with-OS)
+ * 
+ * Additionally, it appears that memory mapping is explicitly disabled in sqlite for iOS.
+ * This can be seen by inspecting the sqlite.c source code file:
+ * 
+ * &gt; #ifdef __APPLE__
+ * &gt; # include &lt;TargetConditionals.h&gt;
+ * &gt; # if TARGET_OS_IOS
+ * &gt; #   undef SQLITE_MAX_MMAP_SIZE
+ * &gt; #   define SQLITE_MAX_MMAP_SIZE 0
+ * &gt; # endif
+ * &gt; #endif
+ *
+ * It does, however, currently work for Mac OS X.
+ * 
+ * You can verify whether or not sqlite accepted your mmap_size configuration request via:
+ * - [yapdbConnection pragmaMMapSize]
+ */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">NSInteger</span> <span class="n">pragmaMMapSize</span><span class="p">;</span>
+
+<span class="cp">#ifdef SQLITE_HAS_CODEC
+</span><span class="cm">/**
+ * Set a block here that returns the key for the SQLCipher database.
+ *
+ * This is the key that will be passed to SQLCipher via the sqlite3_key method:
+ * https://www.zetetic.net/sqlcipher/sqlcipher-api/#sqlite3_key
+ * 
+ * This block allows you to fetch the passphrase from the keychain (or elsewhere)
+ * only when you need it, instead of persisting it in memory.
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * Important: If you do not set a cipherKeyBlock the database will NOT be configured with encryption.
+ */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">YapDatabaseCipherKeyBlock</span> <span class="n">cipherKeyBlock</span><span class="p">;</span>
+
+<span class="cm">/**
+ * Set the PBKDF2 iteration number for deriving the key to the SQLCipher database.
+ *
+ * This is the PBKDF2 iteration number that will be passed to SQLCipher via the 'kdf_iter' pragma.
+ * This parameter will be used everytime the database is openened and you must not change it,
+ * otherwise SQLCipher will not be able to decrypt it.
+ * https://www.zetetic.net/sqlcipher/sqlcipher-api/#kdf_iter
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * This parameter isn't compulsory to a SQLCipher database but it is useful if you want
+ * to customize the iteration count (for performance reasons) of PBKDF.
+ * Default is 64,000 PBKDF2 iterations (effectively 256,000 SHA1 operations)
+  */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">NSUInteger</span> <span class="n">kdfIterNumber</span><span class="p">;</span>
+
+<span class="cm">/**
+ * Set the PBKDF2 iteration number for the SQLCipher database.
+ *
+ * In some very specific cases, it is not possible to call 'kdf_iter' (@see kdfIterNumber)
+ * as one of the first operations on a database. In these cases cipherDefaultkdfIterNumber
+ * can be used to globally alter the default number of PBKDF2 iterations used when opening a database.
+ *
+ * This is the PBKDF2 iteration number that will be passed to SQLCipher via the 'cipher_default_kdf_iter' pragma.
+ * This parameter will be used everytime the database is openened and you must not change it,
+ * otherwise SQLCipher will not be able to decrypt it.
+ * https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_default_kdf_iter
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * This parameter isn't compulsory to a SQLCipher database but it is useful if you want
+ * to customize the iteration count (for performance reasons) of PBKDF.
+  */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">NSUInteger</span> <span class="n">cipherDefaultkdfIterNumber</span><span class="p">;</span>
+
+<span class="cm">/**
+ * Set the page size for the encrypted database. The default page size is 1024 bytes.
+ *
+ * This is the adjusted page size that will be passed to SQLCipher via the 'cipher_page_size' pragma.
+ * This parameter will be used everytime the database is openened and you must not change it,
+ * otherwise SQLCipher will not be able to decrypt it.
+ * https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_page_size
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * This parameter isn't compulsory to a SQLCipher database but it is useful if you want
+ * to customize the page size of your encrypted database.
+  */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">NSUInteger</span> <span class="n">cipherPageSize</span><span class="p">;</span>
+
+<span class="cm">/**
+ * Set a block here that returns the salt (not the key) for the SQLCipher database.
+ *
+ * This salt that will be passed to SQLCipher via `PRAGMA cipher_salt`.
+ *
+ * This block allows you to fetch the salt from the keychain (or elsewhere)
+ * only when you need it, instead of persisting it in memory.
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * cipherSaltBlock will be ignored if you don't also set cipherKeyBlock and cipherUnencryptedHeaderLength.
+ *
+ * For more information, see comments in YapDatabaseCryptoUtils.h.
+  */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">YapDatabaseCipherKeyBlock</span> <span class="n">cipherSaltBlock</span><span class="p">;</span>
+
+<span class="cm">/**
+ * Set a block here that returns the key spec (not the key) for the SQLCipher database.
+ *
+ * This key spec incorporates the "derived key" and the "salt".
+ *
+ * This block allows you to fetch the key spec from the keychain (or elsewhere)
+ * only when you need it, instead of persisting it in memory.
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * cipherKeySpecBlock will be ignored if you don't also set cipherUnencryptedHeaderLength.
+ *
+ * For more information, see comments in YapDatabaseCryptoUtils.h.
+  */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">YapDatabaseCipherKeyBlock</span> <span class="n">cipherKeySpecBlock</span><span class="p">;</span>
+
+<span class="cm">/**
+ * If set, this many bytes at the start of the first page of the database will _NOT_
+ * be encrypted.
+ *
+ * This value will be passed to SQLCipher via `PRAGMA cipher_plaintext_header_size`.
+ *
+ * You must use the 'YapDatabase/SQLCipher' subspec
+ * in your Podfile for this option to take effect.
+ *
+ * cipherUnencryptedHeaderLength will be ignored if you don't also set
+ * ((cipherKeyBlock AND cipherSaltBlock) OR cipherKeySpecBlock).
+ *
+ * For more information, see comments in YapDatabaseCryptoUtils.h.
+  */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">NSUInteger</span> <span class="n">cipherUnencryptedHeaderLength</span><span class="p">;</span>
+
+<span class="cp">#endif
+</span>
+<span class="cm">/**
+ * There are a few edge-case scenarios where the sqlite WAL (write-ahead log) file
+ * could grow without bound, because the normal checkpoint mechanisms are getting spoiled.
+ * 
+ * 1. The application only does a single large write at app launch.
+ *    And afterwards, it only uses the database for reads.
+ *    This may be due to a bug in sqlite. Generally, once the WAL has been fully checkpointed,
+ *    the next write transaction will automatically reset the WAL. But we've noticed
+ *    that if the next write occurs after restarting the process, then the WAL doesn't get reset.
+ * 
+ * 2. The application continually writes to the database without pause.
+ *    The checkpoint operation can run in parallel with reads &amp; writes.
+ *    Normally this is optimal, as the last write (in a sequence) will conclude, followed by a checkpoint.
+ *    And then the next write will reset the WAL.
+ *    But if the application never ceases executing write operations,
+ *    then we have no choice but to occasionally interrupt the writes in order to
+ *    allow the checkpoint operation to catch up.
+ * 
+ * If the WAL file ever reaches the configured aggressiveWALTruncationSize,
+ * then YapDatabase will effectively insert a checkpoint operation as a readWriteTransction.
+ *
+ * (This is in contrast to its normal optimized checkpoint operations, which can run in parallel with db writes.)
+ * 
+ * Note: The internals approximate the file size based on the number of reported frames in the WAL.
+ * The approximation is generally a bit smaller than the actual file size (as reported by the file system).
+ *
+ * It's unlikely you'd even notice this "aggressive" checkpoint operation,
+ * unless you were benchmarking or stress testing your database system.
+ * In which case you may notice this aggressive checkpoint as something of a "stutter" in the system.
+ *
+ * The default value is (1024 * 1024 * 4) (i.e. 4 MB)
+ * 
+ * Remember: This value is specified as a number of bytes. For example:
+ * -   1 KB == 1024 * 1
+ * - 512 KB == 1024 * 512
+ * -   1 MB == 1024 * 1024
+ * -  10 MB == 1024 * 1024 * 10
+ *
+ */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">aggressiveWALTruncationSize</span><span class="p">;</span>
+
+<span class="cm">/**
+ * This option enables multiprocess access to the database.
+ *
+ * All read and write operations will continue to function as expected when multiple processes are
+ * concurrently accessing the database, but some optimizations are disabled when using this mode.
+ *
+ * For instance, when a process updates the database, all other processes must clear their cache to
+ * fetch fresh data from the database.
+ *
+ * In the future, we might communicate changes via IPC accross processes, and it might still be possible
+ * to retain most of the cache in each process.
+ *
+ * If you want to be notified when another process has updated the database (for instance to reload a view),
+ * you can add a `CrossProcessNotifier` extension to the database and receive a
+ * `YapDatabaseModifiedExternallyNotification` notification.
+ *
+ * WARNING: if you are using multiple processes with the same database, all processes MUST register the
+ * same database extensions, otherwise unspecified behavior will happen with the creation and removal of
+ * extension tables depending on when each process was started.
+ *
+ */</span>
+<span class="k">@property</span> <span class="p">(</span><span class="n">nonatomic</span><span class="p">,</span> <span class="n">assign</span><span class="p">,</span> <span class="n">readwrite</span><span class="p">)</span> <span class="n">BOOL</span> <span class="n">enableMultiProcessSupport</span><span class="p">;</span>
+
+<span class="k">@end</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">YapDatabaseOptions</span> <span class="p">:</span> <span class="kt">NSObject</span><span class="p">,</span> <span class="kt">NSCopying</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabaseConnection"></a>
+                    <a name="//apple_ref/objc/Class/YapDatabaseConnection" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabaseConnection">YapDatabaseConnection</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Welcome to YapDatabase!</p>
+
+<p>The project page has a wealth of documentation if you have any questions.
+ <a href="https://github.com/yapstudios/YapDatabase">https://github.com/yapstudios/YapDatabase</a></p>
+
+<p>If you&rsquo;re new to the project you may want to visit the wiki.
+ <a href="https://github.com/yapstudios/YapDatabase/wiki">https://github.com/yapstudios/YapDatabase/wiki</a></p>
+
+<p>From a single YapDatabase instance you can create multiple connections.
+ Each connection is thread-safe and may be used concurrently with other connections.</p>
+
+<p>Multiple connections can simultaneously read from the database.
+ Multiple connections can simultaneously read from the database while another connection is modifying the database.
+ For example, the main thread could be reading from the database via connectionA,
+ while a background thread is writing to the database via connectionB.</p>
+
+<p>However, only a single connection may be writing to the database at any one time.
+ This is an inherent limitation of the underlying sqlite database.</p>
+
+<p>A connection instance is thread-safe, and operates by serializing access to itself.
+ Thus you can share a single connection between multiple threads.
+ But for conncurrent access between multiple threads you must use multiple connections.</p>
+
+                        <a href="Classes/YapDatabaseConnection.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YapDatabaseConnection</span> <span class="p">:</span> <span class="nc">NSObject</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">YapDatabaseConnection</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabaseReadTransaction"></a>
+                    <a name="//apple_ref/objc/Class/YapDatabaseReadTransaction" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabaseReadTransaction">YapDatabaseReadTransaction</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>A YapDatabaseReadTransaction encompasses a single read-only database transaction.
+ You can execute multiple operations within a single transaction.</p>
+
+<p>A transaction allows you to safely access the database as needed in a thread-safe and optimized manner.</p>
+
+                        <a href="Classes/YapDatabaseReadTransaction.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YapDatabaseReadTransaction</span> <span class="p">:</span> <span class="nc">NSObject</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">YapDatabaseReadTransaction</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabaseReadWriteTransaction"></a>
+                    <a name="//apple_ref/objc/Class/YapDatabaseReadWriteTransaction" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabaseReadWriteTransaction">YapDatabaseReadWriteTransaction</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////</p>
+
+                        <a href="Classes/YapDatabaseReadWriteTransaction.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YapDatabaseReadWriteTransaction</span> <span class="p">:</span> <span class="nc"><a href="Classes/YapDatabaseReadTransaction.html">YapDatabaseReadTransaction</a></span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">YapDatabaseReadWriteTransaction</span> <span class="p">:</span> <span class="kt"><a href="Classes/YapDatabaseReadTransaction.html">YapDatabaseReadTransaction</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2019 <a class="link" href="https://github.com/yapstudios/YapDatabase" target="_blank" rel="external">YapStudios</a>. All rights reserved. (Last updated: 2019-10-25)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>
