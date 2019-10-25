@@ -12,26 +12,26 @@
 
 @implementation TestYapDatabaseFilteredView
 
-- (NSString *)databasePath:(NSString *)suffix
+- (NSURL *)databaseURL:(NSString *)suffix
 {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-	NSString *baseDir = ([paths count] > 0) ? [paths objectAtIndex:0] : NSTemporaryDirectory();
-	
 	NSString *databaseName = [NSString stringWithFormat:@"%@-%@.sqlite", THIS_FILE, suffix];
 	
-	return [baseDir stringByAppendingPathComponent:databaseName];
+	NSArray<NSURL*> *urls = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
+	NSURL *baseDir = [urls firstObject];
+	
+	return [baseDir URLByAppendingPathComponent:databaseName isDirectory:NO];
 }
 
 - (void)setUp
 {
-    [super setUp];
+	[super setUp];
 	[DDLog removeAllLoggers];
 	[DDLog addLogger:[DDTTYLogger sharedInstance]];
 }
 
 - (void)tearDown
 {
-    [DDLog flushLog];
+	[DDLog flushLog];
 	[super tearDown];
 }
 
@@ -55,28 +55,28 @@
 
 - (void)test_persistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = YES;
 	
-	[self _test_withPath:databasePath options:options];
+	[self _test_withURL:databaseURL options:options];
 }
 
 - (void)test_nonPersistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = NO;
 	
-	[self _test_withPath:databasePath options:options];
+	[self _test_withURL:databaseURL options:options];
 }
 
-- (void)_test_withPath:(NSString *)databasePath options:(YapDatabaseViewOptions *)options
+- (void)_test_withURL:(NSURL *)databaseURL options:(YapDatabaseViewOptions *)options
 {
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	
@@ -189,59 +189,59 @@
 
 - (void)test_skipInitialPopulationView_persistent
 {
-    NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
-    
-    YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
-    options.isPersistent = YES;
-    options.skipInitialViewPopulation = YES;
-    
-    [self _testSkipInitialPopulationView_withPath:databasePath options:options];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
+	
+	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
+	options.isPersistent = YES;
+	options.skipInitialViewPopulation = YES;
+	
+	[self _testSkipInitialPopulationView_withURL:databaseURL options:options];
 }
 
 - (void)test_skipInitialPopulationView_nonPersistent
 {
-    NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
-    
-    YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
-    options.isPersistent = NO;
-    options.skipInitialViewPopulation = YES;
-    
-    [self _testSkipInitialPopulationView_withPath:databasePath options:options];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
+	
+	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
+	options.isPersistent = NO;
+	options.skipInitialViewPopulation = YES;
+	
+	[self _testSkipInitialPopulationView_withURL:databaseURL options:options];
 }
 
 - (void)test_notskipInitialPopulationView_persistent
 {
-    NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
-    
-    YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
-    options.isPersistent = YES;
-    options.skipInitialViewPopulation = NO;
-    
-    [self _testSkipInitialPopulationView_withPath:databasePath options:options];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
+	
+	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
+	options.isPersistent = YES;
+	options.skipInitialViewPopulation = NO;
+	
+	[self _testSkipInitialPopulationView_withURL:databaseURL options:options];
 }
 
 - (void)test_notskipInitialPopulationView_nonPersistent
 {
-    NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
-    
-    YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
-    options.isPersistent = NO;
-    options.skipInitialViewPopulation = NO;
-    
-    [self _testSkipInitialPopulationView_withPath:databasePath options:options];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
+	
+	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
+	options.isPersistent = NO;
+	options.skipInitialViewPopulation = NO;
+	
+	[self _testSkipInitialPopulationView_withURL:databaseURL options:options];
 }
 
-- (void)_testSkipInitialPopulationView_withPath:(NSString *)databasePath options:(YapDatabaseViewOptions *)options
+- (void)_testSkipInitialPopulationView_withURL:(NSURL *)databaseURL options:(YapDatabaseViewOptions *)options
 {
-    [[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-    YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
-    
-    XCTAssertNotNil(database, @"Oops");
-    
-    YapDatabaseConnection *connection1 = [database newConnection];
-    YapDatabaseConnection *connection2 = [database newConnection];
-    
-    YapDatabaseViewGrouping *grouping = [YapDatabaseViewGrouping withKeyBlock:
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
+	
+	XCTAssertNotNil(database, @"Oops");
+	
+	YapDatabaseConnection *connection1 = [database newConnection];
+	YapDatabaseConnection *connection2 = [database newConnection];
+	
+	YapDatabaseViewGrouping *grouping = [YapDatabaseViewGrouping withKeyBlock:
 		^NSString *(YapDatabaseReadTransaction *transaction, NSString *collection, NSString *key)
 	{
 		if ([key isEqualToString:@"keyX"]) // Exclude keyX from view
@@ -264,20 +264,20 @@
 	NSString *order_initialVersionTag = @"1";
     
 	YapDatabaseAutoView *view =
-	  [[YapDatabaseAutoView alloc] initWithGrouping:grouping
-                                            sorting:sorting
-                                         versionTag:order_initialVersionTag
-                                            options:options];
+	  [[YapDatabaseAutoView alloc] initWithGrouping: grouping
+	                                        sorting: sorting
+	                                     versionTag: order_initialVersionTag
+	                                        options: options];
     
-    BOOL registerResult1 = [database registerExtension:view withName:@"order"];
-    XCTAssertTrue(registerResult1, @"Failure registering view extension");
+	BOOL registerResult1 = [database registerExtension:view withName:@"order"];
+	XCTAssertTrue(registerResult1, @"Failure registering view extension");
     
-    [connection1 readWithBlock:^(YapDatabaseReadTransaction *transaction) {
-        
-        NSString *versionTag = [[transaction ext:@"order"] versionTag];
-        XCTAssert([versionTag isEqualToString:order_initialVersionTag], @"Bad versionTag");
-    }];
-    
+	[connection1 readWithBlock:^(YapDatabaseReadTransaction *transaction) {
+		
+		NSString *versionTag = [[transaction ext:@"order"] versionTag];
+		XCTAssert([versionTag isEqualToString:order_initialVersionTag], @"Bad versionTag");
+	}];
+	
 	YapDatabaseViewFiltering *filtering = [YapDatabaseViewFiltering withObjectBlock:
 		^BOOL (YapDatabaseReadTransaction *transaction, NSString *group, NSString *collection, NSString *key, id object)
 	{
@@ -343,28 +343,28 @@
 
 - (void)testScratch_persistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = YES;
 	
-	[self _testScratch_withPath:databasePath options:options];
+	[self _testScratch_withURL:databaseURL options:options];
 }
 
 - (void)testScratch_nonPersistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = NO;
 	
-	[self _testScratch_withPath:databasePath options:options];
+	[self _testScratch_withURL:databaseURL options:options];
 }
 
-- (void)_testScratch_withPath:(NSString *)databasePath options:(YapDatabaseViewOptions *)options
+- (void)_testScratch_withURL:(NSURL *)databaseURL options:(YapDatabaseViewOptions *)options
 {
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	
@@ -459,28 +459,28 @@
 
 - (void)testRepopulate_persistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = YES;
 	
-	[self _testRepopulate_withPath:databasePath options:options];
+	[self _testRepopulate_withURL:databaseURL options:options];
 }
 
 - (void)testRepopulate_nonPersistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = NO;
 	
-	[self _testRepopulate_withPath:databasePath options:options];
+	[self _testRepopulate_withURL:databaseURL options:options];
 }
 
-- (void)_testRepopulate_withPath:(NSString *)databasePath options:(YapDatabaseViewOptions *)options
+- (void)_testRepopulate_withURL:(NSURL *)databaseURL options:(YapDatabaseViewOptions *)options
 {
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	
@@ -613,28 +613,28 @@
 
 - (void)testUnregistration_persistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = YES;
 	
-	[self _testUnregistration_withPath:databasePath options:options];
+	[self _testUnregistration_withURL:databaseURL options:options];
 }
 
 - (void)testUnregistration_nonPersistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = NO;
 	
-	[self _testUnregistration_withPath:databasePath options:options];
+	[self _testUnregistration_withURL:databaseURL options:options];
 }
 
-- (void)_testUnregistration_withPath:(NSString *)databasePath options:(YapDatabaseViewOptions *)options
+- (void)_testUnregistration_withURL:(NSURL *)databaseURL options:(YapDatabaseViewOptions *)options
 {
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	
@@ -712,28 +712,28 @@
 
 - (void)testDoubleUnregistration_persistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = YES;
 	
-	[self _testDoubleUnregistration_withPath:databasePath options:options];
+	[self _testDoubleUnregistration_withURL:databaseURL options:options];
 }
 
 - (void)testDoubleUnregistration_nonPersistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = NO;
 	
-	[self _testDoubleUnregistration_withPath:databasePath options:options];
+	[self _testDoubleUnregistration_withURL:databaseURL options:options];
 }
 
-- (void)_testDoubleUnregistration_withPath:(NSString *)databasePath options:(YapDatabaseViewOptions *)options
+- (void)_testDoubleUnregistration_withURL:(NSURL *)databaseURL options:(YapDatabaseViewOptions *)options
 {
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	
@@ -831,29 +831,29 @@
 
 - (void)testDoubleDependencyPlusChangeFilterBlock_persistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = YES;
 	
-	[self _testDoubleDependencyPlusChangeFilterBlock_withPath:databasePath options:options];
+	[self _testDoubleDependencyPlusChangeFilterBlock_withURL:databaseURL options:options];
 }
 
 - (void)testDoubleDependencyPlusChangeFilterBlock_nonPersistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = NO;
 	
-	[self _testDoubleDependencyPlusChangeFilterBlock_withPath:databasePath options:options];
+	[self _testDoubleDependencyPlusChangeFilterBlock_withURL:databaseURL options:options];
 }
 
-- (void)_testDoubleDependencyPlusChangeFilterBlock_withPath:(NSString *)databasePath
+- (void)_testDoubleDependencyPlusChangeFilterBlock_withURL:(NSURL *)databaseURL
                                                     options:(YapDatabaseViewOptions *)options
 {
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	
@@ -1070,29 +1070,29 @@
 
 - (void)testDoubleDependencyPlusChangeGroupingBlock_persistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = YES;
 	
-	[self _testDoubleDependencyPlusChangeGroupingBlock_withPath:databasePath options:options];
+	[self _testDoubleDependencyPlusChangeGroupingBlock_withURL:databaseURL options:options];
 }
 
 - (void)testDoubleDependencyPlusChangeGroupingBlock_nonPersistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = NO;
 	
-	[self _testDoubleDependencyPlusChangeGroupingBlock_withPath:databasePath options:options];
+	[self _testDoubleDependencyPlusChangeGroupingBlock_withURL:databaseURL options:options];
 }
 
-- (void)_testDoubleDependencyPlusChangeGroupingBlock_withPath:(NSString *)databasePath
+- (void)_testDoubleDependencyPlusChangeGroupingBlock_withURL:(NSURL *)databaseURL
                                                       options:(YapDatabaseViewOptions *)options
 {
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	
@@ -1358,28 +1358,28 @@
 
 - (void)testEmptyFilterMappings_persistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = YES;
 
-	[self _testEmptyFilterMappings_withPath:databasePath options:options];
+	[self _testEmptyFilterMappings_withURL:databaseURL options:options];
 }
 
 - (void)testEmptyFilterMappings_nonPersistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = NO;
 
-	[self _testEmptyFilterMappings_withPath:databasePath options:options];
+	[self _testEmptyFilterMappings_withURL:databaseURL options:options];
 }
 
-- (void)_testEmptyFilterMappings_withPath:(NSString *)databasePath options:(YapDatabaseViewOptions *)options
+- (void)_testEmptyFilterMappings_withURL:(NSURL *)databaseURL options:(YapDatabaseViewOptions *)options
 {
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 
 	XCTAssertNotNil(database, @"Oops");
 
@@ -1571,30 +1571,30 @@
 
 - (void)testIssue186_persistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = YES;
 	
-	[self _testIssue186_withPath:databasePath options:options];
+	[self _testIssue186_withURL:databaseURL options:options];
 }
 
 - (void)testIssue186_nonPersistent
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
 	YapDatabaseViewOptions *options = [[YapDatabaseViewOptions alloc] init];
 	options.isPersistent = NO;
 	
-	[self _testIssue186_withPath:databasePath options:options];
+	[self _testIssue186_withURL:databaseURL options:options];
 }
 
-- (void)_testIssue186_withPath:(NSString *)databasePath options:(YapDatabaseViewOptions *)options
+- (void)_testIssue186_withURL:(NSURL *)databaseURL options:(YapDatabaseViewOptions *)options
 {
 	BOOL registerResult;
 	
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	

@@ -35,6 +35,7 @@ LumberjackUser.temp.h
 ## Excluding Xcode-desktop which is used by travis-ci
 ##
 Testing/Swift-desktop/Pods
+Testing/Xcode-desktop/Pods
 Testing/Xcode-mobile/Pods
 Testing/Xcode-tv/Pods
 Testing/Xcode-watch/Pods

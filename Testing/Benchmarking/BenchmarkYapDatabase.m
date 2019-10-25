@@ -16,12 +16,12 @@ static NSMutableArray *keys;
 	return @"BenchmarkYapDatabase.sqlite";
 }
 
-+ (NSString *)databasePath
++ (NSURL *)databaseURL
 {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-	NSString *baseDir = ([paths count] > 0) ? [paths objectAtIndex:0] : NSTemporaryDirectory();
+	NSArray<NSURL*> *urls = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
+	NSURL *baseDir = [urls firstObject];
 	
-	return [baseDir stringByAppendingPathComponent:[self databaseName]];
+	return [baseDir URLByAppendingPathComponent:[self databaseName] isDirectory:NO];
 }
 
 + (NSString *)randomLetters:(NSUInteger)length
@@ -236,10 +236,10 @@ static NSMutableArray *keys;
 
 + (void)runTestsWithCompletion:(dispatch_block_t)completionBlock
 {
-	NSString *databasePath = [self databasePath];
+	NSURL *databaseURL = [self databaseURL];
 	
 	// Delete old database file (if exists)
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:nil];
 	
 	// Create database
 	YapDatabaseOptions *options = [[YapDatabaseOptions alloc] init];
@@ -248,10 +248,7 @@ static NSMutableArray *keys;
 
 	options.pragmaMMapSize = (1024 * 1024 * 25); // full file size, with max of 25 MB
 	
-	database = [[YapDatabase alloc] initWithPath:databasePath
-	                                  serializer:NULL
-	                                deserializer:NULL
-	                                     options:options];
+	database = [[YapDatabase alloc] initWithURL:databaseURL options:options];
 	
 	// Create database connection (can have multiple for concurrency)
 	connection = [database newConnection];

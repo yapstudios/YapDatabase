@@ -6,6 +6,6 @@ target 'Swift-desktop' do
 	use_frameworks!
 
 	# Pods for Swift-desktop
-	pod "YapDatabase", path: '../../'
+	pod "YapDatabase/Standard-Swift", path: '../../'
 
 end

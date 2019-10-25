@@ -14,14 +14,14 @@
 
 @implementation TestYapDatabaseSecondaryIndex
 
-- (NSString *)databasePath:(NSString *)suffix
+- (NSURL *)databaseURL:(NSString *)suffix
 {
-	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-	NSString *baseDir = ([paths count] > 0) ? [paths objectAtIndex:0] : NSTemporaryDirectory();
-	
 	NSString *databaseName = [NSString stringWithFormat:@"%@-%@.sqlite", THIS_FILE, suffix];
 	
-	return [baseDir stringByAppendingPathComponent:databaseName];
+	NSArray<NSURL*> *urls = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
+	NSURL *baseDir = [urls firstObject];
+	
+	return [baseDir URLByAppendingPathComponent:databaseName isDirectory:NO];
 }
 
 - (void)setUp
@@ -40,10 +40,10 @@
 
 - (void)test
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:nil];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	
@@ -277,10 +277,10 @@
 **/
 - (void)testIssue104
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	
@@ -359,10 +359,10 @@
 
 - (void)testAggregateQuery
 {
-	NSString *databasePath = [self databasePath:NSStringFromSelector(_cmd)];
+	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
 	
-	[[NSFileManager defaultManager] removeItemAtPath:databasePath error:NULL];
-	YapDatabase *database = [[YapDatabase alloc] initWithPath:databasePath];
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
 	
 	XCTAssertNotNil(database, @"Oops");
 	

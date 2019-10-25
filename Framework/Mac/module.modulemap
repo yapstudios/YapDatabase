@@ -4,6 +4,7 @@ framework module YapDatabase {
 	header "YapDatabaseConnection.h"
 	header "YapDatabaseTransaction.h"
 	header "YapDatabaseOptions.h"
+	header "YapDatabaseTypes.h"
 	header "YapDatabaseExtension.h"
 	header "YapDatabaseExtensionConnection.h"
 	header "YapDatabaseExtensionTransaction.h"
@@ -15,6 +16,8 @@ framework module YapDatabase {
 		header "YapCollectionKey.h"
 		header "YapDatabaseAtomic.h"
 		header "YapDatabaseConnectionConfig.h"
+		header "YapDatabaseConnectionPool.h"
+		header "YapDatabaseConnectionProxy.h"
 		header "YapDatabaseQuery.h"
 		header "YapMurmurHash.h"
 		header "YapProxyObject.h"
@@ -137,18 +140,6 @@ framework module YapDatabase {
 		header "YapDatabaseRTreeIndexOptions.h"
 		header "YapDatabaseRTreeIndexConnection.h"
 		header "YapDatabaseRTreeIndexTransaction.h"
-	}
-	
-	// Extension: ConnectionProxy
-	
-	explicit module YapDatabaseConnectionProxy {
-		header "YapDatabaseConnectionProxy.h"
-	}
-	
-	// Extension: ConnectionPool
-	
-	explicit module YapDatabaseConnectionPool {
-		header "YapDatabaseConnectionPool.h"
 	}
 	
 	// Extension: ActionManager

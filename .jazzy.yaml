@@ -2,7 +2,7 @@ objc: true
 output: Docs
 framework_root: YapDatabase
 sdk: iphonesimulator
-umbrella_header: YapDatabase/YapDatabaseUmbrella.h
+umbrella_header: JazzyDocsUmbrella.h
 theme: fullwidth
 author: YapStudios
 custom_categories:
