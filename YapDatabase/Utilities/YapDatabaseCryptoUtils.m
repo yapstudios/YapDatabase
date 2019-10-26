@@ -13,15 +13,16 @@
 #endif
 
 #import <CommonCrypto/CommonCrypto.h>
+#import <objc/runtime.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 #ifdef SQLITE_HAS_CODEC
 
 #if DEBUG
-static const int ydbLogLevel = YDBLogLevelInfo;
+  static const int ydbLogLevel = YDBLogLevelInfo;
 #else
-static const int ydbLogLevel = YDBLogLevelWarning;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -35,17 +36,21 @@ static const int ydbLogLevel = YDBLogLevelWarning;
 // YapAssert() and YapFail() should be used in Obj-C methods.
 // YapCAssert() and YapCFail() should be used in free functions.
 
-#define YapAssert(X)                                                                             \
-  if (!(X)) {                                                                                    \
-    YDBLogError(@"%s Assertion failed: %s", __PRETTY_FUNCTION__, YAP_CONVERT_EXPR_TO_STRING(X)); \                                                                                             \
-    NSAssert(0, @"Assertion failed: %s", YAP_CONVERT_EXPR_TO_STRING(X));                         \
-  }
+#define YapAssert(condition)                                                                              \
+do {                                                                                                      \
+  if (!(condition)) {                                                                                     \
+    YDBLogError(@"%s Assertion failed: %s", __PRETTY_FUNCTION__, YAP_CONVERT_EXPR_TO_STRING(condition));  \
+    NSAssert(0, @"Assertion failed: %s", YAP_CONVERT_EXPR_TO_STRING(condition));                          \
+  }                                                                                                       \
+} while (0)
 
-#define YapCAssert(X)                                                                            \
-  if (!(X)) {                                                                                    \
-    YDBLogError(@"%s Assertion failed: %s", __PRETTY_FUNCTION__, YAP_CONVERT_EXPR_TO_STRING(X)); \
-    NSCAssert(0, @"Assertion failed: %s", YAP_CONVERT_EXPR_TO_STRING(X));                        \
-  }
+#define YapCAssert(condition)                                                                             \
+do {                                                                                                      \
+  if (!(condition)) {                                                                                     \
+    YDBLogError(@"%s Assertion failed: %s", __PRETTY_FUNCTION__, YAP_CONVERT_EXPR_TO_STRING(condition));  \
+    NSCAssert(0, @"Assertion failed: %s", YAP_CONVERT_EXPR_TO_STRING(condition));                         \
+  }                                                                                                       \
+} while(0)
 
 #define YapFail(message, ...)                                                      \
 {                                                                                  \
@@ -69,7 +74,7 @@ NSAssert(0, message);                                   \
 
 #define YapCFailNoFormat(message)                       \
 {                                                       \
-YDBLogError(@"%s %@", __PRETTY_FUNCTION__, message);    \                                                                                            \
+YDBLogError(@"%s %@", __PRETTY_FUNCTION__, message);    \                                                                          \
 NSCAssert(0, message);                                  \
 }
 
