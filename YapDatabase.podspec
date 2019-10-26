@@ -393,7 +393,7 @@ Pod::Spec.new do |s|
 		end
 
 		ss.subspec 'Extensions' do |sse|
-			sse.dependency 'YapDatabase/Standard/Core'
+			sse.dependency 'YapDatabase/SQLCipher/Core'
       
 			sse.subspec 'View' do |ssee|
 				ssee.dependency 'YapDatabase/SQLCipher-ObjC/Extensions/View'
