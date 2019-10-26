@@ -7,8 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		399ED3144EBA3812A77C1B43 /* libPods-YapDatabase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A49D152AFE96D1097A905CB /* libPods-YapDatabase.a */; };
-		A3C026266FACBD17964811B9 /* libPods-YapDatabaseTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3691C2504A9B4D6D5ED74750 /* libPods-YapDatabaseTests.a */; };
+		40E24EC025AF1D0123E338A6 /* libPods-tvOS-YapDatabaseTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 547BE3C6CBB0EBB87E6C1CCB /* libPods-tvOS-YapDatabaseTests.a */; };
 		DC1E7CF61D809A25000721B8 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DC1E7CED1D809A25000721B8 /* AppDelegate.m */; };
 		DC1E7CF71D809A25000721B8 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DC1E7CEE1D809A25000721B8 /* Assets.xcassets */; };
 		DC1E7CF81D809A25000721B8 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC1E7CF01D809A25000721B8 /* Main.storyboard */; };
@@ -27,6 +26,7 @@
 		DC9350051C13C634005468AA /* TestYapDatabaseRelationship.m in Sources */ = {isa = PBXBuildFile; fileRef = DC85979F1C13BF8A00650D15 /* TestYapDatabaseRelationship.m */; };
 		DC9350061C13C637005468AA /* TestYapDatabaseSearchResultsView.m in Sources */ = {isa = PBXBuildFile; fileRef = DC8597A01C13BF8A00650D15 /* TestYapDatabaseSearchResultsView.m */; };
 		DC9350071C13C63A005468AA /* TestYapDatabaseHooks.m in Sources */ = {isa = PBXBuildFile; fileRef = DC85979D1C13BF8A00650D15 /* TestYapDatabaseHooks.m */; };
+		EF6B553E5B561A51333742C4 /* libPods-tvOS-YapDatabase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 09CA51326CCD649C79137D0E /* libPods-tvOS-YapDatabase.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -40,9 +40,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		09CA51326CCD649C79137D0E /* libPods-tvOS-YapDatabase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-tvOS-YapDatabase.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		126E3B927FD9D68045CA0145 /* Pods-tvOS-YapDatabaseTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tvOS-YapDatabaseTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-tvOS-YapDatabaseTests/Pods-tvOS-YapDatabaseTests.release.xcconfig"; sourceTree = "<group>"; };
 		292A445AD4A090249381A93C /* Pods-YapDatabaseTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YapDatabaseTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YapDatabaseTests/Pods-YapDatabaseTests.debug.xcconfig"; sourceTree = "<group>"; };
-		3691C2504A9B4D6D5ED74750 /* libPods-YapDatabaseTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YapDatabaseTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		7A49D152AFE96D1097A905CB /* libPods-YapDatabase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-YapDatabase.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		47DF0A785CD661FB87529687 /* Pods-tvOS-YapDatabase.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tvOS-YapDatabase.release.xcconfig"; path = "Pods/Target Support Files/Pods-tvOS-YapDatabase/Pods-tvOS-YapDatabase.release.xcconfig"; sourceTree = "<group>"; };
+		4BFAD5EE0EED1CC14CD98620 /* Pods-tvOS-YapDatabaseTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tvOS-YapDatabaseTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-tvOS-YapDatabaseTests/Pods-tvOS-YapDatabaseTests.debug.xcconfig"; sourceTree = "<group>"; };
+		547BE3C6CBB0EBB87E6C1CCB /* libPods-tvOS-YapDatabaseTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-tvOS-YapDatabaseTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		563A4F0426D32E7A1F8B0D76 /* Pods-tvOS-YapDatabase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-tvOS-YapDatabase.debug.xcconfig"; path = "Pods/Target Support Files/Pods-tvOS-YapDatabase/Pods-tvOS-YapDatabase.debug.xcconfig"; sourceTree = "<group>"; };
 		9919BC73ACF551ADAC68CF1D /* Pods-YapDatabase.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YapDatabase.release.xcconfig"; path = "Pods/Target Support Files/Pods-YapDatabase/Pods-YapDatabase.release.xcconfig"; sourceTree = "<group>"; };
 		DC1E7CEC1D809A25000721B8 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = YapDatabase/AppDelegate.h; sourceTree = SOURCE_ROOT; };
 		DC1E7CED1D809A25000721B8 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = YapDatabase/AppDelegate.m; sourceTree = SOURCE_ROOT; };
@@ -80,7 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				399ED3144EBA3812A77C1B43 /* libPods-YapDatabase.a in Frameworks */,
+				EF6B553E5B561A51333742C4 /* libPods-tvOS-YapDatabase.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,7 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A3C026266FACBD17964811B9 /* libPods-YapDatabaseTests.a in Frameworks */,
+				40E24EC025AF1D0123E338A6 /* libPods-tvOS-YapDatabaseTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +106,10 @@
 				9919BC73ACF551ADAC68CF1D /* Pods-YapDatabase.release.xcconfig */,
 				292A445AD4A090249381A93C /* Pods-YapDatabaseTests.debug.xcconfig */,
 				FD8311EAEA701D58C27C1A0F /* Pods-YapDatabaseTests.release.xcconfig */,
+				563A4F0426D32E7A1F8B0D76 /* Pods-tvOS-YapDatabase.debug.xcconfig */,
+				47DF0A785CD661FB87529687 /* Pods-tvOS-YapDatabase.release.xcconfig */,
+				4BFAD5EE0EED1CC14CD98620 /* Pods-tvOS-YapDatabaseTests.debug.xcconfig */,
+				126E3B927FD9D68045CA0145 /* Pods-tvOS-YapDatabaseTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -110,8 +118,8 @@
 			isa = PBXGroup;
 			children = (
 				DC934FFB1C13C29D005468AA /* libPods.a */,
-				7A49D152AFE96D1097A905CB /* libPods-YapDatabase.a */,
-				3691C2504A9B4D6D5ED74750 /* libPods-YapDatabaseTests.a */,
+				09CA51326CCD649C79137D0E /* libPods-tvOS-YapDatabase.a */,
+				547BE3C6CBB0EBB87E6C1CCB /* libPods-tvOS-YapDatabaseTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -373,7 +381,7 @@
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-YapDatabase-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-tvOS-YapDatabase-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -391,7 +399,7 @@
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-YapDatabaseTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-tvOS-YapDatabaseTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -540,7 +548,7 @@
 		};
 		DC8597351C13BC5C00650D15 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E542EC2C3B88D43AE4EBC8D6 /* Pods-YapDatabase.debug.xcconfig */;
+			baseConfigurationReference = 563A4F0426D32E7A1F8B0D76 /* Pods-tvOS-YapDatabase.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -554,7 +562,7 @@
 		};
 		DC8597361C13BC5C00650D15 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9919BC73ACF551ADAC68CF1D /* Pods-YapDatabase.release.xcconfig */;
+			baseConfigurationReference = 47DF0A785CD661FB87529687 /* Pods-tvOS-YapDatabase.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -568,7 +576,7 @@
 		};
 		DC8597381C13BC5C00650D15 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 292A445AD4A090249381A93C /* Pods-YapDatabaseTests.debug.xcconfig */;
+			baseConfigurationReference = 4BFAD5EE0EED1CC14CD98620 /* Pods-tvOS-YapDatabaseTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				HEADER_SEARCH_PATHS = (
@@ -589,7 +597,7 @@
 		};
 		DC8597391C13BC5C00650D15 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = FD8311EAEA701D58C27C1A0F /* Pods-YapDatabaseTests.release.xcconfig */;
+			baseConfigurationReference = 126E3B927FD9D68045CA0145 /* Pods-tvOS-YapDatabaseTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				HEADER_SEARCH_PATHS = (

@@ -1,8 +1,11 @@
-# Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
+# Workaround for Xcode bug:
+# - https://www.ralfebert.de/ios/blog/cocoapods-clean-input-output-files/
+# - https://github.com/CocoaPods/CocoaPods/issues/8073
+# - https://github.com/CocoaPods/CocoaPods/pull/8105
+# 
+install! 'cocoapods', :disable_input_output_paths => true
 
 target 'Swift-desktop' do
-	# Comment the next line if you don't want to use dynamic frameworks
 	use_frameworks!
 
 	# Pods for Swift-desktop

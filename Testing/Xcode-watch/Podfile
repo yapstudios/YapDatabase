@@ -1,27 +1,33 @@
-source 'https://github.com/CocoaPods/Specs.git'
-
 workspace 'YapDatabaseTesting'
 project 'YapDatabaseTesting.xcodeproj'
 
 use_modular_headers!
 
-target :'YapDatabaseTesting' do
+# Workaround for Xcode bug:
+# - https://www.ralfebert.de/ios/blog/cocoapods-clean-input-output-files/
+# - https://github.com/CocoaPods/CocoaPods/issues/8073
+# - https://github.com/CocoaPods/CocoaPods/pull/8105
+# 
+install! 'cocoapods', :disable_input_output_paths => true
 
-	platform :ios, '9.0'
+abstract_target 'iOS' do 
+	platform :ios, '10.0'
 
-	pod "YapDatabase", path: '../../'
+	pod "YapDatabase/Standard-ObjC", path: '../../'
+
+	target :'YapDatabaseTesting' do
+	end
 end
 	
 abstract_target 'watchOS' do
-	
-	pod "YapDatabase", path: '../../'
+	platform :watchos, '3.0'
 
-	target :'YapDatabaseTesting WatchKit App' do
-		platform :watchos, '3.0'
+	pod "YapDatabase/Standard-ObjC", path: '../../'
+
+	target :'YapDatabaseTesting WatchKit App' do	
 	end
 	
 	target :'YapDatabaseTesting WatchKit Extension' do
-		platform :watchos, '3.0'
 	end
 end
 

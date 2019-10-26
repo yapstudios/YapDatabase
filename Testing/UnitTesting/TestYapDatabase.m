@@ -1,13 +1,18 @@
 #import <XCTest/XCTest.h>
-#import <CocoaLumberjack/CocoaLumberjack.h>
 #import <libkern/OSAtomic.h>
 
 #import "TestObject.h"
-#import "YapDatabase.h"
 
-#import "YapProxyObject.h"
+#import <YapDatabase/YapDatabase.h>
+#import <YapDatabase/YapProxyObject.h>
+
+#if PODFILE_USE_FRAMEWORKS
+// Works with `use_frameworks`, but not with `use_modular_headers`
+#import <YapDatabase/YapProxyObjectPrivate.h>
+#else
+// Works with `use_modular_headers`, but not with `use_frameworks`
 #import "YapProxyObjectPrivate.h"
-
+#endif
 
 @interface TestYapDatabase : XCTestCase
 @end
@@ -32,9 +37,22 @@
 	return result;
 }
 
+- (NSString *)fileName
+{
+	NSString *filePath = [NSString stringWithFormat:@"%s", __FILE__];
+	NSString *fileName = [filePath lastPathComponent];
+	
+	NSUInteger dotLocation = [fileName rangeOfString:@"." options:NSBackwardsSearch].location;
+	if (dotLocation != NSNotFound) {
+		 fileName = [fileName substringToIndex:dotLocation];
+	}
+	
+	return fileName;
+}
+
 - (NSURL *)databaseURL:(NSString *)suffix
 {
-	NSString *databaseName = [NSString stringWithFormat:@"%@-%@.sqlite", THIS_FILE, suffix];
+	NSString *databaseName = [NSString stringWithFormat:@"%@-%@.sqlite", [self fileName], suffix];
 	
 	NSArray<NSURL*> *urls = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
 	NSURL *baseDir = [urls firstObject];
@@ -45,13 +63,10 @@
 - (void)setUp
 {
 	[super setUp];
-	[DDLog removeAllLoggers];
-	[DDLog addLogger:[DDTTYLogger sharedInstance]];
 }
 
 - (void)tearDown
 {
-	[DDLog flushLog];
 	[super tearDown];
 }
 

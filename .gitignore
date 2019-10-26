@@ -29,6 +29,7 @@ Carthage/Build
 Docs
 LumberjackUser.h
 LumberjackUser.temp.h
+jazzy.markdown
 
 ## CocoaPods within Unit Tests
 ## 

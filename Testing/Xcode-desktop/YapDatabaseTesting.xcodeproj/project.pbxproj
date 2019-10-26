@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7296C97ABA4A73DB51010EA0 /* libPods-macOS-YapDatabaseTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 84B9EE2F2BE0A7A114DB6CA6 /* libPods-macOS-YapDatabaseTests.a */; };
+		18E82F6BDCE692409251470B /* Pods_macOS_MultiprocessApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 826351A36B7C157180460586 /* Pods_macOS_MultiprocessApp.framework */; };
+		3C1B6F79C68F659A8C042537 /* Pods_macOS_YapDatabaseTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4B55C7D3FCD7234643C48626 /* Pods_macOS_YapDatabaseTests.framework */; };
+		8BF6B8EA553928899728EFF7 /* Pods_macOS_YapDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C5944E42E6F38F64F5417370 /* Pods_macOS_YapDatabase.framework */; };
 		980A1A1F1C73445E00AE574D /* run in CopyFiles */ = {isa = PBXBuildFile; fileRef = 980A1A1B1C73439D00AE574D /* run */; };
 		98987F821C71D79600173D90 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 98987F811C71D79600173D90 /* main.m */; };
 		98987F881C71D80E00173D90 /* MultiprocessTest.m in Sources */ = {isa = PBXBuildFile; fileRef = 98987F871C71D80E00173D90 /* MultiprocessTest.m */; };
-		B1C43D53A75849AFB77C492C /* libPods-macOS-MultiprocessApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 091B9BA7A4BD7EF25B20B5AC /* libPods-macOS-MultiprocessApp.a */; };
-		BF6020F86A99EF179BE43D73 /* libPods-macOS-YapDatabase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 80F9635C6589D410D32C26B6 /* libPods-macOS-YapDatabase.a */; };
 		DC2B5F6D1C458D2D00319AF5 /* TestRelationshipMigration.m in Sources */ = {isa = PBXBuildFile; fileRef = DC2B5F6C1C458D2D00319AF5 /* TestRelationshipMigration.m */; };
 		DC84FF8F175130D2003BFBB2 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC84FF8E175130D2003BFBB2 /* Cocoa.framework */; };
 		DC84FF99175130D3003BFBB2 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DC84FF97175130D3003BFBB2 /* InfoPlist.strings */; };
@@ -63,17 +63,16 @@
 
 /* Begin PBXFileReference section */
 		01BE886730E734A1B199938B /* Pods-macOS-MultiprocessApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS-MultiprocessApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-macOS-MultiprocessApp/Pods-macOS-MultiprocessApp.release.xcconfig"; sourceTree = "<group>"; };
-		091B9BA7A4BD7EF25B20B5AC /* libPods-macOS-MultiprocessApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-macOS-MultiprocessApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		155CAC43FB64BE566213770D /* Pods-macOS-YapDatabase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS-YapDatabase.debug.xcconfig"; path = "Pods/Target Support Files/Pods-macOS-YapDatabase/Pods-macOS-YapDatabase.debug.xcconfig"; sourceTree = "<group>"; };
 		2ABF2E0A3F5FAB2A77FA03D7 /* Pods-macOS-YapDatabaseTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS-YapDatabaseTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-macOS-YapDatabaseTests/Pods-macOS-YapDatabaseTests.release.xcconfig"; sourceTree = "<group>"; };
 		2B4F87A32EF76AE43AA98904 /* Pods-YapDatabaseTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YapDatabaseTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-YapDatabaseTests/Pods-YapDatabaseTests.release.xcconfig"; sourceTree = "<group>"; };
 		32AA48BAD5D7D86253BF8CEC /* Pods-macOS-YapDatabaseTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS-YapDatabaseTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-macOS-YapDatabaseTests/Pods-macOS-YapDatabaseTests.debug.xcconfig"; sourceTree = "<group>"; };
+		4B55C7D3FCD7234643C48626 /* Pods_macOS_YapDatabaseTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_macOS_YapDatabaseTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		583A4982BD8EA5EAB4C43EE0 /* Pods-MultiprocessApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MultiprocessApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MultiprocessApp/Pods-MultiprocessApp.debug.xcconfig"; sourceTree = "<group>"; };
 		588E5E6547945E9906A3C836 /* Pods-YapDatabase.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YapDatabase.release.xcconfig"; path = "Pods/Target Support Files/Pods-YapDatabase/Pods-YapDatabase.release.xcconfig"; sourceTree = "<group>"; };
 		71C1B3CA4D75DBA9CA1F368F /* Pods-YapDatabase.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YapDatabase.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YapDatabase/Pods-YapDatabase.debug.xcconfig"; sourceTree = "<group>"; };
 		8096713B5ED9819DA2FE8A6F /* Pods-YapDatabaseTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YapDatabaseTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-YapDatabaseTests/Pods-YapDatabaseTests.debug.xcconfig"; sourceTree = "<group>"; };
-		80F9635C6589D410D32C26B6 /* libPods-macOS-YapDatabase.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-macOS-YapDatabase.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		84B9EE2F2BE0A7A114DB6CA6 /* libPods-macOS-YapDatabaseTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-macOS-YapDatabaseTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		826351A36B7C157180460586 /* Pods_macOS_MultiprocessApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_macOS_MultiprocessApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		980A1A1B1C73439D00AE574D /* run */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = run; sourceTree = "<group>"; };
 		98987F7F1C71D79600173D90 /* MultiprocessApp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = MultiprocessApp; sourceTree = BUILT_PRODUCTS_DIR; };
 		98987F811C71D79600173D90 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
@@ -81,6 +80,7 @@
 		98987F871C71D80E00173D90 /* MultiprocessTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MultiprocessTest.m; sourceTree = "<group>"; };
 		9EE0E7621B5D8055699A38D6 /* Pods-macOS-YapDatabase.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS-YapDatabase.release.xcconfig"; path = "Pods/Target Support Files/Pods-macOS-YapDatabase/Pods-macOS-YapDatabase.release.xcconfig"; sourceTree = "<group>"; };
 		B4A4F1B44C0F6474AD2020D0 /* Pods-macOS-MultiprocessApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS-MultiprocessApp.debug.xcconfig"; path = "Pods/Target Support Files/Pods-macOS-MultiprocessApp/Pods-macOS-MultiprocessApp.debug.xcconfig"; sourceTree = "<group>"; };
+		C5944E42E6F38F64F5417370 /* Pods_macOS_YapDatabase.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_macOS_YapDatabase.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D71802B8DE814FD69A9CC453 /* Pods-MultiprocessApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MultiprocessApp.release.xcconfig"; path = "Pods/Target Support Files/Pods-MultiprocessApp/Pods-MultiprocessApp.release.xcconfig"; sourceTree = "<group>"; };
 		DC2B5F6B1C458D2D00319AF5 /* TestRelationshipMigration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TestRelationshipMigration.h; path = ../../Testing/UnitTesting/TestRelationshipMigration.h; sourceTree = "<group>"; };
 		DC2B5F6C1C458D2D00319AF5 /* TestRelationshipMigration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TestRelationshipMigration.m; path = ../../Testing/UnitTesting/TestRelationshipMigration.m; sourceTree = "<group>"; };
@@ -126,7 +126,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B1C43D53A75849AFB77C492C /* libPods-macOS-MultiprocessApp.a in Frameworks */,
+				18E82F6BDCE692409251470B /* Pods_macOS_MultiprocessApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -136,7 +136,7 @@
 			files = (
 				DCDA29E11BE586FA005C9835 /* libsqlite3.tbd in Frameworks */,
 				DC84FF8F175130D2003BFBB2 /* Cocoa.framework in Frameworks */,
-				BF6020F86A99EF179BE43D73 /* libPods-macOS-YapDatabase.a in Frameworks */,
+				8BF6B8EA553928899728EFF7 /* Pods_macOS_YapDatabase.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -144,7 +144,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7296C97ABA4A73DB51010EA0 /* libPods-macOS-YapDatabaseTests.a in Frameworks */,
+				3C1B6F79C68F659A8C042537 /* Pods_macOS_YapDatabaseTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,9 +248,9 @@
 				DC84FF8E175130D2003BFBB2 /* Cocoa.framework */,
 				DC84FF90175130D2003BFBB2 /* Other Frameworks */,
 				DCDA29E01BE586FA005C9835 /* libsqlite3.tbd */,
-				091B9BA7A4BD7EF25B20B5AC /* libPods-macOS-MultiprocessApp.a */,
-				80F9635C6589D410D32C26B6 /* libPods-macOS-YapDatabase.a */,
-				84B9EE2F2BE0A7A114DB6CA6 /* libPods-macOS-YapDatabaseTests.a */,
+				826351A36B7C157180460586 /* Pods_macOS_MultiprocessApp.framework */,
+				C5944E42E6F38F64F5417370 /* Pods_macOS_YapDatabase.framework */,
+				4B55C7D3FCD7234643C48626 /* Pods_macOS_YapDatabaseTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -407,6 +407,7 @@
 				DC84FF87175130D2003BFBB2 /* Sources */,
 				DC84FF88175130D2003BFBB2 /* Frameworks */,
 				DC84FF89175130D2003BFBB2 /* Resources */,
+				015B3460924DC538F7517712 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -425,6 +426,7 @@
 				DCFBF7001B45F2D700EC6DFF /* Sources */,
 				DCFBF7011B45F2D700EC6DFF /* Frameworks */,
 				DCFBF7021B45F2D700EC6DFF /* Resources */,
+				835838D1374A3C59119C189C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -503,6 +505,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		015B3460924DC538F7517712 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-macOS-YapDatabase/Pods-macOS-YapDatabase-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		15D2CA53F5C9243340E31E1C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -537,6 +554,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		835838D1374A3C59119C189C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-macOS-YapDatabaseTests/Pods-macOS-YapDatabaseTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		CA689FA5101E28C0B10CF1BB /* [CP] Check Pods Manifest.lock */ = {
@@ -719,8 +751,9 @@
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
 					"$(inherited)",
+					"DEBUG=1",
+					"PODFILE_USE_FRAMEWORKS=1",
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -731,6 +764,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
 				ONLY_ACTIVE_ARCH = YES;
+				PODFILE_USE_FRAMEWORKS = 1;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -765,6 +799,10 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_ENABLE_OBJC_EXCEPTIONS = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"PODFILE_USE_FRAMEWORKS=1",
+				);
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -772,6 +810,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				PODFILE_USE_FRAMEWORKS = 1;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -788,7 +827,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
-					"\"${PODS_ROOT}/Headers/Public/CocoaLumberjack\"",
 					"\"${PODS_ROOT}/Headers/Public/YapDatabase\"",
 					"\"${PODS_ROOT}/Headers/Private/YapDatabase\"",
 				);
@@ -811,7 +849,6 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"${PODS_ROOT}/Headers/Public\"",
-					"\"${PODS_ROOT}/Headers/Public/CocoaLumberjack\"",
 					"\"${PODS_ROOT}/Headers/Public/YapDatabase\"",
 					"\"${PODS_ROOT}/Headers/Private/YapDatabase\"",
 				);

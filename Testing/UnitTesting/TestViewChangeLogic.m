@@ -1,8 +1,16 @@
 #import <XCTest/XCTest.h>
 
+#import <YapDatabase/YapCollectionKey.h>
+
+#if PODFILE_USE_FRAMEWORKS
+// Works with `use_frameworks`, but not with `use_modular_headers`
+#import <YapDatabase/YapDatabaseViewChangePrivate.h>
+#import <YapDatabase/YapDatabaseViewMappingsPrivate.h>
+#else
+// Works with `use_modular_headers`, but not with `use_frameworks`
 #import "YapDatabaseViewChangePrivate.h"
 #import "YapDatabaseViewMappingsPrivate.h"
-#import "YapCollectionKey.h"
+#endif
 
 #define YCK(collection, key) YapCollectionKeyCreate(collection, key)
 

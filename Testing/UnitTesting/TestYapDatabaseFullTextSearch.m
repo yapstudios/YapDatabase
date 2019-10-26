@@ -3,9 +3,6 @@
 #import "YapDatabase.h"
 #import "YapDatabaseFullTextSearch.h"
 
-#import <CocoaLumberjack/CocoaLumberjack.h>
-#import <CocoaLumberjack/DDTTYLogger.h>
-
 
 @interface TestYapDatabaseFullTextSearch : XCTestCase
 
@@ -15,9 +12,22 @@
 
 @implementation TestYapDatabaseFullTextSearch
 
+- (NSString *)fileName
+{
+	NSString *filePath = [NSString stringWithFormat:@"%s", __FILE__];
+	NSString *fileName = [filePath lastPathComponent];
+	
+	NSUInteger dotLocation = [fileName rangeOfString:@"." options:NSBackwardsSearch].location;
+	if (dotLocation != NSNotFound) {
+		 fileName = [fileName substringToIndex:dotLocation];
+	}
+	
+	return fileName;
+}
+
 - (NSURL *)databaseURL:(NSString *)suffix
 {
-	NSString *databaseName = [NSString stringWithFormat:@"%@-%@.sqlite", THIS_FILE, suffix];
+	NSString *databaseName = [NSString stringWithFormat:@"%@-%@.sqlite", [self fileName], suffix];
 	
 	NSArray<NSURL*> *urls = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask];
 	NSURL *baseDir = [urls firstObject];
@@ -28,13 +38,10 @@
 - (void)setUp
 {
 	[super setUp];
-	[DDLog removeAllLoggers];
-	[DDLog addLogger:[DDTTYLogger sharedInstance]];
 }
 
 - (void)tearDown
 {
-	[DDLog flushLog];
 	[super tearDown];
 }
 

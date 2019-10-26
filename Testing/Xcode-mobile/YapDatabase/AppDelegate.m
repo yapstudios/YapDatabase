@@ -4,29 +4,13 @@
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapDatabaseAutoView.h>
 
-#import <CocoaLumberjack/CocoaLumberjack.h>
 #import "YapDatabaseLogging.h"
-
-
-static int ddLogLevel = DDLogLevelWarning;
-#pragma unused(ddLogLevel)
 
 
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication __unused *)application didFinishLaunchingWithOptions:(NSDictionary __unused *)launchOptions
 {
-	[DDLog addLogger:[DDTTYLogger sharedInstance]];
-	
-	[[DDTTYLogger sharedInstance] setColorsEnabled:YES];
-	
-#if YapDatabaseLoggingTechnique == YapDatabaseLoggingTechnique_Lumberjack
-	[[DDTTYLogger sharedInstance] setForegroundColor:[UIColor grayColor]
-	                                 backgroundColor:nil
-	                                         forFlag:YDB_LOG_FLAG_TRACE
-	                                         context:YDBLogContext];
-#endif
-	
 	double delayInSeconds;
 	dispatch_time_t popTime;
 	

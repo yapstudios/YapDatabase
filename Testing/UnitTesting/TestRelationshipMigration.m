@@ -2,8 +2,14 @@
 
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapDatabaseRelationship.h>
-#import "YapDatabaseRelationshipPrivate.h"
 
+#if PODFILE_USE_FRAMEWORKS
+// Works with `use_frameworks`, but not with `use_modular_headers`
+#import <YapDatabase/YapDatabaseRelationshipPrivate.h>
+#else
+// Works with `use_modular_headers`, but not with `use_frameworks`
+#import "YapDatabaseRelationshipPrivate.h"
+#endif
 
 @implementation TestRelationshipMigration
 
