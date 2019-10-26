@@ -16,9 +16,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 
 static NSString *const ext_key_classVersion       = @"classVersion";
@@ -147,11 +147,10 @@ static NSString *const ext_key_version_deprecated = @"version";
 
 			if (![setup matchesExistingColumnNamesAndAffinity:columns])
 			{
-				YDBLogError(@"Error creating rtree index extension (%@):"
+				YDBLogError(@"Error creating rtree index extension:"
 				            @" The given setup doesn't match the previously registered setup."
 				            @" If you change the setup, or you change the block in any meaningful way,"
-				            @" then you MUST change the versionTag as well.",
-				            THIS_METHOD);
+				            @" then you MUST change the versionTag as well.");
 				return NO;
 			}
 		}
@@ -192,8 +191,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 	int status = sqlite3_exec(db, [dropTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed dropping rtree index table (%@): %d %s",
-		            THIS_METHOD, dropTable, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed dropping rtree index table (%@): %d %s", dropTable, status, sqlite3_errmsg(db));
 		return NO;
 	}
 
@@ -229,8 +227,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 	int status = sqlite3_exec(db, [createTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating rtree index table (%@): %d %s",
-		            THIS_METHOD, tableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating rtree index table (%@): %d %s", tableName, status, sqlite3_errmsg(db));
 		return NO;
 	}
 
@@ -605,8 +602,8 @@ static NSString *const ext_key_version_deprecated = @"version";
 	status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ (%@): Error in removeAllStatement: %d %s",
-		            THIS_METHOD, [self registeredName],
+		YDBLogError(@"(%@): Error in removeAllStatement: %d %s",
+		            [self registeredName],
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 
@@ -1018,8 +1015,8 @@ static NSString *const ext_key_version_deprecated = @"version";
 		int status = sqlite3_prepare_v2(db, [fullQueryString UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@: Error creating query:\n query: '%@'\n error: %d %s",
-						THIS_METHOD, fullQueryString, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating query:\n query: '%@'\n error: %d %s",
+			            fullQueryString, status, sqlite3_errmsg(db));
 
 			return NO;
 		}
@@ -1095,7 +1092,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD,
+		YDBLogError(@"sqlite_step error: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 
@@ -1213,8 +1210,8 @@ static NSString *const ext_key_version_deprecated = @"version";
 		int status = sqlite3_prepare_v2(db, [fullQueryString UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@: Error creating query:\n query: '%@'\n error: %d %s",
-						THIS_METHOD, fullQueryString, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating query:\n query: '%@'\n error: %d %s",
+			            fullQueryString, status, sqlite3_errmsg(db));
 
 			return NO;
 		}
@@ -1285,7 +1282,7 @@ static NSString *const ext_key_version_deprecated = @"version";
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD,
+		YDBLogError(@"sqlite_step error: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		result = NO;
 	}

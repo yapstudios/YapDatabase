@@ -20,9 +20,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_INFO;
+  static const int ydbLogLevel = YDBLogLevelInfo;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -1629,7 +1629,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -1683,7 +1683,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -2179,7 +2179,7 @@
 		
 		if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+			YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -2391,7 +2391,7 @@
 		
 		if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+			YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -2642,7 +2642,7 @@
 		
 		if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+			YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -2735,7 +2735,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -2794,7 +2794,7 @@
 		
 		if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+			YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 		}
 		
 		sqlite_enum_reset(statement, needsFinalize);
@@ -2860,7 +2860,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -2971,7 +2971,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -3087,7 +3087,7 @@
 		
 		if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+			YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 		}
 		
 		sqlite3_clear_bindings(statement); // ok: within loop
@@ -3206,7 +3206,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -3316,7 +3316,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -3431,7 +3431,7 @@
 		
 		if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+			YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 		}
 		
 		sqlite3_clear_bindings(statement); // ok: within loop
@@ -3556,7 +3556,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -3698,7 +3698,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -3854,7 +3854,7 @@
 		
 		if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+			YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 		}
 		
 		sqlite3_clear_bindings(statement); // ok: within loop
@@ -4005,7 +4005,7 @@
 	
 	if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 	{
-		YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+		YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 	}
 	
 	sqlite_enum_reset(statement, needsFinalize);
@@ -4138,7 +4138,7 @@
 		
 		if ((status != SQLITE_DONE) && !stop && !mutation.isMutated)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+			YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -5883,7 +5883,7 @@
 			
 			if ((foundCount < numKeyParams) && (status != SQLITE_DONE))
 			{
-				YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD, status, sqlite3_errmsg(connection->db));
+				YDBLogError(@"sqlite_step error: %d %s", status, sqlite3_errmsg(connection->db));
 			}
 			
 			sqlite_enum_reset(statement, needsFinalize);

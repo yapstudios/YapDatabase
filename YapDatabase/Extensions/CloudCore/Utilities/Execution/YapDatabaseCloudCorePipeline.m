@@ -15,11 +15,11 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG && robbie_hanson
-  static const int ydbLogLevel = YDB_LOG_LEVEL_VERBOSE; // | YDB_LOG_FLAG_TRACE;
+  static const int ydbLogLevel = YDBLogLevelVerbose; // | YDBLogFlagTrace;
 #elif DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_INFO;
+  static const int ydbLogLevel = YDBLogLevelInfo;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -1174,7 +1174,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	YAPUnfairLockUnlock(&spinLock);
 	
 	if (overflow) {
-		YDBLogWarn(@"%@ - The suspendCount has reached NSUIntegerMax!", THIS_METHOD);
+		YDBLogWarn(@"The suspendCount has reached NSUIntegerMax!");
 	}
 	else if (suspendCountIncrement > 0) {
 		YDBLogInfo(@"=> SUSPENDED : incremented suspendCount == %lu", (unsigned long)newSuspendCount);
@@ -1219,7 +1219,7 @@ NSString *const YDBCloudCore_EphemeralKey_Hold     = @"hold";
 	YAPUnfairLockUnlock(&spinLock);
 	
 	if (underflow) {
-		YDBLogWarn(@"%@ - Attempting to resume with suspendCount already at zero.", THIS_METHOD);
+		YDBLogWarn(@"Attempting to resume with suspendCount already at zero.");
 	}
 	else
 	{

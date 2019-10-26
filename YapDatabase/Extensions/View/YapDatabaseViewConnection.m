@@ -15,9 +15,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -433,7 +433,7 @@
 {
 	if (mappings == nil)
 	{
-		YDBLogWarn(@"%@ - mappings parameter is nil", THIS_METHOD);
+		YDBLogWarn(@"mappings parameter is nil");
 		
 		if (sectionChangesPtr) *sectionChangesPtr = nil;
 		if (rowChangesPtr) *rowChangesPtr = nil;

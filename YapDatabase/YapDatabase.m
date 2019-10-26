@@ -15,6 +15,7 @@
 #endif
 
 #import <mach/mach_time.h>
+#import <os/log.h>
 #import <stdatomic.h>
 
 #if ! __has_feature(objc_arc)
@@ -26,11 +27,11 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if robbie_hanson
-  static const int ydbLogLevel = YDB_LOG_LEVEL_INFO;
+  static const int ydbLogLevel = YDBLogLevelInfo;
 #elif DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_INFO;
+  static const int ydbLogLevel = YDBLogLevelInfo;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -106,6 +107,10 @@ static int connectionBusyHandler(void *ptr, int count) {
     
     return 1;
 }
+
+typedef void (^YDBLogHandler)(YDBLogMessage *);
+
+static YDBLogHandler logHandler = nil;
 
 @implementation YapDatabase {
 @private
@@ -255,6 +260,74 @@ static int connectionBusyHandler(void *ptr, int count) {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark Logging
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Used by the macros defined in YapDatabaseLogging.h
+ */
++ (void)log:(YDBLogLevel)level
+       flag:(YDBLogFlag)flag
+       file:(const char *)file
+   function:(const char *)function
+       line:(NSUInteger)line
+     format:(NSString *)format, ...
+{
+	va_list args;
+	if (format)
+	{
+		va_start(args, format);
+		NSString *message = [[NSString alloc] initWithFormat:format arguments:args];
+      va_end(args);
+		
+		YDBLogMessage *logMessage =
+		  [[YDBLogMessage alloc] initWithMessage: message
+		                                   level: level
+		                                    flag: flag
+		                                    file: [NSString stringWithFormat:@"%s", file]
+		                                function: [NSString stringWithFormat:@"%s", function]
+		                                    line: line];
+		
+		logHandler(logMessage);
+	}
+}
+
++ (YDBLogHandler)defaultLogHandler
+{
+	NSString *subsystem = @"yapdb";
+	NSString *category = @"";
+	
+	os_log_t logger = os_log_create([subsystem UTF8String], [category UTF8String]);
+	
+	YDBLogHandler handler = ^void (YDBLogMessage *log){ @autoreleasepool {
+		
+		if (log.flag & (YDBLogFlagError | YDBLogFlagWarning))
+		{
+			NSString *formattedMessage =
+			  [NSString stringWithFormat:@"%@: %@ - %@", log.fileName, log.function, log.message];
+			
+		//	os_log_error(OS_LOG_DEFAULT, "%{public}s", [formattedMessage UTF8String]);
+			os_log_error(logger, "%{public}s", [formattedMessage UTF8String]);
+		}
+	}};
+	return handler;
+}
+
++ (void)setLogHandler:(void (^)(YDBLogMessage *))inLogHandler
+{
+	logHandler = inLogHandler ?: [self defaultLogHandler];
+}
+
++ (void)initialize
+{
+	static BOOL initialized = NO;
+	if (!initialized) {
+		initialized = YES;
+		logHandler = [self defaultLogHandler];
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Properties
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -321,6 +394,8 @@ static int connectionBusyHandler(void *ptr, int count) {
 		            @"For concurrency you create multiple connections from a single database instance.");
 		return nil;
 	}
+	
+	YDBLogError(@"Ur momma wears combat boots");
 	
 	if ((self = [super init]))
 	{
@@ -943,7 +1018,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	int status = sqlite3_prepare_v2(aDb, "SELECT sqlite_version();", -1, &statement, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@: Error creating statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error creating statement! %d %s", status, sqlite3_errmsg(aDb));
 		return nil;
 	}
 	
@@ -959,7 +1034,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	}
 	else
 	{
-		YDBLogError(@"%@: Error executing statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error executing statement! %d %s", status, sqlite3_errmsg(aDb));
 	}
 	
 	sqlite3_finalize(statement);
@@ -978,7 +1053,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	int status = sqlite3_prepare_v2(aDb, [pragma UTF8String], -1, &statement, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@: Error creating statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error creating statement! %d %s", status, sqlite3_errmsg(aDb));
 		return NO;
 	}
 	
@@ -991,7 +1066,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@: Error executing statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error executing statement! %d %s", status, sqlite3_errmsg(aDb));
 	}
 	
 	sqlite3_finalize(statement);
@@ -1035,7 +1110,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	int status = sqlite3_prepare_v2(aDb, stmt, (int)strlen(stmt)+1, &statement, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@: Error creating statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error creating statement! %d %s", status, sqlite3_errmsg(aDb));
 		return NO;
 	}
 	
@@ -1052,7 +1127,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@: Error executing statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error executing statement! %d %s", status, sqlite3_errmsg(aDb));
 	}
 	
 	sqlite3_finalize(statement);
@@ -1069,7 +1144,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	int status = sqlite3_prepare_v2(aDb, stmt, (int)strlen(stmt)+1, &statement, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@: Error creating statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error creating statement! %d %s", status, sqlite3_errmsg(aDb));
 		return nil;
 	}
 	
@@ -1090,7 +1165,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@: Error executing statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error executing statement! %d %s", status, sqlite3_errmsg(aDb));
 	}
 	
 	sqlite3_finalize(statement);
@@ -1112,7 +1187,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	int status = sqlite3_prepare_v2(aDb, [pragma UTF8String], -1, &statement, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@: Error creating statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error creating statement! %d %s", status, sqlite3_errmsg(aDb));
 		return nil;
 	}
 	
@@ -1135,7 +1210,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@: Error executing statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error executing statement! %d %s", status, sqlite3_errmsg(aDb));
 	}
 	
 	sqlite3_finalize(statement);
@@ -1160,7 +1235,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	int status = sqlite3_prepare_v2(aDb, [pragma UTF8String], -1, &statement, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@: Error creating statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error creating statement! %d %s", status, sqlite3_errmsg(aDb));
 		return nil;
 	}
 	
@@ -1188,7 +1263,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@: Error executing statement! %d %s", THIS_METHOD, status, sqlite3_errmsg(aDb));
+		YDBLogError(@"Error executing statement! %d %s", status, sqlite3_errmsg(aDb));
 	}
 	
 	sqlite3_finalize(statement);
@@ -1403,7 +1478,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	int status = status = sqlite3_exec(db, "BEGIN TRANSACTION;", NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"Error in '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+		YDBLogError(@"Error in 'BEGIN TRANSACTION' %d %s", status, sqlite3_errmsg(db));
 	}
 }
 
@@ -1412,51 +1487,50 @@ static int connectionBusyHandler(void *ptr, int count) {
 	int status = status = sqlite3_exec(db, "COMMIT TRANSACTION;", NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"Error in '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+		YDBLogError(@"Error in 'COMMIT TRANSACTION': %d %s", status, sqlite3_errmsg(db));
 	}
 }
 
 - (uint64_t)readSnapshot
 {
-    int status;
-    sqlite3_stmt *statement;
-    
-    const char *stmt = "SELECT \"data\" FROM \"yap2\" WHERE \"extension\" = ? AND \"key\" = ?;";
+	int status;
+	sqlite3_stmt *statement;
 	
-    int const column_idx_data    = SQLITE_COLUMN_START;
-    int const bind_idx_extension = SQLITE_BIND_START + 0;
-    int const bind_idx_key       = SQLITE_BIND_START + 1;
-    
-    uint64_t result = 0;
-    
-    status = sqlite3_prepare_v2(db, stmt, (int)strlen(stmt)+1, &statement, NULL);
-    if (status != SQLITE_OK)
-    {
-        YDBLogError(@"%@: Error creating statement: %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
-    }
-    else
-    {
-        const char *extension = "";
-        sqlite3_bind_text(statement, bind_idx_extension, extension, (int)strlen(extension), SQLITE_STATIC);
-        
-        const char *key = "snapshot";
-        sqlite3_bind_text(statement, bind_idx_key, key, (int)strlen(key), SQLITE_STATIC);
-        
-        status = sqlite3_step(statement);
-        if (status == SQLITE_ROW)
-        {
-            result = (uint64_t)sqlite3_column_int64(statement, column_idx_data);
-        }
-        else if (status == SQLITE_ERROR)
-        {
-            YDBLogError(@"Error executing 'readSnapshot': %d %s",
-                        status, sqlite3_errmsg(db));
-        }
-        
-        sqlite3_finalize(statement);
-    }
-    
-    return result;
+	const char *stmt = "SELECT \"data\" FROM \"yap2\" WHERE \"extension\" = ? AND \"key\" = ?;";
+	
+	int const column_idx_data    = SQLITE_COLUMN_START;
+	int const bind_idx_extension = SQLITE_BIND_START + 0;
+	int const bind_idx_key       = SQLITE_BIND_START + 1;
+	
+	uint64_t result = 0;
+	
+	status = sqlite3_prepare_v2(db, stmt, (int)strlen(stmt)+1, &statement, NULL);
+	if (status != SQLITE_OK)
+	{
+		YDBLogError(@"Error creating statement: %d %s", status, sqlite3_errmsg(db));
+	}
+	else
+	{
+		const char *extension = "";
+		sqlite3_bind_text(statement, bind_idx_extension, extension, (int)strlen(extension), SQLITE_STATIC);
+		
+		const char *key = "snapshot";
+		sqlite3_bind_text(statement, bind_idx_key, key, (int)strlen(key), SQLITE_STATIC);
+		
+		status = sqlite3_step(statement);
+		if (status == SQLITE_ROW)
+		{
+			result = (uint64_t)sqlite3_column_int64(statement, column_idx_data);
+		}
+		else if (status == SQLITE_ERROR)
+		{
+			YDBLogError(@"Error executing 'readSnapshot': %d %s", status, sqlite3_errmsg(db));
+		}
+		
+		sqlite3_finalize(statement);
+	}
+	
+	return result;
 }
 
 - (void)fetchPreviouslyRegisteredExtensionNames
@@ -1471,7 +1545,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 	status = sqlite3_prepare_v2(db, stmt, (int)strlen(stmt)+1, &statement, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@: Error creating statement: %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+		YDBLogError(@"Error creating statement: %d %s", status, sqlite3_errmsg(db));
 	}
 	else
 	{
@@ -1491,7 +1565,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@: Error in statement: %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error in statement: %d %s", status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -3329,7 +3403,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 			status = sqlite3_prepare_v2(db, stmt, (int)strlen(stmt)+1, &statement, NULL);
 			if (status != SQLITE_OK)
 			{
-				YDBLogError(@"%@: Error creating statement: %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+				YDBLogError(@"Error creating statement: %d %s", status, sqlite3_errmsg(db));
 			}
 			else
 			{
@@ -3345,7 +3419,7 @@ static int connectionBusyHandler(void *ptr, int count) {
 				status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-					YDBLogError(@"%@: Error in statement: %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+					YDBLogError(@"Error in statement: %d %s", status, sqlite3_errmsg(db));
 				}
 				
 				sqlite3_finalize(statement);

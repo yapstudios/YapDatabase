@@ -12,9 +12,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -367,7 +367,7 @@
 	YAPUnfairLockUnlock(&suspendCountLock);
 	
 	if (overflow) {
-		YDBLogWarn(@"%@ - The suspendCount has reached NSUIntegerMax!", THIS_METHOD);
+		YDBLogWarn(@"The suspendCount has reached NSUIntegerMax!");
 	}
 	
 	if ((oldSuspendCount == 0) && (newSuspendCount > 0))
@@ -398,7 +398,7 @@
 	YAPUnfairLockUnlock(&suspendCountLock);
 	
 	if (underflow) {
-		YDBLogWarn(@"%@ - Attempting to resume with suspendCount already at zero.", THIS_METHOD);
+		YDBLogWarn(@"Attempting to resume with suspendCount already at zero.");
 	}
 	
 	if ((oldSuspendCount > 0) && (newSuspendCount == 0))

@@ -12,9 +12,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -48,15 +48,13 @@
 		status = sqlite3_exec(db, [dropKeyTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed dropping map table (%@): %d %s",
-			            THIS_METHOD, mapTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed dropping map table (%@): %d %s", mapTableName, status, sqlite3_errmsg(db));
 		}
 		
 		status = sqlite3_exec(db, [dropPageTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed dropping page table (%@): %d %s",
-			            THIS_METHOD, pageTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed dropping page table (%@): %d %s", pageTableName, status, sqlite3_errmsg(db));
 		}
 	}
 	else

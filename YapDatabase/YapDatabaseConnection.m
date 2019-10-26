@@ -30,9 +30,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_INFO;
+  static const int ydbLogLevel = YDBLogLevelInfo;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -1039,7 +1039,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error in '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1057,7 +1057,7 @@ static int connectionBusyHandler(void *ptr, int count)
         int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
         if (status != SQLITE_OK)
         {
-            YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+            YDBLogError(@"Error in '%s': %d %s", stmt, status, sqlite3_errmsg(db));
         }
     }
     
@@ -1075,7 +1075,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1093,7 +1093,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1111,7 +1111,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1129,7 +1129,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1147,7 +1147,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1165,7 +1165,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1183,7 +1183,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1201,7 +1201,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1219,7 +1219,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1237,7 +1237,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1255,7 +1255,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1273,7 +1273,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1291,7 +1291,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1309,7 +1309,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1327,7 +1327,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1345,7 +1345,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1363,7 +1363,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1382,7 +1382,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1401,7 +1401,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1419,7 +1419,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1437,7 +1437,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1455,7 +1455,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1473,7 +1473,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1491,7 +1491,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1509,7 +1509,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -1531,7 +1531,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -1576,7 +1576,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -1621,7 +1621,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -1666,7 +1666,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -1711,7 +1711,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -1757,7 +1757,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -1802,7 +1802,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -1848,7 +1848,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -1894,7 +1894,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -1940,7 +1940,7 @@ static int connectionBusyHandler(void *ptr, int count)
 		int status = sqlite3_prepare_v2(db, stmt, stmtLen+1, &result, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"Error creating '%@': %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating '%s': %d %s", stmt, status, sqlite3_errmsg(db));
 		}
 		
 		return result;
@@ -4575,7 +4575,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	{
 		if (![notification isKindOfClass:[NSNotification class]])
 		{
-			YDBLogWarn(@"%@ - notifications parameter contains non-NSNotification object", THIS_METHOD);
+			YDBLogWarn(@"notifications parameter contains non-NSNotification object");
 			continue;
 		}
 		
@@ -4672,7 +4672,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	{
 		if (![notification isKindOfClass:[NSNotification class]])
 		{
-			YDBLogWarn(@"%@ - notifications parameter contains non-NSNotification object", THIS_METHOD);
+			YDBLogWarn(@"notifications parameter contains non-NSNotification object");
 			continue;
 		}
 		
@@ -4761,7 +4761,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	{
 		if (![notification isKindOfClass:[NSNotification class]])
 		{
-			YDBLogWarn(@"%@ - notifications parameter contains non-NSNotification object", THIS_METHOD);
+			YDBLogWarn(@"notifications parameter contains non-NSNotification object");
 			continue;
 		}
 		
@@ -4880,7 +4880,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	{
 		if (![notification isKindOfClass:[NSNotification class]])
 		{
-			YDBLogWarn(@"%@ - notifications parameter contains non-NSNotification object", THIS_METHOD);
+			YDBLogWarn(@"notifications parameter contains non-NSNotification object");
 			continue;
 		}
 		
@@ -4918,7 +4918,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	{
 		if (![notification isKindOfClass:[NSNotification class]])
 		{
-			YDBLogWarn(@"%@ - notifications parameter contains non-NSNotification object", THIS_METHOD);
+			YDBLogWarn(@"notifications parameter contains non-NSNotification object");
 			continue;
 		}
 		
@@ -4964,7 +4964,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	{
 		if (![notification isKindOfClass:[NSNotification class]])
 		{
-			YDBLogWarn(@"%@ - notifications parameter contains non-NSNotification object", THIS_METHOD);
+			YDBLogWarn(@"notifications parameter contains non-NSNotification object");
 			continue;
 		}
 		
@@ -5042,7 +5042,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	{
 		if (![notification isKindOfClass:[NSNotification class]])
 		{
-			YDBLogWarn(@"%@ - notifications parameter contains non-NSNotification object", THIS_METHOD);
+			YDBLogWarn(@"notifications parameter contains non-NSNotification object");
 			continue;
 		}
 		

@@ -7,6 +7,8 @@
 #import "YapDatabaseExtension.h"
 #import "YapDatabaseConnectionConfig.h"
 
+#import "YDBLogMessage.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 #if defined(SQLITE_HAS_CODEC) && defined(YAP_STANDARD_SQLITE)
@@ -226,6 +228,21 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * **For Swift**: @see `-[YapDatabase registerDeserializer:forCollection:]`
  */
 + (YapDatabaseDeserializer)timestampDeserializer;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark Logging
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Allows you to configure a handler for log messages emitted from the framework.
+ *
+ * A custom log handler allows you to integrate framework-emitted log messages into your desired logging system.
+ *
+ * If you don't configure your own log handler, then a default handler is used, which:
+ * - only logs errors & warnings
+ * - uses os_log
+ */
++ (void)setLogHandler:(void (^)(YDBLogMessage *))logHandler;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Init

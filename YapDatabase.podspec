@@ -13,7 +13,7 @@ Pod::Spec.new do |s|
 		:tag => s.version.to_s
 	}
 
-	s.osx.deployment_target = '10.10'
+	s.osx.deployment_target = '10.11'
 	s.ios.deployment_target = '8.2'
 	s.tvos.deployment_target = '9.0'
 	s.watchos.deployment_target = '3.0'
@@ -72,7 +72,6 @@ Pod::Spec.new do |s|
 		ss.subspec 'Core' do |ssc|
 			ssc.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DYAP_STANDARD_SQLITE' }
 			ssc.library = 'sqlite3'
-			ssc.dependency 'CocoaLumberjack'
 			ssc.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}', 'YapDatabase/Extensions/Protocol/**/*.{h,m,mm,c}'
 			ssc.private_header_files = 'YapDatabase/Internal/*.h'
 
@@ -276,7 +275,6 @@ Pod::Spec.new do |s|
 
 		ss.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DYAP_STANDARD_SQLITE' }
 		ss.library = 'sqlite3'
-		ss.dependency 'CocoaLumberjack'
 		ss.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities,Swift}/*.{h,m,mm,c,swift}', 'YapDatabase/Extensions/**/*.{h,m,mm,c,swift}'
 		ss.private_header_files = 'YapDatabase/Internal/*.h', 'YapDatabase/Extensions/**/Internal/*.h'
 
@@ -294,7 +292,6 @@ Pod::Spec.new do |s|
 		ss.subspec 'Core' do |ssc|
 			ssc.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DSQLITE_HAS_CODEC' }
 			ssc.dependency 'SQLCipher', '>= 3.4.0'
-			ssc.dependency 'CocoaLumberjack'
 			ssc.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}', 'YapDatabase/Extensions/Protocol/**/*.{h,m,mm,c}'
 			ssc.private_header_files = 'YapDatabase/Internal/*.h'
 
@@ -497,7 +494,6 @@ Pod::Spec.new do |s|
 
 		ss.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DSQLITE_HAS_CODEC' }
 		ss.dependency 'SQLCipher', '>= 3.4.0'
-		ss.dependency 'CocoaLumberjack'
 		ss.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities,Swift}/*.{h,m,mm,c,swift}', 'YapDatabase/Extensions/**/*.{h,m,mm,c,swift}'
 		ss.private_header_files = 'YapDatabase/Internal/*.h', 'YapDatabase/Extensions/**/Internal/*.h'
 

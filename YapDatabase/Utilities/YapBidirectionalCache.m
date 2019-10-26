@@ -15,9 +15,9 @@ const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBacks = (Y
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_OFF;
+  static const int ydbLogLevel = YDBLogLevelOff;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_OFF;
+  static const int ydbLogLevel = YDBLogLevelOff;
 #endif
 
 
@@ -467,7 +467,7 @@ const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBacks = (Y
 		}
 	}
 	
-	if (ydbLogLevel & YDB_LOG_FLAG_VERBOSE)
+	if (ydbLogLevel & YDBLogFlagVerbose)
 	{
 		YDBLogVerbose(@"key_obj_dict: %@", key_obj_dict);
 		YDBLogVerbose(@"obj_key_dict: %@", obj_key_dict);

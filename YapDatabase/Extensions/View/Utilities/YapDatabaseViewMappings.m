@@ -17,9 +17,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -165,7 +165,7 @@
 - (void)setIsDynamicSection:(BOOL)isDynamic forGroup:(NSString *)group
 {
 	if (![self isGroupNameValid:group]) {
-		YDBLogWarn(@"%@ - mappings doesn't contain group(%@), only: %@", THIS_METHOD, group, allGroups);
+		YDBLogWarn(@"mappings doesn't contain group(%@), only: %@", group, allGroups);
 		return;
 	}
 	
@@ -200,7 +200,7 @@
 	}
 
     if (![self isGroupNameValid:group]){
-		YDBLogWarn(@"%@ - mappings doesn't contain group(%@), only: %@", THIS_METHOD, group, allGroups);
+		YDBLogWarn(@"mappings doesn't contain group(%@), only: %@", group, allGroups);
 		return;
 	}
 	
@@ -251,7 +251,7 @@
 {
 
     if (![self isGroupNameValid:group]){
-		YDBLogWarn(@"%@ - mappings doesn't contain group(%@), only: %@", THIS_METHOD, group, allGroups);
+		YDBLogWarn(@"mappings doesn't contain group(%@), only: %@", group, allGroups);
 		return;
 	}
 
@@ -273,7 +273,7 @@
 		}
 		else
 		{
-			YDBLogWarn(@"%@ - Non-NSNumber passed in offsets: %@", THIS_METHOD, obj);
+			YDBLogWarn(@"Non-NSNumber passed in offsets: %@", obj);
 		}
 	}
 
@@ -304,7 +304,7 @@
 - (void)setIsReversed:(BOOL)isReversed forGroup:(NSString *)group
 {
     if (![self isGroupNameValid:group]){
-		YDBLogWarn(@"%@ - mappings doesn't contain group(%@), only: %@", THIS_METHOD, group, allGroups);
+		YDBLogWarn(@"mappings doesn't contain group(%@), only: %@", group, allGroups);
 		return;
 	}
 	
@@ -427,7 +427,7 @@
 
 - (void)validateAutoConsolidation{
     if ([allGroups containsObject:consolidatedGroupName]){
-        YDBLogWarn(@"%@ - consolidatedGroupName cannot match existing groupName", THIS_METHOD);
+        YDBLogWarn(@"consolidatedGroupName cannot match existing groupName");
         consolidatedGroupName = nil;
         autoConsolidateGroupsThreshold = 0;
     }

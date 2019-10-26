@@ -16,9 +16,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -280,8 +280,8 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	int status = sqlite3_exec(db, [dropTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed dropping relationship table (%@): %d %s",
-		            THIS_METHOD, dropTable, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed dropping relationship table (%@): %d %s",
+		            dropTable, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
@@ -374,7 +374,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ - Error executing enum statement: %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error executing enum statement: %d %s", status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -414,7 +414,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			status = sqlite3_step(statement);
 			if (status != SQLITE_DONE)
 			{
-				YDBLogError(@"%@ - Error executing modify statement: %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+				YDBLogError(@"Error executing modify statement: %d %s", status, sqlite3_errmsg(db));
 			}
 			
 			sqlite3_clear_bindings(statement);
@@ -462,24 +462,24 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	status = sqlite3_exec(db, [createTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-		            THIS_METHOD, createTable, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating table (%@): %d %s",
+		            createTable, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
 	status = sqlite3_exec(db, [createSrcNameIndex UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating src_name index (%@): %d %s",
-		            THIS_METHOD, createSrcNameIndex, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating src_name index (%@): %d %s",
+		            createSrcNameIndex, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
 	status = sqlite3_exec(db, [createDstNameIndex UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating dst_name index (%@): %d %s",
-		            THIS_METHOD, createDstNameIndex, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating dst_name index (%@): %d %s",
+		            createDstNameIndex, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
@@ -1907,7 +1907,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1978,7 +1978,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2013,7 +2013,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2051,7 +2051,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2152,7 +2152,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2263,7 +2263,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (status == SQLITE_ERROR)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -2310,7 +2310,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		}
 		else if (status == SQLITE_ERROR)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -2739,7 +2739,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	}
 	else
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2779,7 +2779,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	}
 	else
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2813,7 +2813,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	}
 	else
 	{
-		YDBLogError(@"%@ - Error executing statement (B): %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement (B): %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2852,7 +2852,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD,
+			YDBLogError(@"sqlite_step error: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -2877,7 +2877,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		int status = sqlite3_step(statement);
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 						status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -2907,7 +2907,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -3001,7 +3001,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ - sqlite_step error: %d %s", THIS_METHOD,
+			YDBLogError(@"sqlite_step error: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -3021,7 +3021,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		int status = sqlite3_step(statement);
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 			
@@ -4473,7 +4473,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	if (status != SQLITE_DONE && !stop)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -4782,7 +4782,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (status != SQLITE_DONE && !stop)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -5061,7 +5061,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (status != SQLITE_DONE && !stop)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -5348,7 +5348,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	if (status != SQLITE_DONE && !stop)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -5657,7 +5657,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (status != SQLITE_DONE && !stop)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -5977,7 +5977,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (status != SQLITE_DONE && !stop)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -6229,7 +6229,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -6332,7 +6332,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -6428,7 +6428,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -6607,7 +6607,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -6674,8 +6674,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	if (edge == nil) return;
 	if (edge->sourceKey == nil)
 	{
-		YDBLogWarn(@"%@ - Cannot add edge. You must pass a fully specified edge, including sourceKey/collection.",
-		           THIS_METHOD);
+		YDBLogWarn(@"Cannot add edge. You must pass a fully specified edge, including sourceKey/collection.");
 		return;
 	}
 	
@@ -6764,8 +6763,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	if (edge == nil) return;
 	if (edge->sourceKey == nil)
 	{
-		YDBLogWarn(@"%@ - Cannot remove edge. You must pass a fully specified edge, including sourceKey/collection.",
-		           THIS_METHOD);
+		YDBLogWarn(@"Cannot remove edge. You must pass a fully specified edge, including sourceKey/collection.");
 		return;
 	}
 	

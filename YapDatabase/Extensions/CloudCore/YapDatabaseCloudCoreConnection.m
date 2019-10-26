@@ -13,11 +13,11 @@
 **/
 
 #if DEBUG && robbie_hanson
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN; // YDB_LOG_LEVEL_VERBOSE | YDB_LOG_FLAG_TRACE;
+  static const int ydbLogLevel = YDBLogLevelWarning; // YDBLogLevelVerbose | YDBLogFlagTrace;
 #elif DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 

@@ -20,9 +20,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -124,8 +124,7 @@ static NSString *const ext_key_query           = @"query";
 	int status = sqlite3_exec(db, [dropTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed dropping snippet table (%@): %d %s",
-		            THIS_METHOD, snippetTableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed dropping snippet table (%@): %d %s", snippetTableName, status, sqlite3_errmsg(db));
 	}
 }
 
@@ -1412,7 +1411,7 @@ static NSString *const ext_key_query           = @"query";
 	
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return;
 	}
 	
@@ -1421,7 +1420,7 @@ static NSString *const ext_key_query           = @"query";
 	
 	if (![parentViewName isEqualToString:searchResultsView->parentViewName])
 	{
-		YDBLogWarn(@"%@ - Method inappropriately invoked. Doesn't match parentViewName.", THIS_METHOD);
+		YDBLogWarn(@"Method inappropriately invoked. Doesn't match parentViewName.");
 		return;
 	}
 	
@@ -1887,7 +1886,7 @@ static NSString *const ext_key_query           = @"query";
 	
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return;
 	}
 	
@@ -1928,7 +1927,7 @@ static NSString *const ext_key_query           = @"query";
 	
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return;
 	}
 	

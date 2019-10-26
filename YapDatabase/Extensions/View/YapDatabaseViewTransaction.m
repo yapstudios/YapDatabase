@@ -18,9 +18,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -279,8 +279,8 @@
 		int status = sqlite3_prepare_v2(db, [string UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ (%@): Cannot create 'enumerate_stmt': %d %s",
-						THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db));
+			YDBLogError(@"(%@): Cannot create 'enumerate_stmt': %d %s",
+			            [self registeredName], status, sqlite3_errmsg(db));
 			return NO;
 		}
 		
@@ -340,7 +340,7 @@
 			}
 			else
 			{
-				YDBLogWarn(@"%@ (%@): Encountered invalid count: %d", THIS_METHOD, [self registeredName], count);
+				YDBLogWarn(@"(%@): Encountered invalid count: %d", [self registeredName], count);
 			}
 		}
 	
@@ -352,8 +352,8 @@
 		if ((status != SQLITE_OK) && (status != SQLITE_DONE))
 		{
 			error = YES;
-			YDBLogError(@"%@ (%@): Error enumerating page table: %d %s",
-			            THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db));
+			YDBLogError(@"(%@): Error enumerating page table: %d %s",
+			            [self registeredName], status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -427,8 +427,7 @@
 				YapDatabaseViewPageMetadata *pageMetadata = [pageDict objectForKey:pageKey];
 				if (pageMetadata == nil)
 				{
-					YDBLogError(@"%@ (%@): Invalid key ordering detected in group(%@)",
-					            THIS_METHOD, [self registeredName], group);
+					YDBLogError(@"(%@): Invalid key ordering detected in group(%@)", [self registeredName], group);
 					
 					error = YES;
 					break;
@@ -443,8 +442,7 @@
 				// sanity check for circular linked list
 				if (pageCount > expectedPageCount)
 				{
-					YDBLogError(@"%@ (%@): Circular key ordering detected in group(%@)",
-					            THIS_METHOD, [self registeredName], group);
+					YDBLogError(@"(%@): Circular key ordering detected in group(%@)", [self registeredName], group);
 					
 					error = YES;
 					break;
@@ -455,8 +453,7 @@
 			
 			if (!error && (pageCount != expectedPageCount))
 			{
-				YDBLogError(@"%@ (%@): Missing key page(s) in group(%@)",
-				            THIS_METHOD, [self registeredName], group);
+				YDBLogError(@"(%@): Missing key page(s) in group(%@)", [self registeredName], group);
 				
 				error = YES;
 			}
@@ -506,8 +503,8 @@
 		int status = sqlite3_exec(db, [dropKeyTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed dropping key table (%@): %d %s",
-						THIS_METHOD, keyTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed dropping key table (%@): %d %s",
+			            keyTableName, status, sqlite3_errmsg(db));
 		}
 	}
 	
@@ -526,8 +523,8 @@
 		int status = sqlite3_exec(db, [dropPageTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed dropping old page table (%@): %d %s",
-						THIS_METHOD, dropPageTable, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed dropping old page table (%@): %d %s",
+			            dropPageTable, status, sqlite3_errmsg(db));
 		}
 	}
 }
@@ -570,16 +567,14 @@
 		status = sqlite3_exec(db, [createMapTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed creating map table (%@): %d %s",
-			            THIS_METHOD, mapTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed creating map table (%@): %d %s", mapTableName, status, sqlite3_errmsg(db));
 			return NO;
 		}
 		
 		status = sqlite3_exec(db, [createPageTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed creating page table (%@): %d %s",
-			            THIS_METHOD, pageTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed creating page table (%@): %d %s", pageTableName, status, sqlite3_errmsg(db));
 			return NO;
 		}
 		
@@ -597,19 +592,19 @@
 		
 		if (![databaseTransaction->connection registerMemoryTable:mapTable withName:mapTableName])
 		{
-			YDBLogError(@"%@ - Failed registering map table", THIS_METHOD);
+			YDBLogError(@"Failed registering map table");
 			return NO;
 		}
 		
 		if (![databaseTransaction->connection registerMemoryTable:pageTable withName:pageTableName])
 		{
-			YDBLogError(@"%@ - Failed registering page table", THIS_METHOD);
+			YDBLogError(@"Failed registering page table");
 			return NO;
 		}
 		
 		if (![databaseTransaction->connection registerMemoryTable:pageMetadataTable withName:pageMetadataTableName])
 		{
-			YDBLogError(@"%@ - Failed registering pageMetadata table", THIS_METHOD);
+			YDBLogError(@"Failed registering pageMetadata table");
 			return NO;
 		}
 		
@@ -758,8 +753,8 @@
 		}
 		else if (status == SQLITE_ERROR)
 		{
-			YDBLogError(@"%@ (%@): Error executing statement: %d %s",
-			            THIS_METHOD, [self registeredName],
+			YDBLogError(@"(%@): Error executing statement: %d %s",
+			            [self registeredName],
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -825,8 +820,8 @@
 		}
 		else if (status == SQLITE_ERROR)
 		{
-			YDBLogError(@"%@ (%@): Error executing statement: %d %s",
-			            THIS_METHOD, [self registeredName],
+			YDBLogError(@"(%@): Error executing statement: %d %s",
+			            [self registeredName],
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -1023,10 +1018,10 @@
 			status = sqlite3_prepare_v2(db, [query UTF8String], -1, &statement, NULL);
 			if (status != SQLITE_OK)
 			{
-				YDBLogError(@"%@ (%@): Error creating statement\n"
+				YDBLogError(@"(%@): Error creating statement\n"
 				            @" - status(%d), errmsg: %s\n"
 				            @" - query: %@",
-				            THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db), query);
+				            [self registeredName], status, sqlite3_errmsg(db), query);
 				
 				return nil;
 			}
@@ -1056,8 +1051,8 @@
 			
 			if (status != SQLITE_DONE)
 			{
-				YDBLogError(@"%@ (%@): Error executing statement: %d %s",
-				            THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db));
+				YDBLogError(@"(%@): Error executing statement: %d %s",
+				            [self registeredName], status, sqlite3_errmsg(db));
 			}
 		
 			sqlite3_finalize(statement);
@@ -1476,8 +1471,8 @@
 	
 	if (!found)
 	{
-		YDBLogError(@"%@ (%@): collection(%@) key(%@) expected to be in page(%@), but is missing",
-		            THIS_METHOD, [self registeredName], collectionKey.collection, collectionKey.key, pageKey);
+		YDBLogError(@"(%@): collection(%@) key(%@) expected to be in page(%@), but is missing",
+		            [self registeredName], collectionKey.collection, collectionKey.key, pageKey);
 		return;
 	}
 	
@@ -1650,8 +1645,8 @@
 		status = sqlite3_step(mapStatement);
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ (%@): Error in mapStatement: %d %s",
-			            THIS_METHOD, [self registeredName],
+			YDBLogError(@"(%@): Error in mapStatement: %d %s",
+			            [self registeredName],
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -1662,8 +1657,8 @@
 		status = sqlite3_step(pageStatement);
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ (%@): Error in pageStatement: %d %s",
-			            THIS_METHOD, [self registeredName],
+			YDBLogError(@"(%@): Error in pageStatement: %d %s",
+			            [self registeredName],
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -2099,8 +2094,8 @@
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-					YDBLogError(@"%@ (%@): Error executing statement[1a]: %d %s",
-					            THIS_METHOD, [self registeredName],
+					YDBLogError(@"(%@): Error executing statement[1a]: %d %s",
+					            [self registeredName],
 					            status, sqlite3_errmsg(databaseTransaction->connection->db));
 				}
 				
@@ -2154,8 +2149,8 @@
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-					YDBLogError(@"%@ (%@): Error executing statement[1b]: %d %s",
-					            THIS_METHOD, [self registeredName],
+					YDBLogError(@"(%@): Error executing statement[1b]: %d %s",
+					            [self registeredName],
 					            status, sqlite3_errmsg(databaseTransaction->connection->db));
 				}
 				
@@ -2204,8 +2199,8 @@
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-					YDBLogError(@"%@ (%@): Error executing statement[1c]: %d %s",
-					            THIS_METHOD, [self registeredName],
+					YDBLogError(@"(%@): Error executing statement[1c]: %d %s",
+					            [self registeredName],
 					            status, sqlite3_errmsg(databaseTransaction->connection->db));
 				}
 				
@@ -2244,8 +2239,8 @@
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-					YDBLogError(@"%@ (%@): Error executing statement[1d]: %d %s",
-					            THIS_METHOD, [self registeredName],
+					YDBLogError(@"(%@): Error executing statement[1d]: %d %s",
+					            [self registeredName],
 					            status, sqlite3_errmsg(databaseTransaction->connection->db));
 				}
 				
@@ -2304,8 +2299,8 @@
 			int status = sqlite3_step(statement);
 			if (status != SQLITE_DONE)
 			{
-				YDBLogError(@"%@ (%@): Error executing statement[2]: %d %s",
-				            THIS_METHOD, [self registeredName],
+				YDBLogError(@"(%@): Error executing statement[2]: %d %s",
+				            [self registeredName],
 				            status, sqlite3_errmsg(databaseTransaction->connection->db));
 			}
 			
@@ -2349,9 +2344,9 @@
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-						YDBLogError(@"%@ (%@): Error executing statement[3a]: %d %s",
-					            THIS_METHOD, [self registeredName],
-					            status, sqlite3_errmsg(databaseTransaction->connection->db));
+						YDBLogError(@"(%@): Error executing statement[3a]: %d %s",
+						            [self registeredName],
+						            status, sqlite3_errmsg(databaseTransaction->connection->db));
 				}
 				
 				sqlite3_clear_bindings(statement);
@@ -2383,8 +2378,8 @@
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-					YDBLogError(@"%@ (%@): Error executing statement[3b]: %d %s",
-					            THIS_METHOD, [self registeredName],
+					YDBLogError(@"(%@): Error executing statement[3b]: %d %s",
+					            [self registeredName],
 					            status, sqlite3_errmsg(databaseTransaction->connection->db));
 				}
 				
@@ -3167,7 +3162,7 @@
 	
 	if (!stop && keysLeft > 0)
 	{
-		YDBLogWarn(@"%@: Range out of bounds: range(%lu, %lu) >= numberOfKeys(%lu) in group %@", THIS_METHOD,
+		YDBLogWarn(@"Range out of bounds: range(%lu, %lu) >= numberOfKeys(%lu) in group %@",
 		    (unsigned long)range.location, (unsigned long)range.length,
 		    (unsigned long)[self numberOfItemsInGroup:group], group);
 	}
@@ -3247,7 +3242,7 @@
 {
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return;
 	}
 	
@@ -3264,7 +3259,7 @@
 {
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return;
 	}
 	
@@ -3281,7 +3276,7 @@
 {
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return;
 	}
 	

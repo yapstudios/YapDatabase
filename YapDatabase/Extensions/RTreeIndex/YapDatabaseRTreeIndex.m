@@ -15,9 +15,9 @@
  * See YapDatabaseLogging.h for more information.
  **/
 #if DEBUG
-static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 
 
@@ -35,8 +35,7 @@ static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
     int status = sqlite3_exec(db, [dropTable UTF8String], NULL, NULL, NULL);
     if (status != SQLITE_OK)
     {
-        YDBLogError(@"%@ - Failed dropping table (%@): %d %s",
-                    THIS_METHOD, tableName, status, sqlite3_errmsg(db));
+        YDBLogError(@"Failed dropping table (%@): %d %s", tableName, status, sqlite3_errmsg(db));
     }
 }
 
@@ -94,7 +93,7 @@ static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
     {
         NSAssert(NO, @"Invalid setup: nil");
 
-        YDBLogError(@"%@: Invalid setup: nil", THIS_METHOD);
+        YDBLogError(@"Invalid setup: nil");
         return nil;
     }
 
@@ -102,7 +101,7 @@ static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
     {
         NSAssert(NO, @"Invalid setup: empty");
 
-        YDBLogError(@"%@: Invalid setup: empty", THIS_METHOD);
+        YDBLogError(@"Invalid setup: empty");
         return nil;
     }
 
@@ -110,7 +109,7 @@ static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
     {
         NSAssert(NO, @"Invalid handler: NULL");
 
-        YDBLogError(@"%@: Invalid handler: NULL", THIS_METHOD);
+        YDBLogError(@"Invalid handler: NULL");
         return nil;
     }
 

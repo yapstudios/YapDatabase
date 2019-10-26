@@ -10,9 +10,9 @@
  * See YapDatabaseLogging.h for more information.
  **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -101,7 +101,7 @@ NSString* NSStringFromYapDatabaseSecondaryIndexType(YapDatabaseSecondaryIndexTyp
 	{
 		NSAssert(NO, @"Invalid columnName: nil");
 		
-		YDBLogError(@"%@: Invalid columnName: nil", THIS_METHOD);
+		YDBLogError(@"Invalid columnName: nil");
 		return;
 	}
 	
@@ -129,7 +129,7 @@ NSString* NSStringFromYapDatabaseSecondaryIndexType(YapDatabaseSecondaryIndexTyp
 	{
 		NSAssert(NO, @"Invalid type");
 		
-		YDBLogError(@"%@: Invalid type", THIS_METHOD);
+		YDBLogError(@"Invalid type");
 		return;
 	}
 	

@@ -15,9 +15,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN; // YDB_LOG_LEVEL_VERBOSE | YDB_LOG_FLAG_TRACE;
+  static const int ydbLogLevel = YDBLogLevelWarning; // YDBLogLevelVerbose | YDBLogFlagTrace;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -197,8 +197,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	status = sqlite3_exec(db, [createMappingTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-		            THIS_METHOD, mappingTableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating table (%@): %d %s", mappingTableName, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
@@ -206,8 +205,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	status = sqlite3_exec(db, [createMappingTableIndex UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating index on table (%@): %d %s",
-					THIS_METHOD, mappingTableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating index on table (%@): %d %s", mappingTableName, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
@@ -229,8 +227,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	status = sqlite3_exec(db, [createRecordTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-		            THIS_METHOD, recordTableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating table (%@): %d %s", recordTableName, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
@@ -253,8 +250,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	status = sqlite3_exec(db, [createQueueTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-		            THIS_METHOD, queueTableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating table (%@): %d %s", queueTableName, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
@@ -303,7 +299,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	status = sqlite3_prepare_v2(db, [enumerate UTF8String], -1, &statement, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@: Error creating prepared statement: %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+		YDBLogError(@"Error creating prepared statement: %d %s", status, sqlite3_errmsg(db));
 		
 		return NO;
 	}
@@ -371,7 +367,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 					status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1530,10 +1526,10 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		status = sqlite3_prepare_v2(db, [query UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ (%@): Error creating statement\n"
+			YDBLogError(@"(%@): Error creating statement\n"
 			            @" - status(%d), errmsg: %s\n"
 			            @" - query: %@",
-			            THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db), query);
+			            [self registeredName], status, sqlite3_errmsg(db), query);
 			
 			return foundRowids;
 		}
@@ -1568,8 +1564,8 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ (%@): Error executing statement: %d %s",
-						THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db));
+			YDBLogError(@"(%@): Error executing statement: %d %s",
+			            [self registeredName], status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -1606,8 +1602,8 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		int status = sqlite3_step(statement);
 		if (status == SQLITE_ERROR)
 		{
-			YDBLogError(@"%@ - Error executing statement (insert): %d %s", THIS_METHOD,
-						status, sqlite3_errmsg(databaseTransaction->connection->db));
+			YDBLogError(@"Error executing statement (insert): %d %s",
+			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
 		sqlite3_clear_bindings(statement);
@@ -1641,7 +1637,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		int status = sqlite3_step(statement);
 		if (status == SQLITE_ERROR)
 		{
-			YDBLogError(@"%@ - Error executing statement (insert): %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement (insert): %d %s",
 						status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -1669,7 +1665,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	int status = sqlite3_step(statement);
 	if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement (remove): %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement (remove): %d %s",
 					status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1693,7 +1689,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1985,10 +1981,10 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		status = sqlite3_prepare_v2(db, [query UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ (%@): Error creating statement\n"
+			YDBLogError(@"(%@): Error creating statement\n"
 			            @" - status(%d), errmsg: %s\n"
 			            @" - query: %@",
-			            THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db), query);
+			            [self registeredName], status, sqlite3_errmsg(db), query);
 			
 			return foundHashes;
 		}
@@ -2046,8 +2042,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ (%@): Error executing statement: %d %s",
-						THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db));
+			YDBLogError(@"(%@): Error executing statement: %d %s", [self registeredName], status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -2109,7 +2104,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2163,7 +2158,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		int status = sqlite3_step(statement);
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ - Error executing statement (A): %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement (A): %d %s",
 						status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -2205,7 +2200,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement (A): %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement (A): %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2224,7 +2219,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	YDBLogAutoTrace();
 	
 	if (hash == nil) {
-		YDBLogWarn(@"%@ - Invalid parameter: hash == nil", THIS_METHOD);
+		YDBLogWarn(@"Invalid parameter: hash == nil");
 		return;
 	}
 	
@@ -2245,7 +2240,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	int status = sqlite3_step(statement);
 	if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2305,10 +2300,10 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		status = sqlite3_prepare_v2(db, [query UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ (%@): Error creating statement\n"
+			YDBLogError(@"(%@): Error creating statement\n"
 			            @" - status(%d), errmsg: %s\n"
 			            @" - query: %@",
-			            THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db), query);
+			            [self registeredName], status, sqlite3_errmsg(db), query);
 			
 			return;
 		}
@@ -2325,8 +2320,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		status = sqlite3_step(statement);
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ (%@): Error executing statement: %d %s",
-						THIS_METHOD, [self registeredName], status, sqlite3_errmsg(db));
+			YDBLogError(@"(%@): Error executing statement: %d %s", [self registeredName], status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -2355,7 +2349,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2458,7 +2452,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -2506,7 +2500,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		int status = sqlite3_step(statement);
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -2541,7 +2535,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		int status = sqlite3_step(statement);
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -2584,7 +2578,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		int status = sqlite3_step(statement);
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 		
@@ -2618,7 +2612,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -3858,7 +3852,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		}
 		
 		if (logWarning) {
-			YDBLogWarn(@"%@ - No row in database with given collection/key: %@, %@", THIS_METHOD, collection, key);
+			YDBLogWarn(@"No row in database with given collection/key: %@, %@", collection, key);
 		}
 		
 		return;
@@ -3918,7 +3912,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	
 	if (remoteRecord == nil)
 	{
-		YDBLogWarn(@"%@ - Unable to merge a nil record! Did you mean to detach the recordID?", THIS_METHOD);
+		YDBLogWarn(@"Unable to merge a nil record! Did you mean to detach the recordID?");
 		return;
 	}
 	
@@ -4437,7 +4431,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 					status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	

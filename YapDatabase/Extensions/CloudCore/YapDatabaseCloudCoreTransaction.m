@@ -14,9 +14,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN; // YDB_LOG_LEVEL_VERBOSE; // | YDB_LOG_FLAG_TRACE;
+  static const int ydbLogLevel = YDBLogLevelWarning; // YDBLogLevelVerbose; // | YDBLogFlagTrace;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -186,8 +186,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	status = sqlite3_exec(db, [createPipelineTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-		            THIS_METHOD, pipelineTableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating table (%@): %d %s", pipelineTableName, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
@@ -209,8 +208,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	status = sqlite3_exec(db, [createQueueTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-		            THIS_METHOD, queueTableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed creating table (%@): %d %s", queueTableName, status, sqlite3_errmsg(db));
 		return NO;
 	}
 	
@@ -234,8 +232,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_exec(db, [createTagTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-			            THIS_METHOD, createTagTable, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed creating table (%@): %d %s", createTagTable, status, sqlite3_errmsg(db));
 			return NO;
 		}
 	}
@@ -268,8 +265,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_exec(db, [createMappingTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-			            THIS_METHOD, mappingTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed creating table (%@): %d %s", mappingTableName, status, sqlite3_errmsg(db));
 			return NO;
 		}
 		
@@ -277,8 +273,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_exec(db, [createMappingTableIndex_rowid UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed creating index (database_rowid) on table (%@): %d %s",
-						THIS_METHOD, mappingTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed creating index (database_rowid) on table (%@): %d %s",
+			            mappingTableName, status, sqlite3_errmsg(db));
 			return NO;
 		}
 		
@@ -286,8 +282,8 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_exec(db, [createMappingTableIndex_cloudURI UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed creating index (cloudURI) on table (%@): %d %s",
-						THIS_METHOD, mappingTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed creating index (cloudURI) on table (%@): %d %s",
+			            mappingTableName, status, sqlite3_errmsg(db));
 			return NO;
 		}
 	}
@@ -326,8 +322,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_exec(db, [createQueueTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-			            THIS_METHOD, new_queueTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed creating table (%@): %d %s", new_queueTableName, status, sqlite3_errmsg(db));
 			return NO;
 		}
 	}
@@ -361,7 +356,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_prepare_v2(db, [enumerate UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@: Error creating prepared statement (B): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating prepared statement (B): %d %s", status, sqlite3_errmsg(db));
 			return NO;
 		}
 		
@@ -458,7 +453,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@: Error executing statement (A): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error executing statement (A): %d %s", status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -550,7 +545,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			status = sqlite3_step(statement);
 			if (status != SQLITE_DONE)
 			{
-				YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+				YDBLogError(@"Error executing statement: %d %s",
 								status, sqlite3_errmsg(databaseTransaction->connection->db));
 			}
 			
@@ -568,8 +563,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	status = sqlite3_exec(db, [dropTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed dropping table (%@): %d %s",
-		            THIS_METHOD, old_queueTableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed dropping table (%@): %d %s", old_queueTableName, status, sqlite3_errmsg(db));
 	}
 	
 	return YES;
@@ -606,8 +600,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_exec(db, [createPipelineTable UTF8String], NULL, NULL, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@ - Failed creating table (%@): %d %s",
-							THIS_METHOD, new_pipelineTableName, status, sqlite3_errmsg(db));
+			YDBLogError(@"Failed creating table (%@): %d %s", new_pipelineTableName, status, sqlite3_errmsg(db));
 			return NO;
 		}
 	}
@@ -631,7 +624,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_prepare_v2(db, [enumerate UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@: Error creating prepared statement (B): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating prepared statement (B): %d %s", status, sqlite3_errmsg(db));
 			return NO;
 		}
 		
@@ -651,7 +644,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@: Error executing statement (A): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error executing statement (A): %d %s", status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -676,7 +669,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 			status = sqlite3_step(statement);
 			if (status != SQLITE_DONE)
 			{
-				YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+				YDBLogError(@"Error executing statement: %d %s",
 								status, sqlite3_errmsg(databaseTransaction->connection->db));
 			}
 			
@@ -694,8 +687,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	status = sqlite3_exec(db, [dropTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed dropping table (%@): %d %s",
-						THIS_METHOD, old_pipelineTableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed dropping table (%@): %d %s", old_pipelineTableName, status, sqlite3_errmsg(db));
 	}
 	
 	return YES;
@@ -728,7 +720,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_prepare_v2(db, [enumerate UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@: Error creating prepared statement (A): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating prepared statement (A): %d %s", status, sqlite3_errmsg(db));
 			return NO;
 		}
 		
@@ -751,7 +743,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@: Error executing statement (A): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error executing statement (A): %d %s", status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -847,7 +839,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-					YDBLogError(@"%@: Error executing statement (B1): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+					YDBLogError(@"Error executing statement (B1): %d %s", status, sqlite3_errmsg(db));
 					foundError = YES;
 				}
 				
@@ -889,7 +881,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 				}
 				else
 				{
-					YDBLogError(@"%@: Error executing statement (B2): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+					YDBLogError(@"Error executing statement (B2): %d %s", status, sqlite3_errmsg(db));
 					foundError = YES;
 				}
 				
@@ -920,7 +912,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 				int status = sqlite3_step(statement);
 				if (status != SQLITE_DONE)
 				{
-					YDBLogError(@"%@: Error executing statement (B3): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+					YDBLogError(@"Error executing statement (B3): %d %s", status, sqlite3_errmsg(db));
 					foundError = YES;
 				}
 				
@@ -954,7 +946,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		status = sqlite3_prepare_v2(db, [enumerate UTF8String], -1, &statement, NULL);
 		if (status != SQLITE_OK)
 		{
-			YDBLogError(@"%@: Error creating prepared statement (B): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error creating prepared statement (B): %d %s", status, sqlite3_errmsg(db));
 			return NO;
 		}
 		
@@ -1022,7 +1014,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		
 		if (status != SQLITE_DONE)
 		{
-			YDBLogError(@"%@: Error executing statement (A): %d %s", THIS_METHOD, status, sqlite3_errmsg(db));
+			YDBLogError(@"Error executing statement (A): %d %s", status, sqlite3_errmsg(db));
 		}
 		
 		sqlite3_finalize(statement);
@@ -1291,7 +1283,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		}
 		else
 		{
-			YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+			YDBLogError(@"Error executing statement: %d %s",
 			            status, sqlite3_errmsg(databaseTransaction->connection->db));
 		}
 	
@@ -1322,7 +1314,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 					status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1346,7 +1338,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1370,7 +1362,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1417,7 +1409,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1473,7 +1465,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1552,7 +1544,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	}
 	else if (status == SQLITE_ERROR)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 					status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1633,7 +1625,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1668,7 +1660,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 					status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1696,7 +1688,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 					status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1782,7 +1774,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1871,7 +1863,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1907,7 +1899,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1938,7 +1930,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 					status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -1965,7 +1957,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	int status = sqlite3_step(statement);
 	if (status != SQLITE_DONE)
 	{
-		YDBLogError(@"%@ - Error executing statement: %d %s", THIS_METHOD,
+		YDBLogError(@"Error executing statement: %d %s",
 		            status, sqlite3_errmsg(databaseTransaction->connection->db));
 	}
 	
@@ -3373,7 +3365,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	if (key == nil)
 	{
-		YDBLogWarn(@"%@ - Ignoring: key is nil", THIS_METHOD);
+		YDBLogWarn(@"Ignoring: key is nil");
 		return;
 	}
 	if (identifier == nil)
@@ -3383,7 +3375,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	    ![tag isKindOfClass:[NSString class]] &&
 	    ![tag isKindOfClass:[NSData class]])
 	{
-		YDBLogWarn(@"%@ - Ignoring: unsupported changeTag class: %@", THIS_METHOD, [tag class]);
+		YDBLogWarn(@"Ignoring: unsupported changeTag class: %@", [tag class]);
 		return;
 	}
 	
@@ -3448,7 +3440,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	if (key == nil)
 	{
-		YDBLogWarn(@"%@ - Ignoring: key is nil", THIS_METHOD);
+		YDBLogWarn(@"Ignoring: key is nil");
 		return;
 	}
 	if (identifier == nil)
@@ -3481,7 +3473,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	
 	if (key == nil)
 	{
-		YDBLogWarn(@"%@ - Ignoring: key is nil", THIS_METHOD);
+		YDBLogWarn(@"Ignoring: key is nil");
 		return;
 	}
 	
@@ -3557,7 +3549,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	NSString *cloudURI = [inCloudURI copy]; // mutable string protection
 	
 	if (cloudURI == nil) {
-		YDBLogWarn(@"%@ - Ignoring: cloudURI is nil", THIS_METHOD);
+		YDBLogWarn(@"Ignoring: cloudURI is nil");
 		return;
 	}
 	
@@ -3601,7 +3593,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 	NSString *cloudURI = [inCloudURI copy]; // mutable string protection
 	
 	if (cloudURI == nil) {
-		YDBLogWarn(@"%@ - Ignoring: cloudURI is nil", THIS_METHOD);
+		YDBLogWarn(@"Ignoring: cloudURI is nil");
 		return;
 	}
 	
@@ -3625,7 +3617,7 @@ static NSString *const ext_key_versionTag   = @"versionTag";
 		}
 		
 		if (logWarning) {
-			YDBLogWarn(@"%@ - No row in database with given collection/key: %@, %@", THIS_METHOD, collection, key);
+			YDBLogWarn(@"No row in database with given collection/key: %@, %@", collection, key);
 		}
 		
 		return;

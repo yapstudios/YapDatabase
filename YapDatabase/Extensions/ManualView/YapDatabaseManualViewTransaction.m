@@ -11,9 +11,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -262,7 +262,7 @@
 	
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return NO;
 	}
 	
@@ -302,7 +302,7 @@
 	
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return NO;
 	}
 	
@@ -339,7 +339,7 @@
 	
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return NO;
 	}
 	
@@ -370,7 +370,7 @@
 	
 	if (!databaseTransaction->isReadWriteTransaction)
 	{
-		YDBLogWarn(@"%@ - Method only allowed in readWrite transaction", THIS_METHOD);
+		YDBLogWarn(@"Method only allowed in readWrite transaction");
 		return NO;
 	}
 	

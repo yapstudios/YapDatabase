@@ -13,9 +13,9 @@
  * See YapDatabaseLogging.h for more information.
  **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_VERBOSE | YDB_LOG_FLAG_TRACE;
+  static const int ydbLogLevel = YDBLogLevelVerbose | YDBLogFlagTrace;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -227,7 +227,7 @@ NSString *const YDBCloudCoreOperationIsReadyToStartNotification = @"YDBCloudCore
 	if ([badDependency isKindOfClass:[NSUUID class]] ||
 	    [badDependency isKindOfClass:[YapDatabaseCloudCoreOperation class]])
 	{
-		YDBLogWarn(@"%@ - An operation cannot depend on itself", THIS_METHOD);
+		YDBLogWarn(@"An operation cannot depend on itself");
 	}
 	else if (badDependency != nil)
 	{

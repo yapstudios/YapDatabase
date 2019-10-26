@@ -15,9 +15,9 @@
  * See YapDatabaseLogging.h for more information.
 **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+  static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -44,8 +44,7 @@
 	int status = sqlite3_exec(db, [dropTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed dropping table (%@): %d %s",
-		            THIS_METHOD, tableName, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed dropping table (%@): %d %s", tableName, status, sqlite3_errmsg(db));
 	}
 }
 

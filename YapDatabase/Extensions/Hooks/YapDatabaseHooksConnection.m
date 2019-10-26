@@ -7,9 +7,9 @@
  * See YapDatabaseLogging.h for more information.
  **/
 #if DEBUG
-  static const int ydbLogLevel = YDB_LOG_LEVEL_OFF;
+  static const int ydbLogLevel = YDBLogLevelOff;
 #else
-  static const int ydbLogLevel = YDB_LOG_LEVEL_OFF;
+  static const int ydbLogLevel = YDBLogLevelOff;
 #endif
 #pragma unused(ydbLogLevel)
 

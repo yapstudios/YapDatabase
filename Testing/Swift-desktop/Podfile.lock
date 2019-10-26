@@ -1,9 +1,5 @@
 PODS:
-  - CocoaLumberjack (3.6.0):
-    - CocoaLumberjack/Core (= 3.6.0)
-  - CocoaLumberjack/Core (3.6.0)
-  - YapDatabase/Standard-ObjC/Core (3.1.4):
-    - CocoaLumberjack
+  - YapDatabase/Standard-ObjC/Core (3.1.4)
   - YapDatabase/Standard-ObjC/Extensions/ActionManager (3.1.4):
     - YapDatabase/Standard-ObjC/Core
     - YapDatabase/Standard-ObjC/Extensions/AutoView
@@ -111,17 +107,12 @@ PODS:
 DEPENDENCIES:
   - YapDatabase/Standard-Swift (from `../../`)
 
-SPEC REPOS:
-  trunk:
-    - CocoaLumberjack
-
 EXTERNAL SOURCES:
   YapDatabase:
     :path: "../../"
 
 SPEC CHECKSUMS:
-  CocoaLumberjack: 78b0c238666f4f58db069738ec176f4519557516
-  YapDatabase: d0c1df888b45307333e0c61137f3fa6ae9f72a00
+  YapDatabase: c18007a628db2e9110293ad35bb613350c83c99d
 
 PODFILE CHECKSUM: e05b739d12dc7b42a975abe1f683a0e123a57dad
 

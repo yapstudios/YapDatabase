@@ -19,9 +19,9 @@ NS_ASSUME_NONNULL_BEGIN
 #ifdef SQLITE_HAS_CODEC
 
 #if DEBUG
-static const int ydbLogLevel = YDB_LOG_LEVEL_INFO;
+static const int ydbLogLevel = YDBLogLevelInfo;
 #else
-static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 

@@ -15,9 +15,9 @@
  * See YapDatabaseLogging.h for more information.
  **/
 #if DEBUG
-static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+static const int ydbLogLevel = YDBLogLevelWarning;
 #else
-static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+static const int ydbLogLevel = YDBLogLevelWarning;
 #endif
 #pragma unused(ydbLogLevel)
 
@@ -43,8 +43,7 @@ NSString *const YapDatabaseFullTextSearchFTS3Version = @"fts3";
 	status = sqlite3_exec(db, [dropTable UTF8String], NULL, NULL, NULL);
 	if (status != SQLITE_OK)
 	{
-		YDBLogError(@"%@ - Failed dropping FTS table (%@): %d %s",
-		            THIS_METHOD, dropTable, status, sqlite3_errmsg(db));
+		YDBLogError(@"Failed dropping FTS table (%@): %d %s", dropTable, status, sqlite3_errmsg(db));
 	}
 }
 
