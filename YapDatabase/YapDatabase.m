@@ -164,8 +164,9 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * The default serializer & deserializer use NSCoding (NSKeyedArchiver & NSKeyedUnarchiver).
- * Thus the objects need only support the NSCoding protocol.
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
 **/
 + (YapDatabaseSerializer)defaultSerializer
 {
@@ -175,8 +176,9 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * The default serializer & deserializer use NSCoding (NSKeyedArchiver & NSKeyedUnarchiver).
- * Thus the objects need only support the NSCoding protocol.
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
 **/
 + (YapDatabaseDeserializer)defaultDeserializer
 {
@@ -186,11 +188,9 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Property lists ONLY support the following: NSData, NSString, NSArray, NSDictionary, NSDate, and NSNumber.
- * Property lists are highly optimized and are used extensively by Apple.
- *
- * Property lists make a good fit when your existing code already uses them,
- * such as replacing NSUserDefaults with a database.
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
 **/
 + (YapDatabaseSerializer)propertyListSerializer
 {
@@ -203,11 +203,9 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Property lists ONLY support the following: NSData, NSString, NSArray, NSDictionary, NSDate, and NSNumber.
- * Property lists are highly optimized and are used extensively by Apple.
- *
- * Property lists make a good fit when your existing code already uses them,
- * such as replacing NSUserDefaults with a database.
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
 **/
 + (YapDatabaseDeserializer)propertyListDeserializer
 {
@@ -217,8 +215,9 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * A FASTER serializer than the default, if serializing ONLY a NSDate object.
- * You may want to use timestampSerializer & timestampDeserializer if your metadata is simply an NSDate.
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
 **/
 + (YapDatabaseSerializer)timestampSerializer
 {
@@ -238,8 +237,9 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * A FASTER deserializer than the default, if deserializing data from timestampSerializer.
- * You may want to use timestampSerializer & timestampDeserializer if your metadata is simply an NSDate.
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
 **/
 + (YapDatabaseDeserializer)timestampDeserializer
 {
@@ -313,6 +313,11 @@ static YDBLogHandler logHandler = nil;
 	return handler;
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 + (void)setLogHandler:(void (^)(YDBLogMessage *))inLogHandler
 {
 	logHandler = inLogHandler ?: [self defaultLogHandler];
@@ -380,6 +385,11 @@ static YDBLogHandler logHandler = nil;
 	return [self initWithURL:inURL options:nil];
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (id)initWithURL:(NSURL *)inURL options:(nullable YapDatabaseOptions *)inOptions
 {
 	// Standardize the path.
@@ -394,8 +404,6 @@ static YDBLogHandler logHandler = nil;
 		            @"For concurrency you create multiple connections from a single database instance.");
 		return nil;
 	}
-	
-	YDBLogError(@"Ur momma wears combat boots");
 	
 	if ((self = [super init]))
 	{
@@ -1578,6 +1586,11 @@ static YDBLogHandler logHandler = nil;
 #pragma mark Serialization
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerDefaultSerializer:(YapDatabaseSerializer)serializer
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1589,6 +1602,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerDefaultDeserializer:(YapDatabaseDeserializer)deserializer
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1928,8 +1946,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * This is a public method called to create a new connection.
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (YapDatabaseConnection *)newConnection
 {
 	YapDatabaseConnection *connection = [[YapDatabaseConnection alloc] initWithDatabase:self];
@@ -1939,8 +1959,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * This is a public method called to create a new connection.
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (YapDatabaseConnection *)newConnection:(YapDatabaseConnectionConfig *)config
 {
 	YapDatabaseConnection *connection = [[YapDatabaseConnection alloc] initWithDatabase:self config:config];
@@ -1954,59 +1976,20 @@ static YDBLogHandler logHandler = nil;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * Registers the extension with the database using the given name.
- * After registration everything works automatically using just the extension name.
- * 
- * The registration process is equivalent to a (synchronous) readwrite transaction.
- * It involves persisting various information about the extension to the database,
- * as well as possibly populating the extension by enumerating existing rows in the database.
- *
- * @param extension
- *     The YapDatabaseExtension subclass instance you wish to register.
- *     For example, this might be a YapDatabaseView instance.
- * 
- * @param extensionName
- *     This is an arbitrary string you assign to the extension.
- *     Once registered, you will generally access the extension instance via this name.
- *     For example: [[transaction ext:@"myView"] numberOfGroups];
- *
- * @return
- *     YES if the extension was properly registered.
- *     NO if an error occurred, such as the extensionName is already registered.
- * 
- * @see asyncRegisterExtension:withName:completionBlock:
- * @see asyncRegisterExtension:withName:completionQueue:completionBlock:
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (BOOL)registerExtension:(YapDatabaseExtension *)extension withName:(NSString *)extensionName
 {
 	return [self registerExtension:extension withName:extensionName config:nil];
 }
 
 /**
- * Registers the extension with the database using the given name.
- * After registration everything works automatically using just the extension name.
- *
- * The registration process is equivalent to a (synchronous) readwrite transaction.
- * It involves persisting various information about the extension to the database,
- * as well as possibly populating the extension by enumerating existing rows in the database.
- * 
- * @param extension (required)
- *     The YapDatabaseExtension subclass instance you wish to register.
- *     For example, this might be a YapDatabaseView instance.
- *
- * @param extensionName (required)
- *     This is an arbitrary string you assign to the extension.
- *     Once registered, you will generally access the extension instance via this name.
- *     For example: [[transaction ext:@"myView"] numberOfGroups];
- * 
- * @param config (optional)
- *     You may optionally pass a config for the internal databaseConnection used to perform
- *     the extension registration process. This allows you to control things such as the
- *     cache size, which is sometimes important for performance tuning.
- * 
- * @see asyncRegisterExtension:withName:completionBlock:
- * @see asyncRegisterExtension:withName:completionQueue:completionBlock:
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (BOOL)registerExtension:(YapDatabaseExtension *)extension
                  withName:(NSString *)extensionName
                    config:(YapDatabaseConnectionConfig *)config
@@ -2021,27 +2004,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Asynchronoulsy starts the extension registration process.
- * After registration everything works automatically using just the extension name.
- * 
- * The registration process is equivalent to an asyncReadwrite transaction.
- * It involves persisting various information about the extension to the database,
- * as well as possibly populating the extension by enumerating existing rows in the database.
- * 
- * @param extension (required)
- *     The YapDatabaseExtension subclass instance you wish to register.
- *     For example, this might be a YapDatabaseView instance.
- *
- * @param extensionName (required)
- *     This is an arbitrary string you assign to the extension.
- *     Once registered, you will generally access the extension instance via this name.
- *     For example: [[transaction ext:@"myView"] numberOfGroups];
- *
- * @param completionBlock (optional)
- *     An optional completion block may be used.
- *     If the extension registration was successful then the ready parameter will be YES.
- *     The completionBlock will be invoked on the main thread (dispatch_get_main_queue()).
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)asyncRegisterExtension:(YapDatabaseExtension *)extension
                       withName:(NSString *)extensionName
                completionBlock:(void(^)(BOOL ready))completionBlock
@@ -2054,30 +2020,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Asynchronoulsy starts the extension registration process.
- * After registration everything works automatically using just the extension name.
- *
- * The registration process is equivalent to an asyncReadwrite transaction.
- * It involves persisting various information about the extension to the database,
- * as well as possibly populating the extension by enumerating existing rows in the database.
- * 
- * @param extension (required)
- *     The YapDatabaseExtension subclass instance you wish to register.
- *     For example, this might be a YapDatabaseView instance.
- *
- * @param extensionName (required)
- *     This is an arbitrary string you assign to the extension.
- *     Once registered, you will generally access the extension instance via this name.
- *     For example: [[transaction ext:@"myView"] numberOfGroups];
- *
- * @param completionQueue (optional)
- *     The dispatch_queue to invoke the completion block may optionally be specified.
- *     If NULL, dispatch_get_main_queue() is automatically used.
- *
- * @param completionBlock (optional)
- *     An optional completion block may be used.
- *     If the extension registration was successful then the ready parameter will be YES.
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)asyncRegisterExtension:(YapDatabaseExtension *)extension
                       withName:(NSString *)extensionName
                completionQueue:(dispatch_queue_t)completionQueue
@@ -2091,32 +2037,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Asynchronoulsy starts the extension registration process.
- * After registration everything works automatically using just the extension name.
- *
- * The registration process is equivalent to an asyncReadwrite transaction.
- * It involves persisting various information about the extension to the database,
- * as well as possibly populating the extension by enumerating existing rows in the database.
- * 
- * @param extension (required)
- *     The YapDatabaseExtension subclass instance you wish to register.
- *     For example, this might be a YapDatabaseView instance.
- *
- * @param extensionName (required)
- *     This is an arbitrary string you assign to the extension.
- *     Once registered, you will generally access the extension instance via this name.
- *     For example: [[transaction ext:@"myView"] numberOfGroups];
- * 
- * @param config (optional)
- *     You may optionally pass a config for the internal databaseConnection used to perform
- *     the extension registration process. This allows you to control things such as the
- *     cache size, which is sometimes important for performance tuning.
- *
- * @param completionBlock (optional)
- *     An optional completion block may be used.
- *     If the extension registration was successful then the ready parameter will be YES.
- *     The completionBlock will be invoked on the main thread (dispatch_get_main_queue()).
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)asyncRegisterExtension:(YapDatabaseExtension *)extension
                       withName:(NSString *)extensionName
                         config:(YapDatabaseConnectionConfig *)config
@@ -2130,35 +2054,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Asynchronoulsy starts the extension registration process.
- * After registration everything works automatically using just the extension name.
- *
- * The registration process is equivalent to an asyncReadwrite transaction.
- * It involves persisting various information about the extension to the database,
- * as well as possibly populating the extension by enumerating existing rows in the database.
- * 
- * @param extension (required)
- *     The YapDatabaseExtension subclass instance you wish to register.
- *     For example, this might be a YapDatabaseView instance.
- *
- * @param extensionName (required)
- *     This is an arbitrary string you assign to the extension.
- *     Once registered, you will generally access the extension instance via this name.
- *     For example: [[transaction ext:@"myView"] numberOfGroups];
- * 
- * @param config (optional)
- *     You may optionally pass a config for the internal databaseConnection used to perform
- *     the extension registration process. This allows you to control things such as the
- *     cache size, which is sometimes important for performance tuning.
- *
- * @param completionQueue (optional)
- *     The dispatch_queue to invoke the completion block may optionally be specified.
- *     If NULL, dispatch_get_main_queue() is automatically used.
- *
- * @param completionBlock (optional)
- *     An optional completion block may be used.
- *     If the extension registration was successful then the ready parameter will be YES.
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)asyncRegisterExtension:(YapDatabaseExtension *)extension
                       withName:(NSString *)extensionName
                         config:(YapDatabaseConnectionConfig *)config
@@ -2186,36 +2085,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * This method unregisters an extension with the given name.
- * The associated underlying tables will be dropped from the database.
- * 
- * The unregistration process is equivalent to a (synchronous) readwrite transaction.
- * It involves deleting various information about the extension from the database,
- * as well as possibly dropping related tables the extension may have been using.
- *
- * @param extensionName (required)
- *     This is the arbitrary string you assigned to the extension when you registered it.
- *
- * Note 1:
- *   You don't need to re-register an extension in order to unregister it. For example,
- *   you've previously registered an extension (in previous app launches), but you no longer need the extension.
- *   You don't have to bother creating and registering the unneeded extension,
- *   just so you can unregister it and have the associated tables dropped.
- *   The database persists information about registered extensions, including the associated class of an extension.
- *   So you can simply pass the name of the extension, and the database system will use the associated class to
- *   drop the appropriate tables.
- *
- * Note 2:
- *   In fact, you don't even have to worry about unregistering extensions that you no longer need.
- *   That database system will automatically handle it for you.
- *   That is, upon completion of the first readWrite transaction (that makes changes), the database system will
- *   check to see if there are any "orphaned" extensions. That is, previously registered extensions that are
- *   no longer in use (and are now out-of-date because they didn't process the recent change(s) to the db).
- *   And it will automatically unregister these orhpaned extensions for you.
- *       
- * @see asyncUnregisterExtensionWithName:completionBlock:
- * @see asyncUnregisterExtensionWithName:completionQueue:completionBlock:
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)unregisterExtensionWithName:(NSString *)extensionName
 {
 	dispatch_sync(writeQueue, ^{ @autoreleasepool {
@@ -2225,19 +2098,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Asynchronoulsy starts the extension unregistration process.
- *
- * The unregistration process is equivalent to an asyncReadwrite transaction.
- * It involves deleting various information about the extension from the database,
- * as well as possibly dropping related tables the extension may have been using.
- *
- * @param extensionName (required)
- *     This is the arbitrary string you assigned to the extension when you registered it.
- *
- * @param completionBlock (optional)
- *     An optional completion block may be used.
- *     The completionBlock will be invoked on the main thread (dispatch_get_main_queue()).
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)asyncUnregisterExtensionWithName:(NSString *)extensionName
                          completionBlock:(dispatch_block_t)completionBlock
 {
@@ -2247,22 +2111,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Asynchronoulsy starts the extension unregistration process.
- *
- * The unregistration process is equivalent to an asyncReadwrite transaction.
- * It involves deleting various information about the extension from the database,
- * as well as possibly dropping related tables the extension may have been using.
- *
- * @param extensionName (required)
- *     This is the arbitrary string you assigned to the extension when you registered it.
- *
- * @param completionQueue (optional)
- *     The dispatch_queue to invoke the completion block may optionally be specified.
- *     If NULL, dispatch_get_main_queue() is automatically used.
- *
- * @param completionBlock (optional)
- *     An optional completion block may be used.
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)asyncUnregisterExtensionWithName:(NSString *)extensionName
                          completionQueue:(dispatch_queue_t)completionQueue
                          completionBlock:(dispatch_block_t)completionBlock
@@ -2429,8 +2281,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Returns the registered extension with the given name.
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (id)registeredExtension:(NSString *)extensionName
 {
 	// This method is public
@@ -2455,9 +2309,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Returns all currently registered extensions as a dictionary.
- * The key is the registed name (NSString), and the value is the extension (YapDatabaseExtension subclass).
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (NSDictionary *)registeredExtensions
 {
 	// This method is public
@@ -2504,19 +2359,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * Allows you to fetch the registered extension names from the last time the database was run.
- * Typically this means from the last time the app was run.
- *
- * This may be used to assist in various tasks, such as cleanup or upgrade tasks.
- *
- * If you need this information, you should fetch it early on because YapDatabase only maintains this information
- * until it sees you are done registering all your initial extensions. That is, after one initializes the database
- * they then immediately register any needed initial extensions before they begin to use the database. Once a
- * readWriteTransaction modifies the database, YapDatabase will take this opportunity to look for orphaned extensions.
- * These are extensions that were registered at the end of the last database session,
- * but which are no longer registered. YapDatabase will automatically cleanup these orphaned extensions,
- * and also clear the previouslyRegisteredExtensionNames information at this point.
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (NSArray *)previouslyRegisteredExtensionNames
 {
 	__block NSArray *result = nil;
@@ -2539,23 +2385,10 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
- * It's sometimes useful to find out when all async registerExtension/unregisterExtension requests have completed.
- *
- * One way to accomplish this is simply to queue an asyncReadWriteTransaction on any databaseConnection.
- * Since all async register/unregister extension requests are immediately dispatch_async'd through the
- * internal serial writeQueue, you'll know that once your asyncReadWriteTransaction is running,
- * all previously scheduled register/unregister requests have completed.
- *
- * Although the above technique works, the 'flushExtensionRequestsWithCompletionQueue::'
- * is a more efficient way to accomplish this task. (And a more elegant & readable way too.)
- *
- * @param completionQueue
- *   The dispatch_queue to invoke the completionBlock on.
- *   If NULL, dispatch_get_main_queue() is automatically used.
- *
- * @param completionBlock
- *   The block to invoke once all previously scheduled register/unregister extension requests have completed.
- **/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)flushExtensionRequestsWithCompletionQueue:(nullable dispatch_queue_t)completionQueue
 									       completionBlock:(nullable dispatch_block_t)completionBlock
 {
@@ -2869,27 +2702,10 @@ static YDBLogHandler logHandler = nil;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * The snapshot represents when the database was last modified by a read-write transaction.
- * This information isn persisted to the 'yap' database, and is separately held in memory.
- * It serves multiple purposes.
- *
- * First is assists in validation of a connection's cache.
- * When a connection begins a new transaction, it may have items sitting in the cache.
- * However the connection doesn't know if the items are still valid because another connection may have made changes.
- *
- * The snapshot also assists in correcting for a race condition.
- * It order to minimize blocking we allow read-write transactions to commit outside the context
- * of the snapshotQueue. This is because the commit may be a time consuming operation, and we
- * don't want to block read-only transactions during this period. The race condition occurs if a read-only
- * transactions starts in the midst of a read-write commit, and the read-only transaction gets
- * a "yap-level" snapshot that's out of sync with the "sql-level" snapshot. This is easily correctable if caught.
- * Thus we maintain the snapshot in memory, and fetchable via a select query.
- * One represents the "yap-level" snapshot, and the other represents the "sql-level" snapshot.
- *
- * The snapshot is simply a 64-bit integer.
- * It is reset when the YapDatabase instance is initialized,
- * and incremented by each read-write transaction (if changes are actually made).
-**/
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (uint64_t)snapshot
 {
 	if (dispatch_get_specific(IsOnSnapshotQueueKey))
@@ -3547,17 +3363,13 @@ static YDBLogHandler logHandler = nil;
 // This method is only used by tests.
 - (void)flushInternalQueue
 {
-    dispatch_sync(internalQueue,
-                  ^{
-                  });
+    dispatch_sync(internalQueue, ^{ });
 }
 
 // This method is only used by tests.
 - (void)flushCheckpointQueue
 {
-    dispatch_sync(checkpointQueue,
-                  ^{
-                  });
+    dispatch_sync(checkpointQueue, ^{ });
 }
 
 #endif
