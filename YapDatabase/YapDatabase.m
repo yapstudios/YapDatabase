@@ -295,19 +295,17 @@ static YDBLogHandler logHandler = nil;
 + (YDBLogHandler)defaultLogHandler
 {
 	NSString *subsystem = @"yapdb";
-	NSString *category = @"";
+	NSString *category = @"yapdb";
 	
 	os_log_t logger = os_log_create([subsystem UTF8String], [category UTF8String]);
 	
 	YDBLogHandler handler = ^void (YDBLogMessage *log){ @autoreleasepool {
 		
-		if (log.flag & (YDBLogFlagError | YDBLogFlagWarning))
-		{
-			NSString *formattedMessage =
-			  [NSString stringWithFormat:@"%@: %@ - %@", log.fileName, log.function, log.message];
-			
-		//	os_log_error(OS_LOG_DEFAULT, "%{public}s", [formattedMessage UTF8String]);
-			os_log_error(logger, "%{public}s", [formattedMessage UTF8String]);
+		if (log.flag & YDBLogFlagError) {
+			os_log_error(logger, "%{public}@ %{public}@", log.function, log.message);
+		}
+		else if (log.flag & YDBLogFlagWarning) {
+			os_log_info(logger, "%{public}@ %{public}@", log.function, log.message);
 		}
 	}};
 	return handler;

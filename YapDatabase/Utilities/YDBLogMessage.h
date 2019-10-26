@@ -110,6 +110,7 @@ typedef NS_ENUM(NSUInteger, YDBLogLevel){
 
 /**
  * The full filePath (e.g. /Users/alice/code/myproject/YapDatabase/Extensions/YapFooBarTransaction.m)
+ * This comes from `__FILE__`
  */
 @property (readonly, nonatomic) NSString *file;
 
@@ -119,14 +120,15 @@ typedef NS_ENUM(NSUInteger, YDBLogLevel){
 @property (readonly, nonatomic) NSString *fileName;
 
 /**
- *
+ * The name of function that triggered the log message.
+ * This comes from __PRETTY_FUNCTION__
  */
 @property (readonly, nonatomic) NSString *function;
+
+/**
+ * The line number within the file. (i.e. location of emitted log message)
+ */
 @property (readonly, nonatomic) NSUInteger line;
-@property (readonly, nonatomic) NSDate *timestamp;
-@property (readonly, nonatomic) NSString *threadID; // ID as it appears in NSLog calculated from the machThreadID
-@property (readonly, nonatomic) NSString *threadName;
-@property (readonly, nonatomic) NSString *queueLabel;
 
 @end
 
