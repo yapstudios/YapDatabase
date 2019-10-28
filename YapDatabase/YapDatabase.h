@@ -433,6 +433,17 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
 - (void)registerPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection;
 
 /**
+ * Registers a configuration group (for both objects & metadata) for an array of collections.
+ *
+ * This is equivalent to looping over the array, and invoking each individual registration method. (But faster.)
+ */
+- (void)registerSerializer:(nullable YapDatabaseSerializer)serializer
+              deserializer:(nullable YapDatabaseDeserializer)deserializer
+              preSanitizer:(nullable YapDatabasePreSanitizer)preSanitizer
+             postSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
+            forCollections:(NSArray<NSString*> *)collections;
+
+/**
  * Registers a serializer (object => data) to be used for all objects in the given collection.
  *
  * @note: Passing nil for the collection is the equivalent of passing the empty string.

@@ -378,6 +378,11 @@ static YDBLogHandler logHandler = nil;
 #pragma mark Init
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (id)initWithURL:(NSURL *)inURL
 {
 	return [self initWithURL:inURL options:nil];
@@ -1616,6 +1621,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerDefaultPreSanitizer:(nullable YapDatabasePreSanitizer)preSanitizer
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1627,6 +1637,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerDefaultPostSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1638,6 +1653,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerSerializer:(YapDatabaseSerializer)serializer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1649,6 +1669,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerDeserializer:(YapDatabaseDeserializer)deserializer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1660,6 +1685,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerPreSanitizer:(YapDatabasePreSanitizer)preSanitizer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1671,6 +1701,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1682,6 +1717,42 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
+- (void)registerSerializer:(nullable YapDatabaseSerializer)serializer
+              deserializer:(nullable YapDatabaseDeserializer)deserializer
+              preSanitizer:(nullable YapDatabasePreSanitizer)preSanitizer
+             postSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
+            forCollections:(NSArray<NSString*> *)collections
+{
+	YAPUnfairLockLock(&serializationLock);
+	{
+		for (NSString *collection in collections)
+		{
+			objectSerializers[collection] = [serializer copy];
+			metadataSerializers[collection] = [serializer copy];
+			
+			objectDeserializers[collection] = [deserializer copy];
+			metadataDeserializers[collection] = [deserializer copy];
+			
+			objectPreSanitizers[collection] = [preSanitizer copy];
+			metadataPreSanitizers[collection] = [preSanitizer copy];
+			
+			objectPostSanitizers[collection] = [postSanitizer copy];
+			metadataPostSanitizers[collection] = [postSanitizer copy];
+		}
+	}
+	YAPUnfairLockUnlock(&serializationLock);
+}
+
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerObjectSerializer:(YapDatabaseSerializer)serializer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1692,6 +1763,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerObjectDeserializer:(YapDatabaseDeserializer)deserializer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1702,6 +1778,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerObjectPreSanitizer:(YapDatabasePreSanitizer)preSanitizer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1712,6 +1793,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerObjectPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1722,6 +1808,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerMetadataSerializer:(YapDatabaseSerializer)serializer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1732,6 +1823,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerMetadataDeserializer:(YapDatabaseDeserializer)deserializer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1742,6 +1838,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerMetadataPreSanitizer:(YapDatabasePreSanitizer)preSanitizer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
@@ -1752,6 +1853,11 @@ static YDBLogHandler logHandler = nil;
 	YAPUnfairLockUnlock(&serializationLock);
 }
 
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 - (void)registerMetadataPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection
 {
 	YAPUnfairLockLock(&serializationLock);
