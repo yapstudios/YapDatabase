@@ -385,8 +385,20 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
 @property (atomic, readonly) NSString *sqliteVersion;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark Serialization
+#pragma mark Default Configuration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Allows you to configure the default values for new connections.
+ *
+ * When you create a connection via `[YapDatabase newConnection]`, that new connection will inherit
+ * its initial configuration via these connectionDefaults. Of course, the connection may then override
+ * these default configuration values, and configure itself as needed.
+ *
+ * Changing the connectionDefault values only affects future connections that will be created.
+ * It does not affect connections that have already been created.
+ */
+@property (atomic, readonly) YapDatabaseConnectionConfig *connectionDefaults;
 
 /**
  * Registers a default serializer (object => data),
@@ -411,6 +423,10 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * which will be used in cases where another PostSanitizer isn't configured for the collection.
  */
 - (void)registerDefaultPostSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark Per-Collection Configuration
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * Registers a serializer (object => data) to be used for all **objects & metadata** in the given collection.
@@ -487,21 +503,23 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  */
 - (void)registerMetadataPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark Defaults
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/**
+ * Allows you to opt-in to various performance improvements,
+ * which is generally dependent on the object types you're storing in each collection.
+ *
+ * The Object-Policy is documented on the wiki here:
+ * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
+ */
+- (void)setObjectPolicy:(YapDatabasePolicy)policy forCollection:(nullable NSString *)collection;
 
 /**
- * Allows you to configure the default values for new connections.
+ * Allows you to opt-in to various performance improvements,
+ * which is generally dependent on the object types you're storing in each collection.
  *
- * When you create a connection via `[YapDatabase newConnection]`, that new connection will inherit
- * its initial configuration via these connectionDefaults. Of course, the connection may then override
- * these default configuration values, and configure itself as needed.
- *
- * Changing the connectionDefault values only affects future connections that will be created.
- * It does not affect connections that have already been created.
+ * The Object-Policy is documented on the wiki here:
+ * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
  */
-@property (atomic, readonly) YapDatabaseConnectionConfig *connectionDefaults;
+- (void)setMetadataPolicy:(YapDatabasePolicy)policy forCollection:(nullable NSString *)collection;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Connections

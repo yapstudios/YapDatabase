@@ -127,19 +127,22 @@ static YDBLogHandler logHandler = nil;
 	
 	YapDatabaseConnectionConfig *connectionDefaults;
 	
-	YAPUnfairLock serializationLock;
+	YAPUnfairLock configLock;
 	
-	NSMutableDictionary<id, YapDatabaseSerializer> *objectSerializers;
-	NSMutableDictionary<id, YapDatabaseDeserializer> *objectDeserializers;
+	NSMutableDictionary<id, YapDatabaseSerializer> *objectSerializers;         // only accessible within configLock
+	NSMutableDictionary<id, YapDatabaseDeserializer> *objectDeserializers;     // only accessible within configLock
 	
-	NSMutableDictionary<id, YapDatabasePreSanitizer> *objectPreSanitizers;
-	NSMutableDictionary<id, YapDatabasePostSanitizer> *objectPostSanitizers;
+	NSMutableDictionary<id, YapDatabasePreSanitizer> *objectPreSanitizers;     // only accessible within configLock
+	NSMutableDictionary<id, YapDatabasePostSanitizer> *objectPostSanitizers;   // only accessible within configLock
 	
-	NSMutableDictionary<id, YapDatabaseSerializer> *metadataSerializers;
-	NSMutableDictionary<id, YapDatabaseDeserializer> *metadataDeserializers;
+	NSMutableDictionary<id, YapDatabaseSerializer> *metadataSerializers;       // only accessible within configLock
+	NSMutableDictionary<id, YapDatabaseDeserializer> *metadataDeserializers;   // only accessible within configLock
 	
-	NSMutableDictionary<id, YapDatabasePreSanitizer> *metadataPreSanitizers;
-	NSMutableDictionary<id, YapDatabasePostSanitizer> *metadataPostSanitizers;
+	NSMutableDictionary<id, YapDatabasePreSanitizer> *metadataPreSanitizers;   // only accessible within configLock
+	NSMutableDictionary<id, YapDatabasePostSanitizer> *metadataPostSanitizers; // only accessible within configLock
+	
+	NSDictionary<NSString*, NSNumber*> *objectPolicies;   // only accessible within configLock
+	NSDictionary<NSString*, NSNumber*> *metadataPolicies; // only accessible within configLock
 	
 	NSDictionary *registeredExtensions;
 	NSDictionary *registeredMemoryTables;
@@ -545,7 +548,7 @@ static YDBLogHandler logHandler = nil;
 		
 		connectionDefaults = [[YapDatabaseConnectionConfig alloc] init];
 		
-		serializationLock = YAP_UNFAIR_LOCK_INIT;
+		configLock = YAP_UNFAIR_LOCK_INIT;
 		
 		objectSerializers = [[NSMutableDictionary alloc] init];
 		objectDeserializers = [[NSMutableDictionary alloc] init];
@@ -559,14 +562,18 @@ static YDBLogHandler logHandler = nil;
 		metadataPreSanitizers = [[NSMutableDictionary alloc] init];
 		metadataPostSanitizers = [[NSMutableDictionary alloc] init];
 		
+		id defaultKey = [NSNull null];
 		YapDatabaseSerializer defaultSerializer = [[self class] defaultSerializer];
 		YapDatabaseDeserializer defaultDeserializer = [[self class] defaultDeserializer];
 		
-		objectSerializers[[NSNull null]] = defaultSerializer;
-		objectDeserializers[[NSNull null]] = defaultDeserializer;
+		objectSerializers[defaultKey] = defaultSerializer;
+		objectDeserializers[defaultKey] = defaultDeserializer;
 		
-		metadataSerializers[[NSNull null]] = defaultSerializer;
-		metadataDeserializers[[NSNull null]] = defaultDeserializer;
+		metadataSerializers[defaultKey] = defaultSerializer;
+		metadataDeserializers[defaultKey] = defaultDeserializer;
+		
+		objectPolicies = [[NSDictionary alloc] init];
+		metadataPolicies = [[NSDictionary alloc] init];
 		
 		registeredExtensions = [[NSDictionary alloc] init];
 		registeredMemoryTables = [[NSDictionary alloc] init];
@@ -1586,8 +1593,13 @@ static YDBLogHandler logHandler = nil;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark Serialization
+#pragma mark Default Configuration
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+- (YapDatabaseConnectionConfig *)connectionDefaults
+{
+	return connectionDefaults;
+}
 
 /**
  * See header file for description.
@@ -1596,13 +1608,13 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerDefaultSerializer:(YapDatabaseSerializer)serializer
 {
-	YAPUnfairLockLock(&serializationLock);
+	YAPUnfairLockLock(&configLock);
 	{
 		id key = [NSNull null];
 		objectSerializers[key] = [serializer copy];
 		metadataSerializers[key] = [serializer copy];
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1612,13 +1624,13 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerDefaultDeserializer:(YapDatabaseDeserializer)deserializer
 {
-	YAPUnfairLockLock(&serializationLock);
+	YAPUnfairLockLock(&configLock);
 	{
 		id key = [NSNull null];
 		objectDeserializers[key] = [deserializer copy];
 		metadataDeserializers[key] = [deserializer copy];
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1628,13 +1640,13 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerDefaultPreSanitizer:(nullable YapDatabasePreSanitizer)preSanitizer
 {
-	YAPUnfairLockLock(&serializationLock);
+	YAPUnfairLockLock(&configLock);
 	{
 		id key = [NSNull null];
 		objectPreSanitizers[key] = [preSanitizer copy];
 		metadataPreSanitizers[key] = [preSanitizer copy];
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1644,14 +1656,18 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerDefaultPostSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
 {
-	YAPUnfairLockLock(&serializationLock);
+	YAPUnfairLockLock(&configLock);
 	{
 		id key = [NSNull null];
 		objectPostSanitizers[key] = [postSanitizer copy];
 		metadataPostSanitizers[key] = [postSanitizer copy];
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+#pragma mark Per-Collection Configuration
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
  * See header file for description.
@@ -1660,13 +1676,15 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerSerializer:(YapDatabaseSerializer)serializer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [serializer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		objectSerializers[key] = [serializer copy];
-		metadataSerializers[key] = [serializer copy];
+		objectSerializers[key] = value;
+		metadataSerializers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1676,13 +1694,15 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerDeserializer:(YapDatabaseDeserializer)deserializer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [deserializer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		objectDeserializers[key] = [deserializer copy];
-		metadataDeserializers[key] = [deserializer copy];
+		objectDeserializers[key] = value;
+		metadataDeserializers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1692,13 +1712,15 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerPreSanitizer:(YapDatabasePreSanitizer)preSanitizer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [preSanitizer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		objectPreSanitizers[key] = [preSanitizer copy];
-		metadataPreSanitizers[key] = [preSanitizer copy];
+		objectPreSanitizers[key] = value;
+		metadataPreSanitizers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1708,13 +1730,15 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [postSanitizer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		objectPostSanitizers[key] = [postSanitizer copy];
-		metadataPostSanitizers[key] = [postSanitizer copy];
+		objectPostSanitizers[key] = value;
+		metadataPostSanitizers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1728,7 +1752,7 @@ static YDBLogHandler logHandler = nil;
              postSanitizer:(nullable YapDatabasePostSanitizer)postSanitizer
             forCollections:(NSArray<NSString*> *)collections
 {
-	YAPUnfairLockLock(&serializationLock);
+	YAPUnfairLockLock(&configLock);
 	{
 		for (NSString *collection in collections)
 		{
@@ -1745,7 +1769,7 @@ static YDBLogHandler logHandler = nil;
 			metadataPostSanitizers[collection] = [postSanitizer copy];
 		}
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1755,12 +1779,14 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerObjectSerializer:(YapDatabaseSerializer)serializer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [serializer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		objectSerializers[key] = [serializer copy];
+		objectSerializers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1770,12 +1796,14 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerObjectDeserializer:(YapDatabaseDeserializer)deserializer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [deserializer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		objectDeserializers[key] = [deserializer copy];
+		objectDeserializers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1785,12 +1813,14 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerObjectPreSanitizer:(YapDatabasePreSanitizer)preSanitizer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [preSanitizer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		objectPreSanitizers[key] = [preSanitizer copy];
+		objectPreSanitizers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1800,12 +1830,14 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerObjectPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [postSanitizer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		objectPostSanitizers[key] = [postSanitizer copy];
+		objectPostSanitizers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1815,12 +1847,14 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerMetadataSerializer:(YapDatabaseSerializer)serializer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [serializer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		metadataSerializers[key] = [serializer copy];
+		metadataSerializers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1830,12 +1864,14 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerMetadataDeserializer:(YapDatabaseDeserializer)deserializer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [deserializer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		metadataDeserializers[key] = [deserializer copy];
+		metadataDeserializers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1845,12 +1881,14 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerMetadataPreSanitizer:(YapDatabasePreSanitizer)preSanitizer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [preSanitizer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		metadataPreSanitizers[key] = [preSanitizer copy];
+		metadataPreSanitizers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
 /**
@@ -1860,109 +1898,170 @@ static YDBLogHandler logHandler = nil;
  */
 - (void)registerMetadataPostSanitizer:(YapDatabasePostSanitizer)postSanitizer forCollection:(nullable NSString *)collection
 {
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	id value = [postSanitizer copy];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		id key = collection ?: @"";
-		metadataPostSanitizers[key] = [postSanitizer copy];
+		metadataPostSanitizers[key] = value;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 }
 
-- (YapDatabaseSerializer)objectSerializerForCollection:(nullable NSString *)collection
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
+- (void)setObjectPolicy:(YapDatabasePolicy)policy forCollection:(nullable NSString *)collection
 {
-	YapDatabaseSerializer result = nil;
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	
+	// Sanity check: ensure policy is valid enum
+	switch (policy)
 	{
-		result = objectSerializers[collection ?: @""] ?: objectSerializers[[NSNull null]];
+		case YapDatabasePolicyContainment : break;
+		case YapDatabasePolicyShare       : break;
+		case YapDatabasePolicyCopy        : break;
+		default                           : policy = YapDatabasePolicyContainment;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
-	return result;
+	
+	YAPUnfairLockLock(&configLock);
+	{
+		NSMutableDictionary *newObjectPolicies = [objectPolicies mutableCopy];
+		newObjectPolicies[key] = @(policy);
+		
+		objectPolicies = [newObjectPolicies copy];
+	}
+	YAPUnfairLockUnlock(&configLock);
 }
 
-- (YapDatabaseSerializer)metadataSerializerForCollection:(nullable NSString *)collection
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
+- (void)setMetadataPolicy:(YapDatabasePolicy)policy forCollection:(nullable NSString *)collection
 {
-	YapDatabaseSerializer result = nil;
-	YAPUnfairLockLock(&serializationLock);
+	id key = collection ?: @"";
+	
+	// Sanity check: ensure policy is valid enum
+	switch (policy)
 	{
-		result = metadataSerializers[collection ?: @""] ?: metadataSerializers[[NSNull null]];
+		case YapDatabasePolicyContainment : break;
+		case YapDatabasePolicyShare       : break;
+		case YapDatabasePolicyCopy        : break;
+		default                           : policy = YapDatabasePolicyContainment;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
-	return result;
+	
+	YAPUnfairLockLock(&configLock);
+	{
+		NSMutableDictionary *newMetadataPolicies = [metadataPolicies mutableCopy];
+		newMetadataPolicies[key] = @(policy);
+		
+		metadataPolicies = [newMetadataPolicies copy];
+	}
+	YAPUnfairLockUnlock(&configLock);
 }
 
 - (YapDatabaseDeserializer)objectDeserializerForCollection:(nullable NSString *)collection
 {
+	id const key = collection ?: @"";
+	id const defaultKey = [NSNull null];
+	
 	YapDatabaseDeserializer result = nil;
-	YAPUnfairLockLock(&serializationLock);
+	YAPUnfairLockLock(&configLock);
 	{
-		result = objectDeserializers[collection ?: @""] ?: objectDeserializers[[NSNull null]];
+		result = objectDeserializers[key] ?: objectDeserializers[defaultKey];
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 	return result;
 }
 
 - (YapDatabaseDeserializer)metadataDeserializerForCollection:(nullable NSString *)collection
 {
+	id const key = collection ?: @"";
+	id const defaultKey = [NSNull null];
+	
 	YapDatabaseDeserializer result = nil;
-	YAPUnfairLockLock(&serializationLock);
+	YAPUnfairLockLock(&configLock);
 	{
-		result = metadataDeserializers[collection ?: @""] ?: metadataDeserializers[[NSNull null]];
+		result = metadataDeserializers[key] ?: metadataDeserializers[defaultKey];
 	}
-	YAPUnfairLockUnlock(&serializationLock);
+	YAPUnfairLockUnlock(&configLock);
 	return result;
 }
 
-- (nullable YapDatabasePreSanitizer)objectPreSanitizerForCollection:(nullable NSString *)collection
+
+- (YapDatabaseCollectionConfig *)configForCollection:(nullable NSString *)collection
 {
-	YapDatabasePreSanitizer result = nil;
-	YAPUnfairLockLock(&serializationLock);
+	YapDatabaseSerializer objectSerializer = nil;
+	YapDatabaseSerializer metadataSerializer = nil;
+	
+	YapDatabasePreSanitizer objectPreSanitizer = nil;
+	YapDatabasePreSanitizer metadataPreSanitizer = nil;
+	
+	YapDatabasePostSanitizer objectPostSanitizer = nil;
+	YapDatabasePostSanitizer metadataPostSanitizer = nil;
+	
+	YapDatabasePolicy objectPolicy = YapDatabasePolicyContainment;
+	YapDatabasePolicy metadataPolicy = YapDatabasePolicyContainment;
+	
+	id const key = collection ?: @"";
+	id const defaultKey = [NSNull null];
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		result = objectPreSanitizers[collection ?: @""] ?: objectPreSanitizers[[NSNull null]];
+		objectSerializer   =   objectSerializers[key] ?:   objectSerializers[defaultKey];
+		metadataSerializer = metadataSerializers[key] ?: metadataSerializers[defaultKey];
+		
+		objectPreSanitizer   =   objectPreSanitizers[key] ?:   objectPreSanitizers[defaultKey];
+		metadataPreSanitizer = metadataPreSanitizers[key] ?: metadataPreSanitizers[defaultKey];
+		
+		objectPostSanitizer   =   objectPostSanitizers[key] ?:   objectPostSanitizers[defaultKey];
+		metadataPostSanitizer = metadataPostSanitizers[key] ?: metadataPostSanitizers[defaultKey];
+		
+		NSNumber *policy = nil;
+		
+		policy = objectPolicies[key];
+		if (policy) {
+			objectPolicy = (YapDatabasePolicy)[policy integerValue];
+		}
+		
+		policy = metadataPolicies[key];
+		if (policy) {
+			metadataPolicy = (YapDatabasePolicy)[policy integerValue];
+		}
 	}
-	YAPUnfairLockUnlock(&serializationLock);
-	return result;
+	YAPUnfairLockUnlock(&configLock);
+	
+	YapDatabaseCollectionConfig *config =
+	  [[YapDatabaseCollectionConfig alloc] initWithObjectSerializer: objectSerializer
+	                                             metadataSerializer: metadataSerializer
+	                                             objectPreSanitizer: objectPreSanitizer
+	                                           metadataPreSanitizer: metadataPreSanitizer
+	                                            objectPostSanitizer: objectPostSanitizer
+	                                          metadataPostSanitizer: metadataPostSanitizer
+	                                                   objectPolicy: objectPolicy
+	                                                 metadataPolicy: metadataPolicy];
+	return config;
 }
 
-- (nullable YapDatabasePreSanitizer)metadataPreSanitizerForCollection:(nullable NSString *)collection
+- (void)getObjectPolicies:(NSDictionary<NSString*, NSNumber*> **)objectPoliciesPtr
+         metadataPolicies:(NSDictionary<NSString*, NSNumber*> **)metadataPoliciesPtr
 {
-	YapDatabasePreSanitizer result = nil;
-	YAPUnfairLockLock(&serializationLock);
+	NSDictionary *_objectPolicies = nil;
+	NSDictionary *_metadataPolicies = nil;
+	
+	YAPUnfairLockLock(&configLock);
 	{
-		result = metadataPreSanitizers[collection ?: @""] ?: metadataPreSanitizers[[NSNull null]];
+		_objectPolicies = objectPolicies;
+		_metadataPolicies = metadataPolicies;
 	}
-	YAPUnfairLockUnlock(&serializationLock);
-	return result;
-}
-
-- (nullable YapDatabasePostSanitizer)objectPostSanitizerForCollection:(nullable NSString *)collection
-{
-	YapDatabasePostSanitizer result = nil;
-	YAPUnfairLockLock(&serializationLock);
-	{
-		result = objectPostSanitizers[collection ?: @""] ?: objectPostSanitizers[[NSNull null]];
-	}
-	YAPUnfairLockUnlock(&serializationLock);
-	return result;
-}
-
-- (nullable YapDatabasePostSanitizer)metadataPostSanitizerForCollection:(nullable NSString *)collection
-{
-	YapDatabasePostSanitizer result = nil;
-	YAPUnfairLockLock(&serializationLock);
-	{
-		result = metadataPostSanitizers[collection ?: @""] ?: metadataPostSanitizers[[NSNull null]];
-	}
-	YAPUnfairLockUnlock(&serializationLock);
-	return result;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-#pragma mark Defaults
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-- (YapDatabaseConnectionConfig *)connectionDefaults
-{
-	return connectionDefaults;
+	YAPUnfairLockUnlock(&configLock);
+	
+	if (objectPoliciesPtr) *objectPoliciesPtr = _objectPolicies;
+	if (metadataPoliciesPtr) *metadataPoliciesPtr = _metadataPolicies;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

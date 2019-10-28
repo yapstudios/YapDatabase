@@ -9,6 +9,7 @@
 #import "YapBidirectionalCache.h"
 #import "YapCache.h"
 #import "YapCollectionKey.h"
+#import "YapDatabaseCollectionConfig.h"
 #import "YapMemoryTable.h"
 #import "YapMutationStack.h"
 
@@ -116,17 +117,13 @@ static NSString *const ext_key_class = @"class";
 - (BOOL)connectionPoolEnqueue:(sqlite3 *)aDb main_file:(yap_file *)main_file wal_file:(yap_file *)wal_file;
 - (BOOL)connectionPoolDequeue:(sqlite3 *_Nonnull*_Nonnull)aDb main_file:(yap_file *_Nonnull*_Nonnull)main_file wal_file:(yap_file *_Nonnull*_Nonnull)wal_file;
 
-- (YapDatabaseSerializer)objectSerializerForCollection:(nullable NSString *)collection;
-- (YapDatabaseSerializer)metadataSerializerForCollection:(nullable NSString *)collection;
-
 - (YapDatabaseDeserializer)objectDeserializerForCollection:(nullable NSString *)collection;
 - (YapDatabaseDeserializer)metadataDeserializerForCollection:(nullable NSString *)collection;
 
-- (nullable YapDatabasePreSanitizer)objectPreSanitizerForCollection:(nullable NSString *)collection;
-- (nullable YapDatabasePreSanitizer)metadataPreSanitizerForCollection:(nullable NSString *)collection;
+- (YapDatabaseCollectionConfig *)configForCollection:(nullable NSString *)collection;
 
-- (nullable YapDatabasePostSanitizer)objectPostSanitizerForCollection:(nullable NSString *)collection;
-- (nullable YapDatabasePostSanitizer)metadataPostSanitizerForCollection:(nullable NSString *)collection;
+- (void)getObjectPolicies:(NSDictionary<NSString*, NSNumber*> *_Nonnull *_Nonnull)objectPoliciesPtr
+         metadataPolicies:(NSDictionary<NSString*, NSNumber*> *_Nonnull *_Nonnull)metadataPoliciesPtr;
 
 /**
  * These methods are only accessible from within the snapshotQueue.
@@ -225,9 +222,6 @@ static NSString *const ext_key_class = @"class";
 	
 	NSUInteger objectCacheLimit;          // Read-only by transaction. Use as consideration of whether to add to cache.
 	NSUInteger metadataCacheLimit;        // Read-only by transaction. Use as consideration of whether to add to cache.
-	
-	YapDatabasePolicy objectPolicy;       // Read-only by transaction. Use to determine what goes in objectChanges.
-	YapDatabasePolicy metadataPolicy;     // Read-only by transaction. Use to determine what goes in metadataChanges.
 	
 	BOOL needsMarkSqlLevelSharedReadLock; // Read-only by transaction. Use as consideration of whether to invoke method.
 	

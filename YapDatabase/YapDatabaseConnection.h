@@ -8,12 +8,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, YapDatabasePolicy) {
-	YapDatabasePolicyContainment = 0,
-	YapDatabasePolicyShare       = 1,
-	YapDatabasePolicyCopy        = 2,
-};
-
 #ifndef YapDatabaseEnforcePermittedTransactions
   #if DEBUG
     #define YapDatabaseEnforcePermittedTransactions 1
@@ -207,34 +201,6 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Policy
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/**
- * YapDatabase can use various optimizations to reduce overhead and memory footprint.
- * The policy properties allow you to opt-in to these optimizations when ready.
- *
- * The default value is YapDatabasePolicyContainment.
- *
- * It is the slowest, but also the safest policy.
- * The other policies require a little more work, and little deeper understanding.
- *
- * These optimizations are discussed extensively in the wiki article:
- * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
- */
-@property (atomic, assign, readwrite) YapDatabasePolicy objectPolicy;
-
-/**
- * YapDatabase can use various optimizations to reduce overhead and memory footprint.
- * The policy properties allow you to opt-in to these optimizations when ready.
- *
- * The default value is YapDatabasePolicyContainment.
- *
- * It is the slowest, but also the safest policy.
- * The other policies require a little more work, and little deeper understanding.
- *
- * These optimizations are discussed extensively in the wiki article:
- * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
- */
-@property (atomic, assign, readwrite) YapDatabasePolicy metadataPolicy;
 
 /**
  * When architecting your application, you will likely create a few dedicated connections for particular uses.

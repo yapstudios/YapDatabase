@@ -44,22 +44,6 @@
  */
 @property (atomic, assign, readwrite) NSUInteger metadataCacheLimit;
 
-/**
- * YapDatabase allows you to opt-in to advanced performance optimizations.
- *
- * The Object-Policy is documented on the wiki here:
- * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
- */
-@property (atomic, assign, readwrite) YapDatabasePolicy objectPolicy;
-
-/**
- * YapDatabase allows you to opt-in to advanced performance optimizations.
- *
- * The Object-Policy is documented on the wiki here:
- * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
- */
-@property (atomic, assign, readwrite) YapDatabasePolicy metadataPolicy;
-
 #if TARGET_OS_IOS || TARGET_OS_TV
 
 /**

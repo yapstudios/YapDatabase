@@ -4711,7 +4711,9 @@
 	if (key == nil) return;
 	if (collection == nil) collection = @"";
 	
-	YapDatabasePreSanitizer objectPreSanitizer = [connection->database objectPreSanitizerForCollection:collection];
+	YapDatabaseCollectionConfig *collectionConfig = [connection->database configForCollection:collection];
+	
+	YapDatabasePreSanitizer objectPreSanitizer = collectionConfig.objectPreSanitizer;
 	if (objectPreSanitizer)
 	{
 		object = objectPreSanitizer(collection, key, object);
@@ -4725,9 +4727,7 @@
 	}
 	if (metadata)
 	{
-		YapDatabasePreSanitizer metadataPreSanitizer =
-		  [connection->database metadataPreSanitizerForCollection:collection];
-		
+		YapDatabasePreSanitizer metadataPreSanitizer = collectionConfig.metadataPreSanitizer;
 		if (metadataPreSanitizer)
 		{
 			metadata = metadataPreSanitizer(collection, key, metadata);
@@ -4745,8 +4745,7 @@
 	if (preSerializedObject) {
 		serializedObject = preSerializedObject;
 	} else {
-		YapDatabaseSerializer objectSerializer = [connection->database objectSerializerForCollection:collection];
-		serializedObject = objectSerializer(collection, key, object);
+		serializedObject = collectionConfig.objectSerializer(collection, key, object);
 	}
 	
 	__attribute__((objc_precise_lifetime)) NSData *serializedMetadata = nil;
@@ -4755,8 +4754,7 @@
 		if (preSerializedMetadata) {
 			serializedMetadata = preSerializedMetadata;
 		} else {
-			YapDatabaseSerializer metadataSerializer = [connection->database metadataSerializerForCollection:collection];
-			serializedMetadata = metadataSerializer(collection, key, metadata);
+			serializedMetadata = collectionConfig.metadataSerializer(collection, key, metadata);
 		}
 	}
 	
@@ -4864,13 +4862,15 @@
 	[connection->mutationStack markAsMutated];  // mutation during enumeration protection
 	
 	id _object = nil;
-	if (connection->objectPolicy == YapDatabasePolicyContainment) {
+	YapDatabasePolicy objectPolicy = collectionConfig.objectPolicy;
+	
+	if (objectPolicy == YapDatabasePolicyContainment) {
 		_object = [YapNull null];
 	}
-	else if (connection->objectPolicy == YapDatabasePolicyShare) {
+	else if (objectPolicy == YapDatabasePolicyShare) {
 		_object = object;
 	}
-	else // if (connection->objectPolicy == YapDatabasePolicyCopy)
+	else // if (objectPolicy == YapDatabasePolicyCopy)
 	{
 		if ([object conformsToProtocol:@protocol(NSCopying)])
 			_object = [object copy];
@@ -4888,13 +4888,15 @@
 	if (metadata)
 	{
 		id _metadata = nil;
-		if (connection->metadataPolicy == YapDatabasePolicyContainment) {
+		YapDatabasePolicy metadataPolicy = collectionConfig.metadataPolicy;
+		
+		if (metadataPolicy == YapDatabasePolicyContainment) {
 			_metadata = [YapNull null];
 		}
-		else if (connection->metadataPolicy == YapDatabasePolicyShare) {
+		else if (metadataPolicy == YapDatabasePolicyShare) {
 			_metadata = metadata;
 		}
-		else // if (connection->metadataPolicy = YapDatabasePolicyCopy)
+		else // if (metadataPolicy = YapDatabasePolicyCopy)
 		{
 			if ([metadata conformsToProtocol:@protocol(NSCopying)])
 				_metadata = [metadata copy];
@@ -4925,15 +4927,14 @@
 			                          rowid:rowid];
 	}
 	
-	YapDatabasePostSanitizer objectPostSanitizer = [connection->database objectPostSanitizerForCollection:collection];
+	YapDatabasePostSanitizer objectPostSanitizer = collectionConfig.objectPostSanitizer;
 	if (objectPostSanitizer)
 	{
 		objectPostSanitizer(collection, key, object);
 	}
 	if (metadata)
 	{
-		YapDatabasePostSanitizer metadataPostSanitizer =
-		  [connection->database metadataPostSanitizerForCollection:collection];
+		YapDatabasePostSanitizer metadataPostSanitizer = collectionConfig.metadataPostSanitizer;
 		if (metadataPostSanitizer) {
 			metadataPostSanitizer(collection, key, metadata);
 		}
@@ -5034,7 +5035,9 @@
 	NSAssert(key != nil, @"Internal error");
 	if (collection == nil) collection = @"";
 	
-	YapDatabasePreSanitizer objectPreSanitizer = [connection->database objectPreSanitizerForCollection:collection];
+	YapDatabaseCollectionConfig *collectionConfig = [connection->database configForCollection:collection];
+	
+	YapDatabasePreSanitizer objectPreSanitizer = collectionConfig.objectPreSanitizer;
 	if (objectPreSanitizer)
 	{
 		object = objectPreSanitizer(collection, key, object);
@@ -5054,8 +5057,7 @@
 	if (preSerializedObject) {
 		serializedObject = preSerializedObject;
 	} else {
-		YapDatabaseSerializer objectSerializer = [connection->database objectSerializerForCollection:collection];
-		serializedObject = objectSerializer(collection, key, object);
+		serializedObject = collectionConfig.objectSerializer(collection, key, object);
 	}
 	
 	sqlite3_stmt *statement = [connection updateObjectForRowidStatement];
@@ -5097,13 +5099,15 @@
 	[connection->mutationStack markAsMutated];  // mutation during enumeration protection
 	
 	id _object = nil;
-	if (connection->objectPolicy == YapDatabasePolicyContainment) {
+	YapDatabasePolicy objectPolicy = collectionConfig.objectPolicy;
+	
+	if (objectPolicy == YapDatabasePolicyContainment) {
 		_object = [YapNull null];
 	}
-	else if (connection->objectPolicy == YapDatabasePolicyShare) {
+	else if (objectPolicy == YapDatabasePolicyShare) {
 		_object = object;
 	}
-	else // if (connection->objectPolicy = YapDatabasePolicyCopy)
+	else // if (objectPolicy = YapDatabasePolicyCopy)
 	{
 		if ([object conformsToProtocol:@protocol(NSCopying)])
 			_object = [object copy];
@@ -5119,7 +5123,7 @@
 		[extTransaction didReplaceObject:object forCollectionKey:cacheKey withRowid:rowid];
 	}
 	
-	YapDatabasePostSanitizer objectPostSanitizer = [connection->database objectPostSanitizerForCollection:collection];
+	YapDatabasePostSanitizer objectPostSanitizer = collectionConfig.objectPostSanitizer;
 	if (objectPostSanitizer)
 	{
 		objectPostSanitizer(collection, key, object);
@@ -5216,10 +5220,11 @@
 	NSAssert(key != nil, @"Internal error");
 	if (collection == nil) collection = @"";
 	
+	YapDatabaseCollectionConfig *collectionConfig = [connection->database configForCollection:collection];
+	
 	if (metadata)
 	{
-		YapDatabasePreSanitizer metadataPreSanitizer =
-		  [connection->database metadataPreSanitizerForCollection:collection];
+		YapDatabasePreSanitizer metadataPreSanitizer = collectionConfig.metadataPreSanitizer;
 		if (metadataPreSanitizer)
 		{
 			metadata = metadataPreSanitizer(collection, key, metadata);
@@ -5239,8 +5244,7 @@
 		if (preSerializedMetadata) {
 			serializedMetadata = preSerializedMetadata;
 		} else {
-			YapDatabaseSerializer metadataSerializer = [connection->database metadataSerializerForCollection:collection];
-			serializedMetadata = metadataSerializer(collection, key, metadata);
+			serializedMetadata = collectionConfig.metadataSerializer(collection, key, metadata);
 		}
 	}
 	
@@ -5287,13 +5291,15 @@
 	if (metadata)
 	{
 		id _metadata = nil;
-		if (connection->metadataPolicy == YapDatabasePolicyContainment) {
+		YapDatabasePolicy metadataPolicy = collectionConfig.metadataPolicy;
+		
+		if (metadataPolicy == YapDatabasePolicyContainment) {
 			_metadata = [YapNull null];
 		}
-		else if (connection->metadataPolicy == YapDatabasePolicyShare) {
+		else if (metadataPolicy == YapDatabasePolicyShare) {
 			_metadata = metadata;
 		}
-		else // if (connection->metadataPolicy = YapDatabasePolicyCopy)
+		else // if (metadataPolicy = YapDatabasePolicyCopy)
 		{
 			if ([metadata conformsToProtocol:@protocol(NSCopying)])
 				_metadata = [metadata copy];
@@ -5317,8 +5323,7 @@
 	
 	if (metadata)
 	{
-		YapDatabasePostSanitizer metadataPostSanitizer =
-		  [connection->database metadataPostSanitizerForCollection:collection];
+		YapDatabasePostSanitizer metadataPostSanitizer = collectionConfig.metadataPostSanitizer;
 		if (metadataPostSanitizer) {
 			metadataPostSanitizer(collection, key, metadata);
 		}

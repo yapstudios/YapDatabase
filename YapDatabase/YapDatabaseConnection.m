@@ -245,9 +245,6 @@ static int connectionBusyHandler(void *ptr, int count)
 		keyCache.allowedKeyClasses = [NSSet setWithObject:[NSNumber class]];
 		keyCache.allowedObjectClasses = [NSSet setWithObject:[YapCollectionKey class]];
 		
-		objectPolicy = defaults.objectPolicy;
-		metadataPolicy = defaults.metadataPolicy;
-		
 		#if YapDatabaseEnforcePermittedTransactions
 		self.permittedTransactions = YDB_AnyTransaction;
 		#endif
@@ -594,9 +591,6 @@ static int connectionBusyHandler(void *ptr, int count)
 @dynamic metadataCacheEnabled;
 @dynamic metadataCacheLimit;
 
-@dynamic objectPolicy;
-@dynamic metadataPolicy;
-
 #if YapDatabaseEnforcePermittedTransactions
 @synthesize permittedTransactions = _mustUseAtomicProperty_permittedTransactions;
 #endif
@@ -810,96 +804,6 @@ static int connectionBusyHandler(void *ptr, int count)
 		dispatch_async(connectionQueue, block);
 }
 
-- (YapDatabasePolicy)objectPolicy
-{
-	__block YapDatabasePolicy policy = YapDatabasePolicyContainment;
-	
-	dispatch_block_t block = ^{
-	#pragma clang diagnostic push
-	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
-		
-		policy = objectPolicy;
-		
-	#pragma clang diagnostic pop
-	};
-	
-	if (dispatch_get_specific(IsOnConnectionQueueKey))
-		block();
-	else
-		dispatch_sync(connectionQueue, block);
-	
-	return policy;
-}
-
-- (void)setObjectPolicy:(YapDatabasePolicy)newObjectPolicy
-{
-	dispatch_block_t block = ^{
-	#pragma clang diagnostic push
-	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
-		
-		// sanity check
-		switch (newObjectPolicy)
-		{
-			case YapDatabasePolicyContainment :
-			case YapDatabasePolicyShare       :
-			case YapDatabasePolicyCopy        : objectPolicy = newObjectPolicy; break;
-			default                           : objectPolicy = YapDatabasePolicyContainment;
-		}
-		
-	#pragma clang diagnostic pop
-	};
-	
-	if (dispatch_get_specific(IsOnConnectionQueueKey))
-		block();
-	else
-		dispatch_async(connectionQueue, block);
-}
-
-- (YapDatabasePolicy)metadataPolicy
-{
-	__block YapDatabasePolicy policy = YapDatabasePolicyContainment;
-	
-	dispatch_block_t block = ^{
-	#pragma clang diagnostic push
-	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
-		
-		policy = metadataPolicy;
-		
-	#pragma clang diagnostic pop
-	};
-	
-	if (dispatch_get_specific(IsOnConnectionQueueKey))
-		block();
-	else
-		dispatch_sync(connectionQueue, block);
-	
-	return policy;
-}
-
-- (void)setMetadataPolicy:(YapDatabasePolicy)newMetadataPolicy
-{
-	dispatch_block_t block = ^{
-	#pragma clang diagnostic push
-	#pragma clang diagnostic ignored "-Wimplicit-retain-self"
-		
-		// sanity check
-		switch (newMetadataPolicy)
-		{
-			case YapDatabasePolicyContainment :
-			case YapDatabasePolicyShare       :
-			case YapDatabasePolicyCopy        : metadataPolicy = newMetadataPolicy; break;
-			default                           : metadataPolicy = YapDatabasePolicyContainment;
-		}
-		
-	#pragma clang diagnostic pop
-	};
-	
-	if (dispatch_get_specific(IsOnConnectionQueueKey))
-		block();
-	else
-		dispatch_async(connectionQueue, block);
-}
-
 - (uint64_t)snapshot
 {
 	__block uint64_t result = 0;
@@ -990,9 +894,6 @@ static int connectionBusyHandler(void *ptr, int count)
 		config.metadataCacheEnabled = (metadataCache != nil);
 		config.metadataCacheLimit = metadataCacheLimit;
 		
-		config.objectPolicy = objectPolicy;
-		config.metadataPolicy = metadataPolicy;
-		
 	#if TARGET_OS_IOS || TARGET_OS_TV
 		config.autoFlushMemoryFlags = self.autoFlushMemoryFlags;
 	#endif
@@ -1015,9 +916,6 @@ static int connectionBusyHandler(void *ptr, int count)
 	
 	self.metadataCacheEnabled = config.metadataCacheEnabled;
 	self.metadataCacheLimit = config.metadataCacheLimit;
-	
-	self.objectPolicy = config.objectPolicy;
-	self.metadataPolicy = config.metadataPolicy;
 	
 #if TARGET_OS_IOS || TARGET_OS_TV
 	self.autoFlushMemoryFlags = config.autoFlushMemoryFlags;
@@ -4167,6 +4065,11 @@ static int connectionBusyHandler(void *ptr, int count)
 	
 	// Process normal database changeset information
 	
+	NSDictionary<NSString*, NSNumber*> *objectPolicies = nil;
+	NSDictionary<NSString*, NSNumber*> *metadataPolicies = nil;
+	
+	[database getObjectPolicies:&objectPolicies metadataPolicies:&metadataPolicies];
+	
 	NSDictionary *changeset_objectChanges   =  [changeset objectForKey:YapDatabaseObjectChangesKey];
 	NSDictionary *changeset_metadataChanges =  [changeset objectForKey:YapDatabaseMetadataChangesKey];
 	
@@ -4244,9 +4147,6 @@ static int connectionBusyHandler(void *ptr, int count)
 		id yapNull = [YapNull null];    // value == yapNull  : setPrimitive or containment policy
 		id yapTouch = [YapTouch touch]; // value == yapTouch : touchObjectForKey: was used
 		
-		BOOL isPolicyContainment = (objectPolicy == YapDatabasePolicyContainment);
-		BOOL isPolicyShare       = (objectPolicy == YapDatabasePolicyShare);
-		
 		[changeset_objectChanges enumerateKeysAndObjectsUsingBlock:^(id key, id newObject, BOOL __unused *stop) {
 		#pragma clang diagnostic push
 		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
@@ -4261,13 +4161,19 @@ static int connectionBusyHandler(void *ptr, int count)
 				}
 				else if (newObject != yapTouch)
 				{
-					if (isPolicyContainment) {
+					YapDatabasePolicy objectPolicy = YapDatabasePolicyContainment;
+					NSNumber *op = objectPolicies[cacheKey.collection];
+					if (op) {
+						objectPolicy = (YapDatabasePolicy)[op integerValue];
+					}
+					
+					if (objectPolicy == YapDatabasePolicyContainment) {
 						[objectCache removeObjectForKey:cacheKey];
 					}
-					else if (isPolicyShare) {
+					else if (objectPolicy == YapDatabasePolicyShare) {
 						[objectCache setObject:newObject forKey:cacheKey];
 					}
-					else // if (isPolicyCopy)
+					else // if (objectPolicy == YapDatabasePolicyCopy)
 					{
 						if ([newObject conformsToProtocol:@protocol(NSCopying)])
 							[objectCache setObject:[newObject copy] forKey:cacheKey];
@@ -4314,9 +4220,6 @@ static int connectionBusyHandler(void *ptr, int count)
 		id yapNull = [YapNull null];    // value == yapNull  : setPrimitive or containment policy
 		id yapTouch = [YapTouch touch]; // value == yapTouch : touchObjectForKey: was used
 		
-		BOOL isPolicyContainment = (objectPolicy == YapDatabasePolicyContainment);
-		BOOL isPolicyShare       = (objectPolicy == YapDatabasePolicyShare);
-		
 		for (YapCollectionKey *cacheKey in keysToUpdate)
 		{
 			id newObject = [changeset_objectChanges objectForKey:cacheKey];
@@ -4327,13 +4230,19 @@ static int connectionBusyHandler(void *ptr, int count)
 			}
 			else if (newObject != yapTouch)
 			{
-				if (isPolicyContainment) {
+				YapDatabasePolicy objectPolicy = YapDatabasePolicyContainment;
+				NSNumber *op = objectPolicies[cacheKey.collection];
+				if (op) {
+					objectPolicy = (YapDatabasePolicy)[op integerValue];
+				}
+				
+				if (objectPolicy == YapDatabasePolicyContainment) {
 					[objectCache removeObjectForKey:cacheKey];
 				}
-				else if (isPolicyShare) {
+				else if (objectPolicy == YapDatabasePolicyShare) {
 					[objectCache setObject:newObject forKey:cacheKey];
 				}
-				else // if (isPolicyCopy)
+				else // if (objectPolicy == YapDatabasePolicyCopy)
 				{
 					if ([newObject conformsToProtocol:@protocol(NSCopying)])
 						[objectCache setObject:[newObject copy] forKey:cacheKey];
@@ -4360,9 +4269,6 @@ static int connectionBusyHandler(void *ptr, int count)
 		id yapNull = [YapNull null];    // value == yapNull  : setPrimitive or containment policy
 		id yapTouch = [YapTouch touch]; // value == yapTouch : touchObjectForKey: was used
 		
-		BOOL isPolicyContainment = (metadataPolicy == YapDatabasePolicyContainment);
-		BOOL isPolicyShare       = (metadataPolicy == YapDatabasePolicyShare);
-		
 		[changeset_metadataChanges enumerateKeysAndObjectsUsingBlock:^(id key, id newMetadata, BOOL __unused *stop) {
 		#pragma clang diagnostic push
 		#pragma clang diagnostic ignored "-Wimplicit-retain-self"
@@ -4377,13 +4283,19 @@ static int connectionBusyHandler(void *ptr, int count)
 				}
 				else if (newMetadata != yapTouch)
 				{
-					if (isPolicyContainment) {
+					YapDatabasePolicy metadataPolicy = YapDatabasePolicyContainment;
+					NSNumber *mp = metadataPolicies[cacheKey.collection];
+					if (mp) {
+						metadataPolicy = (YapDatabasePolicy)[mp integerValue];
+					}
+					
+					if (metadataPolicy == YapDatabasePolicyContainment) {
 						[metadataCache removeObjectForKey:cacheKey];
 					}
-					else if (isPolicyShare) {
+					else if (metadataPolicy == YapDatabasePolicyShare) {
 						[metadataCache setObject:newMetadata forKey:cacheKey];
 					}
-					else // if (isPolicyCopy)
+					else // if (metadataPolicy == YapDatabasePolicyCopy)
 					{
 						if ([newMetadata conformsToProtocol:@protocol(NSCopying)])
 							[metadataCache setObject:[newMetadata copy] forKey:cacheKey];
@@ -4430,9 +4342,6 @@ static int connectionBusyHandler(void *ptr, int count)
 		id yapNull = [YapNull null];    // value == yapNull  : setPrimitive or containment policy
 		id yapTouch = [YapTouch touch]; // value == yapTouch : touchObjectForKey: was used
 		
-		BOOL isPolicyContainment = (metadataPolicy == YapDatabasePolicyContainment);
-		BOOL isPolicyShare       = (metadataPolicy == YapDatabasePolicyShare);
-		
 		for (YapCollectionKey *cacheKey in keysToUpdate)
 		{
 			id newMetadata = [changeset_metadataChanges objectForKey:cacheKey];
@@ -4443,13 +4352,19 @@ static int connectionBusyHandler(void *ptr, int count)
 			}
 			else if (newMetadata != yapTouch)
 			{
-				if (isPolicyContainment) {
+				YapDatabasePolicy metadataPolicy = YapDatabasePolicyContainment;
+				NSNumber *mp = metadataPolicies[cacheKey.collection];
+				if (mp) {
+					metadataPolicy = (YapDatabasePolicy)[mp integerValue];
+				}
+				
+				if (metadataPolicy == YapDatabasePolicyContainment) {
 					[metadataCache removeObjectForKey:cacheKey];
 				}
-				else if (isPolicyShare) {
+				else if (metadataPolicy == YapDatabasePolicyShare) {
 					[metadataCache setObject:newMetadata forKey:cacheKey];
 				}
-				else // if (isPolicyCopy)
+				else // if (metadataPolicy == YapDatabasePolicyCopy)
 				{
 					if ([newMetadata conformsToProtocol:@protocol(NSCopying)])
 						[metadataCache setObject:[newMetadata copy] forKey:cacheKey];

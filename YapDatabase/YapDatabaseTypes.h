@@ -160,4 +160,41 @@ typedef id __nonnull (^YapDatabasePreSanitizer)(NSString *collection, NSString *
  */
 typedef void (^YapDatabasePostSanitizer)(NSString *collection, NSString *key, id obj);
 
+/**
+ * YapDatabase allows you to opt-in to advanced performance optimizations.
+ *
+ * The Object-Policy is documented on the wiki here:
+ * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
+ */
+typedef NS_ENUM(NSInteger, YapDatabasePolicy) {
+	
+	/**
+	 * This is the default policy, unless configured otherwise.
+	 */
+	YapDatabasePolicyContainment = 0,
+	
+	/**
+	 * An advanced technique that allows you to share the same instance of an object between databaseConnection's.
+	 * This is VERY dangerous, unless the object is immutable.
+	 * In which case it becomes safe, and you get a performance benefit from it.
+	 *
+	 * The Object-Policy is documented on the wiki here:
+	 * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
+	 */
+	YapDatabasePolicyShare       = 1,
+	
+	/**
+	 * An advanced technique that copies objects from one databaseConnection to another.
+	 * This only works if the object supports NSCopying.
+	 *
+	 * This can be dangerous, if you don't perform copying correctly.
+	 * That is, you need to ensure that changes to an original object cannot affect copies of the object.
+	 * This is generally what one would expect to happen, but its also easy to get wrong.
+	 *
+	 * The Object-Policy is documented on the wiki here:
+	 * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
+	 */
+	YapDatabasePolicyCopy        = 2,
+};
+
 NS_ASSUME_NONNULL_END

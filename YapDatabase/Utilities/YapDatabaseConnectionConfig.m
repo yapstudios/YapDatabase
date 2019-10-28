@@ -12,9 +12,6 @@ static NSUInteger const DEFAULT_METADATA_CACHE_LIMIT = 250;
 @synthesize metadataCacheEnabled = metadataCacheEnabled;
 @synthesize metadataCacheLimit = metadataCacheLimit;
 
-@synthesize objectPolicy = objectPolicy;
-@synthesize metadataPolicy = metadataPolicy;
-
 #if TARGET_OS_IOS || TARGET_OS_TV
 @synthesize autoFlushMemoryFlags = autoFlushMemoryFlags;
 #endif
@@ -28,9 +25,6 @@ static NSUInteger const DEFAULT_METADATA_CACHE_LIMIT = 250;
 		
 		metadataCacheEnabled = YES;
 		metadataCacheLimit = DEFAULT_METADATA_CACHE_LIMIT;
-		
-		objectPolicy = YapDatabasePolicyContainment;
-		metadataPolicy = YapDatabasePolicyContainment;
 		
 		#if TARGET_OS_IOS || TARGET_OS_TV
 		autoFlushMemoryFlags = YapDatabaseConnectionFlushMemoryFlags_All;
@@ -49,60 +43,11 @@ static NSUInteger const DEFAULT_METADATA_CACHE_LIMIT = 250;
 	copy->metadataCacheEnabled = self.metadataCacheEnabled;
 	copy->metadataCacheLimit = self.metadataCacheLimit;
 	
-	copy->objectPolicy = self.objectPolicy;
-	copy->metadataPolicy = self.metadataPolicy;
-	
 	#if TARGET_OS_IOS || TARGET_OS_TV
 	copy->autoFlushMemoryFlags = self.autoFlushMemoryFlags;
 	#endif
 	
 	return copy;
-}
-
-- (BOOL)validateObjectPolicy:(id *)ioValue error:(NSError * __autoreleasing *)outError
-{
-	const YapDatabasePolicy defaultPolicy = YapDatabasePolicyContainment;
-	
-	if (*ioValue == nil)
-	{
-		*ioValue = @(defaultPolicy);
-	}
-	else
-	{
-		YapDatabasePolicy policy = (YapDatabasePolicy)[*ioValue integerValue];
-		switch (policy)
-		{
-			case YapDatabasePolicyContainment :
-			case YapDatabasePolicyShare       :
-			case YapDatabasePolicyCopy        : break;
-			default                           : *ioValue = @(defaultPolicy);
-		}
-	}
-	
-	return YES;
-}
-
-- (BOOL)validateMetadataPolicy:(id *)ioValue error:(NSError * __autoreleasing *)outError
-{
-	const YapDatabasePolicy defaultPolicy = YapDatabasePolicyContainment;
-	
-	if (*ioValue == nil)
-	{
-		*ioValue = @(defaultPolicy);
-	}
-	else
-	{
-		YapDatabasePolicy policy = (YapDatabasePolicy)[*ioValue integerValue];
-		switch (policy)
-		{
-			case YapDatabasePolicyContainment :
-			case YapDatabasePolicyShare       :
-			case YapDatabasePolicyCopy        : break;
-			default                           : *ioValue = @(defaultPolicy);
-		}
-	}
-	
-	return YES;
 }
 
 @end
