@@ -14,4 +14,40 @@ extension YapDatabaseViewConnection {
 }
 
 extension YapDatabaseViewTransaction {
+	
+	public func getCollectionKey(atIndexPath indexPath: IndexPath, withMappings mappings: YapDatabaseViewMappings) -> (String, String)? {
+		
+		var key: NSString? = nil
+		var collection: NSString? = nil
+		
+		self.__getKey(&key, collection: &collection, at: indexPath, with: mappings)
+		
+		if let collection = collection as String?,
+		   let key = key as String? {
+			
+			return (collection, key)
+		}
+		else {
+			
+			return nil
+		}
+	}
+	
+	public func getCollectionKey(forRow row: Int, section: Int, withMappings mappings: YapDatabaseViewMappings) -> (String, String)? {
+		
+		var key: NSString? = nil
+		var collection: NSString? = nil
+		
+		self.__getKey(&key, collection: &collection, forRow: UInt(row), inSection: UInt(section), with: mappings)
+		
+		if let collection = collection as String?,
+		   let key = key as String? {
+			
+			return (collection, key)
+		}
+		else {
+			
+			return nil
+		}
+	}
 }

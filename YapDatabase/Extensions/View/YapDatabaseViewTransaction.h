@@ -392,7 +392,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)getKey:(NSString * _Nullable * _Nullable)keyPtr
     collection:(NSString * _Nullable * _Nullable)collectionPtr
    atIndexPath:(NSIndexPath *)indexPath
-  withMappings:(YapDatabaseViewMappings *)mappings;
+  withMappings:(YapDatabaseViewMappings *)mappings NS_REFINED_FOR_SWIFT;
 
 /**
  * Gets the key & collection at the given row & section, assuming the given mappings are being used.
@@ -403,7 +403,7 @@ NS_ASSUME_NONNULL_BEGIN
     collection:(NSString * _Nullable * _Nullable)collectionPtr
         forRow:(NSUInteger)row
      inSection:(NSUInteger)section
-  withMappings:(YapDatabaseViewMappings *)mappings;
+  withMappings:(YapDatabaseViewMappings *)mappings NS_REFINED_FOR_SWIFT;
 
 /**
  * Fetches the indexPath for the given {collection, key} tuple, assuming the given mappings are being used.
