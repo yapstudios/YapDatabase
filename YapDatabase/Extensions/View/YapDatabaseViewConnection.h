@@ -111,7 +111,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)getSectionChanges:(NSArray<YapDatabaseViewSectionChange *> * _Nonnull * _Nullable)sectionChangesPtr
                rowChanges:(NSArray<YapDatabaseViewRowChange *> * _Nonnull * _Nullable)rowChangesPtr
          forNotifications:(NSArray<NSNotification *> *)notifications
-             withMappings:(YapDatabaseViewMappings *)mappings;
+             withMappings:(YapDatabaseViewMappings *)mappings
+NS_REFINED_FOR_SWIFT;
 
 /**
  * A simple YES/NO query to see if the view changed at all, inclusive of all groups.
