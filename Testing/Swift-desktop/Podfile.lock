@@ -1,4 +1,7 @@
 PODS:
+  - YapDatabase/Standard (3.1.4):
+    - YapDatabase/Standard/Core (= 3.1.4)
+    - YapDatabase/Standard/Extensions (= 3.1.4)
   - YapDatabase/Standard-ObjC/Core (3.1.4)
   - YapDatabase/Standard-ObjC/Extensions/ActionManager (3.1.4):
     - YapDatabase/Standard-ObjC/Core
@@ -34,86 +37,83 @@ PODS:
     - YapDatabase/Standard-ObjC/Core
   - YapDatabase/Standard-ObjC/Extensions/View (3.1.4):
     - YapDatabase/Standard-ObjC/Core
-  - YapDatabase/Standard-Swift (3.1.4):
-    - YapDatabase/Standard-Swift/Core (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions (= 3.1.4)
-  - YapDatabase/Standard-Swift/Core (3.1.4):
+  - YapDatabase/Standard/Core (3.1.4):
     - YapDatabase/Standard-ObjC/Core
-  - YapDatabase/Standard-Swift/Extensions (3.1.4):
-    - YapDatabase/Standard-Swift/Core
-    - YapDatabase/Standard-Swift/Extensions/ActionManager (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/AutoView (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/CloudCore (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/CloudKit (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/CrossProcessNotification (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/FilteredView (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/FullTextSearch (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/Hooks (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/ManualView (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/Relationships (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/RTreeIndex (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/SearchResultsView (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/SecondaryIndex (= 3.1.4)
-    - YapDatabase/Standard-Swift/Extensions/View (= 3.1.4)
-  - YapDatabase/Standard-Swift/Extensions/ActionManager (3.1.4):
+  - YapDatabase/Standard/Extensions (3.1.4):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/ActionManager (= 3.1.4)
+    - YapDatabase/Standard/Extensions/AutoView (= 3.1.4)
+    - YapDatabase/Standard/Extensions/CloudCore (= 3.1.4)
+    - YapDatabase/Standard/Extensions/CloudKit (= 3.1.4)
+    - YapDatabase/Standard/Extensions/CrossProcessNotification (= 3.1.4)
+    - YapDatabase/Standard/Extensions/FilteredView (= 3.1.4)
+    - YapDatabase/Standard/Extensions/FullTextSearch (= 3.1.4)
+    - YapDatabase/Standard/Extensions/Hooks (= 3.1.4)
+    - YapDatabase/Standard/Extensions/ManualView (= 3.1.4)
+    - YapDatabase/Standard/Extensions/Relationships (= 3.1.4)
+    - YapDatabase/Standard/Extensions/RTreeIndex (= 3.1.4)
+    - YapDatabase/Standard/Extensions/SearchResultsView (= 3.1.4)
+    - YapDatabase/Standard/Extensions/SecondaryIndex (= 3.1.4)
+    - YapDatabase/Standard/Extensions/View (= 3.1.4)
+  - YapDatabase/Standard/Extensions/ActionManager (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/ActionManager
-    - YapDatabase/Standard-Swift/Core
-    - YapDatabase/Standard-Swift/Extensions/AutoView
-  - YapDatabase/Standard-Swift/Extensions/AutoView (3.1.4):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/AutoView
+  - YapDatabase/Standard/Extensions/AutoView (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/AutoView
-    - YapDatabase/Standard-Swift/Core
-    - YapDatabase/Standard-Swift/Extensions/View
-  - YapDatabase/Standard-Swift/Extensions/CloudCore (3.1.4):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/View
+  - YapDatabase/Standard/Extensions/CloudCore (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/CloudCore
-    - YapDatabase/Standard-Swift/Core
-  - YapDatabase/Standard-Swift/Extensions/CloudKit (3.1.4):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/CloudKit (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/CloudKit
-    - YapDatabase/Standard-Swift/Core
-  - YapDatabase/Standard-Swift/Extensions/CrossProcessNotification (3.1.4):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/CrossProcessNotification (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/CrossProcessNotification
-    - YapDatabase/Standard-Swift/Core
-  - YapDatabase/Standard-Swift/Extensions/FilteredView (3.1.4):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/FilteredView (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/FilteredView
-    - YapDatabase/Standard-Swift/Core
-    - YapDatabase/Standard-Swift/Extensions/View
-  - YapDatabase/Standard-Swift/Extensions/FullTextSearch (3.1.4):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/View
+  - YapDatabase/Standard/Extensions/FullTextSearch (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/FullTextSearch
-    - YapDatabase/Standard-Swift/Core
-  - YapDatabase/Standard-Swift/Extensions/Hooks (3.1.4):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/Hooks (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/Hooks
-    - YapDatabase/Standard-Swift/Core
-  - YapDatabase/Standard-Swift/Extensions/ManualView (3.1.4):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/ManualView (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/ManualView
-    - YapDatabase/Standard-Swift/Core
-    - YapDatabase/Standard-Swift/Extensions/View
-  - YapDatabase/Standard-Swift/Extensions/Relationships (3.1.4):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/View
+  - YapDatabase/Standard/Extensions/Relationships (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/Relationships
-    - YapDatabase/Standard-Swift/Core
-  - YapDatabase/Standard-Swift/Extensions/RTreeIndex (3.1.4):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/RTreeIndex (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/RTreeIndex
-    - YapDatabase/Standard-Swift/Core
-  - YapDatabase/Standard-Swift/Extensions/SearchResultsView (3.1.4):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/SearchResultsView (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/SearchResultsView
-    - YapDatabase/Standard-Swift/Core
-    - YapDatabase/Standard-Swift/Extensions/AutoView
-    - YapDatabase/Standard-Swift/Extensions/FullTextSearch
-  - YapDatabase/Standard-Swift/Extensions/SecondaryIndex (3.1.4):
+    - YapDatabase/Standard/Core
+    - YapDatabase/Standard/Extensions/AutoView
+    - YapDatabase/Standard/Extensions/FullTextSearch
+  - YapDatabase/Standard/Extensions/SecondaryIndex (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/SecondaryIndex
-    - YapDatabase/Standard-Swift/Core
-  - YapDatabase/Standard-Swift/Extensions/View (3.1.4):
+    - YapDatabase/Standard/Core
+  - YapDatabase/Standard/Extensions/View (3.1.4):
     - YapDatabase/Standard-ObjC/Extensions/View
-    - YapDatabase/Standard-Swift/Core
+    - YapDatabase/Standard/Core
 
 DEPENDENCIES:
-  - YapDatabase/Standard-Swift (from `../../`)
+  - YapDatabase/Standard (from `../../`)
 
 EXTERNAL SOURCES:
   YapDatabase:
     :path: "../../"
 
 SPEC CHECKSUMS:
-  YapDatabase: c18007a628db2e9110293ad35bb613350c83c99d
+  YapDatabase: 4f44c321f21187be1e8b28b84930233aeba4b35b
 
-PODFILE CHECKSUM: e82fc62e5cd50036b69e2397290bc5cae3f85a7b
+PODFILE CHECKSUM: 5cc3cb348f758d1603c28630ed12d3fcdd3e5c8a
 
 COCOAPODS: 1.8.4
