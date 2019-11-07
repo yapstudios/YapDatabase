@@ -3,7 +3,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@protocol YapActionable <NSObject>
+@protocol YapActionable
 @required
 
 /**
