@@ -130,7 +130,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Enumerates the keys in the given group.
  */
 - (void)enumerateKeysInGroup:(NSString *)group
-                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
+                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 /**
  * Enumerates the keys in the given group.
@@ -138,7 +139,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)enumerateKeysInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
-                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
+                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 /**
  * Enumerates the keys in the range of the given group.
@@ -147,7 +149,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)enumerateKeysInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                        range:(NSRange)range
-                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block;
+                  usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 @end
 
@@ -270,18 +273,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                              usingBlock:
-                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                             withOptions:(NSEnumerationOptions)options
                              usingBlock:
-                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                             withOptions:(NSEnumerationOptions)options
                                   range:(NSRange)range
                              usingBlock:
-                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+                    (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 - (void)enumerateKeysAndMetadataInGroup:(NSString *)group
                             withOptions:(NSEnumerationOptions)options
@@ -298,18 +304,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                             usingBlock:
-            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                            withOptions:(NSEnumerationOptions)options
                             usingBlock:
-            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                            withOptions:(NSEnumerationOptions)options
                                  range:(NSRange)range
                             usingBlock:
-            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 - (void)enumerateKeysAndObjectsInGroup:(NSString *)group
                            withOptions:(NSEnumerationOptions)options
@@ -326,18 +335,21 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)enumerateRowsInGroup:(NSString *)group
                   usingBlock:
-            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 - (void)enumerateRowsInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                   usingBlock:
-            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 - (void)enumerateRowsInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
                        range:(NSRange)range
                   usingBlock:
-            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, NSUInteger index, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 - (void)enumerateRowsInGroup:(NSString *)group
                  withOptions:(NSEnumerationOptions)options
