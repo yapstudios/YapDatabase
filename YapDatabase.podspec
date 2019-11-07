@@ -20,6 +20,14 @@ Pod::Spec.new do |s|
 
 	s.libraries = 'c++'
 
+	# https://github.com/CocoaPods/CocoaPods/issues/9292
+#	s.exclude_files = 'Docs/**/*.html'
+#	s.resources = '!Docs/**/*'
+#	s.resources = !'Docs/**/*'
+#	s.resources = '!(Docs/**/*)'
+#	s.resources = '[!D]*'
+#	s.resources = '[!D]*/**/*'
+
 	s.default_subspecs = 'Standard'
 
 	# There are 2 primary flavors you can choose from:
@@ -68,7 +76,6 @@ Pod::Spec.new do |s|
 
 	
 	s.subspec 'Standard-ObjC' do |ss|
-		ss.exclude_files = 'Docs/**/*.html'
 		
 		ss.subspec 'Core' do |ssc|
 			ssc.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DYAP_STANDARD_SQLITE' }
