@@ -7,7 +7,36 @@ YapDatabase is a **collection/key/value store and so much more**. It's built ato
 
 &nbsp;
 
-It has the following features:
+### Hello World:
+
+```swift
+// Create and/or Open the database file
+let db = YapDatabase()
+
+// Configure database:
+// We're going to store String's in the collection "test".
+// To store custom classes/structs, just implement Swift's Codable protocol.
+db.registerCodableSerialization(String.self, forCollection: "test")
+
+// Get a connection to the database
+// (You can have multiple connections for concurrency.)
+let connection = db.newConnection()
+
+// Write an item to the database
+connection.readWrite {(transaction) in
+  transaction.setObject("hello", forKey: "world", inCollection: "test")
+}
+
+// Read it back
+connection.read {(transaction) in
+  let str = transaction.object(forKey: "world", inCollection: "test") as? String
+  // str == "hello"
+}
+```
+
+&nbsp;
+
+YapDB has the following features:
 
 * **Concurrency**. You can read from the database while another thread is simultaneously making modifications to the database. So you never have to worry about blocking the main thread, and you can easily write to the database on a background thread. And, of course, you can read from the database on multiple threads simultaneously.
 * **Built-In Caching**. A configurable object cache is built-in. Of course sqlite has caching too. But it's caching raw serialized bytes, and we're dealing with objects. So having a built-in cache means you can skip the deserialization process, and get your objects much faster.

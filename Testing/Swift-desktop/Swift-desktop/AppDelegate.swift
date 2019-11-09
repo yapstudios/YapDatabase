@@ -6,7 +6,8 @@ import YapDatabase
 class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
-		self.testDatabase()
+	//	self.testDatabase()
+		self.testUpgrade()
 	}
 	
 	private func testDatabase() {
@@ -51,5 +52,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 				print("Iterate list: \(list.title)")
 			}
 		})
+	}
+	
+	private func testUpgrade() {
+		
+		let baseDirs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+		let baseDir = baseDirs[0]
+
+		let databaseURL = baseDir.appendingPathComponent("database.sqlite")
+
+		let database = YapDatabase(url: databaseURL)
+		database?.registerCodableSerialization(Foobar.self, forCollection: "upgrade")
+
+		let databaseConnection = database?.newConnection()
+		
+//		databaseConnection?.asyncReadWrite { (transaction) in
+//
+//			let foobar = Foobar(name: "Fancy Pants")
+//			transaction.setObject(foobar, forKey: "1", inCollection: "upgrade")
+//		}
+		
+		databaseConnection?.asyncRead {(transaction) in
+			
+			if let foobar = transaction.object(forKey: "1", inCollection: "upgrade") as? Foobar {
+				print("read foobar: name(\(foobar.name)) age(\(foobar.age))")
+			}
+			else {
+				print("no foobar for you")
+			}
+		}
 	}
 }

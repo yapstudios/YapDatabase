@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,8 +14,7 @@
 		DC1CEF18235CC074004B2EBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC1CEF16235CC074004B2EBC /* Main.storyboard */; };
 		DC1CEF24235CCDA6004B2EBC /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC1CEF23235CCDA6004B2EBC /* Task.swift */; };
 		DC1CEF26235CCFD5004B2EBC /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC1CEF25235CCFD5004B2EBC /* List.swift */; };
-		DC1CEF38235E2CC0004B2EBC /* TestBoth.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC1CEF36235E2CC0004B2EBC /* TestBoth.swift */; };
-		DC1CEF39235E2CC0004B2EBC /* TestCoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC1CEF37235E2CC0004B2EBC /* TestCoding.swift */; };
+		DCDDC3292376131000A5358D /* Foobar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCDDC3282376131000A5358D /* Foobar.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,8 +30,7 @@
 		DC1CEF1A235CC074004B2EBC /* Swift_desktop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Swift_desktop.entitlements; sourceTree = "<group>"; };
 		DC1CEF23235CCDA6004B2EBC /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		DC1CEF25235CCFD5004B2EBC /* List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
-		DC1CEF36235E2CC0004B2EBC /* TestBoth.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestBoth.swift; sourceTree = "<group>"; };
-		DC1CEF37235E2CC0004B2EBC /* TestCoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestCoding.swift; sourceTree = "<group>"; };
+		DCDDC3282376131000A5358D /* Foobar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foobar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,8 +83,6 @@
 		DC1CEF0F235CC072004B2EBC /* Swift-desktop */ = {
 			isa = PBXGroup;
 			children = (
-				DC1CEF36235E2CC0004B2EBC /* TestBoth.swift */,
-				DC1CEF37235E2CC0004B2EBC /* TestCoding.swift */,
 				DC1CEF10235CC072004B2EBC /* AppDelegate.swift */,
 				DC1CEF12235CC072004B2EBC /* ViewController.swift */,
 				DC1CEF14235CC074004B2EBC /* Assets.xcassets */,
@@ -95,6 +91,7 @@
 				DC1CEF1A235CC074004B2EBC /* Swift_desktop.entitlements */,
 				DC1CEF23235CCDA6004B2EBC /* Task.swift */,
 				DC1CEF25235CCFD5004B2EBC /* List.swift */,
+				DCDDC3282376131000A5358D /* Foobar.swift */,
 			);
 			path = "Swift-desktop";
 			sourceTree = "<group>";
@@ -212,9 +209,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC1CEF13235CC072004B2EBC /* ViewController.swift in Sources */,
-				DC1CEF38235E2CC0004B2EBC /* TestBoth.swift in Sources */,
 				DC1CEF26235CCFD5004B2EBC /* List.swift in Sources */,
-				DC1CEF39235E2CC0004B2EBC /* TestCoding.swift in Sources */,
+				DCDDC3292376131000A5358D /* Foobar.swift in Sources */,
 				DC1CEF24235CCDA6004B2EBC /* Task.swift in Sources */,
 				DC1CEF11235CC072004B2EBC /* AppDelegate.swift in Sources */,
 			);
