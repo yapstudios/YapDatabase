@@ -568,15 +568,15 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
 
 // Query for a change to a particular set of keys in a collection
 
-- (BOOL)hasChangeForAnyKeys:(NSSet *)keys
+- (BOOL)hasChangeForAnyKeys:(NSSet<NSString*> *)keys
                inCollection:(NSString *)collection
             inNotifications:(NSArray<NSNotification *> *)notifications;
 
-- (BOOL)hasObjectChangeForAnyKeys:(NSSet *)keys
+- (BOOL)hasObjectChangeForAnyKeys:(NSSet<NSString*> *)keys
                      inCollection:(NSString *)collection
                   inNotifications:(NSArray<NSNotification *> *)notifications;
 
-- (BOOL)hasMetadataChangeForAnyKeys:(NSSet *)keys
+- (BOOL)hasMetadataChangeForAnyKeys:(NSSet<NSString*> *)keys
                        inCollection:(NSString *)collection
                     inNotifications:(NSArray<NSNotification *> *)notifications;
 

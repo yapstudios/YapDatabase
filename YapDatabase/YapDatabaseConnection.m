@@ -4662,7 +4662,7 @@ static int connectionBusyHandler(void *ptr, int count)
 
 // Query for a change to a particular set of keys in a collection
 
-- (BOOL)hasChangeForAnyKeys:(NSSet *)keys
+- (BOOL)hasChangeForAnyKeys:(NSSet<NSString*> *)keys
                inCollection:(NSString *)collection
             inNotifications:(NSArray *)notifications
      includingObjectChanges:(BOOL)includeObjectChanges
@@ -4740,7 +4740,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	return NO;
 }
 
-- (BOOL)hasChangeForAnyKeys:(NSSet *)keys
+- (BOOL)hasChangeForAnyKeys:(NSSet<NSString*> *)keys
                inCollection:(NSString *)collection
             inNotifications:(NSArray *)notifications
 {
@@ -4751,7 +4751,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	                 metadataChanges:YES];
 }
 
-- (BOOL)hasObjectChangeForAnyKeys:(NSSet *)keys
+- (BOOL)hasObjectChangeForAnyKeys:(NSSet<NSString*> *)keys
                      inCollection:(NSString *)collection
                   inNotifications:(NSArray *)notifications
 {
@@ -4762,7 +4762,7 @@ static int connectionBusyHandler(void *ptr, int count)
 	                 metadataChanges:NO];
 }
 
-- (BOOL)hasMetadataChangeForAnyKeys:(NSSet *)keys
+- (BOOL)hasMetadataChangeForAnyKeys:(NSSet<NSString*> *)keys
                        inCollection:(NSString *)collection
                     inNotifications:(NSArray *)notifications
 {
