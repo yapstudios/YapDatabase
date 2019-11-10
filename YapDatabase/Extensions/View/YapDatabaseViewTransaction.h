@@ -63,7 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)getKey:(NSString * _Nullable * _Nullable)keyPtr
     collection:(NSString * _Nullable * _Nullable)collectionPtr
        atIndex:(NSUInteger)index
-       inGroup:(NSString *)group;
+       inGroup:(NSString *)group
+NS_REFINED_FOR_SWIFT;
 
 /**
  * Shortcut for: [view getKey:&key collection:&collection atIndex:0 inGroup:group]
@@ -105,7 +106,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)getGroup:(NSString * _Nullable * _Nullable)groupPtr
            index:(nullable NSUInteger *)indexPtr
           forKey:(NSString *)key
-    inCollection:(nullable NSString *)collection;
+    inCollection:(nullable NSString *)collection
+NS_REFINED_FOR_SWIFT;
 
 /**
  * Returns the versionTag in effect for this transaction.

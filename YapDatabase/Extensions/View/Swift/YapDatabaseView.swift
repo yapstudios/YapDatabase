@@ -15,6 +15,40 @@ extension YapDatabaseViewConnection {
 
 extension YapDatabaseViewTransaction {
 	
+	public func getCollectionKey(atIndex index: Int, inGroup group: String) -> (String, String)? {
+		
+		var key: NSString? = nil
+		var collection: NSString? = nil
+		
+		self.__getKey(&key, collection: &collection, at: UInt(index), inGroup: group)
+		
+		if let collection = collection as String?,
+		   let key = key as String? {
+			
+			return (collection, key)
+		}
+		else {
+			
+			return nil
+		}
+	}
+	
+	public func getGroupIndex(forKey key: String, inCollection collection: String?) -> (String, Int)? {
+		
+		var group: NSString? = nil
+		var index: UInt = 0
+		
+		self.__getGroup(&group, index: &index, forKey: key, inCollection: collection)
+		
+		if let group = group as String? {
+			return (group, Int(index))
+		} else {
+			return nil
+		}
+	}
+	
+	// MARK: Iteration
+	
 	public func iterateKeys(inGroup group: String, using block: (String, String, Int, inout Bool) -> Void) {
 	
 		self.iterateKeys(inGroup: group, reversed: false, using: block)
@@ -162,6 +196,8 @@ extension YapDatabaseViewTransaction {
 		let options: NSEnumerationOptions = reversed ? .reverse : .init()
 		self.__enumerateRows(inGroup: group, with: options, range: range, using: enumBlock)
 	}
+	
+	// MARK: Mappings
 	
 	public func getCollectionKey(atIndexPath indexPath: IndexPath, withMappings mappings: YapDatabaseViewMappings) -> (String, String)? {
 		
