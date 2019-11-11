@@ -132,6 +132,14 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
 @interface YapDatabase : NSObject
 
 /**
+ * The default database file URL.
+ *
+ * - macOS : ~/Library/Application Support/{Bundle Identifier}/yapdb.sqlite
+ * - iOS   : {App Sandbox}/Application Support/yapdb.sqlite
+ */
++ (NSURL *)defaultDatabaseURL;
+
+/**
  * The default serializer & deserializer use NSCoding (NSKeyedArchiver & NSKeyedUnarchiver).
  * This is suitable for Objective-C, but not for Swift.
  *
@@ -247,6 +255,13 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Init
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Opens or creates a sqlite database with the default file URL.
+ *
+ * @see [YapDatabase defaultDatabaseURL]
+ */
+- (nullable instancetype)init;
 
 /**
  * Opens or creates a sqlite database with the given file URL. The defaults options are used.

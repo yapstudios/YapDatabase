@@ -170,7 +170,40 @@ static YDBLogHandler logHandler = nil;
  * See header file for description.
  * Or view the api's online (for both Swift & Objective-C):
  * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
-**/
+ */
++ (NSURL *)defaultDatabaseURL
+{
+	NSError *error = nil;
+	NSURL *appSupportDir =
+	  [[NSFileManager defaultManager] URLForDirectory: NSApplicationSupportDirectory
+	                                         inDomain: NSUserDomainMask
+	                                appropriateForURL: nil
+	                                           create: YES
+	                                            error: &error];
+		
+#if !TARGET_OS_IPHONE // macOS
+	if (!error)
+	{
+		NSString *bundleIdentifier =
+		  [[NSBundle mainBundle] objectForInfoDictionaryKey:(NSString *)kCFBundleIdentifierKey];
+		
+		appSupportDir = [appSupportDir URLByAppendingPathComponent:bundleIdentifier isDirectory:YES];
+		
+		[[NSFileManager defaultManager] createDirectoryAtURL: appSupportDir
+		                         withIntermediateDirectories: YES
+		                                          attributes: nil
+		                                               error: &error];
+	}
+#endif
+	
+	return [appSupportDir URLByAppendingPathComponent:@"yapdb.sqlite" isDirectory:NO];
+}
+
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
 + (YapDatabaseSerializer)defaultSerializer
 {
 	return ^ NSData* (NSString __unused *collection, NSString __unused *key, id object){
@@ -182,7 +215,7 @@ static YDBLogHandler logHandler = nil;
  * See header file for description.
  * Or view the api's online (for both Swift & Objective-C):
  * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
-**/
+ */
 + (YapDatabaseDeserializer)defaultDeserializer
 {
 	return ^ id (NSString __unused *collection, NSString __unused *key, NSData *data){
@@ -194,14 +227,14 @@ static YDBLogHandler logHandler = nil;
  * See header file for description.
  * Or view the api's online (for both Swift & Objective-C):
  * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
-**/
+ */
 + (YapDatabaseSerializer)propertyListSerializer
 {
 	return ^ NSData* (NSString __unused *collection, NSString __unused *key, id object){
-		return [NSPropertyListSerialization dataWithPropertyList:object
-		                                                  format:NSPropertyListBinaryFormat_v1_0
-		                                                 options:NSPropertyListImmutable
-		                                                   error:NULL];
+		return [NSPropertyListSerialization dataWithPropertyList: object
+		                                                  format: NSPropertyListBinaryFormat_v1_0
+		                                                 options: NSPropertyListImmutable
+		                                                   error: NULL];
 	};
 }
 
@@ -209,7 +242,7 @@ static YDBLogHandler logHandler = nil;
  * See header file for description.
  * Or view the api's online (for both Swift & Objective-C):
  * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
-**/
+ */
 + (YapDatabaseDeserializer)propertyListDeserializer
 {
 	return ^ id (NSString __unused *collection, NSString __unused *key, NSData *data){
@@ -221,7 +254,7 @@ static YDBLogHandler logHandler = nil;
  * See header file for description.
  * Or view the api's online (for both Swift & Objective-C):
  * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
-**/
+ */
 + (YapDatabaseSerializer)timestampSerializer
 {
 	return ^ NSData* (NSString __unused *collection, NSString __unused *key, id object) {
@@ -243,7 +276,7 @@ static YDBLogHandler logHandler = nil;
  * See header file for description.
  * Or view the api's online (for both Swift & Objective-C):
  * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
-**/
+ */
 + (YapDatabaseDeserializer)timestampDeserializer
 {
 	return ^ id (NSString __unused *collection, NSString __unused *key, NSData *data) {
@@ -380,6 +413,16 @@ static YDBLogHandler logHandler = nil;
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Init
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/**
+ * See header file for description.
+ * Or view the api's online (for both Swift & Objective-C):
+ * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+ */
+- (nullable instancetype)init
+{
+	return [self initWithURL:[[self class] defaultDatabaseURL] options:nil];
+}
 
 /**
  * See header file for description.
