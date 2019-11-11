@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 	s.name         = "YapDatabase"
-	s.version      = "3.1.4"
-	s.summary      = "A key/value store built atop sqlite for iOS & Mac."
+	s.version      = "4.0"
+	s.summary      = "A collection/key/value store built atop sqlite for iOS & Mac."
 	s.homepage     = "https://github.com/yapstudios/YapDatabase"
 	s.license      = 'MIT'
 
