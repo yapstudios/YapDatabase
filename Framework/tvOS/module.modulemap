@@ -4,6 +4,7 @@ framework module YapDatabase {
 	header "YapDatabaseConnection.h"
 	header "YapDatabaseTransaction.h"
 	header "YapDatabaseOptions.h"
+	header "YapDatabaseTypes.h"
 	header "YapDatabaseExtension.h"
 	header "YapDatabaseExtensionConnection.h"
 	header "YapDatabaseExtensionTransaction.h"
@@ -23,6 +24,7 @@ framework module YapDatabase {
 		header "YapSet.h"
 		header "YapWhitelistBlacklist.h"
 		header "YapMutationStack.h"
+		header "YDBLogMessage.h"
 	}
 
 	explicit module YapDatabaseExtensionPrivate {

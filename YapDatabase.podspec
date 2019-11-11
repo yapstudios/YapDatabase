@@ -18,6 +18,8 @@ Pod::Spec.new do |s|
 	s.tvos.deployment_target = '10.0'
 	s.watchos.deployment_target = '3.0'
 
+	s.swift_version = '5.0'
+
 	s.libraries = 'c++'
 
 	# https://github.com/CocoaPods/CocoaPods/issues/9292
@@ -283,7 +285,7 @@ Pod::Spec.new do |s|
 
 		ss.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DYAP_STANDARD_SQLITE' }
 		ss.library = 'sqlite3'
-		ss.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities,Swift}/*.{h,m,mm,c,swift}', 'YapDatabase/Extensions/**/*.{h,m,mm,c,swift}'
+		ss.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}', 'YapDatabase/Extensions/**/*.{h,m,mm,c}'
 		ss.private_header_files = 'YapDatabase/Internal/*.h', 'YapDatabase/Extensions/**/Internal/*.h'
 
 		ss.osx.framework   = 'SystemConfiguration'
@@ -502,7 +504,7 @@ Pod::Spec.new do |s|
 
 		ss.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DSQLITE_HAS_CODEC' }
 		ss.dependency 'SQLCipher', '>= 3.4.0'
-		ss.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities,Swift}/*.{h,m,mm,c,swift}', 'YapDatabase/Extensions/**/*.{h,m,mm,c,swift}'
+		ss.source_files = 'YapDatabase/*.{h,m,mm,c}', 'YapDatabase/{Internal,Utilities}/*.{h,m,mm,c}', 'YapDatabase/Extensions/**/*.{h,m,mm,c}'
 		ss.private_header_files = 'YapDatabase/Internal/*.h', 'YapDatabase/Extensions/**/Internal/*.h'
 
 		ss.osx.framework   = 'SystemConfiguration'

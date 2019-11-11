@@ -24,6 +24,7 @@ framework module YapDatabase {
 		header "YapSet.h"
 		header "YapWhitelistBlacklist.h"
 		header "YapMutationStack.h"
+		header "YDBLogMessage.h"
 	}
 
 	explicit module YapDatabaseExtensionPrivate {
