@@ -6,4 +6,10 @@ extension YapDatabaseQuery {
 		
 		self.init(string: queryString, parameters: [])
 	}
+	
+	convenience init(aggregateFunction: String, string queryString: String) {
+		
+		self.init(aggregateFunction: aggregateFunction, string: queryString, parameters: [])
+	}
+
 }
