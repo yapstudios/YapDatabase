@@ -419,7 +419,7 @@ static YDBLogHandler logHandler = nil;
  * Or view the api's online (for both Swift & Objective-C):
  * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
  */
-- (nullable instancetype)init
+- (instancetype)init
 {
 	return [self initWithURL:[[self class] defaultDatabaseURL] options:nil];
 }

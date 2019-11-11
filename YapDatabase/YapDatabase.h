@@ -261,7 +261,7 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  *
  * @see [YapDatabase defaultDatabaseURL]
  */
-- (nullable instancetype)init;
+- (instancetype)init;
 
 /**
  * Opens or creates a sqlite database with the given file URL. The defaults options are used.
