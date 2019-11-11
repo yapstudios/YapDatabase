@@ -8,7 +8,7 @@ project 'YapDatabaseTesting.xcodeproj'
 install! 'cocoapods', :disable_input_output_paths => true
 
 abstract_target 'tvOS' do 
-	platform :tvos, '9.0'
+	platform :tvos, '10.0'
 
 	pod "YapDatabase/Standard-ObjC", path: '../../'
 

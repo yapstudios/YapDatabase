@@ -70,6 +70,16 @@
 	[super tearDown];
 }
 
+- (void)test0
+{
+	NSURL *databaseURL = [YapDatabase defaultDatabaseURL];
+	
+	[[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+	YapDatabase *database = [[YapDatabase alloc] init];
+	
+	XCTAssertNotNil(database);
+}
+
 - (void)test1
 {
 	NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
