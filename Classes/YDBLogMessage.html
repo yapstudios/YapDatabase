@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>YDBCKRecordInfo Class Reference</title>
+    <title>YDBLogMessage Class Reference</title>
     <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
     <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
     <meta charset="utf-8">
@@ -14,9 +14,9 @@
   </head>
   <body>
 
-    <a name="//apple_ref/objc/Class/YDBCKRecordInfo" class="dashAnchor"></a>
+    <a name="//apple_ref/objc/Class/YDBLogMessage" class="dashAnchor"></a>
 
-    <a title="YDBCKRecordInfo Class Reference"></a>
+    <a title="YDBLogMessage Class Reference"></a>
 
     <header class="header">
       <p class="header-col header-col--primary">
@@ -38,7 +38,7 @@
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html">YapDatabase Reference</a>
       <img class="carat" src="../img/carat.png" />
-      YDBCKRecordInfo Class Reference
+      YDBLogMessage Class Reference
     </p>
 
     <div class="content-wrapper">
@@ -851,32 +851,14 @@
 
         <section class="section">
           <div class="section-content">
-            <h1>YDBCKRecordInfo</h1>
+            <h1>YDBLogMessage</h1>
               <div class="declaration">
                 <div class="language">
-                  <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YDBCKRecordInfo</span> <span class="p">:</span> <span class="nc">NSObject</span></code></pre>
+                  <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YDBLogMessage</span> <span class="p">:</span> <span class="nc">NSObject</span></code></pre>
 
                 </div>
               </div>
-            <p>This utility class is used by the YapDatabaseCloudKitRecordBlock.
- It provides metadata about the CKRecord.</p>
-
-<p>There are only 4 properties, which can be broken up into 2 sections:</p>
-
-<ul>
-<li><p>Properties you can optionally SET (within the recordBlock):</p>
-
-<ul>
-<li>databaseIdentifier</li>
-<li>originalValues</li>
-</ul></li>
-<li><p>Properties you need to CHECK (within the recordBlock):</p>
-
-<ul>
-<li>keysToRestore</li>
-<li>versionInfo</li>
-</ul></li>
-</ul>
+            <p>Ecapsulates detailed information about an emitted log message.</p>
 
           </div>
         </section>
@@ -888,9 +870,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:objc(cs)YDBCKRecordInfo(py)databaseIdentifier"></a>
-                    <a name="//apple_ref/objc/Property/databaseIdentifier" class="dashAnchor"></a>
-                    <a class="token" href="#/c:objc(cs)YDBCKRecordInfo(py)databaseIdentifier">databaseIdentifier</a>
+                    <a name="/c:objc(cs)YDBLogMessage(im)initWithMessage:level:flag:file:function:line:"></a>
+                    <a name="//apple_ref/objc/Method/-initWithMessage:level:flag:file:function:line:" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YDBLogMessage(im)initWithMessage:level:flag:file:function:line:">-initWithMessage:level:flag:file:function:line:</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -898,33 +880,24 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This property allows you to specify the associated CKDatabase for the record.</p>
-
-<p>In order for YapDatabaseCloudKit to be able to upload the CKRecord to the cloud,
-it must know which CKDatabase the record is associated with.</p>
-
-<p>If unspecified, the private database of the app’s default container is used.
-That is: [[CKContainer defaultContainer] privateCloudDatabase]</p>
-
-<p>If you want to use a different CKDatabase,
-then you need to set recordInfo.databaseIdentifier within your recordBlock.</p>
-
-<p>Important:
-  If you specify a databaseIdentifier here,
-  then you MUST also configure the YapDatabaseCloudKit instance with a databaseIdentifier block.
-  Failure to do so will result in an exception.</p>
+                        <p>Standard init method</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Objective-C</p>
-                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readwrite</span><span class="p">,</span> <span class="n">copy</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">,</span> <span class="n">nullable</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">databaseIdentifier</span><span class="p">;</span></code></pre>
+                          <pre class="highlight objective_c"><code><span class="k">-</span> <span class="p">(</span><span class="n">nonnull</span> <span class="n">instancetype</span><span class="p">)</span><span class="nf">initWithMessage</span><span class="p">:(</span><span class="n">nonnull</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">message</span>
+                                  <span class="nf">level</span><span class="p">:(</span><span class="n"><a href="../Enums/YDBLogLevel.html">YDBLogLevel</a></span><span class="p">)</span><span class="nv">level</span>
+                                   <span class="nf">flag</span><span class="p">:(</span><span class="n"><a href="../Enums/YDBLogFlag.html">YDBLogFlag</a></span><span class="p">)</span><span class="nv">flag</span>
+                                   <span class="nf">file</span><span class="p">:(</span><span class="n">nonnull</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">file</span>
+                               <span class="nf">function</span><span class="p">:(</span><span class="n">nonnull</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">function</span>
+                                   <span class="nf">line</span><span class="p">:(</span><span class="n">NSUInteger</span><span class="p">)</span><span class="nv">line</span><span class="p">;</span></code></pre>
 
                         </div>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">databaseIdentifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="nf">init</span><span class="p">(</span><span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">level</span><span class="p">:</span> <span class="kt"><a href="../Enums/YDBLogLevel.html">YDBLogLevel</a></span><span class="p">,</span> <span class="nv">flag</span><span class="p">:</span> <span class="kt"><a href="../Enums/YDBLogFlag.html">YDBLogFlag</a></span><span class="p">,</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">UInt</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -934,9 +907,9 @@ then you need to set recordInfo.databaseIdentifier within your recordBlock.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:objc(cs)YDBCKRecordInfo(py)originalValues"></a>
-                    <a name="//apple_ref/objc/Property/originalValues" class="dashAnchor"></a>
-                    <a class="token" href="#/c:objc(cs)YDBCKRecordInfo(py)originalValues">originalValues</a>
+                    <a name="/c:objc(cs)YDBLogMessage(py)message"></a>
+                    <a name="//apple_ref/objc/Property/message" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YDBLogMessage(py)message">message</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -944,24 +917,19 @@ then you need to set recordInfo.databaseIdentifier within your recordBlock.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>If you make changes to the CKRecord, you can optionally choose to store the original key/value pairs.
- That is, the original key/value pairs for the key(s) that were changed.</p>
-
-<p>This dictionary will be stored alongside the modified CKRecord within the queue.
- And will be made available during merge operations via YDBCKMergeInfo.originalValues.</p>
+                        <p>The log message. (e.g. <q>sqlite failed to do X because Y</q>)</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Objective-C</p>
-                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readwrite</span><span class="p">,</span> <span class="n">strong</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">,</span> <span class="n">nullable</span><span class="p">)</span>
-    <span class="n">NSDictionary</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*</span><span class="p">,</span> <span class="n">id</span><span class="o">&gt;</span> <span class="o">*</span><span class="n">originalValues</span><span class="p">;</span></code></pre>
+                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">_Nonnull</span> <span class="n">message</span><span class="p">;</span></code></pre>
 
                         </div>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">originalValues</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span> <span class="p">:</span> <span class="kt">Any</span><span class="p">]?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -971,9 +939,9 @@ then you need to set recordInfo.databaseIdentifier within your recordBlock.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:objc(cs)YDBCKRecordInfo(py)keysToRestore"></a>
-                    <a name="//apple_ref/objc/Property/keysToRestore" class="dashAnchor"></a>
-                    <a class="token" href="#/c:objc(cs)YDBCKRecordInfo(py)keysToRestore">keysToRestore</a>
+                    <a name="/c:objc(cs)YDBLogMessage(py)level"></a>
+                    <a name="//apple_ref/objc/Property/level" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YDBLogMessage(py)level">level</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -981,28 +949,19 @@ then you need to set recordInfo.databaseIdentifier within your recordBlock.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>When this property is non-nil, the recordHandler MUST restore the specified keys.</p>
-
-<p>YapDatabaseCloudKit uses various storage optimization techniques to reduce disk IO,
- and reduce the amount of duplicate data that gets stored in the database.
- Essentially it skips storing any values that are already stored within the original database object(s).
- And so, if the application quits before all uploads have made it to the CloudKit server,
- then YapDatabaseCloudKit will need to restore some CKRecords, and may need to restore certain values.</p>
-
-<p>You MUST check for this property within your recordHandler implementation.</p>
+                        <p>The configured <code>ydbLogLevel</code> of the file from which the log was emitted.</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Objective-C</p>
-                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">strong</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">,</span> <span class="n">nullable</span><span class="p">)</span>
-    <span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="n">keysToRestore</span><span class="p">;</span></code></pre>
+                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n"><a href="../Enums/YDBLogLevel.html">YDBLogLevel</a></span> <span class="n">level</span><span class="p">;</span></code></pre>
 
                         </div>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">keysToRestore</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">]?</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">level</span><span class="p">:</span> <span class="kt"><a href="../Enums/YDBLogLevel.html">YDBLogLevel</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -1012,9 +971,9 @@ then you need to set recordInfo.databaseIdentifier within your recordBlock.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:objc(cs)YDBCKRecordInfo(py)versionInfo"></a>
-                    <a name="//apple_ref/objc/Property/versionInfo" class="dashAnchor"></a>
-                    <a class="token" href="#/c:objc(cs)YDBCKRecordInfo(py)versionInfo">versionInfo</a>
+                    <a name="/c:objc(cs)YDBLogMessage(py)flag"></a>
+                    <a name="//apple_ref/objc/Property/flag" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YDBLogMessage(py)flag">flag</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1022,41 +981,150 @@ then you need to set recordInfo.databaseIdentifier within your recordBlock.</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>This property comes directly from the [YapDatabaseCloudKit init&hellip;] method.</p>
-
-<p>As your application evolves, there may be times that you need to change the CKRecord format.
-And there are a couple ways in which you can achieve this.</p>
-
-<ol>
-<li>Simply wait until the corresponding object(s) are naturally updated,
-and then push the new fields to the cloud at that time.</li>
-<li>Push all the updated fields for all the objects right away.</li>
-</ol>
-
-<p>The versionInfo is useful in achieving option #2.
-Here&rsquo;s how it works:</p>
-
-<p>You initialize YapDatabaseCloudKit with an bumped/incremented/changed versionTag,
-and you also supply versionInfo that relays information you can use within the recordHandler.</p>
-
-<p>When YapDatabaseCloudKit is initialized for the first time (first launch, not subsequent launch),
-or its versionTag is changed, it will enumerate the objects in the database and invoke the recordHandler.
-During this enumeration (and only this enumeration) the recordHandler will be passed the versionInfo
-from the init method. Thus the recordHandler can discern between the initial population/repopulation,
-and a normal user-initiated readWriteTransaction that&rsquo;s modifying an object in the database.
-And it can then use the versionInfo to create the proper CKRecord.</p>
+                        <p>Tells you which flag triggered the log.
+For example, <code>if flag == YDBLogFlagError</code>, then this is an error log message, emitted via YDBLogError()</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Objective-C</p>
-                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">strong</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">id</span> <span class="n">_Nonnull</span> <span class="n">versionInfo</span><span class="p">;</span></code></pre>
+                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n"><a href="../Enums/YDBLogFlag.html">YDBLogFlag</a></span> <span class="n">flag</span><span class="p">;</span></code></pre>
 
                         </div>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">versionInfo</span><span class="p">:</span> <span class="kt">Any</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">flag</span><span class="p">:</span> <span class="kt"><a href="../Enums/YDBLogFlag.html">YDBLogFlag</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YDBLogMessage(py)file"></a>
+                    <a name="//apple_ref/objc/Property/file" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YDBLogMessage(py)file">file</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The full filePath (e.g. /Users/alice/code/myproject/YapDatabase/Extensions/YapFooBarTransaction.m)
+This comes from <code>__FILE__</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">_Nonnull</span> <span class="n">file</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">file</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YDBLogMessage(py)fileName"></a>
+                    <a name="//apple_ref/objc/Property/fileName" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YDBLogMessage(py)fileName">fileName</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The lastPathComponent of the filePath, with the fileExtension removed. (e.g. YapFooBarTransaction)</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">_Nonnull</span> <span class="n">fileName</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">fileName</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YDBLogMessage(py)function"></a>
+                    <a name="//apple_ref/objc/Property/function" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YDBLogMessage(py)function">function</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The name of function that triggered the log message.
+This comes from <strong>PRETTY_FUNCTION</strong></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">_Nonnull</span> <span class="n">function</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">function</span><span class="p">:</span> <span class="kt">String</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YDBLogMessage(py)line"></a>
+                    <a name="//apple_ref/objc/Property/line" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YDBLogMessage(py)line">line</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The line number within the file. (i.e. location of emitted log message)</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">nonatomic</span><span class="p">)</span> <span class="n">NSUInteger</span> <span class="n">line</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">line</span><span class="p">:</span> <span class="kt">UInt</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>

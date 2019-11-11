@@ -23,7 +23,7 @@
         <a class="header-link" href="index.html">
           YapDatabase Docs
         </a>
-         (53% documented)
+         (55% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -78,6 +78,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/YapDatabaseConnectionConfig.html">YapDatabaseConnectionConfig</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseConnectionPool.html">YapDatabaseConnectionPool</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YapDatabaseConnectionProxy.html">YapDatabaseConnectionProxy</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/YapDatabaseQuery.html">YapDatabaseQuery</a>
@@ -432,10 +438,7 @@
             <a class="nav-group-name-link" href="Other%20Classes.html">Other Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/YapDatabaseConnectionPool.html">YapDatabaseConnectionPool</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/YapDatabaseConnectionProxy.html">YapDatabaseConnectionProxy</a>
+                <a class="nav-group-task-link" href="Classes/YDBLogMessage.html">YDBLogMessage</a>
               </li>
             </ul>
           </li>
@@ -542,6 +545,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/YDBCloudCorePipelineAlgorithm.html">YDBCloudCorePipelineAlgorithm</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDBLogFlag.html">YDBLogFlag</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDBLogLevel.html">YDBLogLevel</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/YDB_NodeDeleteRules.html">YDB_NodeDeleteRules</a>
@@ -855,9 +864,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:objc(cs)YapDatabaseConnectionPool"></a>
-                    <a name="//apple_ref/objc/Class/YapDatabaseConnectionPool" class="dashAnchor"></a>
-                    <a class="token" href="#/c:objc(cs)YapDatabaseConnectionPool">YapDatabaseConnectionPool</a>
+                    <a name="/c:objc(cs)YDBLogMessage"></a>
+                    <a name="//apple_ref/objc/Class/YDBLogMessage" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YDBLogMessage">YDBLogMessage</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -865,179 +874,20 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>The connection pool class was designed to help you optimize background read-only transactions.
- As a reminder:</p>
+                        <p>Ecapsulates detailed information about an emitted log message.</p>
 
-<ul>
-<li><p>You&rsquo;re encouraged to use a dedicated read-only connection for the main thread.
-<a href="https://github.com/yapstudios/YapDatabase/wiki/Performance-Primer#readonly_vs_readwrite_transactions">https://github.com/yapstudios/YapDatabase/wiki/Performance-Primer#readonly_vs_readwrite_transactions</a></p></li>
-<li><p>You&rsquo;re encouraged to share the dedicated read-only main-thread connection between your viewControllers:
-<a href="https://github.com/yapstudios/YapDatabase/wiki/Performance-Pro#sharing_the_ui_databaseconnection">https://github.com/yapstudios/YapDatabase/wiki/Performance-Pro#sharing_the_ui_databaseconnection</a></p></li>
-<li><p>You&rsquo;re encouraged to create a dedicated read-write connection for read-write transactions:
-(Because there can only be a single read-write transaction per database at any one time.)
-<a href="https://github.com/yapstudios/YapDatabase/wiki/Performance-Primer">https://github.com/yapstudios/YapDatabase/wiki/Performance-Primer</a></p></li>
-</ul>
-
-<p>This leaves only non-main-thread read-only transactions. What&rsquo;s the recommendation for them?
- You could create a single read-only connection that will be shared by all background tasks.
- However, since all transactions are serialized via the shared connection,
- this implies that background taskA may have to wait for background taskB to finish its read-only transaction
- before background taskA can execute its transaction.
- And for background tasks, this is NOT the preferred scenario.</p>
-
-<p>The connection pool was designed to increase the performance in these scenarios.
- It will create connections on demand, up to (but not over) the connectionLimit.
- And it will vend connections using a simple load balancer that&rsquo;s based on the number of pending
- transactions that each connection has.
- (So you&rsquo;ll be handed the connection with the smallest queue of pending <q>work</q>.)</p>
-
-<p>This allows for increased parallelization amongst your background tasks.</p>
-
-                        <a href="Classes/YapDatabaseConnectionPool.html" class="slightly-smaller">See more</a>
+                        <a href="Classes/YDBLogMessage.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Objective-C</p>
-                          <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YapDatabaseConnectionPool</span> <span class="p">:</span> <span class="nc">NSObject</span></code></pre>
+                          <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YDBLogMessage</span> <span class="p">:</span> <span class="nc">NSObject</span></code></pre>
 
                         </div>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">YapDatabaseConnectionPool</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:objc(cs)YapDatabaseConnectionProxy"></a>
-                    <a name="//apple_ref/objc/Class/YapDatabaseConnectionProxy" class="dashAnchor"></a>
-                    <a class="token" href="#/c:objc(cs)YapDatabaseConnectionProxy">YapDatabaseConnectionProxy</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>A <q>proxy</q> connection is a trade-off in terms of the ACID guarantees of the database.</p>
-
-<p>Under normal operations, you must execute a read-write transaction in order to modify the datatbase.
- If the transaction completes, then all data from the transaction has been written to the database.
- And further, the transaction is durable even in the event of an application or system crash.
- In other words, you&rsquo;re guaranteed the data will be there when the app re-launches.</p>
-
-<p>A proxy connection allows you to relax these constraints,
- which may be useful for certain subsets of your data.</p>
-
-<p>Here&rsquo;s how it works:</p>
-
-<ul>
-<li>you write collection/key/value rows to a proxy connection instance</li>
-<li>the value(s) are immediately readable via the proxy connection instance</li>
-<li>the proxy will attempt to write the changes (in batches) at some point in the near future</li>
-</ul>
-
-<p>Thus you can read &amp; write values as if the proxy is an in-memory dictionary.
- However, the proxy will transparently write the changes to the database (but without any guarantees).</p>
-
-<p>** When should I use a proxy ?</p>
-
-<p>You can use a proxy when:</p>
-
-<ul>
-<li>it&rsquo;s not important that you manage an individual transaction</li>
-<li>it&rsquo;s not important if the values don&rsquo;t make it to disk</li>
-</ul>
-
-<p>Example #1 : A download manager</p>
-
-<p>Applications sometimes have download logic encapsulated in a <q>manager</q> class.
-   The manager class typically handles things such as:</p>
-
-<ul>
-<li>downloaing resources on demand</li>
-<li>parsing the results</li>
-<li>providing getter methods to fetch particular items</li>
-<li>automatically checking expiration dates &amp; refreshing items as needed</li>
-<li>automatically deleting unused expired items</li>
-</ul>
-
-<p>You&rsquo;ll notice the manager class is the ONLY class that handles reading/writing certain values in the database.
-   And it doesn&rsquo;t matter if a value doesn&rsquo;t get written to disk, as it can simply be re-downloaed.</p>
-
-<p>Example #2 : NSUserDefaults replacement</p>
-
-<p>NSUserDefaults works similarly to a connection proxy.
-   From the documentation for NSUserDefaults:</p>
-
-<blockquote>
-<p>The synchronize method, which is automatically invoked at periodic intervals,
-keeps the in-memory cache in sync with a user’s defaults database.</p>
-</blockquote>
-
-<p>So NSUserDefaults will <q>eventually</q> write changes to disk.
-   Unless you invoke the synchronize method, which involves waiting for disk IO to complete.</p>
-
-<p>Thus a connection proxy can easily replace your NSUserDefaults system.
-   It&rsquo;s worth pointing out that a proxy connection doesn&rsquo;t have the equivalent of a synchronize method because
-   you don&rsquo;t need one. A connection proxy always begins an asyncReadWrite transaction once it becomes <q>dirty</q>.</p>
-
-<p>In case you&rsquo;re wondering, <q>Why would I use YapDatabase over NSUserDefaults ?</q></p>
-
-<ol>
-<li>NSUserDefaults is not encrypted. And you can easily encrypt a YapDatabase.</li>
-<li>NSUserDefaults writes ALL values to disk everytime because it uses a plist to store the values on disk.
-  YapDatabase uses a database, so only changed values need to be re-written.
-  Thus, YapDatabase has the potential to be faster and involve less disk IO.</li>
-<li>YapDatabase has a notification system that tells you exactly which key/value pairs were changed.</li>
-<li>YapDatabase makes it easier to sync your data using a wide variety of cloud services.</li>
-</ol>
-
-<p>** Caveats</p>
-
-<p>A connection proxy instance expects to <q>own</q> a subset of the database.
- That is, it expects to be the only thing reading &amp; writing a subset of rows in the database.
- If you violate this, you may get unexpected results.</p>
-
-<p>Example #1 :</p>
-
-<ul>
-<li>You write a value using a proxy.</li>
-<li>You then attempt to read that value using a regular database connection.</li>
-<li>If the proxy hasn&rsquo;t written the value to disk yet,
- then the regualar database connection won&rsquo;t see the proper value.</li>
-</ul>
-
-<p>Example #2 :</p>
-
-<ul>
-<li>You write a value using the proxy.</li>
-<li>You write a different value (for the same collection/key) using the regular database connection.</li>
-<li>The proxy later performs a readWrite, and writes its value for the collection/key,
- overwriting the regular database connection.</li>
-</ul>
-
-                        <a href="Classes/YapDatabaseConnectionProxy.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Objective-C</p>
-                          <pre class="highlight objective_c"><code><span class="k">@interface</span> <span class="nc">YapDatabaseConnectionProxy</span> <span class="p">:</span> <span class="nc">NSObject</span></code></pre>
-
-                        </div>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">YapDatabaseConnectionProxy</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kt">YDBLogMessage</span> <span class="p">:</span> <span class="kt">NSObject</span></code></pre>
 
                         </div>
                       </div>
@@ -1052,7 +902,7 @@ keeps the in-memory cache in sync with a user’s defaults database.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://github.com/yapstudios/YapDatabase" target="_blank" rel="external">YapStudios</a>. All rights reserved. (Last updated: 2019-10-24)</p>
+      <p>&copy; 2019 <a class="link" href="https://github.com/yapstudios/YapDatabase" target="_blank" rel="external">YapStudios</a>. All rights reserved. (Last updated: 2019-11-10)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

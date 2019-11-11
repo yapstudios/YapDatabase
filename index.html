@@ -22,7 +22,7 @@
         <a class="header-link" href="index.html">
           YapDatabase Docs
         </a>
-         (53% documented)
+         (55% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -434,6 +434,14 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Other%20Classes.html">Other Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YDBLogMessage.html">YDBLogMessage</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a class="nav-group-name-link" href="Other%20Constants.html">Other Constants</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -536,6 +544,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/YDBCloudCorePipelineAlgorithm.html">YDBCloudCorePipelineAlgorithm</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDBLogFlag.html">YDBLogFlag</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDBLogLevel.html">YDBLogLevel</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/YDB_NodeDeleteRules.html">YDB_NodeDeleteRules</a>
@@ -845,8 +859,34 @@
 <p>YapDatabase is a <strong>collection/key/value store and so much more</strong>. It&rsquo;s built atop sqlite, for <strong>Swift</strong> &amp; Objective-C developers, targeting macOS, iOS, tvOS &amp; watchOS.</p>
 
 <p>&nbsp;</p>
+<h3 id='hello-world' class='heading'>Hello World:</h3>
+<pre class="highlight swift"><code><span class="c1">// Create and/or Open the database file</span>
+<span class="k">let</span> <span class="nv">db</span> <span class="o">=</span> <span class="kt">YapDatabase</span><span class="p">()</span>
 
-<p>It has the following features:</p>
+<span class="c1">// Configure database:</span>
+<span class="c1">// We're going to store String's in the collection "test".</span>
+<span class="c1">// To store custom classes/structs, just implement Swift's Codable protocol.</span>
+<span class="n">db</span><span class="o">.</span><span class="nf">registerCodableSerialization</span><span class="p">(</span><span class="kt">String</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">forCollection</span><span class="p">:</span> <span class="s">"test"</span><span class="p">)</span>
+
+<span class="c1">// Get a connection to the database</span>
+<span class="c1">// (You can have multiple connections for concurrency.)</span>
+<span class="k">let</span> <span class="nv">connection</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="nf">newConnection</span><span class="p">()</span>
+
+<span class="c1">// Write an item to the database</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">readWrite</span> <span class="p">{(</span><span class="n">transaction</span><span class="p">)</span> <span class="k">in</span>
+  <span class="n">transaction</span><span class="o">.</span><span class="nf">setObject</span><span class="p">(</span><span class="s">"hello"</span><span class="p">,</span> <span class="nv">forKey</span><span class="p">:</span> <span class="s">"world"</span><span class="p">,</span> <span class="nv">inCollection</span><span class="p">:</span> <span class="s">"test"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1">// Read it back</span>
+<span class="n">connection</span><span class="o">.</span><span class="n">read</span> <span class="p">{(</span><span class="n">transaction</span><span class="p">)</span> <span class="k">in</span>
+  <span class="k">let</span> <span class="nv">str</span> <span class="o">=</span> <span class="n">transaction</span><span class="o">.</span><span class="nf">object</span><span class="p">(</span><span class="nv">forKey</span><span class="p">:</span> <span class="s">"world"</span><span class="p">,</span> <span class="nv">inCollection</span><span class="p">:</span> <span class="s">"test"</span><span class="p">)</span> <span class="k">as?</span> <span class="kt">String</span>
+  <span class="c1">// str == "hello"</span>
+<span class="p">}</span>
+</code></pre>
+
+<p>&nbsp;</p>
+
+<p>YapDB has the following features:</p>
 
 <ul>
 <li><strong>Concurrency</strong>. You can read from the database while another thread is simultaneously making modifications to the database. So you never have to worry about blocking the main thread, and you can easily write to the database on a background thread. And, of course, you can read from the database on multiple threads simultaneously.</li>
@@ -874,7 +914,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://github.com/yapstudios/YapDatabase" target="_blank" rel="external">YapStudios</a>. All rights reserved. (Last updated: 2019-10-25)</p>
+      <p>&copy; 2019 <a class="link" href="https://github.com/yapstudios/YapDatabase" target="_blank" rel="external">YapStudios</a>. All rights reserved. (Last updated: 2019-11-10)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

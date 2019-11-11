@@ -23,7 +23,7 @@
         <a class="header-link" href="../index.html">
           YapDatabase Docs
         </a>
-         (53% documented)
+         (55% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -435,6 +435,14 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Other%20Classes.html">Other Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/YDBLogMessage.html">YDBLogMessage</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Other%20Constants.html">Other Constants</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -537,6 +545,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/YDBCloudCorePipelineAlgorithm.html">YDBCloudCorePipelineAlgorithm</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/YDBLogFlag.html">YDBLogFlag</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/YDBLogLevel.html">YDBLogLevel</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/YDB_NodeDeleteRules.html">YDB_NodeDeleteRules</a>
@@ -882,6 +896,43 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/c:objc(cs)YapDatabase(cm)defaultDatabaseURL"></a>
+                    <a name="//apple_ref/objc/Method/+defaultDatabaseURL" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabase(cm)defaultDatabaseURL">+defaultDatabaseURL</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The default database file URL.</p>
+
+<ul>
+<li>macOS : ~/Library/Application Support/{Bundle Identifier}/yapdb.sqlite</li>
+<li>iOS   : {App Sandbox}/Application Support/yapdb.sqlite</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">+</span> <span class="p">(</span><span class="n">nonnull</span> <span class="n">NSURL</span> <span class="o">*</span><span class="p">)</span><span class="n">defaultDatabaseURL</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kd">func</span> <span class="nf">defaultDatabaseURL</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">URL</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/c:objc(cs)YapDatabase(cm)defaultSerializer"></a>
                     <a name="//apple_ref/objc/Method/+defaultSerializer" class="dashAnchor"></a>
                     <a class="token" href="#/c:objc(cs)YapDatabase(cm)defaultSerializer">+defaultSerializer</a>
@@ -1147,6 +1198,58 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
+                <a name="/Logging"></a>
+                <a name="//apple_ref/objc/Section/Logging" class="dashAnchor"></a>
+                <a href="#/Logging">
+                  <h3 class="section-name">Logging</h3>
+                </a>
+              </div>
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabase(cm)setLogHandler:"></a>
+                    <a name="//apple_ref/objc/Method/+setLogHandler:" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabase(cm)setLogHandler:">+setLogHandler:</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Allows you to configure a handler for log messages emitted from the framework.</p>
+
+<p>A custom log handler allows you to integrate framework-emitted log messages into your desired logging system.</p>
+
+<p>If you don&rsquo;t configure your own log handler, then a default handler is used, which:</p>
+
+<ul>
+<li>only logs errors &amp; warnings</li>
+<li>uses os_log</li>
+</ul>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">+</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setLogHandler</span><span class="p">:(</span><span class="n">nonnull</span> <span class="kt">void</span> <span class="p">(</span><span class="o">^</span><span class="p">)(</span><span class="n"><a href="../Classes/YDBLogMessage.html">YDBLogMessage</a></span> <span class="o">*</span><span class="n">_Nonnull</span><span class="p">))</span><span class="nv">logHandler</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">class</span> <span class="kd">func</span> <span class="nf">setLogHandler</span><span class="p">(</span><span class="n">_</span> <span class="nv">logHandler</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="kt"><a href="../Classes/YDBLogMessage.html">YDBLogMessage</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
                 <a name="/Init"></a>
                 <a name="//apple_ref/objc/Section/Init" class="dashAnchor"></a>
                 <a href="#/Init">
@@ -1154,6 +1257,43 @@
                 </a>
               </div>
               <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabase(im)init"></a>
+                    <a name="//apple_ref/objc/Method/-init" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabase(im)init">-init</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Opens or creates a sqlite database with the default file URL.</p>
+<div class="aside aside-see">
+    <p class="aside-title">See</p>
+    [YapDatabase defaultDatabaseURL]
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">-</span> <span class="p">(</span><span class="n">nullable</span> <span class="n">instancetype</span><span class="p">)</span><span class="n">init</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="nf">init</span><span class="p">?()</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -1546,13 +1686,53 @@
             </div>
             <div class="task-group">
               <div class="task-name-container">
-                <a name="/Serialization"></a>
-                <a name="//apple_ref/objc/Section/Serialization" class="dashAnchor"></a>
-                <a href="#/Serialization">
-                  <h3 class="section-name">Serialization</h3>
+                <a name="/Default%20Configuration"></a>
+                <a name="//apple_ref/objc/Section/Default Configuration" class="dashAnchor"></a>
+                <a href="#/Default%20Configuration">
+                  <h3 class="section-name">Default Configuration</h3>
                 </a>
               </div>
               <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabase(py)connectionDefaults"></a>
+                    <a name="//apple_ref/objc/Property/connectionDefaults" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabase(py)connectionDefaults">connectionDefaults</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Allows you to configure the default values for new connections.</p>
+
+<p>When you create a connection via <code>[YapDatabase newConnection]</code>, that new connection will inherit
+ its initial configuration via these connectionDefaults. Of course, the connection may then override
+ these default configuration values, and configure itself as needed.</p>
+
+<p>Changing the connectionDefault values only affects future connections that will be created.
+ It does not affect connections that have already been created.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">atomic</span><span class="p">)</span>
+    <span class="n"><a href="../Classes/YapDatabaseConnectionConfig.html">YapDatabaseConnectionConfig</a></span> <span class="o">*</span><span class="n">_Nonnull</span> <span class="n">connectionDefaults</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">connectionDefaults</span><span class="p">:</span> <span class="kt"><a href="../Classes/YapDatabaseConnectionConfig.html">YapDatabaseConnectionConfig</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -1688,6 +1868,17 @@ which will be used in cases where another PostSanitizer isn&rsquo;t configured f
                     </section>
                   </div>
                 </li>
+              </ul>
+            </div>
+            <div class="task-group">
+              <div class="task-name-container">
+                <a name="/Per-Collection%20Configuration"></a>
+                <a name="//apple_ref/objc/Section/Per-Collection Configuration" class="dashAnchor"></a>
+                <a href="#/Per-Collection%20Configuration">
+                  <h3 class="section-name">Per-Collection Configuration</h3>
+                </a>
+              </div>
+              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
@@ -1814,6 +2005,44 @@ which will be used in cases where another PostSanitizer isn&rsquo;t configured f
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">registerPostSanitizer</span><span class="p">(</span><span class="n">_</span> <span class="nv">postSanitizer</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt"><a href="../Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabasePostSanitizer">YapDatabasePostSanitizer</a></span><span class="p">,</span> <span class="n">forCollection</span> <span class="nv">collection</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabase(im)registerSerializer:deserializer:preSanitizer:postSanitizer:forCollections:"></a>
+                    <a name="//apple_ref/objc/Method/-registerSerializer:deserializer:preSanitizer:postSanitizer:forCollections:" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabase(im)registerSerializer:deserializer:preSanitizer:postSanitizer:forCollections:">-registerSerializer:deserializer:preSanitizer:postSanitizer:forCollections:</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Registers a configuration group (for both objects &amp; metadata) for an array of collections.</p>
+
+<p>This is equivalent to looping over the array, and invoking each individual registration method. (But faster.)</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">registerSerializer</span><span class="p">:(</span><span class="n">nullable</span> <span class="n"><a href="../Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabaseSerializer">YapDatabaseSerializer</a></span><span class="p">)</span><span class="nv">serializer</span>
+              <span class="nf">deserializer</span><span class="p">:(</span><span class="n">nullable</span> <span class="n"><a href="../Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabaseDeserializer">YapDatabaseDeserializer</a></span><span class="p">)</span><span class="nv">deserializer</span>
+              <span class="nf">preSanitizer</span><span class="p">:(</span><span class="n">nullable</span> <span class="n"><a href="../Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabasePreSanitizer">YapDatabasePreSanitizer</a></span><span class="p">)</span><span class="nv">preSanitizer</span>
+             <span class="nf">postSanitizer</span><span class="p">:(</span><span class="n">nullable</span> <span class="n"><a href="../Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabasePostSanitizer">YapDatabasePostSanitizer</a></span><span class="p">)</span><span class="nv">postSanitizer</span>
+            <span class="nf">forCollections</span><span class="p">:(</span><span class="n">nonnull</span> <span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSString</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">collections</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">registerSerializer</span><span class="p">(</span><span class="n">_</span> <span class="nv">serializer</span><span class="p">:</span> <span class="kt"><a href="../Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabaseSerializer">YapDatabaseSerializer</a></span><span class="p">?,</span> <span class="nv">deserializer</span><span class="p">:</span> <span class="kt"><a href="../Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabaseDeserializer">YapDatabaseDeserializer</a></span><span class="p">?,</span> <span class="nv">preSanitizer</span><span class="p">:</span> <span class="kt"><a href="../Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabasePreSanitizer">YapDatabasePreSanitizer</a></span><span class="p">?,</span> <span class="nv">postSanitizer</span><span class="p">:</span> <span class="kt"><a href="../Other%20Type%20Definitions.html#/c:YapDatabaseTypes.h@T@YapDatabasePostSanitizer">YapDatabasePostSanitizer</a></span><span class="p">?,</span> <span class="n">forCollections</span> <span class="nv">collections</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">])</span></code></pre>
 
                         </div>
                       </div>
@@ -2092,23 +2321,12 @@ which will be used in cases where another PostSanitizer isn&rsquo;t configured f
                     </section>
                   </div>
                 </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/Defaults"></a>
-                <a name="//apple_ref/objc/Section/Defaults" class="dashAnchor"></a>
-                <a href="#/Defaults">
-                  <h3 class="section-name">Defaults</h3>
-                </a>
-              </div>
-              <ul class="item-container">
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:objc(cs)YapDatabase(py)connectionDefaults"></a>
-                    <a name="//apple_ref/objc/Property/connectionDefaults" class="dashAnchor"></a>
-                    <a class="token" href="#/c:objc(cs)YapDatabase(py)connectionDefaults">connectionDefaults</a>
+                    <a name="/c:objc(cs)YapDatabase(im)setObjectPolicy:forCollection:"></a>
+                    <a name="//apple_ref/objc/Method/-setObjectPolicy:forCollection:" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabase(im)setObjectPolicy:forCollection:">-setObjectPolicy:forCollection:</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -2116,27 +2334,61 @@ which will be used in cases where another PostSanitizer isn&rsquo;t configured f
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Allows you to configure the default values for new connections.</p>
+                        <p>Allows you to opt-in to various performance improvements,
+ which is generally dependent on the object types you&rsquo;re storing in each collection.</p>
 
-<p>When you create a connection via <code>[YapDatabase newConnection]</code>, that new connection will inherit
- its initial configuration via these connectionDefaults. Of course, the connection may then override
- these default configuration values, and configure itself as needed.</p>
-
-<p>Changing the connectionDefault values only affects future connections that will be created.
- It does not affect connections that have already been created.</p>
+<p>The Object-Policy is documented on the wiki here:
+ <a href="https://github.com/yapstudios/YapDatabase/wiki/Object-Policy">https://github.com/yapstudios/YapDatabase/wiki/Object-Policy</a></p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Objective-C</p>
-                          <pre class="highlight objective_c"><code><span class="k">@property</span> <span class="p">(</span><span class="n">readonly</span><span class="p">,</span> <span class="n">atomic</span><span class="p">)</span>
-    <span class="n"><a href="../Classes/YapDatabaseConnectionConfig.html">YapDatabaseConnectionConfig</a></span> <span class="o">*</span><span class="n">_Nonnull</span> <span class="n">connectionDefaults</span><span class="p">;</span></code></pre>
+                          <pre class="highlight objective_c"><code><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setObjectPolicy</span><span class="p">:(</span><span class="n"><a href="../Enums/YapDatabasePolicy.html">YapDatabasePolicy</a></span><span class="p">)</span><span class="nv">policy</span>
+          <span class="nf">forCollection</span><span class="p">:(</span><span class="n">nullable</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">collection</span><span class="p">;</span></code></pre>
 
                         </div>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="k">var</span> <span class="nv">connectionDefaults</span><span class="p">:</span> <span class="kt"><a href="../Classes/YapDatabaseConnectionConfig.html">YapDatabaseConnectionConfig</a></span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">setObjectPolicy</span><span class="p">(</span><span class="n">_</span> <span class="nv">policy</span><span class="p">:</span> <span class="kt"><a href="../Enums/YapDatabasePolicy.html">YapDatabasePolicy</a></span><span class="p">,</span> <span class="n">forCollection</span> <span class="nv">collection</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:objc(cs)YapDatabase(im)setMetadataPolicy:forCollection:"></a>
+                    <a name="//apple_ref/objc/Method/-setMetadataPolicy:forCollection:" class="dashAnchor"></a>
+                    <a class="token" href="#/c:objc(cs)YapDatabase(im)setMetadataPolicy:forCollection:">-setMetadataPolicy:forCollection:</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Allows you to opt-in to various performance improvements,
+ which is generally dependent on the object types you&rsquo;re storing in each collection.</p>
+
+<p>The Object-Policy is documented on the wiki here:
+ <a href="https://github.com/yapstudios/YapDatabase/wiki/Object-Policy">https://github.com/yapstudios/YapDatabase/wiki/Object-Policy</a></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Objective-C</p>
+                          <pre class="highlight objective_c"><code><span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">setMetadataPolicy</span><span class="p">:(</span><span class="n"><a href="../Enums/YapDatabasePolicy.html">YapDatabasePolicy</a></span><span class="p">)</span><span class="nv">policy</span>
+            <span class="nf">forCollection</span><span class="p">:(</span><span class="n">nullable</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">collection</span><span class="p">;</span></code></pre>
+
+                        </div>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">setMetadataPolicy</span><span class="p">(</span><span class="n">_</span> <span class="nv">policy</span><span class="p">:</span> <span class="kt"><a href="../Enums/YapDatabasePolicy.html">YapDatabasePolicy</a></span><span class="p">,</span> <span class="n">forCollection</span> <span class="nv">collection</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span></code></pre>
 
                         </div>
                       </div>
@@ -3439,7 +3691,7 @@ Because in terms of performance, you get a lot of bang for your buck if you recy
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://github.com/yapstudios/YapDatabase" target="_blank" rel="external">YapStudios</a>. All rights reserved. (Last updated: 2019-10-25)</p>
+      <p>&copy; 2019 <a class="link" href="https://github.com/yapstudios/YapDatabase" target="_blank" rel="external">YapStudios</a>. All rights reserved. (Last updated: 2019-11-10)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

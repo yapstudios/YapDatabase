@@ -23,7 +23,7 @@
         <a class="header-link" href="index.html">
           YapDatabase Docs
         </a>
-         (53% documented)
+         (55% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -435,6 +435,14 @@
             </ul>
           </li>
           <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Other%20Classes.html">Other Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/YDBLogMessage.html">YDBLogMessage</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
             <a class="nav-group-name-link" href="Other%20Constants.html">Other Constants</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
@@ -537,6 +545,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/YDBCloudCorePipelineAlgorithm.html">YDBCloudCorePipelineAlgorithm</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDBLogFlag.html">YDBLogFlag</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/YDBLogLevel.html">YDBLogLevel</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/YDB_NodeDeleteRules.html">YDB_NodeDeleteRules</a>
@@ -1058,7 +1072,8 @@
 <span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">getSectionChanges</span><span class="p">:(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n"><a href="Classes/YapDatabaseViewSectionChange.html">YapDatabaseViewSectionChange</a></span> <span class="o">*&gt;</span> <span class="o">*</span> <span class="n">_Nonnull</span> <span class="o">*</span> <span class="n">_Nullable</span><span class="p">)</span><span class="nv">sectionChangesPtr</span>
                <span class="nf">rowChanges</span><span class="p">:(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n"><a href="Classes/YapDatabaseViewRowChange.html">YapDatabaseViewRowChange</a></span> <span class="o">*&gt;</span> <span class="o">*</span> <span class="n">_Nonnull</span> <span class="o">*</span> <span class="n">_Nullable</span><span class="p">)</span><span class="nv">rowChangesPtr</span>
          <span class="nf">forNotifications</span><span class="p">:(</span><span class="n">NSArray</span><span class="o">&lt;</span><span class="n">NSNotification</span> <span class="o">*&gt;</span> <span class="o">*</span><span class="p">)</span><span class="nv">notifications</span>
-             <span class="nf">withMappings</span><span class="p">:(</span><span class="n"><a href="Classes/YapDatabaseViewMappings.html">YapDatabaseViewMappings</a></span> <span class="o">*</span><span class="p">)</span><span class="nv">mappings</span><span class="p">;</span>
+             <span class="nf">withMappings</span><span class="p">:(</span><span class="n"><a href="Classes/YapDatabaseViewMappings.html">YapDatabaseViewMappings</a></span> <span class="o">*</span><span class="p">)</span><span class="nv">mappings</span>
+<span class="n">NS_REFINED_FOR_SWIFT</span><span class="p">;</span>
 
 <span class="cm">/**
  * A simple YES/NO query to see if the view changed at all, inclusive of all groups.
@@ -1235,7 +1250,8 @@
 <span class="k">-</span> <span class="p">(</span><span class="n">BOOL</span><span class="p">)</span><span class="nf">getKey</span><span class="p">:(</span><span class="n">NSString</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="o">*</span> <span class="n">_Nullable</span><span class="p">)</span><span class="nv">keyPtr</span>
     <span class="nf">collection</span><span class="p">:(</span><span class="n">NSString</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="o">*</span> <span class="n">_Nullable</span><span class="p">)</span><span class="nv">collectionPtr</span>
        <span class="nf">atIndex</span><span class="p">:(</span><span class="n">NSUInteger</span><span class="p">)</span><span class="nv">index</span>
-       <span class="nf">inGroup</span><span class="p">:(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">group</span><span class="p">;</span>
+       <span class="nf">inGroup</span><span class="p">:(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">group</span>
+<span class="n">NS_REFINED_FOR_SWIFT</span><span class="p">;</span>
 
 <span class="cm">/**
  * Shortcut for: [view getKey:&amp;key collection:&amp;collection atIndex:0 inGroup:group]
@@ -1277,7 +1293,8 @@
 <span class="k">-</span> <span class="p">(</span><span class="n">BOOL</span><span class="p">)</span><span class="nf">getGroup</span><span class="p">:(</span><span class="n">NSString</span> <span class="o">*</span> <span class="n">_Nullable</span> <span class="o">*</span> <span class="n">_Nullable</span><span class="p">)</span><span class="nv">groupPtr</span>
            <span class="nf">index</span><span class="p">:(</span><span class="n">nullable</span> <span class="n">NSUInteger</span> <span class="o">*</span><span class="p">)</span><span class="nv">indexPtr</span>
           <span class="nf">forKey</span><span class="p">:(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">key</span>
-    <span class="nf">inCollection</span><span class="p">:(</span><span class="n">nullable</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">collection</span><span class="p">;</span>
+    <span class="nf">inCollection</span><span class="p">:(</span><span class="n">nullable</span> <span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">collection</span>
+<span class="n">NS_REFINED_FOR_SWIFT</span><span class="p">;</span>
 
 <span class="cm">/**
  * Returns the versionTag in effect for this transaction.
@@ -1302,7 +1319,8 @@
  * Enumerates the keys in the given group.
  */</span>
 <span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">enumerateKeysInGroup</span><span class="p">:(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">group</span>
-                  <span class="nf">usingBlock</span><span class="p">:(</span><span class="kt">void</span> <span class="p">(</span><span class="n">NS_NOESCAPE</span><span class="o">^</span><span class="p">)(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">collection</span><span class="p">,</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">index</span><span class="p">,</span> <span class="n">BOOL</span> <span class="o">*</span><span class="n">stop</span><span class="p">))</span><span class="nv">block</span><span class="p">;</span>
+                  <span class="nf">usingBlock</span><span class="p">:(</span><span class="kt">void</span> <span class="p">(</span><span class="n">NS_NOESCAPE</span><span class="o">^</span><span class="p">)(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">collection</span><span class="p">,</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">index</span><span class="p">,</span> <span class="n">BOOL</span> <span class="o">*</span><span class="n">stop</span><span class="p">))</span><span class="nv">block</span>
+<span class="n">NS_REFINED_FOR_SWIFT</span><span class="p">;</span>
 
 <span class="cm">/**
  * Enumerates the keys in the given group.
@@ -1310,7 +1328,8 @@
  */</span>
 <span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">enumerateKeysInGroup</span><span class="p">:(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">group</span>
                  <span class="nf">withOptions</span><span class="p">:(</span><span class="n">NSEnumerationOptions</span><span class="p">)</span><span class="nv">options</span>
-                  <span class="nf">usingBlock</span><span class="p">:(</span><span class="kt">void</span> <span class="p">(</span><span class="n">NS_NOESCAPE</span><span class="o">^</span><span class="p">)(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">collection</span><span class="p">,</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">index</span><span class="p">,</span> <span class="n">BOOL</span> <span class="o">*</span><span class="n">stop</span><span class="p">))</span><span class="nv">block</span><span class="p">;</span>
+                  <span class="nf">usingBlock</span><span class="p">:(</span><span class="kt">void</span> <span class="p">(</span><span class="n">NS_NOESCAPE</span><span class="o">^</span><span class="p">)(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">collection</span><span class="p">,</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">index</span><span class="p">,</span> <span class="n">BOOL</span> <span class="o">*</span><span class="n">stop</span><span class="p">))</span><span class="nv">block</span>
+<span class="n">NS_REFINED_FOR_SWIFT</span><span class="p">;</span>
 
 <span class="cm">/**
  * Enumerates the keys in the range of the given group.
@@ -1319,7 +1338,8 @@
 <span class="k">-</span> <span class="p">(</span><span class="kt">void</span><span class="p">)</span><span class="nf">enumerateKeysInGroup</span><span class="p">:(</span><span class="n">NSString</span> <span class="o">*</span><span class="p">)</span><span class="nv">group</span>
                  <span class="nf">withOptions</span><span class="p">:(</span><span class="n">NSEnumerationOptions</span><span class="p">)</span><span class="nv">options</span>
                        <span class="nf">range</span><span class="p">:(</span><span class="n">NSRange</span><span class="p">)</span><span class="nv">range</span>
-                  <span class="nf">usingBlock</span><span class="p">:(</span><span class="kt">void</span> <span class="p">(</span><span class="n">NS_NOESCAPE</span><span class="o">^</span><span class="p">)(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">collection</span><span class="p">,</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">index</span><span class="p">,</span> <span class="n">BOOL</span> <span class="o">*</span><span class="n">stop</span><span class="p">))</span><span class="nv">block</span><span class="p">;</span>
+                  <span class="nf">usingBlock</span><span class="p">:(</span><span class="kt">void</span> <span class="p">(</span><span class="n">NS_NOESCAPE</span><span class="o">^</span><span class="p">)(</span><span class="n">NSString</span> <span class="o">*</span><span class="n">collection</span><span class="p">,</span> <span class="n">NSString</span> <span class="o">*</span><span class="n">key</span><span class="p">,</span> <span class="n">NSUInteger</span> <span class="n">index</span><span class="p">,</span> <span class="n">BOOL</span> <span class="o">*</span><span class="n">stop</span><span class="p">))</span><span class="nv">block</span>
+<span class="n">NS_REFINED_FOR_SWIFT</span><span class="p">;</span>
 
 <span class="k">@end</span></code></pre>
 
@@ -2206,7 +2226,7 @@ which are designed to give you an overview of the various technologies available
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2019 <a class="link" href="https://github.com/yapstudios/YapDatabase" target="_blank" rel="external">YapStudios</a>. All rights reserved. (Last updated: 2019-10-25)</p>
+      <p>&copy; 2019 <a class="link" href="https://github.com/yapstudios/YapDatabase" target="_blank" rel="external">YapStudios</a>. All rights reserved. (Last updated: 2019-11-10)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.11.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

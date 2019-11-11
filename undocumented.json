@@ -2935,77 +2935,77 @@
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 209,
+      "line": 214,
       "symbol": "YapDatabaseViewTransaction.-touchObjectForKey:inCollection:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 210,
+      "line": 215,
       "symbol": "YapDatabaseViewTransaction.-touchMetadataForKey:inCollection:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 275,
+      "line": 281,
       "symbol": "YapDatabaseViewTransaction.-enumerateKeysAndMetadataInGroup:withOptions:usingBlock:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 280,
+      "line": 287,
       "symbol": "YapDatabaseViewTransaction.-enumerateKeysAndMetadataInGroup:withOptions:range:usingBlock:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 286,
+      "line": 294,
       "symbol": "YapDatabaseViewTransaction.-enumerateKeysAndMetadataInGroup:withOptions:range:filter:usingBlock:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 303,
+      "line": 312,
       "symbol": "YapDatabaseViewTransaction.-enumerateKeysAndObjectsInGroup:withOptions:usingBlock:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 308,
+      "line": 318,
       "symbol": "YapDatabaseViewTransaction.-enumerateKeysAndObjectsInGroup:withOptions:range:usingBlock:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 314,
+      "line": 325,
       "symbol": "YapDatabaseViewTransaction.-enumerateKeysAndObjectsInGroup:withOptions:range:filter:usingBlock:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 331,
+      "line": 343,
       "symbol": "YapDatabaseViewTransaction.-enumerateRowsInGroup:withOptions:usingBlock:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 336,
+      "line": 349,
       "symbol": "YapDatabaseViewTransaction.-enumerateRowsInGroup:withOptions:range:usingBlock:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/Extensions/View/YapDatabaseViewTransaction.h",
-      "line": 342,
+      "line": 356,
       "symbol": "YapDatabaseViewTransaction.-enumerateRowsInGroup:withOptions:range:filter:usingBlock:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
@@ -3453,189 +3453,154 @@
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 52,
+      "line": 54,
       "symbol": "YapDatabaseUrlKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 53,
+      "line": 55,
       "symbol": "YapDatabaseUrlWalKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 54,
+      "line": 56,
       "symbol": "YapDatabaseUrlShmKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 91,
+      "line": 93,
       "symbol": "YapDatabaseSnapshotKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 92,
+      "line": 94,
       "symbol": "YapDatabaseConnectionKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 93,
+      "line": 95,
       "symbol": "YapDatabaseExtensionsKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 94,
+      "line": 96,
       "symbol": "YapDatabaseCustomKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 96,
+      "line": 98,
       "symbol": "YapDatabaseObjectChangesKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 97,
+      "line": 99,
       "symbol": "YapDatabaseMetadataChangesKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 98,
+      "line": 100,
       "symbol": "YapDatabaseInsertedKeysKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 99,
+      "line": 101,
       "symbol": "YapDatabaseRemovedKeysKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 100,
+      "line": 102,
       "symbol": "YapDatabaseRemovedCollectionsKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 101,
+      "line": 103,
       "symbol": "YapDatabaseAllKeysRemovedKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabase.h",
-      "line": 102,
+      "line": 104,
       "symbol": "YapDatabaseModifiedExternallyKey",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.constant",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 11,
-      "symbol": "YapDatabasePolicy",
-      "symbol_kind": "sourcekitten.source.lang.objc.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 11,
-      "symbol": "YapDatabasePolicy",
-      "symbol_kind": "sourcekitten.source.lang.objc.decl.typedef",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 12,
-      "symbol": "YapDatabasePolicy.YapDatabasePolicyContainment",
-      "symbol_kind": "sourcekitten.source.lang.objc.decl.enumcase",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 13,
-      "symbol": "YapDatabasePolicy.YapDatabasePolicyShare",
-      "symbol_kind": "sourcekitten.source.lang.objc.decl.enumcase",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 14,
-      "symbol": "YapDatabasePolicy.YapDatabasePolicyCopy",
-      "symbol_kind": "sourcekitten.source.lang.objc.decl.enumcase",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 586,
+      "line": 552,
       "symbol": "YapDatabaseConnection.-hasObjectChangeForCollection:inNotifications:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 587,
+      "line": 553,
       "symbol": "YapDatabaseConnection.-hasMetadataChangeForCollection:inNotifications:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 591,
+      "line": 557,
       "symbol": "YapDatabaseConnection.-hasChangeForKey:inCollection:inNotifications:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 595,
+      "line": 561,
       "symbol": "YapDatabaseConnection.-hasObjectChangeForKey:inCollection:inNotifications:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 599,
+      "line": 565,
       "symbol": "YapDatabaseConnection.-hasMetadataChangeForKey:inCollection:inNotifications:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 605,
+      "line": 571,
       "symbol": "YapDatabaseConnection.-hasChangeForAnyKeys:inCollection:inNotifications:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 609,
+      "line": 575,
       "symbol": "YapDatabaseConnection.-hasObjectChangeForAnyKeys:inCollection:inNotifications:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/robbie/Programs/GitHub/YapDatabase/YapDatabase/YapDatabaseConnection.h",
-      "line": 613,
+      "line": 579,
       "symbol": "YapDatabaseConnection.-hasMetadataChangeForAnyKeys:inCollection:inNotifications:",
       "symbol_kind": "sourcekitten.source.lang.objc.decl.method.instance",
       "warning": "undocumented"
