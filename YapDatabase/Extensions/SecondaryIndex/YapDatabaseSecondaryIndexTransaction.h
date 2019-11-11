@@ -37,26 +37,37 @@ NS_ASSUME_NONNULL_BEGIN
  */
 
 - (BOOL)enumerateKeysMatchingQuery:(YapDatabaseQuery *)query
-                        usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block;
+                        usingBlock:(void (NS_NOESCAPE^)(NSString *collection, NSString *key, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
+
 
 - (BOOL)enumerateKeysAndMetadataMatchingQuery:(YapDatabaseQuery *)query
                                    usingBlock:
-                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, __nullable id metadata, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
+
 
 - (BOOL)enumerateKeysAndObjectsMatchingQuery:(YapDatabaseQuery *)query
                                   usingBlock:
-                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block;
+                         (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
+
 
 - (BOOL)enumerateRowsMatchingQuery:(YapDatabaseQuery *)query
                         usingBlock:
-                            (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block;
+       (void (NS_NOESCAPE^)(NSString *collection, NSString *key, id object, __nullable id metadata, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
-- (BOOL)enumerateIndexedValuesInColumn:(NSString *)column matchingQuery:(YapDatabaseQuery *)query usingBlock:(void(NS_NOESCAPE^)(id indexedValue, BOOL *stop))block;
+
+- (BOOL)enumerateIndexedValuesInColumn:(NSString *)column
+                         matchingQuery:(YapDatabaseQuery *)query
+                            usingBlock:(void (^NS_NOESCAPE)(id indexedValue, BOOL *stop))block
+NS_REFINED_FOR_SWIFT;
 
 /**
  * Skips the enumeration process, and just gives you the count of matching rows.
  */
-- (BOOL)getNumberOfRows:(NSUInteger *)count matchingQuery:(YapDatabaseQuery *)query;
+- (BOOL)getNumberOfRows:(NSUInteger *)count matchingQuery:(YapDatabaseQuery *)query NS_REFINED_FOR_SWIFT;
 
 /**
  * Aggregate Queries.
