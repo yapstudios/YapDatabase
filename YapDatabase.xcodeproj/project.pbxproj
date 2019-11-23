@@ -1560,6 +1560,13 @@
 			path = Internal;
 			sourceTree = "<group>";
 		};
+		B93B310F23897E6200710E07 /* include */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
 		DC1E7D041D80C901000721B8 /* watchOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1624,6 +1631,7 @@
 		DC651F171BCEC77E00188E23 /* YapDatabase */ = {
 			isa = PBXGroup;
 			children = (
+				B93B310F23897E6200710E07 /* include */,
 				DC651F181BCEC77E00188E23 /* Extensions */,
 				DC651FBC1BCEC77E00188E23 /* Internal */,
 				DC651FD61BCEC77E00188E23 /* Utilities */,

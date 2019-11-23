@@ -1,0 +1,1 @@
+../Extensions/RTreeIndex/YapDatabaseRTreeIndexOptions.h

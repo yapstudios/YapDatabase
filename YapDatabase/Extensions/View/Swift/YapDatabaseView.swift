@@ -1,5 +1,7 @@
 /// Add Swift extensions here
-
+#if SWIFT_PACKAGE
+import YapDatabase
+#endif
 extension YapDatabaseViewConnection {
 	
 	public func getChanges(forNotifications notifications: [Notification], withMappings mappings: YapDatabaseViewMappings) -> (sectionChanges: [YapDatabaseViewSectionChange], rowChanges: [YapDatabaseViewRowChange]) {

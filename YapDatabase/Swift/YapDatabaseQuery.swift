@@ -1,5 +1,7 @@
 import Foundation
-
+#if SWIFT_PACKAGE
+import YapDatabase
+#endif
 extension YapDatabaseQuery {
 	
 	convenience init(string queryString: String) {

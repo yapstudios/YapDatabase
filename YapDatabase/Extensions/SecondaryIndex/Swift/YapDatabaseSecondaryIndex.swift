@@ -1,5 +1,7 @@
 /// Add Swift extensions here
-
+#if SWIFT_PACKAGE
+import YapDatabase
+#endif
 extension YapDatabaseSecondaryIndexTransaction {
 	
 	/// Iterates matches from the secondary index using the given query.

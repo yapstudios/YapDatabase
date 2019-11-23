@@ -1,5 +1,7 @@
 import Foundation
-
+#if SWIFT_PACKAGE
+import YapDatabase
+#endif
 extension YapDatabase {
 	
 	/// Creates and returns a `YapDatabaseSerializer` that works with Codable types,

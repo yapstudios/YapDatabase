@@ -1,0 +1,1 @@
+../Extensions/FullTextSearch/YapDatabaseFullTextSearchConnection.h

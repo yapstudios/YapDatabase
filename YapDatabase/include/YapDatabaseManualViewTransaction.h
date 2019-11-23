@@ -1,0 +1,1 @@
+../Extensions/ManualView/YapDatabaseManualViewTransaction.h
