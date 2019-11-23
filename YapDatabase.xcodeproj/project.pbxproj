@@ -89,6 +89,14 @@
 		B93B30F32389675600710E07 /* YapDatabaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B93B30F12389675600710E07 /* YapDatabaseTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B93B30F42389675600710E07 /* YapDatabaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B93B30F12389675600710E07 /* YapDatabaseTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		B93B30F52389675600710E07 /* YapDatabaseTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = B93B30F12389675600710E07 /* YapDatabaseTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B93B3104238968C900710E07 /* YapDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93B3102238968C900710E07 /* YapDatabase.swift */; };
+		B93B3105238968C900710E07 /* YapDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93B3102238968C900710E07 /* YapDatabase.swift */; };
+		B93B3106238968C900710E07 /* YapDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93B3102238968C900710E07 /* YapDatabase.swift */; };
+		B93B3107238968C900710E07 /* YapDatabase.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93B3102238968C900710E07 /* YapDatabase.swift */; };
+		B93B3108238968C900710E07 /* YapDatabaseQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93B3103238968C900710E07 /* YapDatabaseQuery.swift */; };
+		B93B3109238968C900710E07 /* YapDatabaseQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93B3103238968C900710E07 /* YapDatabaseQuery.swift */; };
+		B93B310A238968C900710E07 /* YapDatabaseQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93B3103238968C900710E07 /* YapDatabaseQuery.swift */; };
+		B93B310B238968C900710E07 /* YapDatabaseQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93B3103238968C900710E07 /* YapDatabaseQuery.swift */; };
 		DC06EEB61EFC3F2C0002CB40 /* CocoaLumberjack.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC06EEAA1EFC3AA70002CB40 /* CocoaLumberjack.framework */; };
 		DC06EEB71EFC3F2C0002CB40 /* CocoaLumberjack.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DC06EEAA1EFC3AA70002CB40 /* CocoaLumberjack.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		DC06EEB91EFC3F300002CB40 /* YapDatabase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCF7C2AE1BCC8E610087ED39 /* YapDatabase.framework */; };
@@ -1188,6 +1196,8 @@
 		B93B30E72389673D00710E07 /* YDBLogMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YDBLogMessage.m; sourceTree = "<group>"; };
 		B93B30E82389673D00710E07 /* YDBLogMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YDBLogMessage.h; sourceTree = "<group>"; };
 		B93B30F12389675600710E07 /* YapDatabaseTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YapDatabaseTypes.h; sourceTree = "<group>"; };
+		B93B3102238968C900710E07 /* YapDatabase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YapDatabase.swift; sourceTree = "<group>"; };
+		B93B3103238968C900710E07 /* YapDatabaseQuery.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YapDatabaseQuery.swift; sourceTree = "<group>"; };
 		DC06EEAA1EFC3AA70002CB40 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/Mac/CocoaLumberjack.framework; sourceTree = SOURCE_ROOT; };
 		DC06EEAC1EFC3B070002CB40 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/iOS/CocoaLumberjack.framework; sourceTree = SOURCE_ROOT; };
 		DC06EEAE1EFC3C310002CB40 /* CocoaLumberjack.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CocoaLumberjack.framework; path = Carthage/Build/watchOS/CocoaLumberjack.framework; sourceTree = SOURCE_ROOT; };
@@ -1599,6 +1609,15 @@
 			path = ConnectionPool;
 			sourceTree = "<group>";
 		};
+		B93B3101238968C900710E07 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				B93B3102238968C900710E07 /* YapDatabase.swift */,
+				B93B3103238968C900710E07 /* YapDatabaseQuery.swift */,
+			);
+			path = Swift;
+			sourceTree = "<group>";
+		};
 		DC1E7D041D80C901000721B8 /* watchOS */ = {
 			isa = PBXGroup;
 			children = (
@@ -1666,6 +1685,7 @@
 				DC651F181BCEC77E00188E23 /* Extensions */,
 				DC651FBC1BCEC77E00188E23 /* Internal */,
 				DC651FD61BCEC77E00188E23 /* Utilities */,
+				B93B3101238968C900710E07 /* Swift */,
 				DC651FE51BCEC77E00188E23 /* YapDatabase.h */,
 				DC651FE61BCEC77E00188E23 /* YapDatabase.m */,
 				DC651FE71BCEC77E00188E23 /* YapDatabaseConnection.h */,
@@ -3279,8 +3299,10 @@
 				DC6266521D80D12300557968 /* YapDatabaseExtensionConnection.m in Sources */,
 				DC6266A11D80D29100557968 /* YapDatabaseViewState.m in Sources */,
 				DC6266C01D80D34000557968 /* YapDatabaseFilteredView.m in Sources */,
+				B93B3107238968C900710E07 /* YapDatabase.swift in Sources */,
 				DCBA3C861FAE0EC50086289D /* YapDatabaseCloudCorePipeline.m in Sources */,
 				DC6266691D80D19F00557968 /* YapDatabaseFullTextSearchTransaction.m in Sources */,
+				B93B310B238968C900710E07 /* YapDatabaseQuery.swift in Sources */,
 				B93B30DC2389670D00710E07 /* YapDatabaseConnectionProxy.m in Sources */,
 				DC6266B51D80D2F500557968 /* YapDatabaseSearchQueue.m in Sources */,
 				DC6266701D80D1BE00557968 /* YapDatabaseHooksTransaction.m in Sources */,
@@ -3485,6 +3507,7 @@
 				DCE760B21D78B0E1009C83A0 /* YapProxyObject.m in Sources */,
 				DCE7615F1D78B781009C83A0 /* YapDatabaseRTreeIndexConnection.m in Sources */,
 				DCE761151D78B617009C83A0 /* YapDatabaseViewOptions.m in Sources */,
+				B93B310A238968C900710E07 /* YapDatabaseQuery.swift in Sources */,
 				DCE760D81D78B16A009C83A0 /* YapDatabaseExtensionTransaction.m in Sources */,
 				DCE760A01D78B07E009C83A0 /* YapDatabaseConnection.m in Sources */,
 				B93B30DB2389670D00710E07 /* YapDatabaseConnectionProxy.m in Sources */,
@@ -3502,6 +3525,7 @@
 				DCE760BA1D78B101009C83A0 /* NSDictionary+YapDatabase.m in Sources */,
 				DCE760C01D78B114009C83A0 /* YapDatabaseConnectionState.m in Sources */,
 				DCE761581D78B761009C83A0 /* YapDatabaseRelationshipOptions.m in Sources */,
+				B93B3106238968C900710E07 /* YapDatabase.swift in Sources */,
 				DCE761421D78B6F3009C83A0 /* YapDatabaseFilteredViewConnection.m in Sources */,
 				DCDAF73F1D81DC2A00C827C6 /* YapReachability.m in Sources */,
 				DCE975251F6D7EAE00496D00 /* YapDatabaseConnectionConfig.m in Sources */,
@@ -3615,6 +3639,7 @@
 				DC6520151BCEC77E00188E23 /* YapDatabaseCloudKit.m in Sources */,
 				DC6520571BCEC77E00188E23 /* YapDatabaseHooksConnection.m in Sources */,
 				DC6520E51BCEC77E00188E23 /* YapDatabaseViewState.m in Sources */,
+				B93B3108238968C900710E07 /* YapDatabaseQuery.swift in Sources */,
 				DC6521331BCEC77E00188E23 /* YapRowidSet.mm in Sources */,
 				DC6C28961CAAF03200166CE4 /* YapBidirectionalCache.m in Sources */,
 				B93B30D92389670D00710E07 /* YapDatabaseConnectionProxy.m in Sources */,
@@ -3632,6 +3657,7 @@
 				DC6520651BCEC77E00188E23 /* YapDatabaseExtensionConnection.m in Sources */,
 				DC6C28D11CAAF8DF00166CE4 /* YapDatabaseCrossProcessNotificationTransaction.m in Sources */,
 				DC65205B1BCEC77E00188E23 /* YapDatabaseHooksTransaction.m in Sources */,
+				B93B3104238968C900710E07 /* YapDatabase.swift in Sources */,
 				DC65207B1BCEC77E00188E23 /* YapDatabaseRelationshipEdge.m in Sources */,
 				DC6520731BCEC77E00188E23 /* YapDatabaseRelationship.m in Sources */,
 				DCE975231F6D7EAE00496D00 /* YapDatabaseConnectionConfig.m in Sources */,
@@ -3734,6 +3760,7 @@
 				DC6520161BCEC77E00188E23 /* YapDatabaseCloudKit.m in Sources */,
 				DC6520581BCEC77E00188E23 /* YapDatabaseHooksConnection.m in Sources */,
 				DC6520E61BCEC77E00188E23 /* YapDatabaseViewState.m in Sources */,
+				B93B3109238968C900710E07 /* YapDatabaseQuery.swift in Sources */,
 				DC6521341BCEC77E00188E23 /* YapRowidSet.mm in Sources */,
 				DC6C28971CAAF03200166CE4 /* YapBidirectionalCache.m in Sources */,
 				B93B30DA2389670D00710E07 /* YapDatabaseConnectionProxy.m in Sources */,
@@ -3751,6 +3778,7 @@
 				DC6520661BCEC77E00188E23 /* YapDatabaseExtensionConnection.m in Sources */,
 				DC6C28D21CAAF8DF00166CE4 /* YapDatabaseCrossProcessNotificationTransaction.m in Sources */,
 				DC65205C1BCEC77E00188E23 /* YapDatabaseHooksTransaction.m in Sources */,
+				B93B3105238968C900710E07 /* YapDatabase.swift in Sources */,
 				DC65207C1BCEC77E00188E23 /* YapDatabaseRelationshipEdge.m in Sources */,
 				DC6520741BCEC77E00188E23 /* YapDatabaseRelationship.m in Sources */,
 				DCE975241F6D7EAE00496D00 /* YapDatabaseConnectionConfig.m in Sources */,
@@ -3959,6 +3987,7 @@
 		DCD8813D1BE93C1000317214 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3978,6 +4007,7 @@
 		DCD8813E1BE93C1000317214 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -3998,6 +4028,7 @@
 		DCD8816F1BE94C9300317214 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -4015,6 +4046,7 @@
 		DCD881701BE94C9300317214 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "-";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -4085,6 +4117,7 @@
 		DCE7617E1D78B899009C83A0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4105,6 +4138,7 @@
 		DCE7617F1D78B899009C83A0 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -4173,6 +4207,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
@@ -4221,6 +4256,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 				VERSION_INFO_PREFIX = "";
 			};
