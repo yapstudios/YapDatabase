@@ -81,6 +81,24 @@ extension YapDatabase {
 		self.registerSerializer(serializer, forCollection: collection)
 		self.registerDeserializer(deserializer, forCollection: collection)
 	}
+
+    /// Registers a serializer & deserializer pair designed for the given Codable type.
+    ///
+    /// Do this for each {CodableType, collection} tuple you intend to use:
+    /// ```
+    /// yapdb.registerCodableSerialization(MyCodableClass.self, metadata: MyCodableMetadataClass.self, forCollection: "foo")
+    /// ```
+    ///
+    public func registerCodableSerialization<O, M>(_ objectType: O.Type, metadata metadataType: M.Type, forCollection collection: String?) where O: Codable, M: Codable {
+
+        self.registerCodableSerialization(objectType, forCollection: collection)
+
+        let metadataSerializer = YapDatabase.codableSerializer(metadataType)
+        let metadataDeserializer = YapDatabase.codableDeserializer(metadataType)
+
+        self.registerMetadataSerializer(metadataSerializer, forCollection: collection)
+        self.registerMetadataDeserializer(metadataDeserializer, forCollection: collection)
+    }
 }
 
 extension YapDatabaseReadTransaction {
