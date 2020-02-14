@@ -1629,8 +1629,6 @@
 		B93B30C72389666D00710E07 /* ConnectionProxy */ = {
 			isa = PBXGroup;
 			children = (
-				B93B30D32389670D00710E07 /* YapDatabaseConnectionProxy.h */,
-				B93B30D42389670D00710E07 /* YapDatabaseConnectionProxy.m */,
 			);
 			path = ConnectionProxy;
 			sourceTree = "<group>";
@@ -1638,8 +1636,6 @@
 		B93B30C82389667600710E07 /* ConnectionPool */ = {
 			isa = PBXGroup;
 			children = (
-				B93B30C9238966FC00710E07 /* YapDatabaseConnectionPool.h */,
-				B93B30CA238966FC00710E07 /* YapDatabaseConnectionPool.m */,
 			);
 			path = ConnectionPool;
 			sourceTree = "<group>";
@@ -2129,6 +2125,10 @@
 				DCAD7E1821C7E5FE00004CD3 /* YapDatabaseCryptoUtils.m */,
 				DCE975221F6D7EAE00496D00 /* YapDatabaseConnectionConfig.h */,
 				DCE975211F6D7EAE00496D00 /* YapDatabaseConnectionConfig.m */,
+				B93B30C9238966FC00710E07 /* YapDatabaseConnectionPool.h */,
+				B93B30CA238966FC00710E07 /* YapDatabaseConnectionPool.m */,
+				B93B30D32389670D00710E07 /* YapDatabaseConnectionProxy.h */,
+				B93B30D42389670D00710E07 /* YapDatabaseConnectionProxy.m */,
 				DC6C28921CAAF03200166CE4 /* YapBidirectionalCache.h */,
 				DC6C28931CAAF03200166CE4 /* YapBidirectionalCache.m */,
 				DC302B451BE98DAC009F8C4D /* YapMutationStack.h */,
