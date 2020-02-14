@@ -1626,20 +1626,6 @@
 			path = Internal;
 			sourceTree = "<group>";
 		};
-		B93B30C72389666D00710E07 /* ConnectionProxy */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ConnectionProxy;
-			sourceTree = "<group>";
-		};
-		B93B30C82389667600710E07 /* ConnectionPool */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = ConnectionPool;
-			sourceTree = "<group>";
-		};
 		B93B3101238968C900710E07 /* Swift */ = {
 			isa = PBXGroup;
 			children = (
@@ -1759,8 +1745,6 @@
 				371A7B851EF18AB0004176EC /* AutoView */,
 				DCBA3C321FAE0EC50086289D /* CloudCore */,
 				DC651F191BCEC77E00188E23 /* CloudKit */,
-				B93B30C82389667600710E07 /* ConnectionPool */,
-				B93B30C72389666D00710E07 /* ConnectionProxy */,
 				DC6C28BC1CAAF8DF00166CE4 /* CrossProcessNotification */,
 				DC651F391BCEC77E00188E23 /* FilteredView */,
 				DC651F441BCEC77E00188E23 /* FullTextSearch */,
