@@ -35,31 +35,33 @@ AppDelegate *MyAppDelegate;
 		[DDLog addLogger:[DDTTYLogger sharedInstance]];
 		
 		[[DDTTYLogger sharedInstance] setColorsEnabled:YES];
-		
-	#if TARGET_OS_IPHONE
-		UIColor *redColor    = [UIColor redColor];
-		UIColor *orangeColor = [UIColor orangeColor];
-		UIColor *grayColor   = [UIColor grayColor];
-	#else
-		NSColor *redColor    = [NSColor redColor];
-		NSColor *orangeColor = [NSColor orangeColor];
-		NSColor *grayColor   = [NSColor grayColor];
-	#endif
-		
-		[[DDTTYLogger sharedInstance] setForegroundColor:redColor
-		                                 backgroundColor:nil
-		                                         forFlag:YDB_LOG_FLAG_ERROR   // errors
-		                                         context:YDBLogContext];      // from YapDatabase
-	
-		[[DDTTYLogger sharedInstance] setForegroundColor:orangeColor
-		                                 backgroundColor:nil
-		                                         forFlag:YDB_LOG_FLAG_WARN    // warnings
-		                                         context:YDBLogContext];      // from YapDatabase
-		
-		[[DDTTYLogger sharedInstance] setForegroundColor:grayColor
-		                                 backgroundColor:nil
-		                                         forFlag:YDB_LOG_FLAG_TRACE   // trace (method invocations)
-		                                         context:YDBLogContext];      // from YapDatabase
+
+// TODO: Restore if/when https://github.com/yapstudios/YapDatabase/issues/509 is resolved
+//	#if TARGET_OS_IPHONE
+//		UIColor *redColor    = [UIColor redColor];
+//		UIColor *orangeColor = [UIColor orangeColor];
+//		UIColor *grayColor   = [UIColor grayColor];
+//	#else
+//		NSColor *redColor    = [NSColor redColor];
+//		NSColor *orangeColor = [NSColor orangeColor];
+//		NSColor *grayColor   = [NSColor grayColor];
+//	#endif
+//
+//		[[DDTTYLogger sharedInstance] setForegroundColor:redColor
+//		                                 backgroundColor:nil
+//		                                         forFlag:YDBLogFlagError   // errors
+//		                                         context:YDBLogContext];      // from YapDatabase
+//
+//		[[DDTTYLogger sharedInstance] setForegroundColor:orangeColor
+//		                                 backgroundColor:nil
+//		                                         forFlag:YDBLogFlagWarn    // warnings
+//		                                         context:YDBLogContext];      // from YapDatabase
+//
+//		[[DDTTYLogger sharedInstance] setForegroundColor:grayColor
+//		                                 backgroundColor:nil
+//		                                         forFlag:YDBLogFlagTrace   // trace (method invocations)
+//		                                         context:YDBLogContext];      // from YapDatabase
+// ^^^^^ TODO: Restore if/when https://github.com/yapstudios/YapDatabase/issues/509 is resolved
 	}
 	return self;
 }
