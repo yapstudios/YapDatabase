@@ -1,6 +1,7 @@
 platform :ios, '10.0'
 
 target 'CloudKitTodo' do
-	pod 'Reachability', '3.2'
+  pod 'Reachability', '3.2'
+  pod 'CocoaLumberjack'
 	pod "YapDatabase", path: '../../'
 end

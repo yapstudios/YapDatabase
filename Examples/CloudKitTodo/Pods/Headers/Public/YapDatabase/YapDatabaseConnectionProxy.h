@@ -1,1 +1,1 @@
-../../../../../../YapDatabase/Extensions/ConnectionProxy/YapDatabaseConnectionProxy.h
+../../../../../../YapDatabase/Utilities/YapDatabaseConnectionProxy.h
