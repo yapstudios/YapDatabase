@@ -32,6 +32,7 @@
 		ABB1832E9FCC349F48EB4C9C /* libPods-CloudKitTodo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CloudKitTodo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9A9B94F23FAA7E400A187DD /* Signing.sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.sample.xcconfig; sourceTree = "<group>"; };
 		B9A9B95023FAA8C600A187DD /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
+		B9A9B95123FAAA9500A187DD /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		DC212CE01F6D98F600C11BF0 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		DC6071451A33F3FF00207DE9 /* TodoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodoCell.h; sourceTree = "<group>"; };
 		DC6071461A33F3FF00207DE9 /* TodoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoCell.m; sourceTree = "<group>"; };
@@ -90,6 +91,7 @@
 		DCDE77121A3023E9001D8FCE = {
 			isa = PBXGroup;
 			children = (
+				B9A9B95123FAAA9500A187DD /* README.md */,
 				DCDE771D1A3023E9001D8FCE /* CloudKitTodo */,
 				DCDE776B1A3028EA001D8FCE /* Frameworks */,
 				DCDE771C1A3023E9001D8FCE /* Products */,
