@@ -531,10 +531,34 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * Allows you to opt-in to various performance improvements,
  * which is generally dependent on the object types you're storing in each collection.
  *
+ * This object policy will be used for all collections for which an explicit object
+ * policy has not been set.
+ *
+ * The Object-Policy is documented on the wiki here:
+ * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
+ */
+- (void)setDefaultObjectPolicy:(YapDatabasePolicy)policy;
+
+/**
+ * Allows you to opt-in to various performance improvements,
+ * which is generally dependent on the object types you're storing in each collection.
+ *
  * The Object-Policy is documented on the wiki here:
  * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
  */
 - (void)setMetadataPolicy:(YapDatabasePolicy)policy forCollection:(nullable NSString *)collection;
+
+/**
+ * Allows you to opt-in to various performance improvements,
+ * which is generally dependent on the object types you're storing in each collection.
+ *
+ * This metadata policy will be used for all collections for which an explicit metadata
+ * policy has not been set.
+ *
+ * The Object-Policy is documented on the wiki here:
+ * https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
+*/
+- (void)setDefaultMetadataPolicy:(YapDatabasePolicy)policy;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Connections

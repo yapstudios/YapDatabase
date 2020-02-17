@@ -4162,7 +4162,7 @@ static int connectionBusyHandler(void *ptr, int count)
 				else if (newObject != yapTouch)
 				{
 					YapDatabasePolicy objectPolicy = YapDatabasePolicyContainment;
-					NSNumber *op = objectPolicies[cacheKey.collection];
+          NSNumber *op = objectPolicies[cacheKey.collection] ?: [database getDefaultObjectPolicy];
 					if (op) {
 						objectPolicy = (YapDatabasePolicy)[op integerValue];
 					}
@@ -4284,7 +4284,7 @@ static int connectionBusyHandler(void *ptr, int count)
 				else if (newMetadata != yapTouch)
 				{
 					YapDatabasePolicy metadataPolicy = YapDatabasePolicyContainment;
-					NSNumber *mp = metadataPolicies[cacheKey.collection];
+					NSNumber *mp = metadataPolicies[cacheKey.collection] ?: [database getDefaultMetadataPolicy];
 					if (mp) {
 						metadataPolicy = (YapDatabasePolicy)[mp integerValue];
 					}
