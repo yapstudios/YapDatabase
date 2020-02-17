@@ -3079,122 +3079,30 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
         // All of this records references have been accounted for and fit in the
         // change set prior to it reaching its max item limit.
         // We can remove it from the reference map
+        [referenceMap removeObjectForKey:dirtyRecordTableInfo.recordID];
+        if (referenceMap.count == 0) {
+          isResolvingReferences = NO;
+        }
       }
     }
 
-    void(^queueBlock)(YDBCKChangeQueue *,
-                      YDBCKChangeQueue *,
-                      YDBCKDirtyRecordTableInfo *) =
-    ^(YDBCKChangeQueue *queue_master,
-      YDBCKChangeQueue *queue_pending,
-      YDBCKDirtyRecordTableInfo *info_dirtyRecord) {
-      if ([info_dirtyRecord hasNilRecordOrZeroOwnerCount])
-      {
-        // The CKRecord has been deleted via one of the following:
-        //
-        // - [transaction removeObjectForKey:inCollection:]
-        // - [[transaction ext:ck] deleteRecordForKey:inCollection]
-        // - [[transaction ext:ck] detachKey:inCollection]
-        //
-        // Note: In the detached scenario, the user wants us to "detach" the local row
-        // from its associated CKRecord, but not to actually delete the CKRecord from the cloud.
-
-        if (info_dirtyRecord.clean_ownerCount <= 0 &&
-            info_dirtyRecord.dirty_record &&
-            info_dirtyRecord.remoteMerge)
-        {
-          // We were just updating CKRecords in the queue.
-          // We've already deleted/detached the CKRecord, so it's not in the record table.
-
-          [queue_master updatePendingQueue:queue_pending
-                          withMergedRecord:info_dirtyRecord.dirty_record
-                        databaseIdentifier:info_dirtyRecord.databaseIdentifier];
+    if (!isResolvingReferences) {
+      if (accumulatedQueueOperations.count > 0) {
+        for (YDBCKDirtyRecordTableInfo *accumulatedDirtyRecordInfo in accumulatedQueueOperations) {
+          [self applyDirtyRecordInfo:accumulatedDirtyRecordInfo withMasterQueue:masterQueue andPendingQueue:pendingQueue];
         }
-        else if (info_dirtyRecord.remoteDeletion)
-        {
-          [queue_master updatePendingQueue:queue_pending
-                 withRemoteDeletedRecordID:info_dirtyRecord.recordID
-                        databaseIdentifier:info_dirtyRecord.databaseIdentifier];
-        }
-        else if (info_dirtyRecord.skipUploadDeletion)
-        {
-          [queue_master updatePendingQueue:queue_pending
-                      withDetachedRecordID:info_dirtyRecord.recordID
-                        databaseIdentifier:info_dirtyRecord.databaseIdentifier];
-        }
-        else
-        {
-          [queue_master updatePendingQueue:queue_pending
-                       withDeletedRecordID:info_dirtyRecord.recordID
-                        databaseIdentifier:info_dirtyRecord.databaseIdentifier];
-        }
+        [self applyDirtyRecordInfo:dirtyRecordTableInfo withMasterQueue:masterQueue andPendingQueue:pendingQueue];
+      } else {
+        [self applyDirtyRecordInfo:dirtyRecordTableInfo withMasterQueue:masterQueue andPendingQueue:pendingQueue];
       }
-      else
-      {
-        // The CKRecord has been modified via one or more of the following:
-        //
-        // - [transaction setObject:forKey:inCollection:]
-        // - [[transaction ext:ck] detachKey:inCollection:]
-        // - [[transaction ext:ck] attachRecord:forKey:inCollection:]
-
-        if (info_dirtyRecord.clean_ownerCount <= 0)
-        {
-          // Newly inserted record
-
-          if (info_dirtyRecord.remoteMerge)
-          {
-            [queue_master updatePendingQueue:queue_pending
-                            withMergedRecord:info_dirtyRecord.dirty_record
-                          databaseIdentifier:info_dirtyRecord.databaseIdentifier];
-          }
-          else if (info_dirtyRecord.skipUploadRecord == NO)
-          {
-            [queue_master updatePendingQueue:queue_pending
-                          withInsertedRecord:info_dirtyRecord.dirty_record
-                          databaseIdentifier:info_dirtyRecord.databaseIdentifier];
-          }
-        }
-        else
-        {
-          // Modified record
-
-          if (info_dirtyRecord.remoteMerge)
-          {
-            [queue_master updatePendingQueue:queue_pending
-                            withMergedRecord:info_dirtyRecord.dirty_record
-                          databaseIdentifier:info_dirtyRecord.databaseIdentifier];
-          }
-          else if (info_dirtyRecord.skipUploadRecord == NO)
-          {
-            [queue_master updatePendingQueue:queue_pending
-                          withModifiedRecord:info_dirtyRecord.dirty_record
-                          databaseIdentifier:info_dirtyRecord.databaseIdentifier
-                              originalValues:info_dirtyRecord.originalValues];
-          }
-        }
-      }
-    };
-
-    if (isResolvingReferences) {
-      if (maxChangesPerChangeRequest > 0
-          && maxChangesPerChangeRequest > (accumulatedQueueOperations.count + pendingQueue.numberOfChangesInCurrentCommit)) {
-        [self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
-        pendingQueue = nil;
-      }
-      [accumulatedQueueOperations addObject:(YDBCKDirtyRecordTableInfo *)obj];
-      return;
-    } else if (accumulatedQueueOperations.count > 0) {
-      for (YDBCKDirtyRecordTableInfo *accumulatedObj in accumulatedQueueOperations) {
-        queueBlock(masterQueue, pendingQueue, accumulatedObj);
-      }
-      queueBlock(masterQueue, pendingQueue, dirtyRecordTableInfo);
-    } else {
-      queueBlock(masterQueue, pendingQueue, dirtyRecordTableInfo);
     }
 
 		// Merge pending queue in master queue if number of changes is reached the limit.
-		
-		if (maxChangesPerChangeRequest > 0 && maxChangesPerChangeRequest <= pendingQueue.numberOfChangesInCurrentCommit)
+    NSUInteger changes = pendingQueue.numberOfChangesInCurrentCommit;
+    if (isResolvingReferences) {
+      changes += accumulatedQueueOperations.count;
+    }
+		if (maxChangesPerChangeRequest > 0 && maxChangesPerChangeRequest <= changes)
 		{
 			// Step 4 of 5:
 			//
@@ -3202,6 +3110,9 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 			
 			[self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
 			pendingQueue = nil;
+      if (isResolvingReferences) {
+        [accumulatedQueueOperations addObject:(YDBCKDirtyRecordTableInfo *)obj];
+      }
 		}
 	}];
 	
@@ -3211,6 +3122,94 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	
 	[self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
 	pendingQueue = nil;
+}
+
+- (void)applyDirtyRecordInfo:(YDBCKDirtyRecordTableInfo *)info withMasterQueue:(YDBCKChangeQueue *)masterQueue andPendingQueue:(YDBCKChangeQueue *)pendingQueue {
+  if ([info hasNilRecordOrZeroOwnerCount])
+  {
+    // The CKRecord has been deleted via one of the following:
+    //
+    // - [transaction removeObjectForKey:inCollection:]
+    // - [[transaction ext:ck] deleteRecordForKey:inCollection]
+    // - [[transaction ext:ck] detachKey:inCollection]
+    //
+    // Note: In the detached scenario, the user wants us to "detach" the local row
+    // from its associated CKRecord, but not to actually delete the CKRecord from the cloud.
+
+    if (info.clean_ownerCount <= 0 &&
+        info.dirty_record &&
+        info.remoteMerge)
+    {
+      // We were just updating CKRecords in the queue.
+      // We've already deleted/detached the CKRecord, so it's not in the record table.
+
+      [masterQueue updatePendingQueue:pendingQueue
+                      withMergedRecord:info.dirty_record
+                    databaseIdentifier:info.databaseIdentifier];
+    }
+    else if (info.remoteDeletion)
+    {
+      [masterQueue updatePendingQueue:pendingQueue
+             withRemoteDeletedRecordID:info.recordID
+                    databaseIdentifier:info.databaseIdentifier];
+    }
+    else if (info.skipUploadDeletion)
+    {
+      [masterQueue updatePendingQueue:pendingQueue
+                  withDetachedRecordID:info.recordID
+                    databaseIdentifier:info.databaseIdentifier];
+    }
+    else
+    {
+      [masterQueue updatePendingQueue:pendingQueue
+                   withDeletedRecordID:info.recordID
+                    databaseIdentifier:info.databaseIdentifier];
+    }
+  }
+  else
+  {
+    // The CKRecord has been modified via one or more of the following:
+    //
+    // - [transaction setObject:forKey:inCollection:]
+    // - [[transaction ext:ck] detachKey:inCollection:]
+    // - [[transaction ext:ck] attachRecord:forKey:inCollection:]
+
+    if (info.clean_ownerCount <= 0)
+    {
+      // Newly inserted record
+
+      if (info.remoteMerge)
+      {
+        [masterQueue updatePendingQueue:pendingQueue
+                        withMergedRecord:info.dirty_record
+                      databaseIdentifier:info.databaseIdentifier];
+      }
+      else if (info.skipUploadRecord == NO)
+      {
+        [masterQueue updatePendingQueue:pendingQueue
+                      withInsertedRecord:info.dirty_record
+                      databaseIdentifier:info.databaseIdentifier];
+      }
+    }
+    else
+    {
+      // Modified record
+
+      if (info.remoteMerge)
+      {
+        [masterQueue updatePendingQueue:pendingQueue
+                        withMergedRecord:info.dirty_record
+                      databaseIdentifier:info.databaseIdentifier];
+      }
+      else if (info.skipUploadRecord == NO)
+      {
+        [masterQueue updatePendingQueue:pendingQueue
+                      withModifiedRecord:info.dirty_record
+                      databaseIdentifier:info.databaseIdentifier
+                          originalValues:info.originalValues];
+      }
+    }
+  }
 }
 
 - (void)mergePendingQueue:(YDBCKChangeQueue *)pendingQueue toMasterQueue:(YDBCKChangeQueue *)masterQueue
