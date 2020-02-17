@@ -46,7 +46,7 @@ DatabaseManager *MyDatabaseManager;
 	return MyDatabaseManager;
 }
 
-+ (NSString *)databasePath
++ (NSURL *)databaseURL
 {
 	NSString *databaseName = @"MyAwesomeApp.sqlite";
 	
@@ -56,9 +56,7 @@ DatabaseManager *MyDatabaseManager;
 	                                                          create:YES
 	                                                           error:NULL];
 	
-	NSURL *databaseURL = [baseURL URLByAppendingPathComponent:databaseName isDirectory:NO];
-	
-	return databaseURL.filePathURL.path;
+	return [baseURL URLByAppendingPathComponent:databaseName isDirectory:NO];
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,8 +147,8 @@ DatabaseManager *MyDatabaseManager;
 
 - (void)setupDatabase
 {
-	NSString *databasePath = [[self class] databasePath];
-	DDLogVerbose(@"databasePath: %@", databasePath);
+	NSURL *databaseURL = [[self class] databaseURL];
+	DDLogVerbose(@"databaseURL: %@", databaseURL);
 	
 	// Configure custom class mappings for NSCoding.
 	// In a previous version of the app, the "MyTodo" class was named "MyTodoItem".
@@ -159,21 +157,29 @@ DatabaseManager *MyDatabaseManager;
 	[NSKeyedUnarchiver setClass:[MyTodo class] forClassName:@"MyTodoItem"];
 	
 	// Create the database
-	
-	database = [[YapDatabase alloc] initWithPath:databasePath
-	                                  serializer:[self databaseSerializer]
-	                                deserializer:[self databaseDeserializer]
-	                                preSanitizer:[self databasePreSanitizer]
-	                               postSanitizer:[self databasePostSanitizer]
-	                                     options:nil];
+  database = [[YapDatabase alloc] initWithURL:databaseURL options:nil];
+  [database registerDefaultSerializer:[self databaseSerializer]];
+  [database registerDefaultDeserializer:[self databaseDeserializer]];
+  [database registerDefaultPreSanitizer:[self databasePreSanitizer]];
+  [database registerDefaultPostSanitizer:[self databasePostSanitizer]];
 	
 	// FOR ADVANCED USERS ONLY
 	//
 	// Do NOT copy this blindly into your app unless you know exactly what you're doing.
 	// https://github.com/yapstudios/YapDatabase/wiki/Object-Policy
 	//
-	database.defaultObjectPolicy = YapDatabasePolicyShare;
-	database.defaultMetadataPolicy = YapDatabasePolicyShare;
+  // TODO: Restore the following once https://github.com/yapstudios/YapDatabase/issues/502 is resolved
+  //	database.defaultObjectPolicy = YapDatabasePolicyShare;
+  //	database.defaultMetadataPolicy = YapDatabasePolicyShare;
+  // TODO: Remove the following once https://github.com/yapstudios/YapDatabase/issues/502 is resolved
+  [database setObjectPolicy:YapDatabasePolicyShare forCollection:Collection_CloudKit];
+  [database setObjectPolicy:YapDatabasePolicyShare forCollection:Collection_Todos];
+  [database setObjectPolicy:YapDatabasePolicyShare forCollection:nil];
+  [database setMetadataPolicy:YapDatabasePolicyShare forCollection:Collection_CloudKit];
+  [database setMetadataPolicy:YapDatabasePolicyShare forCollection:Collection_Todos];
+  [database setMetadataPolicy:YapDatabasePolicyShare forCollection:nil];
+  // ^^^ TODO: Remove the following once https://github.com/yapstudios/YapDatabase/issues/502 is resolved
+
 	//
 	// ^^^ FOR ADVANCED USERS ONLY ^^^
 	

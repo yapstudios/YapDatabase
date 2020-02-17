@@ -71,7 +71,7 @@ extern DatabaseManager *MyDatabaseManager;
 /**
  * The path of the raw database file.
 **/
-+ (NSString *)databasePath;
++ (NSURL *)databaseURL;
 
 /**
  * The root database class, and extension(s)
