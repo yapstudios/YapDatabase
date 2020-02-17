@@ -30,6 +30,8 @@
 /* Begin PBXFileReference section */
 		703B5BE0F88E9B9E927805E5 /* Pods-CloudKitTodo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CloudKitTodo.release.xcconfig"; path = "Pods/Target Support Files/Pods-CloudKitTodo/Pods-CloudKitTodo.release.xcconfig"; sourceTree = "<group>"; };
 		ABB1832E9FCC349F48EB4C9C /* libPods-CloudKitTodo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-CloudKitTodo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		B9A9B94F23FAA7E400A187DD /* Signing.sample.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.sample.xcconfig; sourceTree = "<group>"; };
+		B9A9B95023FAA8C600A187DD /* Signing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Signing.xcconfig; sourceTree = "<group>"; };
 		DC212CE01F6D98F600C11BF0 /* CloudKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CloudKit.framework; path = System/Library/Frameworks/CloudKit.framework; sourceTree = SDKROOT; };
 		DC6071451A33F3FF00207DE9 /* TodoCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TodoCell.h; sourceTree = "<group>"; };
 		DC6071461A33F3FF00207DE9 /* TodoCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TodoCell.m; sourceTree = "<group>"; };
@@ -122,6 +124,8 @@
 				DCDE77681A302873001D8FCE /* CloudKitTodo.entitlements */,
 				DCDE771F1A3023E9001D8FCE /* Info.plist */,
 				DCDE77201A3023E9001D8FCE /* main.m */,
+				B9A9B94F23FAA7E400A187DD /* Signing.sample.xcconfig */,
+				B9A9B95023FAA8C600A187DD /* Signing.xcconfig */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -212,7 +216,7 @@
 				TargetAttributes = {
 					DCDE771A1A3023E9001D8FCE = {
 						CreatedOnToolsVersion = 6.1;
-						DevelopmentTeam = VT5GYGYX83;
+						DevelopmentTeam = 8Y2R2YMCQT;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
@@ -232,6 +236,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -353,6 +358,7 @@
 /* Begin XCBuildConfiguration section */
 		DCDE773C1A3023E9001D8FCE /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B9A9B95023FAA8C600A187DD /* Signing.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -405,6 +411,7 @@
 		};
 		DCDE773D1A3023E9001D8FCE /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B9A9B95023FAA8C600A187DD /* Signing.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -466,7 +473,6 @@
 				);
 				INFOPLIST_FILE = CloudKitTodo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.4th-a.CloudKitTodo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};
@@ -490,7 +496,6 @@
 				);
 				INFOPLIST_FILE = CloudKitTodo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "com.4th-a.CloudKitTodo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
 			};

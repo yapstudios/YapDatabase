@@ -1,0 +1,13 @@
+///
+///  Created by George Cox on 2/17/20.
+///
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+
+// This is a sample xcconfig file. The point is to remove the hard coded signing
+// information from the project so anyone trying to use this can add their own
+// Signing.xcconfig file with their own team id and bundle id
+
+DEVELOPMENT_TEAM = <your team id here>
+PRODUCT_BUNDLE_IDENTIFIER = <your domain>.ydb.cktodo
