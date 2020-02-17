@@ -5,6 +5,7 @@
 
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapProxyObject.h>
+#import <YapDatabase/YapDatabasePrivate.h>
 
 #if PODFILE_USE_FRAMEWORKS
 // Works with `use_frameworks`, but not with `use_modular_headers`
@@ -1234,6 +1235,46 @@
 	}];
 	
 	XCTAssert(count == 4);
+}
+
+- (void)testObjectAndMetadataPolicies {
+  NSURL *databaseURL = [self databaseURL:NSStringFromSelector(_cmd)];
+
+  [[NSFileManager defaultManager] removeItemAtURL:databaseURL error:NULL];
+  YapDatabase *database = [[YapDatabase alloc] initWithURL:databaseURL];
+
+  XCTAssertNotNil(database);
+
+  YapDatabaseCollectionConfig *collectionConfig = [database configForCollection:@"col1"];
+  // Confirm the defaults are used
+  XCTAssert(collectionConfig.objectPolicy == YapDatabasePolicyContainment);
+  XCTAssert(collectionConfig.metadataPolicy == YapDatabasePolicyContainment);
+
+  [database setObjectPolicy:YapDatabasePolicyShare forCollection:@"col1"];
+  [database setMetadataPolicy:YapDatabasePolicyCopy forCollection:@"col1"];
+
+  collectionConfig = [database configForCollection:@"col1"];
+  // Confirm the explicit policies are used for the collection they were set for
+  XCTAssert(collectionConfig.objectPolicy == YapDatabasePolicyShare);
+  XCTAssert(collectionConfig.metadataPolicy == YapDatabasePolicyCopy);
+
+  collectionConfig = [database configForCollection:@"col2"];
+  // Confirm the defaults are used for a collection with no explicitly set policies
+  XCTAssert(collectionConfig.objectPolicy == YapDatabasePolicyContainment);
+  XCTAssert(collectionConfig.metadataPolicy == YapDatabasePolicyContainment);
+
+  [database setDefaultObjectPolicy:YapDatabasePolicyCopy];
+  [database setDefaultMetadataPolicy:YapDatabasePolicyShare];
+
+  collectionConfig = [database configForCollection:@"col1"];
+  // Confirm the explicit policies are still used for the collection with explicit policies
+  XCTAssert(collectionConfig.objectPolicy == YapDatabasePolicyShare);
+  XCTAssert(collectionConfig.metadataPolicy == YapDatabasePolicyCopy);
+
+  collectionConfig = [database configForCollection:@"col2"];
+  // Confirm the explicit default policies are used for a collection with no explicit policies
+  XCTAssert(collectionConfig.objectPolicy == YapDatabasePolicyCopy);
+  XCTAssert(collectionConfig.metadataPolicy == YapDatabasePolicyShare);
 }
 
 @end

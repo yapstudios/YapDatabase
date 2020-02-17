@@ -122,6 +122,8 @@ static NSString *const ext_key_class = @"class";
 
 - (YapDatabaseCollectionConfig *)configForCollection:(nullable NSString *)collection;
 
+- (NSNumber *)getDefaultObjectPolicy;
+- (NSNumber *)getDefaultMetadataPolicy;
 - (void)getObjectPolicies:(NSDictionary<NSString*, NSNumber*> *_Nonnull *_Nonnull)objectPoliciesPtr
          metadataPolicies:(NSDictionary<NSString*, NSNumber*> *_Nonnull *_Nonnull)metadataPoliciesPtr;
 

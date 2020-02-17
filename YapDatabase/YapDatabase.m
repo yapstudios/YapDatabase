@@ -140,8 +140,10 @@ static YDBLogHandler logHandler = nil;
 	
 	NSMutableDictionary<id, YapDatabasePreSanitizer> *metadataPreSanitizers;   // only accessible within configLock
 	NSMutableDictionary<id, YapDatabasePostSanitizer> *metadataPostSanitizers; // only accessible within configLock
-	
+
+  NSNumber *_defaultObjectPolicy; // only accessible within configLock
 	NSDictionary<NSString*, NSNumber*> *objectPolicies;   // only accessible within configLock
+  NSNumber *_defaultMetadataPolicy; // only accessible within configLock
 	NSDictionary<NSString*, NSNumber*> *metadataPolicies; // only accessible within configLock
 	
 	NSDictionary *registeredExtensions;
@@ -1980,6 +1982,29 @@ static YDBLogHandler logHandler = nil;
 }
 
 /**
+* See header file for description.
+* Or view the api's online (for both Swift & Objective-C):
+* https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+*/
+- (void)setDefaultObjectPolicy:(YapDatabasePolicy)policy
+{
+  // Sanity check: ensure policy is valid enum
+  switch (policy)
+  {
+    case YapDatabasePolicyContainment : break;
+    case YapDatabasePolicyShare       : break;
+    case YapDatabasePolicyCopy        : break;
+    default                           : policy = YapDatabasePolicyContainment;
+  }
+
+  YAPUnfairLockLock(&configLock);
+  {
+    _defaultObjectPolicy = @(policy);
+  }
+  YAPUnfairLockUnlock(&configLock);
+}
+
+/**
  * See header file for description.
  * Or view the api's online (for both Swift & Objective-C):
  * https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
@@ -2005,6 +2030,29 @@ static YDBLogHandler logHandler = nil;
 		metadataPolicies = [newMetadataPolicies copy];
 	}
 	YAPUnfairLockUnlock(&configLock);
+}
+
+/**
+* See header file for description.
+* Or view the api's online (for both Swift & Objective-C):
+* https://yapstudios.github.io/YapDatabase/Classes/YapDatabase.html
+*/
+- (void)setDefaultMetadataPolicy:(YapDatabasePolicy)policy
+{
+  // Sanity check: ensure policy is valid enum
+  switch (policy)
+  {
+    case YapDatabasePolicyContainment : break;
+    case YapDatabasePolicyShare       : break;
+    case YapDatabasePolicyCopy        : break;
+    default                           : policy = YapDatabasePolicyContainment;
+  }
+
+  YAPUnfairLockLock(&configLock);
+  {
+    _defaultMetadataPolicy = @(policy);
+  }
+  YAPUnfairLockUnlock(&configLock);
 }
 
 - (YapDatabaseDeserializer)objectDeserializerForCollection:(nullable NSString *)collection
@@ -2066,12 +2114,12 @@ static YDBLogHandler logHandler = nil;
 		
 		NSNumber *policy = nil;
 		
-		policy = objectPolicies[key];
+    policy = objectPolicies[key] ?: _defaultObjectPolicy;
 		if (policy) {
 			objectPolicy = (YapDatabasePolicy)[policy integerValue];
 		}
 		
-		policy = metadataPolicies[key];
+    policy = metadataPolicies[key] ?: _defaultMetadataPolicy;
 		if (policy) {
 			metadataPolicy = (YapDatabasePolicy)[policy integerValue];
 		}
@@ -2088,6 +2136,28 @@ static YDBLogHandler logHandler = nil;
 	                                                   objectPolicy: objectPolicy
 	                                                 metadataPolicy: metadataPolicy];
 	return config;
+}
+
+- (NSNumber *)getDefaultObjectPolicy
+{
+  NSNumber *result = nil;
+  YAPUnfairLockLock(&configLock);
+  {
+    result = _defaultObjectPolicy;
+  }
+  YAPUnfairLockUnlock(&configLock);
+  return result;
+}
+
+- (NSNumber *)getDefaultMetadataPolicy
+{
+  NSNumber *result = nil;
+  YAPUnfairLockLock(&configLock);
+  {
+    result = _defaultMetadataPolicy;
+  }
+  YAPUnfairLockUnlock(&configLock);
+  return result;
 }
 
 - (void)getObjectPolicies:(NSDictionary<NSString*, NSNumber*> **)objectPoliciesPtr
