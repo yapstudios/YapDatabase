@@ -936,6 +936,16 @@ static YDBLogHandler logHandler = nil;
             }
         }
         
+        if (options.cipherCompatability != YapDatabaseCipherCompatability_Default) {
+            char *errorMsg;
+            NSString *pragmaCommand = [NSString stringWithFormat:@"PRAGMA cipher_compatibility = %lu", (unsigned long)options.cipherCompatability];
+            if (sqlite3_exec(sqlite, [pragmaCommand UTF8String], NULL, NULL, &errorMsg) != SQLITE_OK)
+            {
+                YDBLogError(@"failed to set database cipher_compatibility: %s", errorMsg);
+                return NO;
+            }
+        }
+        
         if (options.cipherUnencryptedHeaderLength > 0 &&
             (options.cipherKeySpecBlock ||
              options.cipherSaltBlock)) {

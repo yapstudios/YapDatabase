@@ -29,6 +29,12 @@ typedef NS_ENUM(NSInteger, YapDatabasePragmaSynchronous) {
 
 #ifdef SQLITE_HAS_CODEC
 typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
+
+typedef NS_ENUM(NSInteger, YapDatabaseCipherCompatability) {
+    YapDatabaseCipherCompatability_Default   = 0,
+    YapDatabaseCipherCompatability_Version3  = 3,
+    YapDatabaseCipherCompatability_Version4  = 4,
+};
 #endif
 
 @interface YapDatabaseOptions : NSObject <NSCopying>
@@ -170,6 +176,17 @@ typedef NSData *_Nonnull (^YapDatabaseCipherKeyBlock)(void);
  * Important: If you do not set a cipherKeyBlock the database will NOT be configured with encryption.
  */
 @property (nonatomic, copy, readwrite) YapDatabaseCipherKeyBlock cipherKeyBlock;
+
+/**
+ * Databases created with SQLCipher 3.0 are not compatible with SQLCipher 4.0.
+ * Setting this flag to YapDatabaseCipherCompatability_Version3 will
+ * set "PRAGMA cipher_compatibility = 3" on the current database.
+ *
+ * For more information see https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_compatibility
+ *
+ * Default value is YapDatabaseCipherCompatability_Default which is a no-op.
+ **/
+@property (nonatomic, assign, readwrite) YapDatabaseCipherCompatability cipherCompatability;
 
 /**
  * Set the PBKDF2 iteration number for deriving the key to the SQLCipher database.
