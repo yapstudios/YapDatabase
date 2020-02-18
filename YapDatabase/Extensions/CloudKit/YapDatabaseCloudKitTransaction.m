@@ -3032,7 +3032,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
         (referenceMap[obj.dirty_record.parent.recordID] ?: NSMutableArray.new);
 
       [parentReferences addObject:obj.dirty_record.recordID];
-      referenceMap[obj.dirty_record.recordID] = parentReferences;
+      referenceMap[obj.dirty_record.parent.recordID] = parentReferences;
     }
   }];
 
