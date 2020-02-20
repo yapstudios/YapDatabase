@@ -629,7 +629,12 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 			[dirtyRecordTableInfo incrementOwnerCount];
 			[dirtyRecordTableInfo mergeOriginalValues:recordInfo.originalValues];
 		}
-		
+
+    // Remove the hash from the ordered set, then add it. `removeObject` is a noop
+    // if the hash isn't in the list yet.
+    // This ensures the order gets update.
+    [parentConnection->dirtyRecordTableInfoHashOrder removeObject:hash];
+    [parentConnection->dirtyRecordTableInfoHashOrder addObject:hash];
 	#pragma clang diagnostic pop
 	};
 	
@@ -1234,6 +1239,12 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 			
 			[parentConnection->cleanRecordTableInfoCache removeObjectForKey:prevRecordTableHash];
 			[parentConnection->dirtyRecordTableInfoDict setObject:dirtyRecordTableInfo forKey:prevRecordTableHash];
+
+      // Remove the hash from the ordered set, then add it. `removeObject` is a noop
+      // if the hash isn't in the list yet.
+      // This ensures the order gets update.
+      [parentConnection->dirtyRecordTableInfoHashOrder removeObject:prevRecordTableHash];
+      [parentConnection->dirtyRecordTableInfoHashOrder addObject:prevRecordTableHash];
 		}
 	}
 	
@@ -1285,6 +1296,11 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 			
 			[parentConnection->cleanRecordTableInfoCache removeObjectForKey:newRecordTableHash];
 			[parentConnection->dirtyRecordTableInfoDict setObject:newDirtyRecordTableInfo forKey:newRecordTableHash];
+      // Remove the hash from the ordered set, then add it. `removeObject` is a noop
+      // if the hash isn't in the list yet.
+      // This ensures the order gets update.
+      [parentConnection->dirtyRecordTableInfoHashOrder removeObject:newRecordTableHash];
+      [parentConnection->dirtyRecordTableInfoHashOrder addObject:newRecordTableHash];
 		}
 		else
 		{
@@ -1302,6 +1318,11 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 			
 			[parentConnection->cleanRecordTableInfoCache removeObjectForKey:newRecordTableHash];
 			[parentConnection->dirtyRecordTableInfoDict setObject:newDirtyRecordTableInfo forKey:newRecordTableHash];
+      // Remove the hash from the ordered set, then add it. `removeObject` is a noop
+      // if the hash isn't in the list yet.
+      // This ensures the order gets update.
+      [parentConnection->dirtyRecordTableInfoHashOrder removeObject:newRecordTableHash];
+      [parentConnection->dirtyRecordTableInfoHashOrder addObject:newRecordTableHash];
 		}
 	}
 	
@@ -1327,6 +1348,11 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 			
 			[parentConnection->cleanRecordTableInfoCache removeObjectForKey:newRecordTableHash];
 			[parentConnection->dirtyRecordTableInfoDict setObject:dirtyRecordTableInfo forKey:newRecordTableHash];
+      // Remove the hash from the ordered set, then add it. `removeObject` is a noop
+      // if the hash isn't in the list yet.
+      // This ensures the order gets update.
+      [parentConnection->dirtyRecordTableInfoHashOrder removeObject:newRecordTableHash];
+      [parentConnection->dirtyRecordTableInfoHashOrder addObject:newRecordTableHash];
 		}
 		else
 		{
@@ -1341,6 +1367,11 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 			
 			[parentConnection->cleanRecordTableInfoCache removeObjectForKey:newRecordTableHash];
 			[parentConnection->dirtyRecordTableInfoDict setObject:newDirtyRecordTableInfo forKey:newRecordTableHash];
+      // Remove the hash from the ordered set, then add it. `removeObject` is a noop
+      // if the hash isn't in the list yet.
+      // This ensures the order gets update.
+      [parentConnection->dirtyRecordTableInfoHashOrder removeObject:newRecordTableHash];
+      [parentConnection->dirtyRecordTableInfoHashOrder addObject:newRecordTableHash];
 		}
 	}
 }
@@ -3039,15 +3070,22 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
   __block BOOL isResolvingReferences = NO;
   __block NSMutableArray *accumulatedQueueOperations = NSMutableArray.new;
 
-	[parentConnection->dirtyRecordTableInfoDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
-		
-		// Create pending queue if not exist.
-		if (pendingQueue == nil)
-		{
-			pendingQueue = [masterQueue newPendingQueue];
-		}
-	//	__unsafe_unretained NSString *hash = (NSString *)key;
-		__unsafe_unretained YDBCKDirtyRecordTableInfo *dirtyRecordTableInfo = (YDBCKDirtyRecordTableInfo *)obj;
+  [parentConnection->dirtyRecordTableInfoHashOrder enumerateObjectsUsingBlock:^(NSString *hash, NSUInteger idx, BOOL *stop) {
+    // Create pending queue if not exist.
+    if (pendingQueue == nil)
+    {
+      pendingQueue = [masterQueue newPendingQueue];
+    }
+    //  __unsafe_unretained NSString *hash = (NSString *)key;
+
+    YDBCKDirtyRecordTableInfo *retainedDirtyRecordTableInfo = parentConnection->dirtyRecordTableInfoDict[hash];
+    if (retainedDirtyRecordTableInfo == nil) {
+      // TODO: Should we be doing more here? Setting `stop` to YES? Throwing?
+      // This certainly shouldn't happen. If it does, something isn't working as
+      // intended.
+      return;
+    }
+    __unsafe_unretained YDBCKDirtyRecordTableInfo *dirtyRecordTableInfo = retainedDirtyRecordTableInfo;
 
     NSMutableArray *references = referenceMap[dirtyRecordTableInfo.recordID];
     if (dirtyRecordTableInfo.dirty_record.parent.recordID
@@ -3097,24 +3135,104 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
       }
     }
 
-		// Merge pending queue in master queue if number of changes is reached the limit.
+    // Merge pending queue in master queue if number of changes is reached the limit.
     NSUInteger changes = pendingQueue.numberOfChangesInCurrentCommit;
     if (isResolvingReferences) {
       changes += accumulatedQueueOperations.count;
     }
-		if (maxChangesPerChangeRequest > 0 && maxChangesPerChangeRequest <= changes)
-		{
-			// Step 4 of 5:
-			//
-			// Update the masterQueue.
-			
-			[self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
-			pendingQueue = nil;
+    if (maxChangesPerChangeRequest > 0 && maxChangesPerChangeRequest <= changes)
+    {
+      // Step 4 of 5:
+      //
+      // Update the masterQueue.
+
+      [self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
+      pendingQueue = nil;
       if (isResolvingReferences) {
-        [accumulatedQueueOperations addObject:(YDBCKDirtyRecordTableInfo *)obj];
+        [accumulatedQueueOperations addObject:retainedDirtyRecordTableInfo];
+      } else {
+        retainedDirtyRecordTableInfo = nil;
       }
-		}
-	}];
+    } else {
+      retainedDirtyRecordTableInfo = nil;
+    }
+  }];
+//	[parentConnection->dirtyRecordTableInfoDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+//
+//		// Create pending queue if not exist.
+//		if (pendingQueue == nil)
+//		{
+//			pendingQueue = [masterQueue newPendingQueue];
+//		}
+//	//	__unsafe_unretained NSString *hash = (NSString *)key;
+//		__unsafe_unretained YDBCKDirtyRecordTableInfo *dirtyRecordTableInfo = (YDBCKDirtyRecordTableInfo *)obj;
+//
+//    NSMutableArray *references = referenceMap[dirtyRecordTableInfo.recordID];
+//    if (dirtyRecordTableInfo.dirty_record.parent.recordID
+//        && referenceMap[dirtyRecordTableInfo.dirty_record.parent.recordID]) {
+//      // This is a referenced record and it's parent has also changed
+//      // We can remove this record from the parent's reference map
+//      [references removeObject:dirtyRecordTableInfo.recordID];
+//      if (references.count == 0) {
+//        // If there are no more references from the parent to account for, remove
+//        // it from the reference map completely.
+//        [referenceMap removeObjectForKey:dirtyRecordTableInfo.dirty_record.parent.recordID];
+//      } else {
+//        // If there are still more references from the parent to account for, update
+//        // the reference map with the new references from the parent
+//        referenceMap[dirtyRecordTableInfo.dirty_record.parent.recordID] = references;
+//      }
+//    }
+//
+//    if (references) {
+//      // This is a record that has a CKReference to at least one more record
+//      if ([references count] > 0) {
+//        // It still has references we haven't encountered yet during this
+//        // enumeration of the dirty records.
+//        // We have to wait to queue this record and it's references until we're
+//        // sure they will fit in the current change set before it reaches its max
+//        // item limit.
+//        isResolvingReferences = YES;
+//      } else {
+//        // All of this records references have been accounted for and fit in the
+//        // change set prior to it reaching its max item limit.
+//        // We can remove it from the reference map
+//        [referenceMap removeObjectForKey:dirtyRecordTableInfo.recordID];
+//        if (referenceMap.count == 0) {
+//          isResolvingReferences = NO;
+//        }
+//      }
+//    }
+//
+//    if (!isResolvingReferences) {
+//      if (accumulatedQueueOperations.count > 0) {
+//        for (YDBCKDirtyRecordTableInfo *accumulatedDirtyRecordInfo in accumulatedQueueOperations) {
+//          [self applyDirtyRecordInfo:accumulatedDirtyRecordInfo withMasterQueue:masterQueue andPendingQueue:pendingQueue];
+//        }
+//        [self applyDirtyRecordInfo:dirtyRecordTableInfo withMasterQueue:masterQueue andPendingQueue:pendingQueue];
+//      } else {
+//        [self applyDirtyRecordInfo:dirtyRecordTableInfo withMasterQueue:masterQueue andPendingQueue:pendingQueue];
+//      }
+//    }
+//
+//		// Merge pending queue in master queue if number of changes is reached the limit.
+//    NSUInteger changes = pendingQueue.numberOfChangesInCurrentCommit;
+//    if (isResolvingReferences) {
+//      changes += accumulatedQueueOperations.count;
+//    }
+//		if (maxChangesPerChangeRequest > 0 && maxChangesPerChangeRequest <= changes)
+//		{
+//			// Step 4 of 5:
+//			//
+//			// Update the masterQueue.
+//
+//			[self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
+//			pendingQueue = nil;
+//      if (isResolvingReferences) {
+//        [accumulatedQueueOperations addObject:(YDBCKDirtyRecordTableInfo *)obj];
+//      }
+//		}
+//	}];
 	
 	// Step 5 of 5:
 	//
@@ -3762,7 +3880,8 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	
 	[parentConnection->dirtyMappingTableInfoDict removeAllObjects];
 	[parentConnection->dirtyRecordTableInfoDict removeAllObjects];
-	
+  [parentConnection->dirtyRecordTableInfoHashOrder removeAllObjects];
+
 	parentConnection->reset = YES;
 }
 
@@ -4149,6 +4268,11 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 			
 			[parentConnection->cleanRecordTableInfoCache removeObjectForKey:hash];
 			[parentConnection->dirtyRecordTableInfoDict setObject:dirtyRecordTableInfo forKey:hash];
+      // Remove the hash from the ordered set, then add it. `removeObject` is a noop
+      // if the hash isn't in the list yet.
+      // This ensures the order gets update.
+      [parentConnection->dirtyRecordTableInfoHashOrder removeObject:hash];
+      [parentConnection->dirtyRecordTableInfoHashOrder addObject:hash];
 		}
 		else // if ([recordTableInfo isKindOfClass:[YDBCKDirtyRecordTableInfo class]])
 		{
@@ -4170,6 +4294,11 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		dirtyRecordTableInfo.remoteMerge = YES;
 		
 		[parentConnection->dirtyRecordTableInfoDict setObject:dirtyRecordTableInfo forKey:hash];
+    // Remove the hash from the ordered set, then add it. `removeObject` is a noop
+    // if the hash isn't in the list yet.
+    // This ensures the order gets update.
+    [parentConnection->dirtyRecordTableInfoHashOrder removeObject:hash];
+    [parentConnection->dirtyRecordTableInfoHashOrder addObject:hash];
 	}
 }
 
@@ -4241,6 +4370,11 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 			
 			[parentConnection->cleanRecordTableInfoCache removeObjectForKey:hash];
 			[parentConnection->dirtyRecordTableInfoDict setObject:dirtyRecordTableInfo forKey:hash];
+      // Remove the hash from the ordered set, then add it. `removeObject` is a noop
+      // if the hash isn't in the list yet.
+      // This ensures the order gets update.
+      [parentConnection->dirtyRecordTableInfoHashOrder removeObject:hash];
+      [parentConnection->dirtyRecordTableInfoHashOrder addObject:hash];
 		}
 		else // if ([recordTableInfo isKindOfClass:[YDBCKDirtyRecordTableInfo class]])
 		{

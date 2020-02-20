@@ -180,6 +180,10 @@
 	
 	if (dirtyRecordTableInfoDict == nil)
 		dirtyRecordTableInfoDict = [[NSMutableDictionary alloc] init];
+
+  if (dirtyRecordTableInfoHashOrder == nil) {
+    dirtyRecordTableInfoHashOrder = [[NSMutableOrderedSet alloc] init];
+  }
 }
 
 /**
@@ -218,6 +222,7 @@
 	
 	dirtyMappingTableInfoDict = nil;
 	dirtyRecordTableInfoDict = nil;
+  dirtyRecordTableInfoHashOrder = nil;
 	pendingAttachRequests = nil;
 	
 	reset = NO;
@@ -242,6 +247,7 @@
 	
 	dirtyMappingTableInfoDict = nil;
 	dirtyRecordTableInfoDict = nil;
+  dirtyRecordTableInfoHashOrder = nil;
 	pendingAttachRequests = nil;
 	
 	reset = NO;
