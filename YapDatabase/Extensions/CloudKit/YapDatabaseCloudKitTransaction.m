@@ -3053,9 +3053,9 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 
   // Build a map of dirty record CKRecordIDs to all of their associated CKReferences'
   NSMutableDictionary<CKRecordID *, NSMutableArray<CKRecordID *> *> *referenceMap = NSMutableDictionary.new;
-
+  NSMutableDictionary<CKRecordID *, NSString *> *parentRecordIDToHashMap = NSMutableDictionary.new;
   [parentConnection->dirtyRecordTableInfoDict
-   enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull key,
+   enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull hash,
                                        YDBCKDirtyRecordTableInfo * _Nonnull obj,
                                        BOOL * _Nonnull stop) {
     if (obj.dirty_record.parent) {
@@ -3064,13 +3064,66 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 
       [parentReferences addObject:obj.dirty_record.recordID];
       referenceMap[obj.dirty_record.parent.recordID] = parentReferences;
+      parentRecordIDToHashMap[obj.dirty_record.parent.recordID] = hash;
+    }
+  }];
+
+  // Created a sorted copy of the dirtyRecordTableInfoHashOrder that keeps parent
+  // and child references together so we always process them in the same CloudKit
+  // operation.
+  NSMutableOrderedSet<NSString *> *referenceSafeDirtyRecordTableInfoHashOrder = NSMutableOrderedSet.new;
+  NSMutableDictionary<NSString *, NSArray<NSString *> *> *referencesPendingProcessing = NSMutableDictionary.new;
+  [parentConnection->dirtyRecordTableInfoHashOrder enumerateObjectsUsingBlock:^(NSString *hash, NSUInteger idx, BOOL * _Nonnull stop) {
+    YDBCKDirtyRecordTableInfo *info = parentConnection->dirtyRecordTableInfoDict[hash];
+    NSArray<CKRecordID *> *references = referenceMap[info.recordID];
+    if (references && references.count > 0) {
+      // Check to see if there are any cached references waiting to be inserted.
+      // If so, add them in order here.
+      [referenceSafeDirtyRecordTableInfoHashOrder addObject:hash];
+      NSArray<NSString *> *pending = referencesPendingProcessing[hash];
+      if (pending && pending.count > 0) {
+        for (NSString *referenceHash in pending) {
+          [referenceSafeDirtyRecordTableInfoHashOrder addObject:referenceHash];
+        }
+      }
+      [referencesPendingProcessing removeObjectForKey:hash];
+    } else if (info.dirty_record.parent) {
+      // Has a parent reference
+
+      NSString *parentHash = parentRecordIDToHashMap[info.dirty_record.parent.recordID];
+      NSInteger parentIdx = [referenceSafeDirtyRecordTableInfoHashOrder indexOfObject:parentHash];
+      if (parentIdx >= 0) {
+        // If `referenceSafeDirtyRecordTableInfoHashOrder` already contains the parent's
+        // hash find the index of the last reference for the parent and insert this
+        // hash after it.
+        NSInteger insertIdx = parentIdx + 1;
+        for (NSInteger i = insertIdx; i < referenceSafeDirtyRecordTableInfoHashOrder.count; i++) {
+          NSString *nextHash = [referenceSafeDirtyRecordTableInfoHashOrder objectAtIndex:i];
+          YDBCKDirtyRecordTableInfo *nextInfo = parentConnection->dirtyRecordTableInfoDict[nextHash];
+          if (nextInfo.dirty_record.parent != info.dirty_record.parent) {
+            break;
+          }
+          insertIdx++;
+        }
+        [referenceSafeDirtyRecordTableInfoHashOrder insertObject:hash atIndex:insertIdx];
+      } else {
+        // If the parent doesn't exist in the hash yet, which shouldn't happen, then
+        // cache this reference for processing later, once the parent is added to
+        // the set.
+        NSMutableArray<NSString *> *pending = [referencesPendingProcessing[parentHash] mutableCopy] ?: NSMutableArray.new;
+        [pending addObject:hash];
+        referencesPendingProcessing[parentHash] = pending;
+      }
+    } else {
+      // No child references, add it to the end
+      [referenceSafeDirtyRecordTableInfoHashOrder addObject:hash];
     }
   }];
 
   __block BOOL isResolvingReferences = NO;
   __block NSMutableArray *accumulatedQueueOperations = NSMutableArray.new;
 
-  [parentConnection->dirtyRecordTableInfoHashOrder enumerateObjectsUsingBlock:^(NSString *hash, NSUInteger idx, BOOL *stop) {
+  [referenceSafeDirtyRecordTableInfoHashOrder enumerateObjectsUsingBlock:^(NSString *hash, NSUInteger idx, BOOL *stop) {
     // Create pending queue if not exist.
     if (pendingQueue == nil)
     {
