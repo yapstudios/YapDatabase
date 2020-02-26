@@ -3084,9 +3084,8 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
   NSMutableDictionary<NSString *, NSArray<NSString *> *> *referencesPendingProcessing = NSMutableDictionary.new;
   [parentConnection->dirtyRecordTableInfoHashOrder enumerateObjectsUsingBlock:^(NSString *hash, NSUInteger idx, BOOL * _Nonnull stop) {
     YDBCKDirtyRecordTableInfo *info = parentConnection->dirtyRecordTableInfoDict[hash];
-    NSArray<CKRecordID *> *references = referenceMap[info.recordID];
-    if (references && references.count > 0) {
-      // Check to see if there are any cached references waiting to be inserted.
+    if (parentRecordIDToHashMap[info.dirty_record.recordID] != nil) {
+      // Check to see if there are any pending references waiting to be inserted.
       // If so, add them in order here.
       [referenceSafeDirtyRecordTableInfoHashOrder addObject:hash];
       NSArray<NSString *> *pending = referencesPendingProcessing[hash];
