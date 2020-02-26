@@ -3053,7 +3053,6 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 
   // Build a map of dirty record CKRecordIDs to all of their associated CKReferences'
   NSMutableDictionary<CKRecordID *, NSMutableArray<CKRecordID *> *> *referenceMap = NSMutableDictionary.new;
-  NSMutableDictionary<CKRecordID *, NSString *> *parentRecordIDToHashMap = NSMutableDictionary.new;
   [parentConnection->dirtyRecordTableInfoDict
    enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull hash,
                                        YDBCKDirtyRecordTableInfo * _Nonnull obj,
@@ -3064,7 +3063,17 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 
       [parentReferences addObject:obj.dirty_record.recordID];
       referenceMap[obj.dirty_record.parent.recordID] = parentReferences;
-      parentRecordIDToHashMap[obj.dirty_record.parent.recordID] = hash;
+    }
+  }];
+
+  // Build a map of parent CKRecordID to its corresponding hash
+  NSMutableDictionary<CKRecordID *, NSString *> *parentRecordIDToHashMap = NSMutableDictionary.new;
+  [parentConnection->dirtyRecordTableInfoDict
+   enumerateKeysAndObjectsUsingBlock:^(NSString * _Nonnull hash,
+                                       YDBCKDirtyRecordTableInfo * _Nonnull obj,
+                                       BOOL * _Nonnull stop) {
+    if (referenceMap[obj.dirty_record.recordID] != nil) {
+      parentRecordIDToHashMap[obj.dirty_record.recordID] = hash;
     }
   }];
 
