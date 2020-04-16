@@ -52,6 +52,7 @@ typedef NS_ENUM(NSInteger, YDB_NotifyReason) {
  * 
  * @see YapDatabaseRelationshipEdge
  */
+NS_SWIFT_NAME(YapDatabaseRelationshipNode_ObjC)
 @protocol YapDatabaseRelationshipNode
 @required
 

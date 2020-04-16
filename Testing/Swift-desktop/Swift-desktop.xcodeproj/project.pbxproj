@@ -14,6 +14,7 @@
 		DC1CEF18235CC074004B2EBC /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DC1CEF16235CC074004B2EBC /* Main.storyboard */; };
 		DC1CEF24235CCDA6004B2EBC /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC1CEF23235CCDA6004B2EBC /* Task.swift */; };
 		DC1CEF26235CCFD5004B2EBC /* List.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC1CEF25235CCFD5004B2EBC /* List.swift */; };
+		DCDC67BA2448C39D00CB30AC /* Issue515.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCDC67B92448C39D00CB30AC /* Issue515.swift */; };
 		DCDDC3292376131000A5358D /* Foobar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DCDDC3282376131000A5358D /* Foobar.swift */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +31,7 @@
 		DC1CEF1A235CC074004B2EBC /* Swift_desktop.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Swift_desktop.entitlements; sourceTree = "<group>"; };
 		DC1CEF23235CCDA6004B2EBC /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
 		DC1CEF25235CCFD5004B2EBC /* List.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = List.swift; sourceTree = "<group>"; };
+		DCDC67B92448C39D00CB30AC /* Issue515.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Issue515.swift; sourceTree = "<group>"; };
 		DCDDC3282376131000A5358D /* Foobar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Foobar.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -92,6 +94,7 @@
 				DC1CEF23235CCDA6004B2EBC /* Task.swift */,
 				DC1CEF25235CCFD5004B2EBC /* List.swift */,
 				DCDDC3282376131000A5358D /* Foobar.swift */,
+				DCDC67B92448C39D00CB30AC /* Issue515.swift */,
 			);
 			path = "Swift-desktop";
 			sourceTree = "<group>";
@@ -209,6 +212,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DC1CEF13235CC072004B2EBC /* ViewController.swift in Sources */,
+				DCDC67BA2448C39D00CB30AC /* Issue515.swift in Sources */,
 				DC1CEF26235CCFD5004B2EBC /* List.swift in Sources */,
 				DCDDC3292376131000A5358D /* Foobar.swift in Sources */,
 				DC1CEF24235CCDA6004B2EBC /* Task.swift in Sources */,

@@ -510,6 +510,11 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		NSArray *givenEdges = nil;
 		
+		// We cannot use the conformsToProtocol check anymore.
+		// This is because we have 2 different protocols now.
+		// One for objective-c, and another for swift.
+		// So we need to use the respondsToSelector check instead, as it supports either language.
+		//
 	//	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
 		if ([object respondsToSelector:@selector(yapDatabaseRelationshipEdges)])
 		{
@@ -4002,6 +4007,11 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	NSArray *givenEdges = nil;
 	
+	// We cannot use the conformsToProtocol check anymore.
+	// This is because we have 2 different protocols now.
+	// One for objective-c, and another for swift.
+	// So we need to use the respondsToSelector check instead, as it supports either language.
+	//
 //	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
 	if ([object respondsToSelector:@selector(yapDatabaseRelationshipEdges)])
 	{
@@ -4069,6 +4079,11 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	NSArray *givenEdges = nil;
 	
+	// We cannot use the conformsToProtocol check anymore.
+	// This is because we have 2 different protocols now.
+	// One for objective-c, and another for swift.
+	// So we need to use the respondsToSelector check instead, as it supports either language.
+	//
 //	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
 	if ([object respondsToSelector:@selector(yapDatabaseRelationshipEdges)])
 	{
@@ -4125,6 +4140,11 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	NSArray *givenEdges = nil;
 	
+	// We cannot use the conformsToProtocol check anymore.
+	// This is because we have 2 different protocols now.
+	// One for objective-c, and another for swift.
+	// So we need to use the respondsToSelector check instead, as it supports either language.
+	// 
 //	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
 	if ([object respondsToSelector:@selector(yapDatabaseRelationshipEdges)])
 	{
