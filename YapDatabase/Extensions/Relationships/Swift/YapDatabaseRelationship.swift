@@ -1,6 +1,16 @@
 /// Add Swift extensions here
 
 extension YapDatabaseRelationshipTransaction {
+	
+	@objc func swiftBridge_yapDatabaseRelationshipEdges(_ obj: AnyObject) -> [YapDatabaseRelationshipEdge]? {
+		
+		var edges: [YapDatabaseRelationshipEdge]? = nil
+		if let node = obj as? YapDatabaseRelationshipNode {
+			edges = node.yapDatabaseRelationshipEdges()
+		}
+		
+		return edges
+	}
 }
 
 /// The objective-c protocol is automatically imported as a class-only protocol.

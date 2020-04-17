@@ -1,4 +1,5 @@
 #import "YapDatabaseRelationshipTransaction.h"
+#import "YapDatabaseRelationshipBridge.h"
 #import "YapDatabaseRelationshipPrivate.h"
 #import "YapDatabaseRelationshipEdgePrivate.h"
 #import "YapDatabasePrivate.h"
@@ -508,17 +509,15 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	void (^ProcessRow)(int64_t rowid, NSString *collection, NSString *key, id object);
 	ProcessRow = ^(int64_t rowid, NSString *collection, NSString *key, id object){
 		
-		NSArray *givenEdges = nil;
+		NSArray<YapDatabaseRelationshipEdge *> *givenEdges = nil;
 		
-		// We cannot use the conformsToProtocol check anymore.
-		// This is because we have 2 different protocols now.
-		// One for objective-c, and another for swift.
-		// So we need to use the respondsToSelector check instead, as it supports either language.
-		//
-	//	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
-		if ([object respondsToSelector:@selector(yapDatabaseRelationshipEdges)])
+		if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
 		{
 			givenEdges = [object yapDatabaseRelationshipEdges];
+		}
+		else if ([self respondsToSelector:@selector(swiftBridge_yapDatabaseRelationshipEdges:)])
+		{
+			givenEdges = [(id)self swiftBridge_yapDatabaseRelationshipEdges:object];
 		}
 		
 		if ([givenEdges count] > 0)
@@ -4005,22 +4004,20 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	// Request edges from object
 	
-	NSArray *givenEdges = nil;
+	NSArray<YapDatabaseRelationshipEdge *> *givenEdges = nil;
 	
-	// We cannot use the conformsToProtocol check anymore.
-	// This is because we have 2 different protocols now.
-	// One for objective-c, and another for swift.
-	// So we need to use the respondsToSelector check instead, as it supports either language.
-	//
-//	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
-	if ([object respondsToSelector:@selector(yapDatabaseRelationshipEdges)])
+	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
 	{
 		givenEdges = [object yapDatabaseRelationshipEdges];
+	}
+	else if ([self respondsToSelector:@selector(swiftBridge_yapDatabaseRelationshipEdges:)])
+	{
+		givenEdges = [(id)self swiftBridge_yapDatabaseRelationshipEdges:object];
 	}
 	
 	// Make copies, and fill in missing src information
 	
-	NSMutableArray *edges = nil;
+	NSMutableArray<YapDatabaseRelationshipEdge *> *edges = nil;
 	
 	if (givenEdges.count > 0)
 	{
@@ -4077,20 +4074,18 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	// Request edges from object
 	
-	NSArray *givenEdges = nil;
+	NSArray<YapDatabaseRelationshipEdge *> *givenEdges = nil;
 	
-	// We cannot use the conformsToProtocol check anymore.
-	// This is because we have 2 different protocols now.
-	// One for objective-c, and another for swift.
-	// So we need to use the respondsToSelector check instead, as it supports either language.
-	//
-//	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
-	if ([object respondsToSelector:@selector(yapDatabaseRelationshipEdges)])
+	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
 	{
 		givenEdges = [object yapDatabaseRelationshipEdges];
 	}
+	else if ([self respondsToSelector:@selector(swiftBridge_yapDatabaseRelationshipEdges:)])
+	{
+		givenEdges = [(id)self swiftBridge_yapDatabaseRelationshipEdges:object];
+	}
 	
-	NSMutableArray *edges = nil;
+	NSMutableArray<YapDatabaseRelationshipEdge *> *edges = nil;
 	
 	if (givenEdges.count > 0)
 	{
@@ -4138,20 +4133,18 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		return;
 	}
 	
-	NSArray *givenEdges = nil;
+	NSArray<YapDatabaseRelationshipEdge *> *givenEdges = nil;
 	
-	// We cannot use the conformsToProtocol check anymore.
-	// This is because we have 2 different protocols now.
-	// One for objective-c, and another for swift.
-	// So we need to use the respondsToSelector check instead, as it supports either language.
-	// 
-//	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
-	if ([object respondsToSelector:@selector(yapDatabaseRelationshipEdges)])
+	if ([object conformsToProtocol:@protocol(YapDatabaseRelationshipNode)])
 	{
 		givenEdges = [object yapDatabaseRelationshipEdges];
 	}
+	else if ([self respondsToSelector:@selector(swiftBridge_yapDatabaseRelationshipEdges:)])
+	{
+		givenEdges = [(id)self swiftBridge_yapDatabaseRelationshipEdges:object];
+	}
 	
-	NSMutableArray *edges = nil;
+	NSMutableArray<YapDatabaseRelationshipEdge *> *edges = nil;
 	
 	if (givenEdges)
 	{

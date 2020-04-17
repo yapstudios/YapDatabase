@@ -6,8 +6,9 @@ import YapDatabase
 class AppDelegate: NSObject, NSApplicationDelegate {
 
 	func applicationDidFinishLaunching(_ aNotification: Notification) {
-	//	self.testDatabase()
-		self.testUpgrade()
+	//	testDatabase()
+	//	testUpgrade()
+		testIssue515()
 	}
 	
 	private func testDatabase() {
@@ -80,6 +81,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 			else {
 				print("no foobar for you")
 			}
+		}
+	}
+	
+	private func testIssue515() {
+		
+		let baseDirs = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
+		let baseDir = baseDirs[0]
+
+		let databaseURL = baseDir.appendingPathComponent("database.sqlite")
+		
+		let database = YapDatabase(url: databaseURL)
+		
+		let collection = "issue515"
+		database?.registerCodableSerialization(Issue515.self, forCollection: collection)
+		
+		let ext = YapDatabaseRelationship()
+		database?.register(ext, withName: "relationships")
+		
+		let databaseConnection = database?.newConnection()
+		
+		databaseConnection?.asyncReadWrite {(transaction) in
+			
+			let test = Issue515(foobar: 42)
+			
+			transaction.setObject(test, forKey: "key", inCollection: collection)
 		}
 	}
 }
