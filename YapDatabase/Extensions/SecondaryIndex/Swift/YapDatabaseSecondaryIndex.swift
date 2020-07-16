@@ -89,9 +89,9 @@ extension YapDatabaseSecondaryIndexTransaction {
 		return self.__enumerateRows(matching: query, using: enumBlock)
 	}
 	
-	public func iterateIndexedValues(inColumn column: String, matching query: YapDatabaseQuery, using block: (Any, inout Bool) -> Void) -> Bool {
+	public func iterateIndexedValues(inColumn column: String, matching query: YapDatabaseQuery, using block: (Any?, inout Bool) -> Void) -> Bool {
 		
-		let enumBlock = {(value: Any, outerStop: UnsafeMutablePointer<ObjCBool>) -> Void in
+		let enumBlock = {(value: Any?, outerStop: UnsafeMutablePointer<ObjCBool>) -> Void in
 			
 			var innerStop = false
 			block(value, &innerStop)

@@ -61,7 +61,7 @@ NS_REFINED_FOR_SWIFT;
 
 - (BOOL)enumerateIndexedValuesInColumn:(NSString *)column
                          matchingQuery:(YapDatabaseQuery *)query
-                            usingBlock:(void (^NS_NOESCAPE)(id indexedValue, BOOL *stop))block
+                            usingBlock:(void (^NS_NOESCAPE)(__nullable id indexedValue, BOOL *stop))block
 NS_REFINED_FOR_SWIFT;
 
 /**
