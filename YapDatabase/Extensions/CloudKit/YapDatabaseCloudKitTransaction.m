@@ -2907,7 +2907,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		return;
 	}
 	
-	// Step 1 of 6:
+	// Step 1 of 5:
 	//
 	// Update mapping table.
 	
@@ -2943,7 +2943,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	#pragma clang diagnostic pop
 	}];
 	
-	// Step 2 of 6:
+	// Step 2 of 5:
 	//
 	// Update record table.
 	
@@ -3009,19 +3009,24 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	#pragma clang diagnostic pop
 	}];
 	
-	// Step 3 of 6:
+	// Step 3 of 5:
 	//
 	// Create a pendingQueue,
 	// and lock the masterQueue so we can make changes to it.
 	
-	YDBCKChangeQueue *masterQueue = parentConnection->parent->masterQueue;
-	YDBCKChangeQueue *pendingQueue = [masterQueue newPendingQueue];
+	__block YDBCKChangeQueue *masterQueue = parentConnection->parent->masterQueue;
+	__block YDBCKChangeQueue *pendingQueue = nil;
 	
-	// Step 4 of 6:
-	//
-	// Use YDBCKChangeQueue tools to generate a list of updates for the queue table.
+	YapDatabaseCloudKitOptions *options = parentConnection->parent->options;
+	NSUInteger maxChangesPerChangeRequest = (options) ? (options.maxChangesPerChangeRequest) : (0);
 	
 	[parentConnection->dirtyRecordTableInfoDict enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
+		
+		// Create pending queue if not exist.
+		if (pendingQueue == nil)
+		{
+			pendingQueue = [masterQueue newPendingQueue];
+		}
 		
 	//	__unsafe_unretained NSString *hash = (NSString *)key;
 		__unsafe_unretained YDBCKDirtyRecordTableInfo *dirtyRecordTableInfo = (YDBCKDirtyRecordTableInfo *)obj;
@@ -3111,10 +3116,37 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 				}
 			}
 		}
+
+		// Merge pending queue in master queue if number of changes is reached the limit.
+		
+		if (maxChangesPerChangeRequest > 0 && maxChangesPerChangeRequest <= pendingQueue.numberOfChangesInCurrentCommit)
+		{
+			// Step 4 of 5:
+			//
+			// Update the masterQueue.
+			
+			[self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
+			pendingQueue = nil;
+		}
 	}];
 	
-	// Step 5 of 6:
+	// Step 5 of 5:
 	//
+	// Update the masterQueue. Merge the rest.
+	
+	[self mergePendingQueue:pendingQueue toMasterQueue:masterQueue];
+	pendingQueue = nil;
+}
+
+- (void)mergePendingQueue:(YDBCKChangeQueue *)pendingQueue toMasterQueue:(YDBCKChangeQueue *)masterQueue
+{
+	// Check input arguments.
+	
+	if (!pendingQueue || !masterQueue)
+	{
+		return;
+	}
+	
 	// Update queue table.
 	// This is the list of changes the pendingQueue gives us.
 	
@@ -3131,10 +3163,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 		[self insertQueueTableRowWithChangeSet:newChangeSet];
 	}
 	
-	// Step 6 of 6:
-	//
-	// Update the masterQueue,
-	// and unlock it so the next operation can be dispatched.
+	// Update the masterQueue
 	
 	[masterQueue mergePendingQueue:pendingQueue];
 }
