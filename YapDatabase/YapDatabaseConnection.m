@@ -2024,7 +2024,11 @@ static int connectionBusyHandler(void *ptr, int count)
 				NSUInteger count = transaction->completionBlockStack.count;
 				for (NSUInteger i = 0; i < count; i++)
 				{
+#if OS_OBJECT_USE_OBJC
 					dispatch_queue_t stackItemQueue = transaction->completionQueueStack[i];
+#else
+					dispatch_queue_t stackItemQueue = (dispatch_queue_t)[transaction->completionQueueStack[i] pointerValue];
+#endif
 					dispatch_block_t stackItemBlock = transaction->completionBlockStack[i];
 					
 					dispatch_async(stackItemQueue, stackItemBlock);
@@ -2239,7 +2243,11 @@ static int connectionBusyHandler(void *ptr, int count)
 				NSUInteger count = transaction->completionBlockStack.count;
 				for (NSUInteger i = 0; i < count; i++)
 				{
+#if OS_OBJECT_USE_OBJC
 					dispatch_queue_t stackItemQueue = transaction->completionQueueStack[i];
+#else
+					dispatch_queue_t stackItemQueue = [transaction->completionQueueStack[i] pointerValue];
+#endif
 					dispatch_block_t stackItemBlock = transaction->completionBlockStack[i];
 					
 					dispatch_async(stackItemQueue, stackItemBlock);
