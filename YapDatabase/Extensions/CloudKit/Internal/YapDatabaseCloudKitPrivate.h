@@ -124,6 +124,7 @@ static NSString *const changeset_key_reset            = @"reset";
 	
 	NSMutableDictionary<NSNumber *, YDBCKDirtyMappingTableInfo *> *dirtyMappingTableInfoDict;
 	NSMutableDictionary<NSString *, YDBCKDirtyRecordTableInfo *> *dirtyRecordTableInfoDict;
+  NSMutableOrderedSet<NSString *> *dirtyRecordTableInfoHashOrder;
 	
 	YapCache<NSString *, NSArray *> *recordKeysCache;
 	

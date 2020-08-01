@@ -131,6 +131,11 @@
 @property (atomic, readonly) NSUInteger numberOfPendingChangeSets;
 
 /**
+ * Number of changes (saved and deleted objects) in current commit.
+ **/
+- (NSUInteger)numberOfChangesInCurrentCommit;
+
+/**
  * Atomic access to all counts at once.
  */
 - (void)getNumberOfInFlightChangeSets:(NSUInteger *)numInFlightChangeSetsPtr
