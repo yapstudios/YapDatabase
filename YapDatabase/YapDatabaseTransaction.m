@@ -6043,7 +6043,12 @@
 	if (completionBlockStack == nil)
 		completionBlockStack = [[NSMutableArray alloc] initWithCapacity:1];
 	
+#if OS_OBJECT_USE_OBJC
 	[completionQueueStack addObject:completionQueue];
+#else
+	dispatch_retain(completionQueue);
+	[completionQueueStack addObject:[NSValue valueWithPointer:completionQueue]];
+#endif
 	[completionBlockStack addObject:completionBlock];
 }
 
@@ -6309,5 +6314,15 @@
 	sqlite3_reset(statement);
 	FreeYapDatabaseString(&_extension);
 }
+
+#if !OS_OBJECT_USE_OBJC
+- (void)dealloc
+{
+	for (NSValue *value in completionBlockStack) {
+		dispatch_queue_t completionQueue = [value pointerValue];
+		dispatch_release(completionQueue);
+	}
+}
+#endif
 
 @end

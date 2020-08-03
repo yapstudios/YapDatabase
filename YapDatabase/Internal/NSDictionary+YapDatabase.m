@@ -13,7 +13,7 @@
 **/
 - (BOOL)ydb_containsKey:(id)key
 {
-	return CFDictionaryContainsKey((CFDictionaryRef)self, (const void *)key);
+	return CFDictionaryContainsKey((__bridge CFDictionaryRef)self, (__bridge const void *)key);
 }
 
 @end

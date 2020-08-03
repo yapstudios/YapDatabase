@@ -152,7 +152,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 					leastRecentCacheItem->next = nil;
 				}
 				
-				CFDictionaryRemoveValue(cfdict, (const void *)(keyToEvict));
+				CFDictionaryRemoveValue(cfdict, (__bridge const void *)(keyToEvict));
 				
 				#if YapCache_Enable_Statistics
 				evictionCount++;
@@ -168,7 +168,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 	AssertAllowedKeyClass(key, allowedKeyClasses);
 	#endif
 	
-	__unsafe_unretained YapCacheItem *item = CFDictionaryGetValue(cfdict, (const void *)key);
+	__unsafe_unretained YapCacheItem *item = (__bridge YapCacheItem *)CFDictionaryGetValue(cfdict, (__bridge const void *)key);
 	if (item)
 	{
 		if (item != mostRecentCacheItem)
@@ -216,7 +216,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 	AssertAllowedKeyClass(key, allowedKeyClasses);
 	#endif
 	
-	return CFDictionaryContainsKey(cfdict, (const void *)key);
+	return CFDictionaryContainsKey(cfdict, (__bridge const void *)key);
 }
 
 - (void)setObject:(id)object forKey:(id)key
@@ -226,7 +226,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 	AssertAllowedObjectClass(object, allowedObjectClasses);
 	#endif
 	
-	__unsafe_unretained YapCacheItem *existingItem = CFDictionaryGetValue(cfdict, (const void *)key);
+	__unsafe_unretained YapCacheItem *existingItem = (__bridge YapCacheItem *)CFDictionaryGetValue(cfdict, (__bridge const void *)key);
 	if (existingItem)
 	{
 		// Update item value
@@ -283,7 +283,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 		}
 		
 		// Add item to set
-		CFDictionarySetValue(cfdict, (const void *)key, (const void *)newItem);
+		CFDictionarySetValue(cfdict, (__bridge const void *)key, (__bridge const void *)newItem);
 		
 		// Add item to beginning of linked-list
 		
@@ -320,7 +320,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 				leastRecentCacheItem->next = nil;
 			}
 			
-			CFDictionaryRemoveValue(cfdict, (const void *)(keyToEvict));
+			CFDictionaryRemoveValue(cfdict, (__bridge const void *)(keyToEvict));
 			
 			#if YapCache_Enable_Statistics
 			evictionCount++;
@@ -373,7 +373,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 	AssertAllowedKeyClass(key, allowedKeyClasses);
 	#endif
 	
-	__unsafe_unretained YapCacheItem *item = CFDictionaryGetValue(cfdict, (const void *)key);
+	__unsafe_unretained YapCacheItem *item = (__bridge YapCacheItem *)CFDictionaryGetValue(cfdict, (__bridge const void *)key);
 	if (item)
 	{
 		if (mostRecentCacheItem == item)
@@ -386,7 +386,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 		else if (item->next)
 			item->next->prev = item->prev;
 		
-		CFDictionaryRemoveValue(cfdict, (const void *)key);
+		CFDictionaryRemoveValue(cfdict, (__bridge const void *)key);
 	}
 }
 
@@ -398,7 +398,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 		AssertAllowedKeyClass(key, allowedKeyClasses);
 		#endif
 		
-		__unsafe_unretained YapCacheItem *item = CFDictionaryGetValue(cfdict, (const void *)key);
+		__unsafe_unretained YapCacheItem *item = (__bridge YapCacheItem *)CFDictionaryGetValue(cfdict, (__bridge const void *)key);
 		if (item)
 		{
 			if (mostRecentCacheItem == item)
@@ -411,7 +411,7 @@ static const NSUInteger YapCache_Default_CountLimit = 40;
 			else if (item->next)
 				item->next->prev = item->prev;
 			
-			CFDictionaryRemoveValue(cfdict, (const void *)key);
+			CFDictionaryRemoveValue(cfdict, (__bridge const void *)key);
 		}
 	}
 }
