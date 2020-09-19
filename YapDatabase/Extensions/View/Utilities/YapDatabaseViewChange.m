@@ -2153,24 +2153,30 @@
 		// 1 -> 2
 		// 2 -> 1
 		// 3 -> 0
-		//
-		// Basically, we find the midpoint, and then move each index to the other side of the midpoint,
-		// but we keep its distance from the midpoint the same.
-			
 		if ([reverse containsObject:rowChange->originalGroup])
 		{
 			NSUInteger count = [originalMappings visibleCountForGroup:rowChange->originalGroup];
-			double mid = (count - 1) / 2.0;
-			
-			rowChange->originalIndex = (NSUInteger)(mid - (rowChange->originalIndex - mid));
+			NSUInteger forwardIndex = rowChange->originalIndex;
+			if (count < forwardIndex + 1) {
+				// Calculating the reverse index would overflow, so we skip it.
+				NSAssert(NO, @"original index is too large");
+			} else {
+				rowChange->originalIndex = count - (forwardIndex + 1);
+			}
 		}
 		
 		if ([reverse containsObject:rowChange->finalGroup])
 		{
 			NSUInteger count = [finalMappings visibleCountForGroup:rowChange->finalGroup];
-			double mid = (count - 1) / 2.0;
-			
-			rowChange->finalIndex = (NSUInteger)(mid - (rowChange->finalIndex - mid));
+			NSUInteger forwardIndex = rowChange->finalIndex;
+			if (count < forwardIndex + 1) {
+				// This can happen when deleting an item.
+				// Calculating the reverse index would overflow, so we skip it.
+				// When deleting a row, the finalIndex is irrelevant anyway.
+				NSAssert(rowChange->type == YapDatabaseViewChangeDelete, @"final index is too large");
+			} else {
+				rowChange->finalIndex = count - (forwardIndex + 1);
+			}
 		}
 	}
 	
