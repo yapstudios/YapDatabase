@@ -144,7 +144,7 @@ NSError *YDBErrorWithDescription(NSString *description)
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:databaseFilePath]) {
         YDBLogVerbose(@"%@ database file not found.", self.logTag);
-        return nil;
+        return NO;
     }
 
     NSData *headerData = [self readFirstNBytesOfDatabaseFile:databaseFilePath byteCount:kSqliteHeaderLength];
@@ -164,28 +164,27 @@ NSError *YDBErrorWithDescription(NSString *description)
 
 + (nullable NSError *)convertDatabaseIfNecessary:(NSString *)databaseFilePath
                                 databasePassword:(NSData *)databasePassword
-                                       saltBlock:(YapDatabaseSaltBlock)saltBlock
-                                    keySpecBlock:(YapDatabaseKeySpecBlock)keySpecBlock
+                                 recordSaltBlock:(YapRecordDatabaseSaltBlock)recordSaltBlock
 {
     if (![self doesDatabaseNeedToBeConverted:databaseFilePath]) {
+        YDBLogInfo(@"%@ convertDatabaseIfNecessary: database does not need to be converted.", self.logTag);
         return nil;
     }
 
     return [self convertDatabase:databaseFilePath
                 databasePassword:databasePassword
-                       saltBlock:saltBlock
-                    keySpecBlock:keySpecBlock];
+                 recordSaltBlock:recordSaltBlock];
 }
 
 + (nullable NSError *)convertDatabase:(NSString *)databaseFilePath
                      databasePassword:(NSData *)databasePassword
-                            saltBlock:(YapDatabaseSaltBlock)saltBlock
-                         keySpecBlock:(YapDatabaseKeySpecBlock)keySpecBlock
+                      recordSaltBlock:(YapRecordDatabaseSaltBlock)recordSaltBlock
 {
     YapAssert(databaseFilePath.length > 0);
     YapAssert(databasePassword.length > 0);
-    YapAssert(saltBlock);
-    YapAssert(keySpecBlock);
+    YapAssert(recordSaltBlock);
+
+    YDBLogInfo(@"%@ convertDatabase.", self.logTag);
 
     NSData *saltData;
     {
@@ -198,23 +197,15 @@ NSError *YDBErrorWithDescription(NSString *description)
         // Make sure we successfully persist the salt (persumably in the keychain) before
         // proceeding with the database conversion or we could leave the app in an
         // unrecoverable state.
-        saltBlock(saltData);
-    }
-
-    {
-        NSData *_Nullable keySpecData = [self databaseKeySpecForPassword:databasePassword saltData:saltData];
-        if (!keySpecData || keySpecData.length != kSQLCipherKeySpecLength) {
-            YDBLogError(@"Error deriving key spec");
-            return YDBErrorWithDescription(@"Invalid key spec");
+        YDBLogInfo(@"%@ convertDatabase: salt extracted.", self.logTag);
+        BOOL success = recordSaltBlock(saltData);
+        if (!success) {
+            YDBLogError(@"Failed to record salt, aborting conversion");
+            return YDBErrorWithDescription(@"Failed to record salt");
         }
-
-        YapAssert(keySpecData.length == kSQLCipherKeySpecLength);
-
-        // Make sure we successfully persist the key spec (persumably in the keychain) before
-        // proceeding with the database conversion or we could leave the app in an
-        // unrecoverable state.
-        keySpecBlock(keySpecData);
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: key spec derived.", self.logTag);
 
     // -----------------------------------------------------------
     //
@@ -239,6 +230,8 @@ NSError *YDBErrorWithDescription(NSString *description)
             return YDBErrorWithDescription(@"Failed to open database");
         }
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: database open.", self.logTag);
 
     // -----------------------------------------------------------
     //
@@ -252,6 +245,8 @@ NSError *YDBErrorWithDescription(NSString *description)
             return YDBErrorWithDescription(@"Failed to set SQLCipher key");
         }
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: database keyed.", self.logTag);
 
     // -----------------------------------------------------------
     //
@@ -306,6 +301,8 @@ NSError *YDBErrorWithDescription(NSString *description)
         // END DB setup copied from YapDatabase
         // BEGIN SQLCipher migration
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: database configured.", self.logTag);
 
 #ifdef DEBUG
     // We can obtain the database salt in two ways: by reading the first 16 bytes of the encrypted
@@ -317,6 +314,8 @@ NSError *YDBErrorWithDescription(NSString *description)
 
         YapAssert([[self hexadecimalStringForData:saltData] isEqualToString:saltString]);
     }
+    
+    YDBLogInfo(@"%@ convertDatabase: salt confirmed.", self.logTag);
 #endif
 
     // -----------------------------------------------------------
@@ -331,6 +330,8 @@ NSError *YDBErrorWithDescription(NSString *description)
         if (error) {
             return error;
         }
+        
+        YDBLogInfo(@"%@ convertDatabase: encrypted header configured.", self.logTag);
 
         // Modify the first page, so that SQLCipher will overwrite, respecting our new cipher_plaintext_header_size
         NSString *tableName = [NSString stringWithFormat:@"signal-migration-%@", [NSUUID new].UUIDString];
@@ -344,6 +345,8 @@ NSError *YDBErrorWithDescription(NSString *description)
         if (error) {
             return error;
         }
+        
+        YDBLogInfo(@"%@ convertDatabase: database dirtied.", self.logTag);
 
         // Force a checkpoint so that the plaintext is written to the actual DB file, not just living in the WAL.
         int log, ckpt;
@@ -352,8 +355,12 @@ NSError *YDBErrorWithDescription(NSString *description)
             YDBLogError(@"%@ Error forcing checkpoint. status: %d, log: %d, ckpt: %d, error: %s", self.logTag, status, log, ckpt, sqlite3_errmsg(db));
             return YDBErrorWithDescription(@"Error forcing checkpoint.");
         }
+        
+        YDBLogInfo(@"%@ convertDatabase: checkpoint completed.", self.logTag);
 
         sqlite3_close(db);
+        
+        YDBLogInfo(@"%@ convertDatabase: database closed.", self.logTag);
     }
 
     return nil;
@@ -412,9 +419,13 @@ NSError *YDBErrorWithDescription(NSString *description)
     YapAssert(passwordData.length > 0);
     YapAssert(saltData.length == kSQLCipherSaltLength);
 
-    unsigned char *derivedKeyBytes = malloc((size_t)kSQLCipherDerivedKeyLength);
-    YapAssert(derivedKeyBytes);
-    // See: PBKDF2_ITER.
+    NSMutableData *_Nullable derivedKeyData = [NSMutableData dataWithLength:kSQLCipherDerivedKeyLength];
+    if (!derivedKeyData) {
+        YapFail(@"failed to allocate derivedKeyData");
+        return nil;
+    }
+
+    // See: PBKDF2_ITER from SQLCipher.
     const unsigned int workfactor = 64000;
 
     int result = CCKeyDerivationPBKDF(kCCPBKDF2,
@@ -424,23 +435,18 @@ NSError *YDBErrorWithDescription(NSString *description)
         (size_t)saltData.length,
         kCCPRFHmacAlgSHA1,
         workfactor,
-        derivedKeyBytes,
-        kSQLCipherDerivedKeyLength);
+        derivedKeyData.mutableBytes,
+        (size_t)derivedKeyData.length);
+
     if (result != kCCSuccess) {
         YDBLogError(@"Error deriving key: %d", result);
         return nil;
     }
 
-    NSData *_Nullable derivedKeyData = [NSData dataWithBytes:derivedKeyBytes length:kSQLCipherDerivedKeyLength];
-    if (!derivedKeyData || derivedKeyData.length != kSQLCipherDerivedKeyLength) {
-        YDBLogError(@"Invalid derived key: %d", result);
-        return nil;
-    }
-
-    return derivedKeyData;
+    return [derivedKeyData copy];
 }
 
-+ (nullable NSData *)databaseKeySpecForPassword:(NSData *)passwordData saltData:(NSData *)saltData
++ (nullable NSData *)deriveDatabaseKeySpecForPassword:(NSData *)passwordData saltData:(NSData *)saltData
 {
     YapAssert(passwordData.length > 0);
     YapAssert(saltData.length == kSQLCipherSaltLength);
@@ -456,7 +462,7 @@ NSError *YDBErrorWithDescription(NSString *description)
 
     YapAssert(keySpecData.length == kSQLCipherKeySpecLength);
 
-    return keySpecData;
+    return [keySpecData copy];
 }
 
 #pragma mark - Utils
