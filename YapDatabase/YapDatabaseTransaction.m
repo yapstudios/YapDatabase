@@ -1958,6 +1958,10 @@
 		[self _enumerateRowsInCollection:collection
 		                      usingBlock:^(int64_t __unused rowid, NSString *key, id object, id metadata, BOOL *stop) {
 			
+            if (object == nil) {
+                return;
+            }
+            
 			block(key, object, metadata, stop);
 			
 		} withFilter:nil];
