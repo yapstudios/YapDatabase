@@ -691,7 +691,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 			NSNumber *srcRowidNumber = [self rowidNumberForDeletedKey:edge->sourceKey
 			                                             inCollection:edge->sourceCollection];
 			
-			if (srcRowidNumber)
+			if (srcRowidNumber != nil)
 			{
 				edge->sourceRowid = srcRowidNumber.longLongValue;
 				edge->state |= YDB_EdgeState_HasSourceRowid;
@@ -737,7 +737,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 				NSNumber *dstRowidNumber = [self rowidNumberForDeletedKey:edge->destinationKey
 				                                             inCollection:edge->destinationCollection];
 				
-				if (dstRowidNumber)
+				if (dstRowidNumber != nil)
 				{
 					edge->destinationRowid = dstRowidNumber.longLongValue;
 					edge->state |= YDB_EdgeState_HasDestinationRowid;
@@ -1153,7 +1153,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	// Find matching protocol edges
 	
-	NSMutableArray *changedProtocolEdges = [parentConnection->protocolChanges objectForKey:srcRowid];
+	NSMutableArray *changedProtocolEdges = (srcRowid != nil) ? parentConnection->protocolChanges[srcRowid] : nil;
 	for (YapDatabaseRelationshipEdge *edge in changedProtocolEdges)
 	{
 		if (name && ![name isEqualToString:edge->name])
@@ -1223,7 +1223,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasSourceRowid))
 		{
-			if (srcRowid)
+			if (srcRowid != nil)
 			{
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
@@ -1371,7 +1371,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasDestinationRowid))
 		{
-			if (dstRowid)
+			if (dstRowid != nil)
 			{
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
@@ -1520,7 +1520,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	// Find matching protocol edges
 	
-	NSMutableArray *changedProtocolEdges = [parentConnection->protocolChanges objectForKey:srcRowid];
+	NSMutableArray *changedProtocolEdges = (srcRowid != nil) ? parentConnection->protocolChanges[srcRowid] : nil;
 	for (YapDatabaseRelationshipEdge *edge in changedProtocolEdges)
 	{
 		if (name && ![name isEqualToString:edge->name])
@@ -1629,7 +1629,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasSourceRowid))
 		{
-			if (srcRowid)
+			if (srcRowid != nil)
 			{
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
@@ -1645,7 +1645,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasDestinationRowid))
 		{
-			if (dstRowid)
+			if (dstRowid != nil)
 			{
 				// Shortcut:
 				// We already know the destinationRowid. It was given to us as a parameter.
@@ -1695,7 +1695,10 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 	
 	// Find matching protocol edges
 	
-	NSMutableArray *changedProtocolEdges = [parentConnection->protocolChanges objectForKey:srcRowid];
+	NSMutableArray *changedProtocolEdges = nil;
+	if (srcRowid != nil) {
+		changedProtocolEdges = parentConnection->protocolChanges[srcRowid];
+	}
 	for (YapDatabaseRelationshipEdge *edge in changedProtocolEdges)
 	{
 		if (name && ![name isEqualToString:edge->name])
@@ -1774,7 +1777,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 		
 		if (!(edge->state & YDB_EdgeState_HasSourceRowid))
 		{
-			if (srcRowid)
+			if (srcRowid != nil)
 			{
 				// Shortcut:
 				// We already know the sourceRowid. It was given to us as a parameter.
@@ -1827,7 +1830,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * Does not take into account anything in memory (parentConnection->changes dictionary).
 **/
 - (void)enumerateExistingEdgesWithSource:(int64_t)srcRowid
-                              usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge))block
+                              usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge))block
 {
 	BOOL needsFinalize;
 	sqlite3_stmt *statement = [parentConnection enumerateForSrcStatement:&needsFinalize];
@@ -1916,7 +1919,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * Does not take into account anything in memory (parentConnection->changes dictionary).
 **/
 - (void)enumerateExistingEdgesWithDestination:(int64_t)dstRowid
-                                   usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge))block
+                                   usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge))block
 {
 	BOOL needsFinalize;
 	sqlite3_stmt *statement = [parentConnection enumerateForDstStatement:&needsFinalize];
@@ -4327,7 +4330,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * This internal method does NOT prep the edge for the public (e.g. srcKey/dstKey/dstFileURL may be nil).
 **/
 - (void)_enumerateEdgesWithName:(NSString *)name
-                     usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                     usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	if (name == nil) return;
 	if (block == NULL) return;
@@ -4528,7 +4531,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 - (void)_enumerateEdgesWithName:(NSString *)name
                       sourceKey:(NSString *)srcKey
                      collection:(NSString *)srcCollection
-                     usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                     usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	if (srcKey == nil) {
 		[self enumerateEdgesWithName:name usingBlock:block];
@@ -4845,7 +4848,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 - (void)_enumerateEdgesWithName:(NSString *)name
                  destinationKey:(NSString *)dstKey
                      collection:(NSString *)dstCollection
-                     usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                     usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	if (dstKey == nil) {
 		[self enumerateEdgesWithName:name usingBlock:block];
@@ -5117,7 +5120,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 **/
 - (void)_enumerateEdgesWithName:(NSString *)name
              destinationFileURL:(NSURL *)dstFileURL
-                     usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                     usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	if (dstFileURL == nil) {
 		[self enumerateEdgesWithName:name usingBlock:block];
@@ -5423,7 +5426,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
                      collection:(NSString *)srcCollection
                  destinationKey:(NSString *)dstKey
                      collection:(NSString *)dstCollection
-                     usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                     usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	if (srcKey == nil)
 	{
@@ -5722,7 +5725,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
                       sourceKey:(NSString *)srcKey
                      collection:(NSString *)srcCollection
              destinationFileURL:(NSURL *)dstFileURL
-                     usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                     usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	if (srcKey == nil)
 	{
@@ -6020,7 +6023,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  *   The name of the edge (case sensitive).
 **/
 - (void)enumerateEdgesWithName:(NSString *)name
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	[self _enumerateEdgesWithName:name usingBlock:^(YapDatabaseRelationshipEdge *edge, BOOL *stop) {
 		
@@ -6040,10 +6043,10 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * @param name (optional)
  *   The name of the edge (case sensitive).
  *
- * @param sourceKey (optional)
+ * @param srcKey (optional)
  *   The edge.sourceKey to match.
  *
- * @param sourceCollection (optional)
+ * @param srcCollection (optional)
  *   The edge.sourceCollection to match.
  *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
@@ -6052,7 +6055,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
 - (void)enumerateEdgesWithName:(NSString *)name
                      sourceKey:(NSString *)srcKey
                     collection:(NSString *)srcCollection
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	[self _enumerateEdgesWithName:name
 	                    sourceKey:srcKey
@@ -6072,22 +6075,14 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - destinationKey & destinationCollection only
  * - name + destinationKey & destinationCollection
  *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param destinationKey (optional)
- *   The edge.destinationKey to match.
- *
- * @param destinationCollection (optional)
- *   The edge.destinationCollection to match.
- *
  * If you pass a non-nil destinationKey, and destinationCollection is nil,
- * then the destinationCollection is treated as the empty string, just like the rest of the YapDatabase framework.
+ * then the destinationCollection is treated as the empty string,
+ * just like the rest of the YapDatabase framework.
 **/
 - (void)enumerateEdgesWithName:(NSString *)name
                 destinationKey:(NSString *)dstKey
                     collection:(NSString *)dstCollection
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	[self _enumerateEdgesWithName:name
 	               destinationKey:dstKey
@@ -6106,16 +6101,10 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name only
  * - destinationFileURL
  * - name + destinationFileURL
- *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param destinationFileURL (optional)
- *   The edge.destinationFileURL to match.
 **/
 - (void)enumerateEdgesWithName:(NSString *)name
             destinationFileURL:(NSURL *)dstFileURL
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	[self _enumerateEdgesWithName:name
 	           destinationFileURL:dstFileURL
@@ -6137,21 +6126,6 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name + destinationKey & destinationCollection
  * - name + sourceKey & sourceCollection + destinationKey & destinationCollection
  *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param sourceKey (optional)
- *   The edge.sourceKey to match.
- *
- * @param sourceCollection (optional)
- *   The edge.sourceCollection to match.
- *
- * @param destinationKey (optional)
- *   The edge.destinationKey to match.
- *
- * @param destinationCollection (optional)
- *   The edge.destinationCollection to match.
- *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
  * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
  *
@@ -6163,7 +6137,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
                     collection:(NSString *)srcCollection
                 destinationKey:(NSString *)dstKey
                     collection:(NSString *)dstCollection
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	[self _enumerateEdgesWithName:name
 	                    sourceKey:srcKey
@@ -6188,18 +6162,6 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name + destinationKey & destinationCollection
  * - name + sourceKey & sourceCollection + destinationKey & destinationCollection
  *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param sourceKey (optional)
- *   The edge.sourceKey to match.
- *
- * @param sourceCollection (optional)
- *   The edge.sourceCollection to match.
- * 
- * @param destinationFileURL (optional)
- *   The edge.destinationFileURL to match.
- *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
  * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
 **/
@@ -6207,7 +6169,7 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
                      sourceKey:(NSString *)srcKey
                     collection:(NSString *)srcCollection
             destinationFileURL:(NSURL *)dstFileURL
-                    usingBlock:(void (^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
+                    usingBlock:(void (NS_NOESCAPE^)(YapDatabaseRelationshipEdge *edge, BOOL *stop))block
 {
 	[self _enumerateEdgesWithName:name
 	                    sourceKey:srcKey
@@ -6390,15 +6352,6 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name only
  * - destinationKey & destinationCollection only
  * - name + destinationKey & destinationCollection
- *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param destinationKey (optional)
- *   The edge.destinationKey to match.
- *
- * @param destinationCollection (optional)
- *   The edge.destinationCollection to match.
  *
  * If you pass a non-nil destinationKey, and destinationCollection is nil,
  * then the destinationCollection is treated as the empty string, just like the rest of the YapDatabase framework.
@@ -6678,20 +6631,9 @@ NS_INLINE BOOL URLMatchesURL(NSURL *url1, NSURL *url2)
  * - name + destinationFileURL
  * - name + sourceKey & sourceCollection + destinationFileURL
  *
- * @param name (optional)
- *   The name of the edge (case sensitive).
- *
- * @param sourceKey (optional)
- *   The edge.sourceKey to match.
- *
- * @param sourceCollection (optional)
- *   The edge.sourceCollection to match.
- * 
- * @param destinationFileURL (optional)
- *   The edge.destinationFileURL to match.
- *
  * If you pass a non-nil sourceKey, and sourceCollection is nil,
- * then the sourceCollection is treated as the empty string, just like the rest of the YapDatabase framework.
+ * then the sourceCollection is treated as the empty string,
+ * just like the rest of the YapDatabase framework.
 **/
 - (NSUInteger)edgeCountWithName:(NSString *)name
                       sourceKey:(NSString *)srcKey

@@ -28,3 +28,12 @@ Carthage/Build
 ## Custom
 LumberjackUser.h
 LumberjackUser.temp.h
+
+## CocoaPods within Unit Tests
+## 
+## Excluding Xcode-desktop which is used by travis-ci
+##
+Testing/Xcode-mobile/Pods
+Testing/Xcode-tv/Pods
+Testing/Xcode-watch/Pods
+

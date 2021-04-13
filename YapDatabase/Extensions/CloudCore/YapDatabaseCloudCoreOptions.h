@@ -5,6 +5,7 @@
 #import <Foundation/Foundation.h>
 #import "YapWhitelistBlacklist.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface YapDatabaseCloudCoreOptions : NSObject <NSCopying>
 
@@ -17,7 +18,7 @@
  *
  * The default value is nil.
 **/
-@property (nonatomic, copy, readwrite) NSSet *allowedOperationClasses;
+@property (nonatomic, copy, readwrite, nullable) NSSet *allowedOperationClasses;
 
 /**
  * YapDatabaseCloudCore supports storing various "tags" related to cloud syncing, such as eTag values.
@@ -40,3 +41,5 @@
 @property (nonatomic, assign, readwrite) BOOL enableAttachDetachSupport;
 
 @end
+
+NS_ASSUME_NONNULL_END

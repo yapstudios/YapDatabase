@@ -22,10 +22,13 @@
 
 - (NSArray *)actionItemsForCollectionKey:(YapCollectionKey *)ck
 {
-	__unsafe_unretained YapDatabaseActionManagerConnection *amConnection =
-	  (YapDatabaseActionManagerConnection *)parentConnection;
+	__unsafe_unretained YapDatabaseActionManagerConnection *_connection =
+		(YapDatabaseActionManagerConnection *)parentConnection;
 	
-	id cached = [amConnection->actionItemsCache objectForKey:ck];
+	__unsafe_unretained YapDatabaseActionManager *_parent =
+		(YapDatabaseActionManager *)_connection->parent;
+	
+	id cached = [_connection->actionItemsCache objectForKey:ck];
 	if (cached)
 	{
 		if (cached == [NSNull null])
@@ -37,15 +40,19 @@
 	id object = [databaseTransaction objectForKey:ck.key inCollection:ck.collection];
 	
 	NSArray<YapActionItem*> *actionItems = nil;
-	if ([object conformsToProtocol:@protocol(YapActionable)])
+	if (_parent->scheduler)
+	{
+		actionItems = _parent->scheduler(ck.collection, ck.key, object);
+	}
+	else if ([object conformsToProtocol:@protocol(YapActionable)])
 	{
 		actionItems = [[(id <YapActionable>)object yapActionItems] sortedArrayUsingSelector:@selector(compare:)];
 	}
 	
 	if (actionItems)
-		[amConnection->actionItemsCache setObject:actionItems forKey:ck];
+		[_connection->actionItemsCache setObject:actionItems forKey:ck];
 	else
-		[amConnection->actionItemsCache setObject:[NSNull null] forKey:ck];
+		[_connection->actionItemsCache setObject:[NSNull null] forKey:ck];
 	
 	return actionItems;
 }

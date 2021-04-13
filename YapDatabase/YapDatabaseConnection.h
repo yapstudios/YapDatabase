@@ -279,12 +279,15 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * However, once connection2 completes its transaction, it will automatically update itself to snapshot 2.
  *
  * In general, the snapshot is primarily for internal use.
- * However, it may come in handy for some tricky edge-case bugs (why doesn't my connection see that other commit?)
+ * However, it may come in handy for some tricky edge-case bugs
+ * (i.e. why doesn't my connection see that other commit ?)
 **/
 @property (atomic, assign, readonly) uint64_t snapshot;
 
 /**
  * Returns the number of pending/active transactions for the connection.
+ * That is, the number of queued read-only & read-write transactions that are
+ * currently queued to be performed on this connection.
  *
  * Note that if a transaction is currently in progress (active),
  * it's still considered "pending" since it hasn't completed yet.
@@ -309,7 +312,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  *
  * This method is synchronous.
 **/
-- (void)readWithBlock:(void (^)(YapDatabaseReadTransaction *transaction))block;
+- (void)readWithBlock:(void (NS_NOESCAPE^)(YapDatabaseReadTransaction *transaction))block;
 
 /**
  * Read-write access to the database.
@@ -317,7 +320,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * Only a single read-write block can execute among all sibling connections.
  * Thus this method may block if another sibling connection is currently executing a read-write block.
 **/
-- (void)readWriteWithBlock:(void (^)(YapDatabaseReadWriteTransaction *transaction))block;
+- (void)readWriteWithBlock:(void (NS_NOESCAPE^)(YapDatabaseReadWriteTransaction *transaction))block;
 
 /**
  * Read-only access to the database.
@@ -551,7 +554,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
 **/
 - (void)enumerateChangedKeysInCollection:(NSString *)collection
                          inNotifications:(NSArray<NSNotification *> *)notifications
-                              usingBlock:(void (^)(NSString *key, BOOL *stop))block;
+                              usingBlock:(void (NS_NOESCAPE^)(NSString *key, BOOL *stop))block;
 
 /**
  * Allows you to enumerate all the changed collection/key tuples for the given commits.
@@ -567,7 +570,7 @@ typedef NS_OPTIONS(NSUInteger, YapDatabaseConnectionFlushMemoryFlags) {
  * @see didClearAllCollectionsInNotifications:
 **/
 - (void)enumerateChangedCollectionKeysInNotifications:(NSArray<NSNotification *> *)notifications
-                                           usingBlock:(void (^)(YapCollectionKey *ck, BOOL *stop))block;
+                                           usingBlock:(void (NS_NOESCAPE^)(YapCollectionKey *ck, BOOL *stop))block;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 #pragma mark Extensions

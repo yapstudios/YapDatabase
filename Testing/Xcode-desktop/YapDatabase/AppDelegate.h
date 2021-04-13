@@ -3,7 +3,7 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-@property (assign) IBOutlet NSWindow *window;
+@property (nonatomic, assign) IBOutlet NSWindow *window;
 
 @property (nonatomic, strong, readwrite) IBOutlet NSButton *databaseBenchmarksButton;
 @property (nonatomic, strong, readwrite) IBOutlet NSButton *cacheBenchmarksButton;

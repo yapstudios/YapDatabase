@@ -164,6 +164,15 @@ NS_ASSUME_NONNULL_BEGIN
             sorting:(YapDatabaseViewSorting *)sorting
          versionTag:(nullable NSString *)versionTag;
 
+/**
+ * This method allows you to change the sorting on-the-fly.
+ *
+ * Note: You must pass a different versionTag, or this method does nothing.
+ * If needed, you can fetch the current versionTag via the [viewTransaction versionTag] method.
+ **/
+- (void)setSorting:(YapDatabaseViewSorting *)sorting
+        versionTag:(nullable NSString *)versionTag;
+
 @end
 
 NS_ASSUME_NONNULL_END

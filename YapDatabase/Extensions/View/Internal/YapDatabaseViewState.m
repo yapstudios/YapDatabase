@@ -99,7 +99,7 @@
 	return [group_pagesMetadata_dict count];
 }
 
-- (void)enumerateGroupsWithBlock:(void (^)(NSString *group, BOOL *stop))block
+- (void)enumerateGroupsWithBlock:(void (NS_NOESCAPE^)(NSString *group, BOOL *stop))block
 {
 	BOOL stop = NO;
 	for (NSString *group in group_pagesMetadata_dict)
@@ -110,7 +110,7 @@
 	}
 }
 
-- (void)enumerateWithBlock:(void (^)(NSString *group, NSArray *pagesMetadataForGroup, BOOL *stop))block
+- (void)enumerateWithBlock:(void (NS_NOESCAPE^)(NSString *group, NSArray *pagesMetadataForGroup, BOOL *stop))block
 {
 	[group_pagesMetadata_dict enumerateKeysAndObjectsUsingBlock:block];
 }

@@ -31,6 +31,15 @@ NS_INLINE BOOL YDB_IsEqualOrBothNil(id obj1, id obj2)
 **/
 @property (nonatomic, assign, readwrite) int64_t operationRowid;
 
+/**
+ * The snapshot value is stored in its own dedicated row in the database,
+ * and is used to restore the graph's & graph order.
+ *
+ * YapDatabaseCloudCoreTransaction is responsible for setting this value when:
+ * - restoring operations from disk
+ * - adding/inserting/modifying operations
+**/
+@property (nonatomic, assign, readwrite) uint64_t snapshot;
 
 #pragma mark Transactional Changes
 
@@ -54,20 +63,5 @@ NS_INLINE BOOL YDB_IsEqualOrBothNil(id obj1, id obj2)
 @property (nonatomic, readonly) BOOL pendingStatusIsSkipped;
 
 - (void)clearTransactionVariables;
-
-
-#pragma mark Subclass Properties
-
-/**
- * Subclasses may choose to calculate implicit dependencies.
- * 
- * This method is designed to assist in such a process,
- * as it allows for easier separation between:
- * - explict dependencies (specified by the user)
- * - implicit dependencies (calculated by the subclass)
- * 
- * The default implementation simply returns the `dependencies` property.
-**/
-- (NSSet<NSUUID *> *)dependencyUUIDs;
 
 @end

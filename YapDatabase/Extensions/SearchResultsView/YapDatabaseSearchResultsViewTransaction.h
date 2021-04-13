@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  * Note: snippets must be enabled via YapDatabaseSearchResultsViewOptions.
 **/
-- (NSString *)snippetForKey:(NSString *)key inCollection:(nullable NSString *)collection;
+- (nullable NSString *)snippetForKey:(NSString *)key inCollection:(nullable NSString *)collection;
 
 @end
 

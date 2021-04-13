@@ -25,6 +25,7 @@
 @implementation YapDatabaseCloudCoreConnection
 {
 	sqlite3_stmt *pipelineTable_insertStatement;
+	sqlite3_stmt *pipelineTable_updateStatement;
 	sqlite3_stmt *pipelineTable_removeStatement;
 	sqlite3_stmt *pipelineTable_removeAllStatement;
 	
@@ -35,8 +36,9 @@
 	
 	sqlite3_stmt *tagTable_setStatement;
 	sqlite3_stmt *tagTable_fetchStatement;
-	sqlite3_stmt *tagTable_removeForBothStatement;
-	sqlite3_stmt *tagTable_removeForCloudURIStatement;
+	sqlite3_stmt *tagTable_enumerateForKeyStatement;
+	sqlite3_stmt *tagTable_removeForKeyStatement;
+	sqlite3_stmt *tagTable_removeForKeyIdentifierStatement;
 	sqlite3_stmt *tagTable_removeAllStatement;
 	
 	sqlite3_stmt *mappingTable_insertStatement;
@@ -80,6 +82,7 @@
 - (void)_flushStatements
 {
 	sqlite_finalize_null(&pipelineTable_insertStatement);
+	sqlite_finalize_null(&pipelineTable_updateStatement);
 	sqlite_finalize_null(&pipelineTable_removeStatement);
 	sqlite_finalize_null(&pipelineTable_removeAllStatement);
 	
@@ -90,8 +93,9 @@
 	
 	sqlite_finalize_null(&tagTable_setStatement);
 	sqlite_finalize_null(&tagTable_fetchStatement);
-	sqlite_finalize_null(&tagTable_removeForBothStatement);
-	sqlite_finalize_null(&tagTable_removeForCloudURIStatement);
+	sqlite_finalize_null(&tagTable_enumerateForKeyStatement);
+	sqlite_finalize_null(&tagTable_removeForKeyStatement);
+	sqlite_finalize_null(&tagTable_removeForKeyIdentifierStatement);
 	sqlite_finalize_null(&tagTable_removeAllStatement);
 	
 	sqlite_finalize_null(&mappingTable_insertStatement);
@@ -425,7 +429,22 @@
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
-		  @"INSERT INTO \"%@\" (\"name\") VALUES (?);", [parent pipelineTableName]];
+		  @"INSERT INTO \"%@\" (\"name\", \"algorithm\") VALUES (?, ?);", [parent pipelineTableName]];
+		
+		[self prepareStatement:statement withString:string caller:_cmd];
+	}
+	
+	return *statement;
+}
+
+- (sqlite3_stmt *)pipelineTable_updateStatement
+{
+	sqlite3_stmt **statement = &pipelineTable_updateStatement;
+	if (*statement == NULL)
+	{
+		NSString *string = [NSString stringWithFormat:
+		  @"UPDATE \"%@\" SET \"name\" = ?, \"algorithm\" = ? WHERE \"rowid\" = ?;",
+		  [parent pipelineTableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -575,13 +594,13 @@
 	return *statement;
 }
 
-- (sqlite3_stmt *)tagTable_removeForBothStatement
+- (sqlite3_stmt *)tagTable_enumerateForKeyStatement
 {
-	sqlite3_stmt **statement = &tagTable_removeForBothStatement;
+	sqlite3_stmt **statement = &tagTable_enumerateForKeyStatement;
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
-		  @"DELETE FROM \"%@\" WHERE \"key\" = ? AND \"identifier\" = ?;", [parent tagTableName]];
+		  @"SELECT \"identifier\", \"tag\" FROM \"%@\" WHERE \"key\" = ?;", [parent tagTableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}
@@ -589,13 +608,27 @@
 	return *statement;
 }
 
-- (sqlite3_stmt *)tagTable_removeForCloudURIStatement
+- (sqlite3_stmt *)tagTable_removeForKeyStatement
 {
-	sqlite3_stmt **statement = &tagTable_removeForCloudURIStatement;
+	sqlite3_stmt **statement = &tagTable_removeForKeyStatement;
 	if (*statement == NULL)
 	{
 		NSString *string = [NSString stringWithFormat:
 		  @"DELETE FROM \"%@\" WHERE \"key\" = ?;", [parent tagTableName]];
+		
+		[self prepareStatement:statement withString:string caller:_cmd];
+	}
+	
+	return *statement;
+}
+
+- (sqlite3_stmt *)tagTable_removeForKeyIdentifierStatement
+{
+	sqlite3_stmt **statement = &tagTable_removeForKeyIdentifierStatement;
+	if (*statement == NULL)
+	{
+		NSString *string = [NSString stringWithFormat:
+		  @"DELETE FROM \"%@\" WHERE \"key\" = ? AND \"identifier\" = ?;", [parent tagTableName]];
 		
 		[self prepareStatement:statement withString:string caller:_cmd];
 	}

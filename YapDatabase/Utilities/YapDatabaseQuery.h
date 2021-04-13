@@ -96,7 +96,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark Properties
 
-@property (nonatomic, copy, readonly) NSString *aggregateFunction;
+@property (nonatomic, copy, readonly, nullable) NSString *aggregateFunction;
 @property (nonatomic, copy, readonly) NSString *queryString;
 @property (nonatomic, copy, readonly) NSArray *queryParameters;
 

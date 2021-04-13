@@ -8,7 +8,11 @@
 #import "YapDatabaseLogging.h"
 #import "YapDatabaseString.h"
 
-#import "sqlite3.h"
+#ifdef SQLITE_HAS_CODEC
+  #import <SQLCipher/sqlite3.h>
+#else
+  #import "sqlite3.h"
+#endif
 
 #import <mach/mach_time.h>
 #import <stdatomic.h>

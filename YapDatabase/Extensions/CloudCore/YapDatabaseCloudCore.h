@@ -14,14 +14,16 @@
 #import "YapDatabaseCloudCorePipeline.h"
 #import "YapDatabaseCloudCoreGraph.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 /**
  * Serialization/Deserialization for operation objects.
  *
  * The default version uses NSCoding.
  * However, an alternative may be substitued if desired.
 **/
-typedef NSData* (^YDBCloudCoreOperationSerializer)(YapDatabaseCloudCoreOperation *operation);
-typedef YapDatabaseCloudCoreOperation* (^YDBCloudCoreOperationDeserializer)(NSData *operationBlob);
+typedef NSData*_Nonnull (^YDBCloudCoreOperationSerializer)(YapDatabaseCloudCoreOperation *operation);
+typedef YapDatabaseCloudCoreOperation*_Nonnull (^YDBCloudCoreOperationDeserializer)(NSData *operationBlob);
 
 
 extern NSString *const YapDatabaseCloudCoreDefaultPipelineName; // = @"default";
@@ -29,8 +31,8 @@ extern NSString *const YapDatabaseCloudCoreDefaultPipelineName; // = @"default";
 
 @interface YapDatabaseCloudCore : YapDatabaseExtension
 
-- (instancetype)initWithVersionTag:(NSString *)versionTag
-                           options:(YapDatabaseCloudCoreOptions *)options;
+- (instancetype)initWithVersionTag:(nullable NSString *)versionTag
+                           options:(nullable YapDatabaseCloudCoreOptions *)options;
 
 @property (nonatomic, copy, readonly) NSString *versionTag;
 
@@ -50,13 +52,22 @@ extern NSString *const YapDatabaseCloudCoreDefaultPipelineName; // = @"default";
 
 #pragma mark Pipelines
 
-- (YapDatabaseCloudCorePipeline *)defaultPipeline;
+/**
+ * Returns the default pipeline.
+ * That is, the pipeline that operations are automatically added to if the `operation.pipeline` value
+ * is nil, or doesn't match any registered pipelines.
+ *
+ * Note that every YDBCloudCore instance MUST have a defaultPipeline.
+ * Without a defaultPipeline, attempts to register the extension (with YapDatabase) will fail.
+ * So this value is safely nonnull after the extension is registered.
+**/
+- (nullable YapDatabaseCloudCorePipeline *)defaultPipeline;
 
 /**
  * Returns the registered pipeline with the given name.
  * If no pipeline is registered under the given name, returns nil.
 **/
-- (YapDatabaseCloudCorePipeline *)pipelineWithName:(NSString *)name;
+- (nullable YapDatabaseCloudCorePipeline *)pipelineWithName:(NSString *)name;
 
 /**
  * Attempts to register the given pipeline.
@@ -124,3 +135,5 @@ extern NSString *const YapDatabaseCloudCoreDefaultPipelineName; // = @"default";
 - (NSUInteger)resume;
 
 @end
+
+NS_ASSUME_NONNULL_END

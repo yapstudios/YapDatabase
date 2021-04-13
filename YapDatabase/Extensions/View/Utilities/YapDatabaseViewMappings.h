@@ -600,7 +600,7 @@ typedef NSComparisonResult (^YapDatabaseViewMappingGroupSort)(NSString *group1, 
  *
  * If the section is out-of-bounds, returns nil.
 **/
-- (NSString *)groupForSection:(NSUInteger)section;
+- (nullable NSString *)groupForSection:(NSUInteger)section;
 
 /**
  * Maps from an indexPath (in the UI) to a group & index (within the View).

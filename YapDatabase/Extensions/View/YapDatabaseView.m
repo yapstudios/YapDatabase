@@ -18,6 +18,8 @@
 #endif
 #pragma unused(ydbLogLevel)
 
+/* extern */ NSString *const YapDatabaseViewChangesKey = @"changes";
+
 
 @implementation YapDatabaseView
 

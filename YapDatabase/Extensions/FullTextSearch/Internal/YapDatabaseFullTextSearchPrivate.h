@@ -9,7 +9,11 @@
 
 #import "YapMutationStack.h"
 
-#import "sqlite3.h"
+#ifdef SQLITE_HAS_CODEC
+  #import <SQLCipher/sqlite3.h>
+#else
+  #import "sqlite3.h"
+#endif
 
 /**
  * This version number is stored in the yap2 table.
@@ -101,12 +105,12 @@
            databaseTransaction:(YapDatabaseReadTransaction *)databaseTransaction;
 
 - (void)enumerateRowidsMatching:(NSString *)query
-                     usingBlock:(void (^)(int64_t rowid, BOOL *stop))block;
+                     usingBlock:(void (NS_NOESCAPE^)(int64_t rowid, BOOL *stop))block;
 
 - (void)enumerateRowidsMatching:(NSString *)query
              withSnippetOptions:(YapDatabaseFullTextSearchSnippetOptions *)inOptions
                      usingBlock:
-            (void (^)(NSString *snippet, int64_t rowid, BOOL *stop))block;
+            (void (NS_NOESCAPE^)(NSString *snippet, int64_t rowid, BOOL *stop))block;
 
 - (BOOL)rowid:(int64_t)rowid matches:(NSString *)query;
 - (NSString *)rowid:(int64_t)rowid matches:(NSString *)query

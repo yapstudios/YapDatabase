@@ -97,7 +97,7 @@ databaseIdentifier:(NSString *)inDatabaseIdentifier
 - (NSArray *)recordsToSave
 {
 	NSUInteger modifiedRecordsCount = modifiedRecords.count;
-	if (modifiedRecordsCount == 0) return nil;
+	if (modifiedRecordsCount == 0) return [NSArray array];
 	
 	NSMutableArray *array = [NSMutableArray arrayWithCapacity:modifiedRecordsCount];
 	
@@ -133,7 +133,7 @@ databaseIdentifier:(NSString *)inDatabaseIdentifier
 - (NSArray *)recordIDsToSave
 {
 	NSUInteger modifiedRecordsCount = modifiedRecords.count;
-	if (modifiedRecordsCount == 0) return 0;
+	if (modifiedRecordsCount == 0) return [NSArray array];
 	
 	NSMutableArray *array = [NSMutableArray arrayWithCapacity:modifiedRecordsCount];
 	
@@ -212,7 +212,7 @@ databaseIdentifier:(NSString *)inDatabaseIdentifier
 	}
 }
 
-- (void)enumerateMissingRecordsWithBlock:(CKRecord* (^)(CKRecordID *recordID, NSArray *changedKeys))block
+- (void)enumerateMissingRecordsWithBlock:(CKRecord* (NS_NOESCAPE^)(CKRecordID *recordID, NSArray *changedKeys))block
 {
 	for (YDBCKChangeRecord *changeRecord in [modifiedRecords objectEnumerator])
 	{

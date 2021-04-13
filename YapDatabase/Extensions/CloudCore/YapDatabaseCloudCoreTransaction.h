@@ -8,6 +8,7 @@
 @class YapDatabaseCloudCoreOperation;
 @class YapDatabaseCloudCorePipeline;
 
+NS_ASSUME_NONNULL_BEGIN
 
 @interface YapDatabaseCloudCoreTransaction : YapDatabaseExtensionTransaction
 
@@ -58,6 +59,9 @@
  * Replaces the existing operation with the new version.
  * 
  * The dependency graph will automatically be recalculated using the new operation version.
+ *
+ * @return
+ *   NO if the operation isn't properly configured for use.
 **/
 - (BOOL)modifyOperation:(YapDatabaseCloudCoreOperation *)operation;
 
@@ -71,7 +75,7 @@
  * These methods allow the system to remove the operation from its internal sqlite table.
 **/
 - (void)completeOperationWithUUID:(NSUUID *)operationUUID;
-- (void)completeOperationWithUUID:(NSUUID *)operationUUID inPipeline:(NSString *)pipelineName;
+- (void)completeOperationWithUUID:(NSUUID *)operationUUID inPipeline:(nullable NSString *)pipelineName;
 
 /**
  * Use these methods to skip/abort operations.
@@ -83,15 +87,21 @@
  * These methods allow the system to remove the operation from its internal sqlite table.
 **/
 - (void)skipOperationWithUUID:(NSUUID *)operationUUID;
-- (void)skipOperationWithUUID:(NSUUID *)operationUUID inPipeline:(NSString *)pipelineName;
+- (void)skipOperationWithUUID:(NSUUID *)operationUUID inPipeline:(nullable NSString *)pipelineName;
 
-- (void)skipOperationsPassingTest:(BOOL (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                            YapDatabaseCloudCoreOperation *operation,
-                                            NSUInteger graphIdx, BOOL *stop))testBlock;
+- (void)skipOperationsPassingTest:(BOOL (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                       YapDatabaseCloudCoreOperation *operation,
+                                                       NSUInteger graphIdx, BOOL *stop))testBlock;
 
 - (void)skipOperationsInPipeline:(NSString *)pipeline
-                     passingTest:(BOOL (^)(YapDatabaseCloudCoreOperation *operation,
-                                           NSUInteger graphIdx, BOOL *stop))testBlock;
+                     passingTest:(BOOL (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                      NSUInteger graphIdx, BOOL *stop))testBlock;
+
+/**
+ * Returns ALL dependencies for the given operation,
+ * calculated by recursively visiting dependencies of dependecies.
+ */
+- (NSSet<NSUUID*> *)recursiveDependenciesForOperation:(YapDatabaseCloudCoreOperation *)operation;
 
 #pragma mark Operation Searching
 
@@ -100,7 +110,7 @@
  * 
  * @return The corresponding operation, if found. Otherwise nil.
 **/
-- (YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
+- (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
 
 /**
  * Searches for an operation with the given UUID and pipeline.
@@ -108,7 +118,8 @@
  * 
  * @return The corresponding operation, if found. Otherwise nil.
 **/
-- (YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid inPipeline:(NSString *)pipelineName;
+- (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid
+                                                   inPipeline:(nullable NSString *)pipelineName;
 
 /**
  * Fetches the graph index that corresponds to newly added operations.
@@ -148,9 +159,9 @@
  *   For example, if an operation has been modified within the read-write transaction,
  *   then you'll see the uncommitted modified version of the operation when enumerating.
  **/
-- (void)enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                                YapDatabaseCloudCoreOperation *operation,
-                                                NSUInteger graphIdx, BOOL *stop))enumBlock;
+- (void)enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                           YapDatabaseCloudCoreOperation *operation,
+                                                           NSUInteger graphIdx, BOOL *stop))enumBlock;
 /**
  * Enumerates the queued operations in a particluar pipeline.
  *
@@ -167,8 +178,8 @@
  *   then you'll see the uncommitted modified version of the operation when enumerating.
 **/
 - (void)enumerateOperationsInPipeline:(NSString *)pipeline
-                      usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                           NSUInteger graphIdx, BOOL *stop))enumBlock;
+                      usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                      NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 /**
  * Enumerates only those operations that have been added during this commit.
@@ -176,9 +187,9 @@
  * That is, the operations added via the `addOperation:` method,
  * within the current readWriteTransaction.
 **/
-- (void)enumerateAddedOperationsUsingBlock:(void (^)(YapDatabaseCloudCorePipeline *pipeline,
-                                                     YapDatabaseCloudCoreOperation *operation,
-                                                     NSUInteger graphIdx, BOOL *stop))enumBlock;
+- (void)enumerateAddedOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCorePipeline *pipeline,
+                                                                YapDatabaseCloudCoreOperation *operation,
+                                                                NSUInteger graphIdx, BOOL *stop))enumBlock;
 /**
  * Enumerates only those operations that have been added during this commit.
  *
@@ -186,8 +197,8 @@
  * within the current readWriteTransaction.
 **/
 - (void)enumerateAddedOperationsInPipeline:(NSString *)pipeline
-                                usingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                                     NSUInteger graphIdx, BOOL *stop))enumBlock;
+                                usingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                                NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 #pragma mark Tag Support
 
@@ -206,7 +217,7 @@
  * @return
  *   The most recently assigned tag.
 **/
-- (id)tagForKey:(NSString *)key withIdentifier:(NSString *)identifier;
+- (nullable id)tagForKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
 
 /**
  * Allows you to update the current tag value for the given key/identifier tuple.
@@ -231,7 +242,13 @@
  * If the given tag is nil, the effect is the same as invoking removeTagForKey:withIdentifier:.
  * If the given tag is an unsupported class, throws an exception.
 **/
-- (void)setTag:(id)tag forKey:(NSString *)key withIdentifier:(NSString *)identifier;
+- (void)setTag:(nullable id)tag forKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
+
+/**
+ * Allows you to enumerate the current set of <identifier, tag> tuples associated with the given key.
+**/
+- (void)enumerateTagsForKey:(NSString *)key
+                  withBlock:(void (^NS_NOESCAPE)(NSString *identifier, id tag, BOOL *stop))block;
 
 /**
  * Removes the tag for the given key/identifier tuple.
@@ -251,7 +268,7 @@
  * 
  * @see removeAllTagsForCloudURI
 **/
-- (void)removeTagForKey:(NSString *)key withIdentifier:(NSString *)identifier;
+- (void)removeTagForKey:(NSString *)key withIdentifier:(nullable NSString *)identifier;
 
 /**
  * Removes all tags with the given key (matching any identifier).
@@ -308,7 +325,7 @@
 **/
 - (void)attachCloudURI:(NSString *)cloudURI
                 forKey:(NSString *)key
-          inCollection:(NSString *)collection;
+          inCollection:(nullable NSString *)collection;
 
 /**
  * @param cloudURI
@@ -331,6 +348,24 @@
 **/
 - (void)detachCloudURI:(NSString *)cloudURI
                 forKey:(NSString *)key
-          inCollection:(NSString *)collection;
+          inCollection:(nullable NSString *)collection;
+
+/**
+ * Allows you to enumerate the <collection, key> tuples attached to the given cloudURI.
+ *
+ * If a <collection, key> has been attached to the cloudURI, but the corresponding object hasn't been
+ * added to the database yet, the pending flag will be set to YES.
+**/
+- (void)enumerateAttachedForCloudURI:(NSString *)cloudURI
+                          usingBlock:(void (NS_NOESCAPE^)(NSString *key, NSString *collection, BOOL pending, BOOL *stop))block;
+
+/**
+ * Allows you to enumerate all attached cloudURI's for the given <collection, key> tuple.
+**/
+- (void)enumerateAttachedForKey:(NSString *)key
+                     collection:(nullable NSString *)collection
+                     usingBlock:(void (NS_NOESCAPE^)(NSString *cloudURI, BOOL *stop))block;
 
 @end
+
+NS_ASSUME_NONNULL_END

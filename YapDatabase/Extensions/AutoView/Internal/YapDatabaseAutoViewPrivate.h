@@ -13,7 +13,11 @@
 
 #import "YapMemoryTable.h"
 
-#import "sqlite3.h"
+#ifdef SQLITE_HAS_CODEC
+  #import <SQLCipher/sqlite3.h>
+#else
+  #import "sqlite3.h"
+#endif
 
 @class YapCache;
 @class YapCollectionKey;
@@ -80,6 +84,9 @@
 - (void)setGrouping:(YapDatabaseViewGrouping *)newGrouping
             sorting:(YapDatabaseViewSorting *)newSorting
          versionTag:(NSString *)newVersionTag;
+
+- (void)setSorting:(YapDatabaseViewSorting *)newSorting
+        versionTag:(NSString *)newVersionTag;
 
 @end
 

@@ -1,1 +1,0 @@
-../../../../../../YapDatabase/Extensions/SearchResultsView/YapDatabaseSearchResultsViewOptions.h

@@ -136,9 +136,9 @@ extern const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBac
 - (void)removeKeyForObject:(ObjectType)object;
 - (void)removeKeysForObjects:(id <NSFastEnumeration>)objects;
 
-- (void)enumerateKeysWithBlock:(void (^)(KeyType key, BOOL *stop))block;
-- (void)enumerateObjectsWithBlock:(void (^)(ObjectType object, BOOL *stop))block;
-- (void)enumerateKeysAndObjectsWithBlock:(void (^)(KeyType key, ObjectType obj, BOOL *stop))block;
+- (void)enumerateKeysWithBlock:(void (NS_NOESCAPE^)(KeyType key, BOOL *stop))block;
+- (void)enumerateObjectsWithBlock:(void (NS_NOESCAPE^)(ObjectType object, BOOL *stop))block;
+- (void)enumerateKeysAndObjectsWithBlock:(void (NS_NOESCAPE^)(KeyType key, ObjectType obj, BOOL *stop))block;
 
 @end
 

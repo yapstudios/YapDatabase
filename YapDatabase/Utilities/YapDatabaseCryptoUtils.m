@@ -5,7 +5,13 @@
 #import "YapDatabaseCryptoUtils.h"
 #import "YapDatabase.h"
 #import "YapDatabaseLogging.h"
-#import "sqlite3.h"
+
+#ifdef SQLITE_HAS_CODEC
+  #import <SQLCipher/sqlite3.h>
+#else
+  #import "sqlite3.h"
+#endif
+
 #import <CommonCrypto/CommonCrypto.h>
 
 NS_ASSUME_NONNULL_BEGIN

@@ -4229,7 +4229,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	YDBLogAutoTrace();
 	
 	if (recordID == nil) {
-		return nil;
+		return [NSArray array];
 	}
 	
 	NSString *hash = [self hashRecordID:recordID databaseIdentifier:databaseIdentifier];
@@ -4237,7 +4237,7 @@ static BOOL ClassVersionsAreCompatible(int oldClassVersion, int newClassVersion)
 	
 	NSUInteger count = rowids.count;
 	if (count == 0) {
-		return nil;
+		return [NSArray array];
 	}
 	
 	NSMutableArray *collectionKeys = [NSMutableArray arrayWithCapacity:count];

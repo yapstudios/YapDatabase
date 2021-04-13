@@ -352,7 +352,7 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * but it can sometimes come in handy for general debugging of your app.
  *
  * The snapshot is a simple 64-bit number that gets incremented upon every readwrite transaction
- * that makes modifications to the database. Due to the concurrent architecture of YapDatabase,
+ * that makes modifications to the database. Thanks to the concurrent architecture of YapDatabase,
  * there may be multiple concurrent connections that are inspecting the database at similar times,
  * yet they are looking at slightly different "snapshots" of the database.
  *
@@ -394,16 +394,18 @@ extern NSString *const YapDatabaseModifiedExternallyKey;
  * [connection2 asyncReadWithBlock:^(YapDatabaseReadTransaction *transaction){
  *     [NSThread sleepForTimeInterval:5.0]; // sleep for 5 seconds
  *
- *     connection2.snapshot; // returns 1. See why?
+ *     connection2.snapshot; // returns 1. Understand why? See below.
  * }];
  *
- * It's because connection2 started its transaction when the database was in snapshot 1.
- * Thus, for the duration of its transaction, the database remains in that state.
+ * It's because when connection2 started its transaction, the database was in snapshot 1.
+ * (Both connection1 & connection2 started an ASYNC transaction at the same time.)
+ * Thus, for the duration of its transaction, the database remains in that state for connection2.
  *
  * However, once connection2 completes its transaction, it will automatically update itself to snapshot 2.
  *
  * In general, the snapshot is primarily for internal use.
- * However, it may come in handy for some tricky edge-case bugs (why doesn't my connection see that other commit?)
+ * However, it may come in handy for some tricky edge-case bugs.
+ * (i.e. why doesn't my connection see that other commit ?)
 **/
 @property (atomic, assign, readonly) uint64_t snapshot;
 

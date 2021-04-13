@@ -598,7 +598,7 @@ static const NSUInteger YapManyToManyCacheDefaultCountLimit = 40;
 	return range.length;
 }
 
-- (void)enumerateValuesForKey:(id)key withBlock:(void (^)(id value, id metadata, BOOL *stop))block
+- (void)enumerateValuesForKey:(id)key withBlock:(void (NS_NOESCAPE^)(id value, id metadata, BOOL *stop))block
 {
 	if (key == nil) return;
 	if (block == NULL) return;
@@ -660,7 +660,7 @@ static const NSUInteger YapManyToManyCacheDefaultCountLimit = 40;
 	}
 }
 
-- (void)enumerateKeysForValue:(id)value withBlock:(void (^)(id value, id metadata, BOOL *stop))block
+- (void)enumerateKeysForValue:(id)value withBlock:(void (NS_NOESCAPE^)(id value, id metadata, BOOL *stop))block
 {
 	if (value == nil) return;
 	if (block == NULL) return;
@@ -801,7 +801,7 @@ static const NSUInteger YapManyToManyCacheDefaultCountLimit = 40;
  * 
  * As this method is designed to enumerate all values, it ddes not affect the most-recently-used linked-list.
 **/
-- (void)enumerateWithBlock:(void (^)(id key, id value, id metadata, BOOL *stop))block
+- (void)enumerateWithBlock:(void (NS_NOESCAPE^)(id key, id value, id metadata, BOOL *stop))block
 {
 	if (block == NULL) return;
 	

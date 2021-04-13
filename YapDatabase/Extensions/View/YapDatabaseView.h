@@ -10,6 +10,23 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /**
+ * The YapDatabaseModifiedNotification notification is posted after
+ * a readwrite transaction (where the database was actually modified).
+ *
+ * It is documented in more detail in the wiki article "YapDatabaseModifiedNotification":
+ * https://github.com/yapstudios/YapDatabase/wiki/YapDatabaseModifiedNotification
+ *
+ * You can get the raw changeset for a view via:
+ * notification.userInfo[YapDatabaseExtensionsKey][@"registeredNameOfView"][YapDatabaseViewChangesKey].
+ *
+ * However, it's usually more useful to pass the notification to YapDatabaseConnection,
+ * and ask it to give you a list of changes that you can use to animate your tableView/collectionView:
+ *
+ * @see YapDatabaseConnection getSectionChanges:rowChanges:forNotifications:withMappings:
+**/
+extern NSString *const YapDatabaseViewChangesKey;
+
+/**
  * YapDatabaseView is an abstract class that implements the underlying logic for several subclasses:
  *
  * - YapDatabaseAutoView
@@ -71,8 +88,8 @@ NS_ASSUME_NONNULL_BEGIN
  * 
  * So you can use this method to fetch the previous versionTag.
 **/
-+ (NSString *)previousVersionTagForRegisteredViewName:(NSString *)name
-                                      withTransaction:(YapDatabaseReadTransaction *)transaction;
++ (nullable NSString *)previousVersionTagForRegisteredViewName:(NSString *)name
+                                               withTransaction:(YapDatabaseReadTransaction *)transaction;
 
 @end
 

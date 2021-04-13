@@ -13,6 +13,7 @@ framework module YapDatabase {
 		header "YapBidirectionalCache.h"
 		header "YapCache.h"
 		header "YapCollectionKey.h"
+		header "YapDatabaseAtomic.h"
 		header "YapDatabaseConnectionConfig.h"
 		header "YapDatabaseQuery.h"
 		header "YapMurmurHash.h"
@@ -21,7 +22,11 @@ framework module YapDatabase {
 		header "YapWhitelistBlacklist.h"
 		header "YapMutationStack.h"
 	}
-	
+
+	explicit module YapDatabaseExtensionPrivate {
+		header "YapDatabaseExtensionPrivate.h"
+	}
+
 	// Extension: View
 	
 	explicit module YapDatabaseView {
@@ -34,16 +39,16 @@ framework module YapDatabase {
 		header "YapDatabaseViewRangeOptions.h"
 	}
 
-    // Extension: AutoView
+	// Extension: AutoView
 
-    explicit module YapDatabaseAutoView {
-        header "YapDatabaseViewTypes.h"
-        header "YapDatabaseAutoView.h"
-        header "YapDatabaseAutoViewConnection.h"
-        header "YapDatabaseAutoViewTransaction.h"
+	explicit module YapDatabaseAutoView {
+		header "YapDatabaseViewTypes.h"
+		header "YapDatabaseAutoView.h"
+		header "YapDatabaseAutoViewConnection.h"
+		header "YapDatabaseAutoViewTransaction.h"
 
-        export YapDatabaseView
-    }
+		export YapDatabaseView
+	}
 
 	// Extension: FilteredView
 	
@@ -177,5 +182,14 @@ framework module YapDatabase {
 		header "YapDatabaseCloudCorePipelineDelegate.h"
 		header "YapDatabaseCloudCorePipeline.h"
 		header "YapDatabaseCloudCoreGraph.h"
+	}
+
+	explicit module YapDatabaseCloudCorePrivate {
+		header "YapDatabaseCloudCorePrivate.h"
+		header "YapDatabaseCloudCoreOperationPrivate.h"
+		header "YapDatabaseCloudCorePipelinePrivate.h"
+		header "YapDatabaseCloudCoreGraphPrivate.h"
+		
+		export YapDatabaseExtensionPrivate
 	}
 }

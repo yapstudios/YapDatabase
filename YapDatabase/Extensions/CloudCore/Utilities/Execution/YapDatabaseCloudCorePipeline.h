@@ -9,6 +9,60 @@
 #import "YapDatabaseCloudCoreOperation.h"
 #import "YapDatabaseCloudCore.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
+typedef NS_ENUM(NSInteger, YDBCloudCorePipelineAlgorithm) {
+	
+	/**
+	 * This is the default algorithm if you don't explicitly pick one.
+	 * It is HIGHLY recommended you start with this algorithm, until you become more advanced.
+	 *
+	 * The "Commit Graph" algorithm works as follows:
+	 *
+	 * - all operations added within a specific commit are added to their own "graph"
+	 * - the pipeline will execute each graph 1-at-a-time
+	 * - this ensures that graphs are completed in commit order
+	 *
+	 * That is, if a pipeline contains 2 graphs:
+	 * - graph "A" - representing operations from commit #32
+	 * - graph "B" - represending operations from commit #33
+	 *
+	 * Then the pipeline will ensure that ALL operations from graphA are either completed or skipped
+	 * before ANY operations from graphB start.
+	 *
+	 * This is the safest option because it means:
+	 * - you only have to think about operation dependencies within the context of a single commit
+	 * - the pipeline ensures the cloud moves from commit to commit (just as occurred locally)
+	**/
+	YDBCloudCorePipelineAlgorithm_CommitGraph = 0,
+	
+	/**
+	 * This is and ADVANCED algorithm that is only recommended after your cloud solution has matured.
+	 *
+	 * The "Flat Graph" algorithm works as follows:
+	 *
+	 * - all operations added within a specific commit are added to their own "graph"
+	 * - HOWEVER, the pipeline is free to start operations from ANY graph
+	 * - and it will do so, while respecting dependencies, priorities & maxConcurrentOperationCount
+	 *
+	 * In particular, what this means for you is:
+	 *
+	 * - you MUST create a FORMAL DEPENDENCY GRAPH (think: state diagram for dependencies)
+	 *
+	 * That is:
+	 * - given any possible operation (opA) in commitA
+	 * - and given any possible operation (opB) in commitB
+	 * - your formal dependency graph must determine if opB should depend on opA
+	 *
+	 * The recommended way of implementing your formal dependency graph is by
+	 * subclassing YapDatabaseCloudCoreTransaction & overriding the various subclass hooks, such as:
+	 * - willAddOperation:inPipeline:withGraphIdx:
+	 * - willInsertOperation:inPipeline:withGraphIdx:
+	 * - willModifyOperation:inPipeline:withGraphIdx:
+	**/
+	YDBCloudCorePipelineAlgorithm_FlatGraph = 1
+};
+
 typedef NS_ENUM(NSInteger, YDBCloudCoreOperationStatus) {
 	
 	/**
@@ -25,7 +79,7 @@ typedef NS_ENUM(NSInteger, YDBCloudCoreOperationStatus) {
 	 * The operation has been started.
 	 * I.e. has been handed to the PipelineDelegate via 'startOperation::'.
 	**/
-	YDBCloudOperationStatus_Started,
+	YDBCloudOperationStatus_Active,
 	
 	/**
 	 * Until an operation is marked as either completed or skipped,
@@ -51,6 +105,10 @@ typedef NS_ENUM(NSInteger, YDBCloudCoreOperationStatus) {
  * This notification is posted to the main thread.
 **/
 extern NSString *const YDBCloudCorePipelineQueueChangedNotification;
+extern NSString *const YDBCloudCorePipelineQueueChangedKey_addedOperationUUIDs;
+extern NSString *const YDBCloudCorePipelineQueueChangedKey_modifiedOperationUUIDs;
+extern NSString *const YDBCloudCorePipelineQueueChangedKey_insertedOperationUUIDs;
+extern NSString *const YDBCloudCorePipelineQueueChangedKey_removedOperationUUIDs;
 
 /**
  * This notification is posted whenever the suspendCount changes.
@@ -72,14 +130,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * specific pipeline). Within the graph are the various operations with their different dependencies & priorities.
  * The operations within a graph will be executed in accordance with the set dependencies & priorities.
  * 
- * The pipeline manages executing the operations within a graph.
- * It also ensures that graphs are completed in commit order.
- * 
- * That is, if a pipeline contains 2 graphs:
- * - graph "A" - representing operations from commit #32
- * - graph "B" - represending operations from commit #33
- * 
- * Then the pipeline will ensure that all operations from graphA complete before any operations from graphB start.
+ * The pipeline manages executing the operations within each graph.
 **/
 @interface YapDatabaseCloudCorePipeline : NSObject
 
@@ -87,12 +138,24 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * Initializes a pipeline instance with the given name and delegate.
  * After creating a pipeline instance, you need to register it via [YapDatabaseCloudCore registerPipeline:].
 **/
-- (instancetype)initWithName:(NSString *)name delegate:(id <YapDatabaseCloudCorePipelineDelegate>)delegate;
+- (instancetype)initWithName:(NSString *)name
+                    delegate:(id <YapDatabaseCloudCorePipelineDelegate>)delegate;
+
+/**
+ * Initializes a pipeline instance with the given name and delegate.
+ * Additionally, you may choose to use an advanced algorithm such as FlatGraph.
+ *
+ * After creating a pipeline instance, you need to register it via [YapDatabaseCloudCore registerPipeline:].
+**/
+- (instancetype)initWithName:(NSString *)name
+                   algorithm:(YDBCloudCorePipelineAlgorithm)algorithm
+                    delegate:(id <YapDatabaseCloudCorePipelineDelegate>)delegate;
 
 @property (nonatomic, copy, readonly) NSString *name;
+@property (nonatomic, assign, readonly) YDBCloudCorePipelineAlgorithm algorithm;
 @property (nonatomic, weak, readonly) id <YapDatabaseCloudCorePipelineDelegate> delegate;
 
-@property (atomic, weak, readonly) YapDatabaseCloudCore *owner;
+@property (atomic, weak, readonly, nullable) YapDatabaseCloudCore *owner;
 
 #pragma mark Configuration
 
@@ -103,7 +166,7 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * 
  * This property must be set before the pipeline is registered.
 **/
-@property (nonatomic, copy, readwrite) NSSet *previousNames;
+@property (nonatomic, copy, readwrite, nullable) NSSet *previousNames;
 
 /**
  * This value is the maximum number of operations that will be assigned to the delegate at any one time.
@@ -119,6 +182,9 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * This value may be changed at anytime.
  *
  * The default value is 8.
+ *
+ * Setting the value to zero is the equivalent of setting the value to NSUIntegerMax.
+ * If your intention is to pause/suspend the queue, use the suspend/resume methods.
 **/
 @property (atomic, assign, readwrite) NSUInteger maxConcurrentOperationCount;
 
@@ -129,7 +195,20 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  *
  * @return The corresponding operation, if found. Otherwise nil.
 **/
-- (YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
+- (nullable YapDatabaseCloudCoreOperation *)operationWithUUID:(NSUUID *)uuid;
+
+/**
+ * Searches for a list of operations.
+ *
+ * @return A dictionary with all the found operations.
+ *         Operations which were not found won't be present in the returned dictionary.
+**/
+- (NSDictionary<NSUUID*, YapDatabaseCloudCoreOperation*> *)operationsWithUUIDs:(NSArray<NSUUID*> *)uuids;
+
+/**
+ * Returns a list of operations in state 'YDBCloudOperationStatus_Active'.
+**/
+- (NSArray<YapDatabaseCloudCoreOperation *> *)activeOperations;
 
 /**
  * Enumerates the queued operations.
@@ -137,8 +216,8 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * This is useful for finding operation.
  * For example, you might use this to search for an upload operation with a certain cloudPath.
 **/
-- (void)enumerateOperationsUsingBlock:(void (^)(YapDatabaseCloudCoreOperation *operation,
-                                                NSUInteger graphIdx, BOOL *stop))enumBlock;
+- (void)enumerateOperationsUsingBlock:(void (NS_NOESCAPE^)(YapDatabaseCloudCoreOperation *operation,
+                                                           NSUInteger graphIdx, BOOL *stop))enumBlock;
 
 /**
  * Returns the number of graphs queued in the pipeline.
@@ -158,11 +237,11 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
  * You should allow the pipeline to mange the queue, and only start operations when told to.
  *
  * However, there is one particular edge case in which is is unavoidable: background network tasks.
- * If the app is relaunched, and you discover there are network task from a previous app session,
+ * If the app is relaunched, and you discover there are network tasks from a previous app session,
  * you'll obviously want to avoid starting the corresponding operation again.
  * In this case, you should use this method to inform the pipeline that the operation is already started.
 **/
-- (void)setStatusAsStartedForOperationWithUUID:(NSUUID *)opUUID;
+- (void)setStatusAsActiveForOperationWithUUID:(NSUUID *)opUUID;
 
 /**
  * The PipelineDelegate may invoke this method to reset a failed operation.
@@ -171,34 +250,47 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 **/
 - (void)setStatusAsPendingForOperationWithUUID:(NSUUID *)opUUID;
 
-/**
- * The PipelineDelegate may invoke this method to reset a failed operation,
- * and simultaneously tell the pipeline to delay retrying it again for a period of time.
- *
- * This is typically used when implementing retry logic such as exponential backoff.
- * It works by setting a hold on the operation to [now dateByAddingTimeInterval:delay].
-**/
-- (void)setStatusAsPendingForOperationWithUUID:(NSUUID *)opUUID
-                                    retryDelay:(NSTimeInterval)delay;
-
 #pragma mark Operation Hold
 
 /**
- * Returns the current hold for the operation, or nil if there is no hold.
+ * Returns the current hold for the operation (with the given context), or nil if there is no hold.
+ *
+ * Different context's allow different parts of the system to operate in parallel.
+ * For example, if an operation requires several different subsystems to each complete an action,
+ * then each susbsystem can independently place a hold on the operation.
+ * Once all holds are lifted, the pipeline can dispatch the operation again.
 **/
-- (NSDate *)holdDateForOperationWithUUID:(NSUUID *)opUUID;
+- (nullable NSDate *)holdDateForOperationWithUUID:(NSUUID *)opUUID context:(NSString *)context;
 
 /**
  * And operation can be put on "hold" until a specified date.
- * This is typically used in conjunction with retry logic such as exponential backoff.
+ *
+ * There are multiple uses for this. For example:
+ * - An operation may require various preparation tasks to complete before it can be started.
+ * - A failed operation may use a holdDate in conjunction with retry logic, such as exponential backoff.
  * 
- * The operation won't be delegated again until the given date.
- * You can pass a nil date to remove a hold on an operation.
- * 
- * @see setStatusAsPendingForOperation:withRetryDelay:
+ * The operation won't be started again until all associated holdDate's have expired.
+ * You can pass a nil date to remove a hold on an operation (for a given context).
 **/
-- (void)setHoldDate:(NSDate *)date forOperationWithUUID:(NSUUID *)opUUID;
+- (void)setHoldDate:(nullable NSDate *)date forOperationWithUUID:(NSUUID *)opUUID context:(NSString *)context;
 
+/**
+ * Returns the latest hold date for the given operation.
+ *
+ * If there are no holdDates for the operation, returns nil.
+ * If there are 1 or more holdDates, returns the latest date.
+**/
+- (nullable NSDate *)latestHoldDateForOperationWithUUID:(NSUUID *)opUUID;
+
+/**
+ * Returns a dictionary of all the hold dates associated with an operation.
+**/
+- (nullable NSDictionary<NSString*, NSDate*> *)holdDatesForOperationWithUUID:(NSUUID *)opUUID;
+
+/**
+ * Returns a dictionary of all the hold dates associated with a particular context.
+**/
+- (nullable NSDictionary<NSUUID*, NSDate*> *)holdDatesForContext:(NSString *)context;
 
 #pragma mark Suspend & Resume
 
@@ -266,12 +358,18 @@ extern NSString *const YDBCloudCorePipelineActiveStatusChangedNotification;
 
 /**
  * A pipeline transitions to the 'active' state when:
- * - There are 1 or more operations in 'YDBCloudOperationStatus_Started' mode.
+ * - There are 1 or more operations in 'YDBCloudOperationStatus_Active' mode.
  *
  * A pipeline transitions to the 'inactive' state when:
- * - There are 0 operations in 'YDBCloudOperationStatus_Started' mode
+ * - There are 0 operations in 'YDBCloudOperationStatus_Active' mode
  * - AND (the pipeline is suspended OR there are no more operations)
+ *
+ * ^In other words, there may be situations in which there are zero active operations,
+ *  due to something like a conflict resolution, however the pipeline is still considered
+ *  active because it still has pending operations, and it hasn't been suspended.
 **/
 @property (atomic, readonly) BOOL isActive;
 
 @end
+
+NS_ASSUME_NONNULL_END

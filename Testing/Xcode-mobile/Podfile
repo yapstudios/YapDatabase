@@ -1,5 +1,6 @@
 project 'YapDatabaseTesting.xcodeproj'
-platform :ios, '8.1'
+platform :ios, '10.0'
+use_modular_headers!
 
 target 'YapDatabase' do
 	pod "YapDatabase", path: '../../'
@@ -7,4 +8,13 @@ end
 
 target 'YapDatabaseTests' do
 	pod "YapDatabase", path: '../../'
+end
+
+post_install do |installer|
+	installer.pods_project.targets.each do |target|
+		target.build_configurations.each do |config|
+			config.build_settings.delete 'IPHONEOS_DEPLOYMENT_TARGET'
+			config.build_settings.delete 'MACOSX_DEPLOYMENT_TARGET'
+		end
+	end
 end

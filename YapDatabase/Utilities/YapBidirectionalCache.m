@@ -597,7 +597,7 @@ const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBacks = (Y
 	}
 }
 
-- (void)enumerateKeysWithBlock:(void (^)(id key, BOOL *stop))block
+- (void)enumerateKeysWithBlock:(void (NS_NOESCAPE^)(id key, BOOL *stop))block
 {
 	// We could simply walk the linked-list starting with mostRecentCacheItem,
 	// but that breaks the API contract in certain cases.
@@ -619,7 +619,7 @@ const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBacks = (Y
 	}
 }
 
-- (void)enumerateObjectsWithBlock:(void (^)(id object, BOOL *stop))block
+- (void)enumerateObjectsWithBlock:(void (NS_NOESCAPE^)(id object, BOOL *stop))block
 {
 	// We could simply walk the linked-list starting with mostRecentCacheItem,
 	// but that breaks the API contract in certain cases.
@@ -641,7 +641,7 @@ const YapBidirectionalCacheCallBacks kYapBidirectionalCacheDefaultCallBacks = (Y
 	}
 }
 
-- (void)enumerateKeysAndObjectsWithBlock:(void (^)(id key, id obj, BOOL *stop))block
+- (void)enumerateKeysAndObjectsWithBlock:(void (NS_NOESCAPE^)(id key, id obj, BOOL *stop))block
 {
 	// We could simply walk the linked-list starting with mostRecentCacheItem,
 	// but that breaks the API contract in certain cases.

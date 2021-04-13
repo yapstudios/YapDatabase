@@ -5,21 +5,33 @@
 #import "YapDatabaseCloudCoreGraph.h"
 #import "YapDatabaseCloudCorePrivate.h"
 #import "YapDatabaseCloudCoreOperationPrivate.h"
+#import "YapDatabaseLogging.h"
+
+/**
+ * Define log level for this file: OFF, ERROR, WARN, INFO, VERBOSE
+ * See YapDatabaseLogging.h for more information.
+**/
+#if DEBUG
+  static const int ydbLogLevel = YDB_LOG_LEVEL_INFO;
+#else
+  static const int ydbLogLevel = YDB_LOG_LEVEL_WARN;
+#endif
+#pragma unused(ydbLogLevel)
 
 
 @implementation YapDatabaseCloudCoreGraph
 
-@synthesize persistentOrder = persistentOrder;
+@synthesize snapshot = snapshot;
 @synthesize operations = operations;
 @synthesize pipeline = pipeline;
+@synthesize previousGraph = previousGraph;
 
-- (instancetype)initWithPersistentOrder:(uint64_t)inPersistentOrder
-                             operations:(NSArray<YapDatabaseCloudCoreOperation *> *)inOperations
+- (instancetype)initWithSnapshot:(uint64_t)inSnapshot
+                      operations:(NSArray<YapDatabaseCloudCoreOperation *> *)inOperations
 {
 	if ((self = [super init]))
 	{
-		persistentOrder = inPersistentOrder;
-		
+		snapshot = inSnapshot;
 		operations = [[self class] sortOperationsByPriority:inOperations];
 	
 		if ([self hasCircularDependency])
@@ -70,7 +82,13 @@
 		}
 	}
 	
-	return nil;
+	__strong YapDatabaseCloudCoreGraph *previousGraph = self.previousGraph;
+	if (previousGraph) {
+		return [previousGraph operationWithUUID:opUUID];
+	}
+	else {
+		return nil;
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -142,7 +160,7 @@
 - (NSArray *)removeCompletedAndSkippedOperations
 {
 	NSMutableIndexSet *indexesToRemove = [NSMutableIndexSet indexSet];
-	NSMutableArray *operationsToRemove = [NSMutableArray arrayWithCapacity:1];
+	NSMutableArray *removedOperations = [NSMutableArray arrayWithCapacity:1];
 	
 	NSUInteger index = 0;
 	for (YapDatabaseCloudCoreOperation *operation in operations)
@@ -153,7 +171,7 @@
 		    status == YDBCloudOperationStatus_Skipped)
 		{
 			[indexesToRemove addIndex:index];
-			[operationsToRemove addObject:operation];
+			[removedOperations addObject:operation];
 		}
 		
 		index++;
@@ -167,7 +185,7 @@
 		operations = [newOperations copy];
 	}
 	
-	return operationsToRemove;
+	return removedOperations;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -179,31 +197,53 @@
  *
  * If found, sets the isStarted property to YES, and returns the next operation.
  * Otherwise returns nil.
+ *
+ * @param minPriority
+ *   If non-nil, the returned operation must have a priorty > minPriority
 **/
-- (YapDatabaseCloudCoreOperation *)dequeueNextOperation
+- (YapDatabaseCloudCoreOperation *)nextReadyOperation:(NSNumber *)minPriority
 {
+	YDBLogVerbose(@"[graph:%llu] - nextReadyOperation", self.snapshot);
+	
 	YapDatabaseCloudCoreOperation *nextOpToStart = nil;
 	
 	for (YapDatabaseCloudCoreOperation *op in operations)
 	{
-		// Recursive depth-first search.
-		// If this op dependends on another, and that op isn't completed yet, then returns that op.
-		
-		YapDatabaseCloudCoreOperation *opOrDepOp = [self _dequeueNextOperation:op];
-		if (opOrDepOp)
+		if (minPriority != nil)
 		{
+			// Note:
+			//   The operations are already sorted by priority.
+			//   This sorting was done in the init method.
+			
+			if (op.priority <= minPriority.intValue) {
+				break;
+			}
+		}
+		
+		if ([self hasUnmetDependency:op])
+		{
+			YDBLogVerbose(@"[graph:%llu] - op(%@) - has unmet dependency",
+							  self.snapshot, op.uuid);
+		}
+		else
+		{
+			YDBLogVerbose(@"[graph:%llu] - op(%@) - checking op status",
+				self.snapshot, op.uuid);
+			
 			YDBCloudCoreOperationStatus status = YDBCloudOperationStatus_Pending;
 			BOOL isOnHold = NO;
-			[pipeline getStatus:&status isOnHold:&isOnHold forOperationUUID:opOrDepOp.uuid];
+			[pipeline getStatus:&status isOnHold:&isOnHold forOperationUUID:op.uuid];
 			
 			if ((status == YDBCloudOperationStatus_Pending) && !isOnHold)
 			{
-				nextOpToStart = opOrDepOp;
+				nextOpToStart = op;
 				break;
 			}
 		}
 	}
 	
+	YDBLogVerbose(@"[graph:%llu] - nextReadyOperation - nextOpToStart(%@)",
+		self.snapshot, nextOpToStart.uuid);
 	return nextOpToStart;
 }
 
@@ -211,72 +251,40 @@
  * Recursive helper method.
  *
  * A baseOperation cannot be started until all of its dependencies have completed (or been skipped).
+ * So all we need to know (about the baseOperation) is:
  *
- * This method searches for a dependent operation that can be started.
- * If found, this dependent operation is returned.
- * 
- * Otherwise it will search for a dependent operation that is not yet completed.
- * If found, this dependent operation is returned.
- * 
- * Otherwise it will return nil, if there are no dependent operations that aren't completed.
+ * - is there a dependency that isn't finished yet
 **/
-- (YapDatabaseCloudCoreOperation *)_dequeueNextOperation:(YapDatabaseCloudCoreOperation *)baseOp
+- (BOOL)hasUnmetDependency:(YapDatabaseCloudCoreOperation *)baseOp
 {
-	// Recursion - depth first search for dependent operation we can start, or that's blocking us
+	for (NSUUID *depUUID in baseOp.dependencies)
 	{
-		YapDatabaseCloudCoreOperation *dependentOpToStart = nil;
-		YapDatabaseCloudCoreOperation *dependentOpNotDone = nil;
-		
-		for (NSUUID *depUUID in [baseOp dependencyUUIDs])
+		YapDatabaseCloudCoreOperation *dependentOp = [self operationWithUUID:depUUID];
+		if (dependentOp)
 		{
-			YapDatabaseCloudCoreOperation *dependentOp = [self operationWithUUID:depUUID];
-			if (dependentOp)
+			YDBCloudCoreOperationStatus status = YDBCloudOperationStatus_Pending;
+			[pipeline getStatus:&status isOnHold:NULL forOperationUUID:dependentOp.uuid];
+			
+			if (status == YDBCloudOperationStatus_Completed ||
+			    status == YDBCloudOperationStatus_Skipped)
 			{
-				// Recursion step.
-				// Here's where we look for dependencies of dependencies of dependencies...
-				//
-				dependentOp = [self _dequeueNextOperation:dependentOp];
+				// Dependency completed
+			}
+			else
+			{
+				YDBLogVerbose(@"[graph:%llu] - op(%@) - waiting for dependency(%@)",
+					self.snapshot, baseOp.uuid, depUUID);
 				
-				if (dependentOp)
-				{
-					YDBCloudCoreOperationStatus status = YDBCloudOperationStatus_Pending;
-					BOOL isOnHold = NO;
-					[pipeline getStatus:&status isOnHold:&isOnHold forOperationUUID:dependentOp.uuid];
-					
-					if (status == YDBCloudOperationStatus_Pending && !isOnHold)
-					{
-						if (dependentOpToStart == nil)
-							dependentOpToStart = dependentOp;
-					}
-					else if (status != YDBCloudOperationStatus_Completed &&
-					         status != YDBCloudOperationStatus_Skipped)
-					{
-						if (dependentOpNotDone == nil)
-							dependentOpNotDone = dependentOp;
-					}
-				}
+				return YES;
 			}
 		}
-		
-		if (dependentOpToStart) return dependentOpToStart;
-		if (dependentOpNotDone) return dependentOpNotDone;
+		else
+		{
+			// Dependency completed
+		}
 	}
 	
-	// Nothing found via recursion - apply algorithm to baseOp
-	{
-		YDBCloudCoreOperationStatus status = YDBCloudOperationStatus_Pending;
-		BOOL isOnHold = NO;
-		[pipeline getStatus:&status isOnHold:&isOnHold forOperationUUID:baseOp.uuid];
-		
-		if (status == YDBCloudOperationStatus_Pending && !isOnHold)
-			return baseOp;
-		
-		if (status != YDBCloudOperationStatus_Completed &&
-		    status != YDBCloudOperationStatus_Skipped)
-			return baseOp;
-		
-		return nil;
-	}
+	return NO;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -317,7 +325,7 @@
 		
 		[visitedOps addObject:op.uuid];
 		
-		for (NSUUID *depUUID in [op dependencyUUIDs])
+		for (NSUUID *depUUID in op.dependencies)
 		{
 			YapDatabaseCloudCoreOperation *depOp = [self operationWithUUID:depUUID];
 			if (depOp)
