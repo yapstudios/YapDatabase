@@ -226,8 +226,7 @@
 	
 	YapDatabaseViewState *state = nil;
 	
-    // fix cross process don't sync https://github.com/yapstudios/YapDatabase/issues/504
-    BOOL shortcut = NO; // [parentConnection->parent getState:&state forConnection:parentConnection];
+	BOOL shortcut = [parentConnection->parent getState:&state forConnection:parentConnection];
 	if (shortcut && state)
 	{
 		if (databaseTransaction->isReadWriteTransaction)
