@@ -1285,7 +1285,9 @@ static NSString *const ext_key_version_deprecated = @"version";
 		id object = nil;
 		[self->databaseTransaction getCollectionKey:&ck object:&object forRowid:rowid];
 		
-		block(ck.collection, ck.key, object, stop);
+        if (ck && object) {
+            block(ck.collection, ck.key, object, stop);
+        }
 	}];
 	
 	return result;
